@@ -11,6 +11,30 @@ GUILD = os.getenv("DISCORD_GUILD")
 
 bot = commands.Bot(command_prefix="p!")
 
+try:
+    open(r"Bad words to auto-delete.txt", "x").close()
+except FileExistsError:
+    pass
+
+@bot.event
+async def on_message(message):
+    dadprefixes = ["I'm ", "Im ", "i'm ", "im ", "I Am ", "I am ", "i am "]
+    if message.author == bot.user or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
+        return
+
+    for dad in range(len(dadprefixes)):
+        if dadprefixes[dad] in message.content:
+            await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
+            
+    # this section is to auto-delete messages containing a word in the text file
+    with open(r"Bad words to auto-delete.txt", "r") as bads_file:
+        all_bads = bads_file.read().split(" ")
+        for bad in range(len(all_bads)):
+            if all_bads[bad] in message.content:
+                await message.delete()
+
+    await bot.process_commands(message)
+
 @bot.command(name="hi", help="You say hi, I greet you back!")
 async def say_hi_back(ctx):
     responses = ["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]
@@ -57,12 +81,79 @@ async def rollem(ctx, dice: int, sides: int):
             response = "You rolled " + str(total)
         await ctx.send(response)
 
-@bot.command()
-async def slap(ctx, members: commands.Greedy[discord.Member], *, reason="no reason"):
-    slapped = ", ".join(x.name for x in members)
-    await ctx.send(members)
-    if slapped == " ":
-        await ctx.send("{0} just got slapped by {1.author} for {2}".format(slapped, ctx, reason))
+@bot.command(name="slap", help="Slap someone...?", command_category="Interactions")
+async def slap(ctx, slap: discord.User=""):
+    slapper = str(ctx.author.mention)
+    slapped = "<@" + str(slap.id) + ">"
+    responses = [slapped + " just got slapped by " + slapper, slapper + " slapped " + slapped]
+    selfresponses = ["Hey, you can't slap yourself!", "Please don't", "y tho"]
+    botresponses = [";-;", "ow! ;-;", "ow!"]
+    if slapped == "":
+        await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
+    elif slap == ctx.author:
+        await ctx.send(random.choice(selfresponses) + " :(")
     else:
-        await ctx.send("You can't just slap thin air!")
+        await ctx.send(random.choice(responses))
+        if str(slap.id) == "721092139953684580":
+            await ctx.send(random.choice(botresponses))
+
+@bot.command(name="hug", help="Give somebody a hug!")
+async def hug(ctx, hug: discord.User=""):
+    hugger = str(ctx.author.mention)
+    hugged = "<@" + str(hug.id) + ">"
+    responses = [hugged + " just got hugged by " + hugger, hugger + " hugged " + hugged, hugger + " gave a hug to " + hugged]
+    selfresponses = ["You wrap your arms tightly around yourself.", "Reaching through the 4th dimension, you manage to give yourself a hug.", "You hug yourself, somehow."]
+    botresponses = ["aww!", "thanks <:happy:708534449310138379>", "*gasp*"]
+    if hugged == "":
+        await ctx.send("You can't just hug thin air! (Unless you're hugging a ghost?)")
+    elif hug == ctx.author:
+        await ctx.send(random.choice(selfresponses))
+    else:
+        await ctx.send(random.choice(responses))
+        if str(hug.id) == "721092139953684580":
+            await ctx.send(random.choice(botresponses))
+
+@bot.command(name="boop", help="Boop someone's nose :3")
+async def boop(ctx, boop: discord.User=""):
+    booper = str(ctx.author.mention)
+    booped = "<@" + str(boop.id) + ">"
+    responses = [booped + " just got booped by " + booper, booper + " booped " + booped, booper + " booped " + booped + "'s nose!"]
+    selfresponses = ["You boop your own nose, I guess...? ", "You miss your nose and poke yourself in the eye. ", "Somehow, your hand clips through your nose and appears on the other side of your head. "]
+    botresponses = ["<:happy:708534449310138379>", "<:uwu:708534448949559328>", "thaaanks :3"]
+    if booped == "":
+        await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
+    elif boop == ctx.author:
+        choice = random.choice(selfresponses)
+        if choice == selfresponses[1]:
+            await ctx.send(choice + random.choice(["Ouch", "Oops", "Whoops"]) + "!")
+        else:
+            await ctx.send(choice)
+    else:
+        await ctx.send(random.choice(responses))
+        if str(boop.id) == "721092139953684580":
+            await ctx.send(random.choice(botresponses))
+
+@bot.command(name="pat", help="Pat someone on the head!")
+async def pat(ctx, pat: discord.User="", *, bodypart="head"):
+    msg = await ctx.fetch_message("p!pat " + str(pat) + " " + bodypart)
+    await msg.delete(ctx)
+    for not_happening in range(len(nonoparts)):
+        if bodypart == nonoparts[not_happening]:
+            await message.delete(ctx)
+            break
+        else:
+            patter = str(ctx.author.mention)
+            patted = "<@" + str(pat.id) + ">"
+            responses = [patted + " just got patted on the " + bodypart + " by " + patter, patter + " patted " + patted + " on the " + bodypart + "."]
+            botresponses = ["<:happy:708534449310138379>", "hehe", "aw, you're cute :3"]
+            if patted == "":
+                await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
+            elif pat == ctx.author:
+                await ctx.send("You pat yourself on the " + bodypart + ".")
+            else:
+                await ctx.send(random.choice(responses))
+                if str(pat.id) == "721092139953684580":
+                    await ctx.send(random.choice(botresponses))
+            break
+
 bot.run(TOKEN)
