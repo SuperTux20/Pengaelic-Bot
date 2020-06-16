@@ -1,5 +1,5 @@
-# PengaelicBot
-A simple multi-purpose Discord bot.
+# Pengaelic Bot
+### A simple multi-purpose Discord bot.
 Current functions are as follows...
 - Responses like Dad Bot ("Hi hungry, I'm the Pengaelic Bot!")
 - Automatic message deletion based on a text file of keywords
