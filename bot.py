@@ -11,6 +11,8 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="p!")
 
+censorToggle = True
+
 try:
     open(r"Bad words to auto-delete.txt", "x").close()
 except FileExistsError:
@@ -32,13 +34,15 @@ async def on_message(message):
     for dad in range(len(dadprefixes)):
         if dadprefixes[dad] in message.content:
             await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
-            
+    
     # this section is to auto-delete messages containing a keyword contained in the text file
-    with open(r"Bad words to auto-delete.txt", "r") as bads_file:
-        all_bads = bads_file.read().split(" ")
-        for bad in range(len(all_bads)):
-            if all_bads[bad] in message.content:
-                await message.delete()
+    global censorToggle
+    if censorToggle == True:
+        with open(r"Bad words to auto-delete.txt", "r") as bads_file:
+            all_bads = bads_file.read().split(" ")
+            for bad in range(len(all_bads)):
+                if all_bads[bad] in message.content:
+                    await message.delete()
 
     # this section reprimands people when they're rude to the bots
     momSyns = ["mom", "mother", "ma", "mama", "mamma", "mommy", "mum", "mummy"]
@@ -53,6 +57,16 @@ async def on_message(message):
 
     # this lets all the commands below work as normal
     await bot.process_commands(message)
+
+@bot.command(name="togglecensorship", help="Toggle the automatic deletion of messages containing specific keywords.")
+async def togglecensor(ctx):
+    global censorToggle
+    if censorToggle == True:
+        censorToggle = False
+        await ctx.send("Censorship turned off.")
+    elif censorToggle == False:
+        censorToggle = True
+        await ctx.send("Censorship turned on.")
 
 @bot.command(name="hi", help="You say hi, I greet you back!")
 async def say_hi_back(ctx):
@@ -108,18 +122,25 @@ async def rollem(ctx, dice: int=1, sides: int=6):
             response = "You rolled " + str(total)
         await ctx.send(response)
 
-@bot.command(name="draw", help="Draw some cards! Default specifications are 1 card where both suit and value matter (add 'suit', 'value', or 'both' to the end of the command)")
-async def drawem(ctx, cards: int=1, whatMatters: str="both"):
+@bot.command(name="draw", help="Draw some cards! Default specifications are 1 card, replacing the card each time")
+async def drawem(ctx, cards: int=1, replaceCards: str="yes"):
     suits = ['Diamonds', 'Spades', 'Hearts', 'Clubs']
     values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
+    allCards = []
     drawn = []
-    for card in range(cards):
-        if whatMatters == "both":
+    if replaceCards == "no":
+        for suit in range(len(suits)):
+            for value in range(len(values)):
+                allCards.append(str(values[value]) + " of " + suits[suit])
+        if cards > 52:
+            await ctx.send("You can't draw more than the entire deck!")
+            return
+        else:
+            for card in range(cards):
+                drawn.append(str(random.choice(allCards)))
+    else:
+        for card in range(cards):
             drawn.append(str(random.choice(values)) + " of " + random.choice(suits))
-        elif whatMatters == "value":
-            drawn.append("You drew a " + str(random.choice(values)))
-        elif whatMatters == "suit":
-            drawn.append("You drew a " + random.choice(suits))
     await ctx.send("You drew " + str(drawn))
 
 @bot.command(name="slap", help="Slap someone...?", command_category="Interactions")
