@@ -6,7 +6,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from time import sleep
 
-load_dotenv(".env")
+load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="p!")
