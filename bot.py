@@ -4,6 +4,7 @@ import random
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from time import sleep
 
 load_dotenv(".env")
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -17,6 +18,13 @@ except FileExistsError:
     pass
 
 @bot.event
+async def on_ready():
+    print("Connected!")
+    song = random.choice(["Pinballovania", "Zakarralovania", "Bone Travel", "Hall of the Mountain Dude (Pengaelic Remix)"]) # I made all these songs myself :D find me on SoundCloud @ Tux Penguin
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=song))
+    print("Status changed to \"" + song + "\"")
+
+@bot.event
 async def on_message(message):
     dadprefixes = ["I'm ", "Im ", "i'm ", "im ", "I Am ", "I am ", "i am "]
     if message.author == bot.user or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
@@ -26,7 +34,7 @@ async def on_message(message):
         if dadprefixes[dad] in message.content:
             await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
             
-    # this section is to auto-delete messages containing a word in the text file
+    # this section is to auto-delete messages containing a keyword contained in the text file
     with open(r"Bad words to auto-delete.txt", "r") as bads_file:
         all_bads = bads_file.read().split(" ")
         for bad in range(len(all_bads)):
@@ -55,19 +63,19 @@ async def say_back(ctx, *, arg):
 @bot.command(name="roll", help="Roll some dice! Be sure to specify the number of dice, then the number of sides they have (all dice have the same number of sides).\nThe currently known limits are...\n\t- 658 dice with 1 side\n\t- 657 dice with 2-9 sides\n\t- 616 dice with 10 sides")
 async def rollem(ctx, dice: int, sides: int):
     if dice == "0":
-        await ctx.send("Hey, you can't roll zero dice!")
+        await ctx.send("You didn't roll any dice.")
     elif sides == "0":
         if dice == "1":
             await ctx.send("Hey, you can't roll a zero-sided die!")
         if dice > "1":
             await ctx.send("Hey, you can't roll zero-sided dice!")
     elif dice < "0":
-        await ctx.send("Hey, you can't roll negative dice!")
+        await ctx.send("You rolled NaN dice and got [REDACTED]")
     elif sides < "0":
         if dice == "1":
-            await ctx.send("Hey, you can't roll a negative-sided die!")
+            await ctx.send("You rolled a [ERROR]-sided die and got `404`")
         if dice > "1":
-            await ctx.send("Hey, you can't roll negative-sided dice!")
+            await ctx.send("You rolled " + dice + " `err`-sided dice and got [NULL]")
     else:
         sideList = []
         rollResults = []
@@ -85,13 +93,15 @@ async def rollem(ctx, dice: int, sides: int):
 @bot.command(name="slap", help="Slap someone...?", command_category="Interactions")
 async def slap(ctx, slap: discord.User=""):
     slapper = str(ctx.author.mention)
-    slapped = "<@" + str(slap.id) + ">"
+    try:
+        slapped = "<@" + str(slap.id) + ">"
+    except:
+        await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
+        return
     responses = [slapped + " just got slapped by " + slapper, slapper + " slapped " + slapped]
     selfresponses = ["Hey, you can't slap yourself!", "Please don't", "y tho"]
     botresponses = [";-;", "ow! ;-;", "ow!"]
-    if slapped == "":
-        await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
-    elif slap == ctx.author:
+    if slap == ctx.author:
         await ctx.send(random.choice(selfresponses) + " :(")
     else:
         await ctx.send(random.choice(responses))
@@ -101,13 +111,15 @@ async def slap(ctx, slap: discord.User=""):
 @bot.command(name="hug", help="Give somebody a hug!")
 async def hug(ctx, hug: discord.User=""):
     hugger = str(ctx.author.mention)
-    hugged = "<@" + str(hug.id) + ">"
+    try:
+        hugged = "<@" + str(hug.id) + ">"
+    except:
+        await ctx.send("You can't just hug thin air! (Unless you're hugging a ghost?)")
+        return
     responses = [hugged + " just got hugged by " + hugger, hugger + " hugged " + hugged, hugger + " gave a hug to " + hugged]
     selfresponses = ["You wrap your arms tightly around yourself.", "Reaching through the 4th dimension, you manage to give yourself a hug.", "You hug yourself, somehow."]
     botresponses = ["aww!", "thanks <:happy:708534449310138379>", "*gasp*"]
-    if hugged == "":
-        await ctx.send("You can't just hug thin air! (Unless you're hugging a ghost?)")
-    elif hug == ctx.author:
+    if hug == ctx.author:
         await ctx.send(random.choice(selfresponses))
     else:
         await ctx.send(random.choice(responses))
@@ -117,7 +129,11 @@ async def hug(ctx, hug: discord.User=""):
 @bot.command(name="boop", help="Boop someone's nose :3")
 async def boop(ctx, boop: discord.User=""):
     booper = str(ctx.author.mention)
-    booped = "<@" + str(boop.id) + ">"
+    try:
+        booped = "<@" + str(boop.id) + ">"
+    except:
+        await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
+        return
     responses = [booped + " just got booped by " + booper, booper + " booped " + booped, booper + " booped " + booped + "'s nose!"]
     selfresponses = ["You boop your own nose, I guess...? ", "You miss your nose and poke yourself in the eye. ", "Somehow, your hand clips through your nose and appears on the other side of your head. "]
     botresponses = ["<:happy:708534449310138379>", "<:uwu:708534448949559328>", "thaaanks :3"]
@@ -137,12 +153,14 @@ async def boop(ctx, boop: discord.User=""):
 @bot.command(name="pat", help="Pat someone on the head!")
 async def pat(ctx, pat: discord.User="", *, bodypart="head"):
     patter = str(ctx.author.mention)
-    patted = "<@" + str(pat.id) + ">"
+    try:
+        patted = "<@" + str(pat.id) + ">"
+    except:
+        await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
+        return
     responses = [patted + " just got patted on the " + bodypart + " by " + patter, patter + " patted " + patted + " on the " + bodypart + "."]
     botresponses = ["<:happy:708534449310138379>", "hehe", "aw, you're cute :3"]
-    if patted == "":
-        await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
-    elif pat == ctx.author:
+    if pat == ctx.author:
         await ctx.send("You pat yourself on the " + bodypart + ".")
     else:
         await ctx.send(random.choice(responses))
