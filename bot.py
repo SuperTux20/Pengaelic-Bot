@@ -94,20 +94,17 @@ async def vowelRemover(ctx, *, arg):
 
 @bot.command(name="roll", help="Roll some dice! Be sure to specify the number of dice, then the number of sides they have (all dice have the same number of sides).\nThe default is one 6-sided die.\n\nThe currently known limits are...\n\t- 658 dice with 1 side\n\t- 657 dice with 2-9 sides\n\t- 616 dice with 10 sides")
 async def rollem(ctx, dice: int=1, sides: int=6):
-    if dice == "0":
+    if dice == 0:
         await ctx.send("You didn't roll any dice.")
-    elif sides == "0":
-        if dice == "1":
-            await ctx.send("Hey, you can't roll a zero-sided die!")
-        if dice > "1":
-            await ctx.send("Hey, you can't roll zero-sided dice!")
-    elif dice < "0":
+    elif sides == 0:
+        await ctx.send("You rolled thin air.")
+    elif dice < 0:
         await ctx.send("You rolled NaN dice and got [REDACTED]")
-    elif sides < "0":
-        if dice == "1":
+    elif sides < 0:
+        if dice == 1:
             await ctx.send("You rolled a [ERROR]-sided die and got `404`")
-        if dice > "1":
-            await ctx.send("You rolled " + dice + " `err`-sided dice and got [NULL]")
+        if dice > 1:
+            await ctx.send("You rolled " + str(dice) + " `err`-sided dice and got [NULL]")
     else:
         sideList = []
         rollResults = []
