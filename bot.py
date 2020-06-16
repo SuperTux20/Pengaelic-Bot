@@ -40,6 +40,17 @@ async def on_message(message):
             if all_bads[bad] in message.content:
                 await message.delete()
 
+    # this section reprimands people when they're rude to the bots
+    momSyns = ["mom", "mother", "ma", "mama", "mamma", "mommy", "mum", "mummy"]
+    dadSyns = ["dad", "father", "pa", "papa", "poppa", "daddy", "da", "pappy", "pop"]
+    for mom in range(len(momSyns)):
+        for dad in range(len(dadSyns)):
+            if message.content == "Your " + momSyns[mom] + " was a calculator and your" + dadSyns[dad] + " ran on Windows Vista":
+                defenseP1 = ["Hey", "Dude"]
+                defenseP2 = ["be nice to the bot", "be nice", "chill out"]
+                defenseP3 = ["it's only doing its job", "it's only doing what it was told"]
+                await message.channel.send(random.choice(defenseP1) + ", " + random.choice(defenseP2) + ", " + random.choice(defenseP3) + "!")
+
     # this lets all the commands below work as normal
     await bot.process_commands(message)
 
@@ -59,8 +70,16 @@ async def say_bye_back(ctx):
 async def say_back(ctx, *, arg):
     await ctx.send(arg)
 
-@bot.command(name="roll", help="Roll some dice! Be sure to specify the number of dice, then the number of sides they have (all dice have the same number of sides).\nThe currently known limits are...\n\t- 658 dice with 1 side\n\t- 657 dice with 2-9 sides\n\t- 616 dice with 10 sides")
-async def rollem(ctx, dice: int, sides: int):
+@bot.command(name="novowels", help="Remove all vowels from whatever text you put in.")
+async def vowelRemover(ctx, *, arg):
+	vowels = "aeiouAEIOU"
+	outputString = arg
+	for vowel in range(len(vowels)):
+		outputString = outputString.replace(vowels[vowel],"")
+	await ctx.send(outputString.replace("  ", " ")) # fix doubled spaces
+
+@bot.command(name="roll", help="Roll some dice! Be sure to specify the number of dice, then the number of sides they have (all dice have the same number of sides).\nThe default is one 6-sided die.\n\nThe currently known limits are...\n\t- 658 dice with 1 side\n\t- 657 dice with 2-9 sides\n\t- 616 dice with 10 sides")
+async def rollem(ctx, dice: int=1, sides: int=6):
     if dice == "0":
         await ctx.send("You didn't roll any dice.")
     elif sides == "0":
@@ -88,6 +107,20 @@ async def rollem(ctx, dice: int, sides: int):
         else:
             response = "You rolled " + str(total)
         await ctx.send(response)
+
+@bot.command(name="draw", help="Draw some cards! Default specifications are 1 card where both suit and value matter (add 'suit', 'value', or 'both' to the end of the command)")
+async def drawem(ctx, cards: int=1, whatMatters: str="both"):
+    suits = ['Diamonds', 'Spades', 'Hearts', 'Clubs']
+    values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
+    drawn = []
+    for card in range(cards):
+        if whatMatters == "both":
+            drawn.append(str(random.choice(values)) + " of " + random.choice(suits))
+        elif whatMatters == "value":
+            drawn.append("You drew a " + str(random.choice(values)))
+        elif whatMatters == "suit":
+            drawn.append("You drew a " + random.choice(suits))
+    await ctx.send("You drew " + str(drawn))
 
 @bot.command(name="slap", help="Slap someone...?", command_category="Interactions")
 async def slap(ctx, slap: discord.User=""):
