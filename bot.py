@@ -33,6 +33,7 @@ async def on_message(message):
             if all_bads[bad] in message.content:
                 await message.delete()
 
+    # this lets all the commands below work as normal
     await bot.process_commands(message)
 
 @bot.command(name="hi", help="You say hi, I greet you back!")
@@ -135,25 +136,17 @@ async def boop(ctx, boop: discord.User=""):
 
 @bot.command(name="pat", help="Pat someone on the head!")
 async def pat(ctx, pat: discord.User="", *, bodypart="head"):
-    msg = await ctx.fetch_message("p!pat " + str(pat) + " " + bodypart)
-    await msg.delete(ctx)
-    for not_happening in range(len(nonoparts)):
-        if bodypart == nonoparts[not_happening]:
-            await message.delete(ctx)
-            break
-        else:
-            patter = str(ctx.author.mention)
-            patted = "<@" + str(pat.id) + ">"
-            responses = [patted + " just got patted on the " + bodypart + " by " + patter, patter + " patted " + patted + " on the " + bodypart + "."]
-            botresponses = ["<:happy:708534449310138379>", "hehe", "aw, you're cute :3"]
-            if patted == "":
-                await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
-            elif pat == ctx.author:
-                await ctx.send("You pat yourself on the " + bodypart + ".")
-            else:
-                await ctx.send(random.choice(responses))
-                if str(pat.id) == "721092139953684580":
-                    await ctx.send(random.choice(botresponses))
-            break
+    patter = str(ctx.author.mention)
+    patted = "<@" + str(pat.id) + ">"
+    responses = [patted + " just got patted on the " + bodypart + " by " + patter, patter + " patted " + patted + " on the " + bodypart + "."]
+    botresponses = ["<:happy:708534449310138379>", "hehe", "aw, you're cute :3"]
+    if patted == "":
+        await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
+    elif pat == ctx.author:
+        await ctx.send("You pat yourself on the " + bodypart + ".")
+    else:
+        await ctx.send(random.choice(responses))
+        if str(pat.id) == "721092139953684580":
+            await ctx.send(random.choice(botresponses))
 
 bot.run(TOKEN)
