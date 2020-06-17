@@ -49,16 +49,38 @@ async def on_message(message):
                     await message.delete()
 
     # this section reprimands people when they're rude to the bots
-    momSyns = ["mom", "mother", "ma", "mama", "mamma", "mommy", "mum", "mummy"]
-    dadSyns = ["dad", "father", "pa", "papa", "poppa", "daddy", "da", "pappy", "pop"]
-    for mom in range(len(momSyns)):
-        for dad in range(len(dadSyns)):
-            if message.content == "Your " + momSyns[mom] + " was a calculator and your" + dadSyns[dad] + " ran on Windows Vista":
-                defenseP1 = ["Hey", "Dude"]
-                defenseP2 = ["be nice to the bot", "be nice", "chill out"]
-                defenseP3 = ["it's only doing its job", "it's only doing what it was told"]
-                await message.channel.send(random.choice(defenseP1) + ", " + random.choice(defenseP2) + ", " + random.choice(defenseP3) + "!")
+    insults = ["Your mother was a calculator and your dad ran on Windows Vista", "fuck you bot"]
+    for insult in range(len(insults)):
+        if message.content == insults[insult]:
+            defenseP1 = ["Hey", "Dude"]
+            defenseP2 = ["be nice to the bot", "be nice", "chill out"]
+            defenseP3 = ["it's only doing its job", "it's only doing what it was told"]
+            await message.channel.send(random.choice(defenseP1) + ", " + random.choice(defenseP2) + ", " + random.choice(defenseP3) + "!")
 
+
+    # this section randomizes "yo mama" jokes lol
+    mamatypes = ["fat", "stupid", "dumb", "short", "hairy", "ugly", "poor"]
+    fatjokes = ["She doesn't need internet, she's already **W O R L D W I D E .**", "Half of her is in another dimension!", "She wakes up on BOTH sides of the bed!", "She got arrested for carrying ten pounds of CRACK!"]
+    stupidjokes = ["She sold her car for *gas money.*", "When she heard it was \"chili\" outside, she went and got a bowl.", "She brought a giant spoon to the Super Bowl!", "She got tickets to XBOX LIVE."]
+    shortjokes = ["She does backflips *under the bed,*", "When she smokes weed, she can't even get high!!"]
+    hairyjokes = ["She shaves with a weedeater!", "She stars in Donkey Kong games!"]
+    uglyjokes = ["When she played GTA V, she got an instant 5 stars! ...and then the cops ran away the moment they saw her.", "Her reflection said \"I quit.\"", "She wears a steak around her neck to get dogs to play with her.", "She makes *onions* cry!"]
+    poorjokes = ["She runs after the garbage truck with a shopping list!", "She goes to KFC to lick people's fingers.", "The ducks throw bread at *her!*"]
+    for mom in range(len(mamatypes)):
+        if "Yo mama so " + mamatypes[mom] in message.content:
+            if mamatypes[mom] == "fat":
+                await message.channel.send(random.choice(fatjokes))
+            if mamatypes[mom] == "stupid" or mamatypes[mom] == "dumb":
+                await message.channel.send(random.choice(stupidjokes))
+            if mamatypes[mom] == "short":
+                await message.channel.send(random.choice(shortjokes))
+            if mamatypes[mom] == "hairy":
+                await message.channel.send(random.choice(hairyjokes))
+            if mamatypes[mom] == "ugly":
+                await message.channel.send(random.choice(uglyjokes))
+            if mamatypes[mom] == "poor":
+                await message.channel.send(random.choice(poorjokes))
+                
     # this lets all the commands below work as normal
     await bot.process_commands(message)
 
