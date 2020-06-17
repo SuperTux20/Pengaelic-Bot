@@ -10,8 +10,12 @@ load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="p!")
-
-censorToggle = True
+try:
+    with open(r"options.txt", "r") as optionsfile:
+        censorToggle = bool(optionsfile.readlines()[0])
+except FileNotFoundError:
+    open(r"options.txt", "x").close()
+    censorToggle = True
 
 try:
     open(r"Bad words to auto-delete.txt", "x").close()
@@ -21,9 +25,9 @@ except FileExistsError:
 @bot.event
 async def on_ready():
     print("Connected!")
-    song = random.choice(["Pinballovania", "Zakarralovania", "Bone Travel", "Hall of the Mountain Dude (Pengaelic Remix)"]) # I made all these songs myself :D find me on SoundCloud @ Tux Penguin
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=song))
-    print("Status changed to \"" + song + "\"")
+    artist = random.choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
+    print("Status changed to \"" + artist + "\"")
 
 @bot.event
 async def on_message(message):
@@ -58,7 +62,7 @@ async def on_message(message):
     # this lets all the commands below work as normal
     await bot.process_commands(message)
 
-@bot.command(name="togglecensorship", help="Toggle the automatic deletion of messages containing specific keywords.")
+@bot.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
 async def togglecensor(ctx):
     global censorToggle
     if censorToggle == True:
@@ -67,6 +71,8 @@ async def togglecensor(ctx):
     elif censorToggle == False:
         censorToggle = True
         await ctx.send("Censorship turned on.")
+    with open(r"options.txt", "w+") as optionsfile:
+        optionsfile.write(str(censorToggle))
 
 @bot.command(name="hi", help="You say hi, I greet you back!")
 async def say_hi_back(ctx):
@@ -76,7 +82,7 @@ async def say_hi_back(ctx):
 
 @bot.command(name="bye", help="You say bye, I bid you farewell.")
 async def say_bye_back(ctx):
-    responses = ["See you next time!", "Bye!", "So long, gay bowser!"]
+    responses = ["See you next time!", "Bye!", "So long, Gay Bowser!"]
     response = random.choice(responses)
     await ctx.send(response)
 
@@ -184,7 +190,7 @@ async def boop(ctx, boop: discord.User=""):
     except:
         await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
         return
-    responses = [booped + " just got booped by " + booper, booper + " booped " + booped, booper + " booped " + booped + "'s nose!"]
+    responses = [booped + " just got booped by " + booper, booper + " booped " + booped, booper + " booped " + booped + "'s nose!", booper + " booped " + booped + " on the nose!"]
     selfresponses = ["You boop your own nose, I guess...? ", "You miss your nose and poke yourself in the eye. ", "Somehow, your hand clips through your nose and appears on the other side of your head. "]
     botresponses = ["<:happy:708534449310138379>", "<:uwu:708534448949559328>", "thaaanks :3"]
     if booped == "":
