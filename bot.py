@@ -10,6 +10,7 @@ load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="p!")
+
 try:
     with open(r"options.txt", "r") as optionsfile:
         censorToggle = bool(optionsfile.readlines()[0])
