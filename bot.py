@@ -1,7 +1,7 @@
 # bot.py
 import os
-import random
 import discord
+from random import choice
 from discord.ext import commands
 from dotenv import load_dotenv
 from time import sleep
@@ -25,19 +25,22 @@ except FileExistsError:
 @bot.event
 async def on_ready():
     print("Connected!")
-    artist = random.choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
+    artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
     print("Status changed to \"" + artist + "\"")
 
 @bot.event
 async def on_message(message):
+    global bot
     dadprefixes = ["I'm ", "Im ", "i'm ", "im ", "I Am ", "I am ", "i am "]
     if message.author == bot.user or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
     for dad in range(len(dadprefixes)):
         if dadprefixes[dad] in message.content:
-            await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
+            for checking in range(len(dadprefixes[dad])):
+                if message.content[0] == dadprefixes[dad][0]:
+                    await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
     
     # this section is to auto-delete messages containing a keyword contained in the text file
     global censorToggle
@@ -50,12 +53,18 @@ async def on_message(message):
 
     # this section reprimands people when they're rude to the bots
     insults = ["Your mother was a calculator and your dad ran on Windows Vista", "fuck you bot"]
+    bots = ["MEE6", "Mee6", "Mantaro", "Dyno", "Nadeko", "Dad Bot"]
     for insult in range(len(insults)):
-        if message.content == insults[insult]:
-            defenseP1 = ["Hey", "Dude"]
-            defenseP2 = ["be nice to the bot", "be nice", "chill out"]
-            defenseP3 = ["it's only doing its job", "it's only doing what it was told"]
-            await message.channel.send(random.choice(defenseP1) + ", " + random.choice(defenseP2) + ", " + random.choice(defenseP3) + "!")
+        if insults[insult] in message.content:
+            if "pengaelicbot" in message.content or "pengaelic bot" in message.content or "Pengaelic bot" in message.content or "Pengaelic Bot" in message.content:
+                await message.channel.send(choice([";-;", ":sob:", ":cry:"]))
+            else:
+                for bot in range(len(bots)):
+                    if bot in message.content or bot.lower() in message.content:
+                        defenseP1 = ["Hey", "Dude", "Whoa"]
+                        defenseP2 = ["be nice to " + bot, "be nice", "chill out"]
+                        defenseP3 = ["it's only doing its job", "it's only doing what it was told"]
+                        await message.channel.send(choice(defenseP1) + ", " + choice(defenseP2) + ", " + choice(defenseP3) + "!")
 
 
     # this section randomizes "yo mama" jokes lol
@@ -67,19 +76,19 @@ async def on_message(message):
     uglyjokes = ["When she played GTA V, she got an instant 5 stars! ...and then the cops ran away the moment they saw her.", "Her reflection said \"I quit.\"", "She wears a steak around her neck to get dogs to play with her.", "She makes *onions* cry!"]
     poorjokes = ["She runs after the garbage truck with a shopping list!", "She goes to KFC to lick people's fingers.", "The ducks throw bread at *her!*"]
     for mom in range(len(mamatypes)):
-        if "Yo mama so " + mamatypes[mom] in message.content:
+        if "Yo mama so " + mamatypes[mom] in message.content or "yo mama so " + mamatypes[mom] in message.content:
             if mamatypes[mom] == "fat":
-                await message.channel.send(random.choice(fatjokes))
+                await message.channel.send(choice(fatjokes))
             if mamatypes[mom] == "stupid" or mamatypes[mom] == "dumb":
-                await message.channel.send(random.choice(stupidjokes))
+                await message.channel.send(choice(stupidjokes))
             if mamatypes[mom] == "short":
-                await message.channel.send(random.choice(shortjokes))
+                await message.channel.send(choice(shortjokes))
             if mamatypes[mom] == "hairy":
-                await message.channel.send(random.choice(hairyjokes))
+                await message.channel.send(choice(hairyjokes))
             if mamatypes[mom] == "ugly":
-                await message.channel.send(random.choice(uglyjokes))
+                await message.channel.send(choice(uglyjokes))
             if mamatypes[mom] == "poor":
-                await message.channel.send(random.choice(poorjokes))
+                await message.channel.send(choice(poorjokes))
                 
     # this lets all the commands below work as normal
     await bot.process_commands(message)
@@ -97,20 +106,21 @@ async def togglecensor(ctx):
         optionsfile.write(str(censorToggle))
 
 @bot.command(name="hi", help="You say hi, I greet you back!")
-async def say_hi_back(ctx):
-    responses = ["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]
-    response = random.choice(responses)
-    await ctx.send(response)
+async def say_hi_back(ctx, delete=None):
+    await ctx.send(choice(["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]))
+    if delete:
+        await ctx.message.delete()
 
 @bot.command(name="bye", help="You say bye, I bid you farewell.")
-async def say_bye_back(ctx):
-    responses = ["See you next time!", "Bye!", "So long, Gay Bowser!"]
-    response = random.choice(responses)
-    await ctx.send(response)
+async def say_bye_back(ctx, delete=None):
+    await ctx.send(choice(["See you next time!", "Bye!", "So long, Gay Bowser!"]))
+    if delete:
+        await ctx.message.delete()
 
-@bot.command(name="repeat", help="You say something, I repeat it.")
+@bot.command(name="say", help="Make me say something!", pass_context=True)
 async def say_back(ctx, *, arg):
     await ctx.send(arg)
+    await ctx.message.delete()
 
 @bot.command(name="novowels", help="Remove all vowels from whatever text you put in.")
 async def vowelRemover(ctx, *, arg):
@@ -162,10 +172,10 @@ async def drawem(ctx, cards: int=1, replaceCards: str="yes"):
             return
         else:
             for card in range(cards):
-                drawn.append(str(random.choice(allCards)))
+                drawn.append(str(choice(allCards)))
     else:
         for card in range(cards):
-            drawn.append(str(random.choice(values)) + " of " + random.choice(suits))
+            drawn.append(str(choice(values)) + " of " + choice(suits))
     await ctx.send("You drew " + str(drawn))
 
 @bot.command(name="slap", help="Slap someone...?", command_category="Interactions")
@@ -180,11 +190,11 @@ async def slap(ctx, slap: discord.User=""):
     selfresponses = ["Hey, you can't slap yourself!", "Please don't", "y tho"]
     botresponses = [";-;", "ow! ;-;", "ow!"]
     if slap == ctx.author:
-        await ctx.send(random.choice(selfresponses) + " :(")
+        await ctx.send(choice(selfresponses) + " :(")
     else:
-        await ctx.send(random.choice(responses))
+        await ctx.send(choice(responses))
         if str(slap.id) == "721092139953684580":
-            await ctx.send(random.choice(botresponses))
+            await ctx.send(choice(botresponses))
 
 @bot.command(name="hug", help="Give somebody a hug!")
 async def hug(ctx, hug: discord.User=""):
@@ -198,11 +208,11 @@ async def hug(ctx, hug: discord.User=""):
     selfresponses = ["You wrap your arms tightly around yourself.", "Reaching through the 4th dimension, you manage to give yourself a hug.", "You hug yourself, somehow."]
     botresponses = ["aww!", "thanks <:happy:708534449310138379>", "*gasp*"]
     if hug == ctx.author:
-        await ctx.send(random.choice(selfresponses))
+        await ctx.send(choice(selfresponses))
     else:
-        await ctx.send(random.choice(responses))
+        await ctx.send(choice(responses))
         if str(hug.id) == "721092139953684580":
-            await ctx.send(random.choice(botresponses))
+            await ctx.send(choice(botresponses))
 
 @bot.command(name="boop", help="Boop someone's nose :3")
 async def boop(ctx, boop: discord.User=""):
@@ -218,15 +228,15 @@ async def boop(ctx, boop: discord.User=""):
     if booped == "":
         await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
     elif boop == ctx.author:
-        choice = random.choice(selfresponses)
+        choice = choice(selfresponses)
         if choice == selfresponses[1]:
-            await ctx.send(choice + random.choice(["Ouch", "Oops", "Whoops"]) + "!")
+            await ctx.send(choice + choice(["Ouch", "Oops", "Whoops"]) + "!")
         else:
             await ctx.send(choice)
     else:
-        await ctx.send(random.choice(responses))
+        await ctx.send(choice(responses))
         if str(boop.id) == "721092139953684580":
-            await ctx.send(random.choice(botresponses))
+            await ctx.send(choice(botresponses))
 
 @bot.command(name="pat", help="Pat someone on the head!")
 async def pat(ctx, pat: discord.User="", *, bodypart="head"):
@@ -241,8 +251,8 @@ async def pat(ctx, pat: discord.User="", *, bodypart="head"):
     if pat == ctx.author:
         await ctx.send("You pat yourself on the " + bodypart + ".")
     else:
-        await ctx.send(random.choice(responses))
+        await ctx.send(choice(responses))
         if str(pat.id) == "721092139953684580":
-            await ctx.send(random.choice(botresponses))
+            await ctx.send(choice(botresponses))
 
 bot.run(TOKEN)
