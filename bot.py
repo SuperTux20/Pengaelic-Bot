@@ -12,7 +12,6 @@ load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 bot = commands.Bot(command_prefix="p!")
-connections = 0
 
 try:
     with open(r"options.txt", "r") as optionsfile:
@@ -28,13 +27,7 @@ except FileExistsError:
 
 @bot.event
 async def on_ready():
-    global connections
-    if connections == 0:
-        connectmsg = "C"
-    else:
-        connectmsg = "Rec"
-    print(connectmsg + "onnected!")
-    connections += 1
+    print("Connected!")
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
     print("Status changed to \"" + artist + "\"")
@@ -48,9 +41,8 @@ async def on_message(message):
 
     for dad in range(len(dadprefixes)):
         if dadprefixes[dad] in message.content:
-            for checking in range(len(dadprefixes[dad])):
-                if message.content[0] == dadprefixes[dad][0]:
-                    await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
+            if dadprefixes[dad][0] == message.content[0] and dadprefixes[dad][1] == message.content[1]:
+                await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
     
     # this section is to auto-delete messages containing a keyword contained in the text file
     global censorToggle
