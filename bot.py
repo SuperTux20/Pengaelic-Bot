@@ -176,6 +176,12 @@ class Games(commands.Cog):
         results = []
         if coins == 1:
             await ctx.send("You flipped a " + choice(["head","tail"]))
+        elif coins == 0:
+            await ctx.send("You flicked your thumb in the air.")
+        elif coins == -1:
+            await ctx.send("You flipped a [REDACTED]")
+        elif coins < -1:
+            await ctx.semd("You flipped NaN heads and [ERROR] tails.")
         else:
             for flip in range(int(str(coins))):
                 results.append(choice(["h","t"]))
