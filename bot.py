@@ -30,7 +30,7 @@ async def on_ready():
     print("Connected!")
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
-    print("Status changed to \"" + artist + "\"")
+    print("Status changed to \"Listening to " + artist + "\"")
 
 @bot.event
 async def on_message(message):
@@ -137,11 +137,15 @@ class Messages(commands.Cog):
 class Converters(commands.Cog):
     @commands.command(name="novowels", help="Remove all vowels from whatever text you put in.")
     async def vowelRemover(self, ctx, *, arg):
-            vowels = "aeiouAEIOU"
-            outputString = arg
-            for vowel in range(len(vowels)):
-                    outputString = outputString.replace(vowels[vowel],"")
-            await ctx.send(outputString.replace("  ", " ")) # fix doubled spaces
+        vowels = "aeiouAEIOU"
+        outputString = arg
+        for vowel in range(len(vowels)):
+                outputString = outputString.replace(vowels[vowel],"")
+        await ctx.send(outputString.replace("  ", " ")) # fix doubled spaces
+
+    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this")
+    async def owoConverter(self, ctx, *, arg):
+        await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["owo","uwu","^w^","nya~"]))
 
 class Games(commands.Cog):
     @commands.command(name="roll", help="Roll some dice!")
@@ -166,7 +170,7 @@ class Games(commands.Cog):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
-                response = "You rolled `" + str(rollResults) + "`, totalling " + str(total)
+                response = "You rolled " + str(rollResults[:-1])[1:-1] + ", and " + str(rollResults[-1]) + ", totalling " + str(total)
             else:
                 response = "You rolled " + str(total)
             await ctx.send(response)
@@ -189,7 +193,7 @@ class Games(commands.Cog):
             
 
     @commands.command(name="draw", help="Draw some cards!")
-    async def drawem(self, ctx, cards: int=1, replaceCards: str="yes"):
+    async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
         suits = ['Diamonds', 'Spades', 'Hearts', 'Clubs']
         values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
         allCards = []
