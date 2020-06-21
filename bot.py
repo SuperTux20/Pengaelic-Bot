@@ -3,7 +3,7 @@ import os
 import re
 import discord
 import platform
-from random import choice
+from random import choice, randint
 from discord.ext import commands
 from dotenv import load_dotenv
 from time import sleep
@@ -105,7 +105,7 @@ async def on_message(message):
 
 class Misc(commands.Cog):
     @commands.command(name="os", help="Read out what OS I'm running on!")
-    async def showos(ctx):
+    async def showos(self, ctx):
         defaultmsg = "I'm running on " + platform.system() + " "
         if platform.release() == "10":
             await ctx.send(defaultmsg + platform.version())
@@ -113,7 +113,7 @@ class Misc(commands.Cog):
             await ctx.send(defaultmsg + platform.release() + " " + platform.version())
 
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
-    async def togglecensor(ctx):
+    async def togglecensor(self, ctx):
         global censorToggle
         if censorToggle == True:
             censorToggle = False
@@ -171,7 +171,7 @@ class Games(commands.Cog):
             for side in range(sides):
                 sideList.append(side + 1)
             for result in range(dice):
-                rollResults.append(sideList[random.randint(0, sideList[-1])-1])
+                rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
                 response = "You rolled `" + str(rollResults) + "`, totalling " + str(total)
@@ -273,7 +273,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="pat", help="Pat someone on the head!")
-    async def pat(ctx, pat: discord.User="", *, bodypart="head"):
+    async def pat(self, ctx, pat: discord.User="", *, bodypart="head"):
         patter = str(ctx.author.mention)
         try:
             patted = "<@" + str(pat.id) + ">"
