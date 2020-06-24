@@ -248,7 +248,7 @@ class Games(commands.Cog):
     @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
         if width == 1 and height == 1:
-            await ctx.send(r"""``
+            await ctx.send(r"""```
  ____   ___  ____
 |  _ \ / _ \|  _ \
 | |_) | | | | |_) |
