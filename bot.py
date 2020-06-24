@@ -37,7 +37,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     global bot
-    dadprefixes = ["I'm ", "Im ", "I am "]
+    """ dadprefixes = ["I'm ", "Im ", "I am "]
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
@@ -51,7 +51,7 @@ async def on_message(message):
                     await message.channel.send("You're not the Pengaelic Bot, I am!")
                 else:
                     await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")
-    
+                     """
     # this section is to auto-delete messages containing a keyword contained in the text file
     global censorToggle
     if censorToggle == True:
@@ -247,16 +247,13 @@ class Games(commands.Cog):
 
     @commands.command(name="bubblewrap", help="Get a sheet of bubble wrap! Click to pop.")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
-        def arr2str(arr):
-            converted = str(arr).replace("[","").replace("]","").replace(", ","").replace("'","")
-            return converted
         sheet = ""
         for col in range(height):
-            row = []
+            row = ""
             for line in range(width):
-                row.append("||pop||")
-            sheet = sheet + arr2str(row) + "\n"
-        await ctx.send(arr2str(sheet))
+                row = row + "||pop||"
+            sheet = sheet + row + "\n"
+        await ctx.send(sheet)
 
 class Actions(commands.Cog):
     @commands.command(name="slap", help="Slap someone...?", command_category="Interactions")
