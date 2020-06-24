@@ -8,6 +8,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from time import sleep
 
+print("Starting...")
+
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 
@@ -35,14 +37,20 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     global bot
-    dadprefixes = ["I'm ", "Im ", "i'm ", "im ", "I Am ", "I am ", "i am "]
+    dadprefixes = ["I'm ", "Im ", "I am "]
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
     for dad in range(len(dadprefixes)):
-        if dadprefixes[dad] in message.content:
-            if dadprefixes[dad][0] == message.content[0] and dadprefixes[dad][1] == message.content[1]:
-                await message.channel.send("Hi " + message.content[len(dadprefixes[dad]):] + ", I'm the Pengaelic Bot!")
+        if dadprefixes[dad] in message.content or dadprefixes[dad].lower() in message.content:
+            dadjoke = dadprefixes[dad]
+            if dadprefixes[dad].lower() in message.content:
+                dadjoke = dadjoke.lower()
+            if dadjoke[0] == message.content[0] and dadjoke[1] == message.content[1]:
+                if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
+                    await message.channel.send("You're not the Pengaelic Bot, I am!")
+                else:
+                    await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")
     
     # this section is to auto-delete messages containing a keyword contained in the text file
     global censorToggle
@@ -145,7 +153,28 @@ class Converters(commands.Cog):
 
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this")
     async def owoConverter(self, ctx, *, arg):
-        await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["owo","uwu","^w^","nya~"]))
+        await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
+        await ctx.message.delete()
+
+    @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.")
+    async def embiggener(self, ctx, *, arg):
+        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!"
+        textlist = []
+        finaltext = ""
+        for char in range(len(arg)):
+            for letter in range(len(alphabet)):
+                if alphabet[letter] == arg[char] or alphabet[letter].lower() == arg[char]:
+                    if arg[char] == " ":
+                        textlist.append("\n")
+                    elif arg[char] == "!":
+                        textlist.append(":exclamation: ")
+                    elif arg[char] == "?":
+                        textlist.append(":question: ")
+                    else:
+                        textlist.append(":regional_indicator_" + arg[char] + ": ")
+        for beeg in range(len(textlist)):
+            finaltext = finaltext + textlist[beeg]
+        await ctx.send(finaltext)
 
 class Games(commands.Cog):
     @commands.command(name="roll", help="Roll some dice!")
@@ -202,7 +231,10 @@ class Games(commands.Cog):
             for suit in range(len(suits)):
                 for value in range(len(values)):
                     allCards.append(str(values[value]) + " of " + suits[suit])
-            if cards > 52:
+            if cards == 52:
+                await ctx.send("You picked up the entire deck. What was the point of that?")
+                return
+            elif cards > 52:
                 await ctx.send("You can't draw more than the entire deck!")
                 return
             else:
@@ -264,11 +296,11 @@ class Actions(commands.Cog):
         if booped == "":
             await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
         elif boop == ctx.author:
-            choice = choice(selfresponses)
-            if choice == selfresponses[1]:
-                await ctx.send(choice + choice(["Ouch", "Oops", "Whoops"]) + "!")
+            oops = choice(selfresponses)
+            if oops == selfresponses[1]:
+                await ctx.send(oops + choice(["Ouch", "Oops", "Whoops"]) + "!")
             else:
-                await ctx.send(choice)
+                await ctx.send(oops)
         else:
             await ctx.send(choice(responses))
             if str(boop.id) == "721092139953684580":
