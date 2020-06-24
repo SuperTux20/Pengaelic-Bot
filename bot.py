@@ -195,7 +195,7 @@ class Games(commands.Cog):
             rollResults = []
             for side in range(sides):
                 sideList.append(side + 1)
-            for result in range(dice):
+            for _ in range(dice):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
@@ -216,7 +216,7 @@ class Games(commands.Cog):
         elif coins < -1:
             await ctx.semd("You flipped NaN heads and [ERROR] tails.")
         else:
-            for flip in range(int(str(coins))):
+            for _ in range(int(str(coins))):
                 results.append(choice(["h","t"]))
             await ctx.send("You flipped " + str(results.count("h")) + " heads and " + str(results.count("t")) + " tails.")
             
@@ -238,19 +238,19 @@ class Games(commands.Cog):
                 await ctx.send("You can't draw more than the entire deck!")
                 return
             else:
-                for card in range(cards):
+                for _ in range(cards):
                     drawn.append(str(choice(allCards)))
         else:
-            for card in range(cards):
+            for _ in range(cards):
                 drawn.append(str(choice(values)) + " of " + choice(suits))
         await ctx.send("You drew " + str(drawn))
 
     @commands.command(name="bubblewrap", help="Get a sheet of bubble wrap! Click to pop.")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
         sheet = ""
-        for col in range(height):
+        for _ in range(height):
             row = ""
-            for line in range(width):
+            for _ in range(width):
                 row = row + "||pop||"
             sheet = sheet + row + "\n"
         await ctx.send(sheet)
