@@ -245,15 +245,30 @@ class Games(commands.Cog):
                 drawn.append(str(choice(values)) + " of " + choice(suits))
         await ctx.send("You drew " + str(drawn))
 
-    @commands.command(name="bubblewrap", help="Get a sheet of bubble wrap! Click to pop.")
+    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
-        sheet = ""
-        for _ in range(height):
-            row = ""
-            for _ in range(width):
-                row = row + "||pop||"
-            sheet = sheet + row + "\n"
-        await ctx.send(sheet)
+        if width == 1 and height == 1:
+            await ctx.send(r"""``
+ ____   ___  ____
+|  _ \ / _ \|  _ \
+| |_) | | | | |_) |
+|  __/| |_| |  __/
+|_|    \___/|_|
+```""")
+        else:
+            sheet = ""
+            for _ in range(height):
+                row = ""
+                for _ in range(width):
+                    if width < 5 and height < 5:
+                        if width == 2 and height == 2:
+                            row = row + "||:regional_indicator_p: :regional_indicator_o: :regional_indicator_p:||"
+                        else:
+                            row = row + "||POP||"
+                    else:
+                        row = row + "||pop||"
+                sheet = sheet + row + "\n"
+            await ctx.send(sheet)
 
 class Actions(commands.Cog):
     @commands.command(name="slap", help="Slap someone...?", command_category="Interactions")
