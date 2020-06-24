@@ -245,6 +245,19 @@ class Games(commands.Cog):
                 drawn.append(str(choice(values)) + " of " + choice(suits))
         await ctx.send("You drew " + str(drawn))
 
+    @commands.command(name="bubblewrap", help="Get a sheet of bubble wrap! Click to pop.")
+    async def summonsheet(self, ctx, width: int=5, height: int=5):
+        def arr2str(arr):
+            converted = str(arr).replace("[","").replace("]","").replace(", ","").replace("'","")
+            return converted
+        sheet = ""
+        for col in range(height):
+            row = []
+            for line in range(width):
+                row.append("||pop||")
+            sheet = sheet + arr2str(row) + "\n"
+        await ctx.send(arr2str(sheet))
+
 class Actions(commands.Cog):
     @commands.command(name="slap", help="Slap someone...?", command_category="Interactions")
     async def slap(self, ctx, slap: discord.User=""):
