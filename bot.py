@@ -16,12 +16,18 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 bot = commands.Bot(command_prefix="p!")
 
 try:
-    with open(r"options.txt", "r") as optionsfile:
-        censorToggle = bool(optionsfile.readlines()[0])
+    try:
+        with open(r"options.txt", "r") as optionsfile:
+            censorToggle = bool(optionsfile.readlines()[0])
+            dadToggle = bool(optionsfile.readlines()[1])
+    except IndexError:
+        pass
 except FileNotFoundError:
     open(r"options.txt", "x").close()
     censorToggle = False
+    dadToggle = False
 
+dadToggle = False
 try:
     open(r"Bad words (Caution, NSFW).txt", "x").close()
 except FileExistsError:
@@ -41,16 +47,19 @@ async def on_message(message):
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
-    """ for dad in range(len(dadprefixes)):
-        if dadprefixes[dad] in message.content or dadprefixes[dad].lower() in message.content:
-            dadjoke = dadprefixes[dad]
-            if dadprefixes[dad].lower() in message.content:
-                dadjoke = dadjoke.lower()
-            if dadjoke[0] == message.content[0] and dadjoke[1] == message.content[1]:
-                if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
-                    await message.channel.send("You're not the Pengaelic Bot, I am!")
-                else:
-                    await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")"""
+    # this section is for Dad Bot-like responses
+    global dadToggle
+    if dadToggle == True:
+        for dad in range(len(dadprefixes)):
+            if dadprefixes[dad] in message.content or dadprefixes[dad].lower() in message.content:
+                dadjoke = dadprefixes[dad]
+                if dadprefixes[dad].lower() in message.content:
+                    dadjoke = dadjoke.lower()
+                if dadjoke[0] == message.content[0] and dadjoke[1] == message.content[1]:
+                    if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
+                        await message.channel.send("You're not the Pengaelic Bot, I am!")
+                    else:
+                        await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")
 
     # this section is to auto-delete messages containing a keyword contained in the text file
     global censorToggle
@@ -112,6 +121,24 @@ class Misc(commands.Cog):
         else:
             await ctx.send(defaultmsg + platform.release() + " " + platform.version())
 
+class Options(commands.Cog):
+    async def updateoptions(self):
+        global censorToggle
+        global dadToggle
+        with open(r"options.txt", "w+") as optionsfile:
+            optionsfile.write(str(censorToggle))
+            optionsfile.write("\n")
+            optionsfile.write(str(dadToggle))
+
+    @commands.command(name="options", help="Show a list of all options.")
+    async def showoptions(self, ctx):
+        global censorToggle
+        global dadToggle
+        await ctx.send(f"""```Auto-Censorship: {censorToggle}
+Dad Responses: {dadToggle}```""")
+        with open(r"options.txt", "r") as optionsfile:
+            await ctx.send(str(optionsfile.read()))
+
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
     async def togglecensor(self, ctx):
         global censorToggle
@@ -121,8 +148,18 @@ class Misc(commands.Cog):
         elif censorToggle == False:
             censorToggle = True
             await ctx.send("Censorship turned on.")
-        with open(r"options.txt", "w+") as optionsfile:
-            optionsfile.write(str(censorToggle))
+        await self.updateoptions()
+
+    @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\"")
+    async def toggledad(self, ctx):
+        global dadToggle
+        if dadToggle == True:
+            dadToggle = False
+            await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
+        elif dadToggle == False:
+            dadToggle = True
+            await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
+        await self.updateoptions()
 
 class Messages(commands.Cog):
     @commands.command(name="hi", help="You say hi, I greet you back!")
@@ -349,6 +386,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
 bot.add_cog(Misc(bot))
+bot.add_cog(Options(bot))
 bot.add_cog(Messages(bot))
 bot.add_cog(Converters(bot))
 bot.add_cog(Games(bot))
