@@ -2,6 +2,6 @@
     "toggles": {
         "censor": true,
         "dad": false,
-        "yoMama": true
+        "yoMama": false
     }
 }

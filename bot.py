@@ -16,15 +16,15 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 bot = commands.Bot(command_prefix="p!")
 
 try:
-    with open(r"options.txt", "r") as optionsfile:
+    with open(r"options.json", "r") as optionsfile:
         allOptions = load(optionsfile)
 except:
     try:
-        open(r"options.txt", "x").close()
+        open(r"options.json", "x").close()
     except FileExistsError:
         pass
     allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
-    with open(r"options.txt", "w") as optionsfile:
+    with open(r"options.json", "w") as optionsfile:
         dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
 try:
@@ -88,7 +88,7 @@ async def on_message(message):
     if allOptions["toggles"]["yoMama"] == True:
         mamatypes = ["fat", "stupid", "short", "hairy", "ugly", "poor"]
         failedtypes = []
-        with open(r"Yo Mama Jokes.txt", "r") as AllTheJokes:
+        with open(r"Yo Mama Jokes.json", "r") as AllTheJokes:
             jokes = load(AllTheJokes)
         for mom in range(len(mamatypes)):
             if "Yo mama so " in message.content or "yo mama so " in message.content:
@@ -116,13 +116,13 @@ class Misc(commands.Cog):
 class Options(commands.Cog):
     async def updateoptions(self):
         global allOptions
-        with open(r"options.txt", "w+") as optionsfile:
+        with open(r"options.json", "w+") as optionsfile:
             dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
     @commands.command(name="options", help="Show a list of all options.")
     async def showoptions(self, ctx):
         global allOptions
-        with open(r"options.txt", "r") as optionsfile:
+        with open(r"options.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
