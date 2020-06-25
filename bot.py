@@ -37,11 +37,11 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     global bot
-    """ dadprefixes = ["I'm ", "Im ", "I am "]
+    dadprefixes = ["I'm ", "Im ", "I am "]
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
-    for dad in range(len(dadprefixes)):
+    """ for dad in range(len(dadprefixes)):
         if dadprefixes[dad] in message.content or dadprefixes[dad].lower() in message.content:
             dadjoke = dadprefixes[dad]
             if dadprefixes[dad].lower() in message.content:
@@ -50,15 +50,15 @@ async def on_message(message):
                 if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
                     await message.channel.send("You're not the Pengaelic Bot, I am!")
                 else:
-                    await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")
-                     """
+                    await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")"""
+
     # this section is to auto-delete messages containing a keyword contained in the text file
     global censorToggle
     if censorToggle == True:
         with open(r"Bad words (Caution, NSFW).txt", "r") as bads_file:
             all_bads = bads_file.read().split(" ")
             for bad in range(len(all_bads)):
-                if all_bads[bad] in message.content:
+                if all_bads[bad] in message.content or all_bads[bad].lower() in message.content:
                     await message.delete()
 
     # this section reprimands people when they're rude to the bots
@@ -77,28 +77,28 @@ async def on_message(message):
                         await message.channel.send(choice(defenseP1) + ", " + choice(defenseP2) + ", it's only doing " + choice(defenseP3) + "!")
 
 
-    # this section randomizes "yo mama" jokes lol
-    mamatypes = ["fat", "stupid", "dumb", "short", "hairy", "ugly", "poor"]
-    fatjokes = ["She doesn't need internet, she's already **W O R L D W I D E .**", "Half of her is in another dimension!", "She wakes up on BOTH sides of the bed!", "She got arrested for carrying ten pounds of CRACK!"]
-    stupidjokes = ["She sold her car for *gas money.*", "When she heard it was \"chili\" outside, she went and got a bowl.", "She brought a giant spoon to the Super Bowl!", "She got tickets to XBOX LIVE."]
-    shortjokes = ["She does backflips *under the bed,*", "When she smokes weed, she can't even get high!!"]
-    hairyjokes = ["She shaves with a weedeater!", "She stars in Donkey Kong games!"]
-    uglyjokes = ["When she played GTA V, she got an instant 5 stars! ...and then the cops ran away the moment they saw her.", "Her reflection said \"I quit.\"", "She wears a steak around her neck to get dogs to play with her.", "She makes *onions* cry!"]
-    poorjokes = ["She runs after the garbage truck with a shopping list!", "She goes to KFC to lick people's fingers.", "The ducks throw bread at *her!*"]
+    # this section randomizes yo mama jokes
+    mamatypes = ["fat", "stupid", "short", "hairy", "ugly", "poor"]
+    failedtypes = []
+    jokes = {
+        "fat": ["She doesn't need internet, she's already **W O R L D W I D E .**", "She wakes up on BOTH sides of the bed!", "She got arrested for carrying ten pounds of CRACK!"],
+        "stupid": ["She sold her car for *gas money.*", "When she heard it was \"chili\" outside, she went and got a bowl.", "She brought a giant spoon to the Super Bowl!", "She got tickets to XBOX LIVE."],
+        "short": ["She does backflips *under the bed.*", "When she smokes weed, she can't even get high!!"],
+        "hairy": ["She shaves with a weedeater!", "She stars in Donkey Kong games!"],
+        "ugly": ["When she played GTA V, she got an instant 5 stars! ...and then the cops ran away the moment they saw her.", "Her reflection said \"I quit.\"", "She wears a steak around her neck to get dogs to play with her.", "She makes *onions* cry!"],
+        "poor": ["She runs after the garbage truck with a shopping list!", "She goes to KFC to lick people's fingers.", "The ducks throw bread at *her!*"]
+    }
     for mom in range(len(mamatypes)):
-        if "Yo mama so " + mamatypes[mom] in message.content or "yo mama so " + mamatypes[mom] in message.content:
-            if mamatypes[mom] == "fat":
-                await message.channel.send(choice(fatjokes))
-            if mamatypes[mom] == "stupid" or mamatypes[mom] == "dumb":
-                await message.channel.send(choice(stupidjokes))
-            if mamatypes[mom] == "short":
-                await message.channel.send(choice(shortjokes))
-            if mamatypes[mom] == "hairy":
-                await message.channel.send(choice(hairyjokes))
-            if mamatypes[mom] == "ugly":
-                await message.channel.send(choice(uglyjokes))
-            if mamatypes[mom] == "poor":
-                await message.channel.send(choice(poorjokes))
+        if "Yo mama so " in message.content or "yo mama so " in message.content:
+            if mamatypes[mom] in message.content or mamatypes[mom] in message.content:
+                await message.channel.send(choice(jokes[mamatypes[mom]]))
+            else:
+                failedtypes.append(mamatypes[mom])
+
+    if failedtypes == mamatypes:
+        mamatype = choice(mamatypes)
+        await message.channel.send("Invalid Yo Mama type detected... Sending a " + mamatype + " joke.")
+        await message.channel.send(choice(jokes[mamatype]))
                 
     # this lets all the commands below work as normal
     await bot.process_commands(message)
