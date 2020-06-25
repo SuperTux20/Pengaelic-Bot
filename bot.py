@@ -5,6 +5,7 @@ import os
 import re
 import discord
 import platform
+from json import load, dump
 from random import choice, randint
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -12,22 +13,20 @@ from time import sleep
 
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
-
 bot = commands.Bot(command_prefix="p!")
 
 try:
+    with open(r"options.txt", "r") as optionsfile:
+        allOptions = load(optionsfile)
+except:
     try:
-        with open(r"options.txt", "r") as optionsfile:
-            censorToggle = bool(optionsfile.readlines()[0])
-            dadToggle = bool(optionsfile.readlines()[1])
-    except IndexError:
+        open(r"options.txt", "x").close()
+    except FileExistsError:
         pass
-except FileNotFoundError:
-    open(r"options.txt", "x").close()
-    censorToggle = False
-    dadToggle = False
+    allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
+    with open(r"options.txt", "w") as optionsfile:
+        dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
-dadToggle = False
 try:
     open(r"Bad words (Caution, NSFW).txt", "x").close()
 except FileExistsError:
@@ -43,13 +42,13 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     global bot
-    dadprefixes = ["I'm ", "Im ", "I am "]
+    global allOptions
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
     # this section is for Dad Bot-like responses
-    global dadToggle
-    if dadToggle == True:
+    if allOptions["toggles"]["dad"] == True:
+        dadprefixes = ["I'm ", "Im ", "I am "]
         for dad in range(len(dadprefixes)):
             if dadprefixes[dad] in message.content or dadprefixes[dad].lower() in message.content:
                 dadjoke = dadprefixes[dad]
@@ -62,8 +61,7 @@ async def on_message(message):
                         await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")
 
     # this section is to auto-delete messages containing a keyword contained in the text file
-    global censorToggle
-    if censorToggle == True:
+    if allOptions["toggles"]["censor"] == True:
         with open(r"Bad words (Caution, NSFW).txt", "r") as bads_file:
             all_bads = bads_file.read().split(" ")
             for bad in range(len(all_bads)):
@@ -87,27 +85,21 @@ async def on_message(message):
 
 
     # this section randomizes yo mama jokes
-    mamatypes = ["fat", "stupid", "short", "hairy", "ugly", "poor"]
-    failedtypes = []
-    jokes = {
-        "fat": ["She doesn't need internet, she's already **W O R L D W I D E .**", "She wakes up on BOTH sides of the bed!", "She got arrested for carrying ten pounds of CRACK!"],
-        "stupid": ["She sold her car for *gas money.*", "When she heard it was \"chili\" outside, she went and got a bowl.", "She brought a giant spoon to the Super Bowl!", "She got tickets to XBOX LIVE."],
-        "short": ["She does backflips *under the bed.*", "When she smokes weed, she can't even get high!!"],
-        "hairy": ["She shaves with a weedeater!", "She stars in Donkey Kong games!"],
-        "ugly": ["When she played GTA V, she got an instant 5 stars! ...and then the cops ran away the moment they saw her.", "Her reflection said \"I quit.\"", "She wears a steak around her neck to get dogs to play with her.", "She makes *onions* cry!"],
-        "poor": ["She runs after the garbage truck with a shopping list!", "She goes to KFC to lick people's fingers.", "The ducks throw bread at *her!*"]
-    }
-    for mom in range(len(mamatypes)):
-        if "Yo mama so " in message.content or "yo mama so " in message.content:
-            if mamatypes[mom] in message.content or mamatypes[mom] in message.content:
-                await message.channel.send(choice(jokes[mamatypes[mom]]))
-            else:
-                failedtypes.append(mamatypes[mom])
-
-    if failedtypes == mamatypes:
-        mamatype = choice(mamatypes)
-        await message.channel.send("Invalid Yo Mama type detected... Sending a " + mamatype + " joke.")
-        await message.channel.send(choice(jokes[mamatype]))
+    if allOptions["toggles"]["yoMama"] == True:
+        mamatypes = ["fat", "stupid", "short", "hairy", "ugly", "poor"]
+        failedtypes = []
+        with open(r"Yo Mama Jokes.txt", "r") as AllTheJokes:
+            jokes = load(AllTheJokes)
+        for mom in range(len(mamatypes)):
+            if "Yo mama so " in message.content or "yo mama so " in message.content:
+                if mamatypes[mom] in message.content or mamatypes[mom] in message.content:
+                    await message.channel.send(choice(jokes[mamatypes[mom]]))
+                else:
+                    failedtypes.append(mamatypes[mom])
+        if failedtypes == mamatypes:
+            mamatype = choice(mamatypes)
+            await message.channel.send("Invalid Yo Mama type detected... Sending a " + mamatype + " joke.")
+            await message.channel.send(choice(jokes[mamatype]))
                 
     # this lets all the commands below work as normal
     await bot.process_commands(message)
@@ -123,42 +115,47 @@ class Misc(commands.Cog):
 
 class Options(commands.Cog):
     async def updateoptions(self):
-        global censorToggle
-        global dadToggle
+        global allOptions
         with open(r"options.txt", "w+") as optionsfile:
-            optionsfile.write(str(censorToggle))
-            optionsfile.write("\n")
-            optionsfile.write(str(dadToggle))
+            dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
     @commands.command(name="options", help="Show a list of all options.")
     async def showoptions(self, ctx):
-        global censorToggle
-        global dadToggle
-        await ctx.send(f"""```Auto-Censorship: {censorToggle}
-Dad Responses: {dadToggle}```""")
+        global allOptions
         with open(r"options.txt", "r") as optionsfile:
-            await ctx.send(str(optionsfile.read()))
+            await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
     async def togglecensor(self, ctx):
-        global censorToggle
-        if censorToggle == True:
-            censorToggle = False
+        global allOptions
+        if allOptions["toggles"]["censor"] == True:
+            allOptions["toggles"]["censor"] = False
             await ctx.send("Censorship turned off.")
-        elif censorToggle == False:
-            censorToggle = True
+        elif allOptions["toggles"]["censor"] == False:
+            allOptions["toggles"]["censor"] = True
             await ctx.send("Censorship turned on.")
         await self.updateoptions()
 
     @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\"")
     async def toggledad(self, ctx):
-        global dadToggle
-        if dadToggle == True:
-            dadToggle = False
+        global allOptions
+        if allOptions["toggles"]["dad"] == True:
+            allOptions["toggles"]["dad"] = False
             await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
-        elif dadToggle == False:
-            dadToggle = True
+        elif allOptions["toggles"]["dad"] == False:
+            allOptions["toggles"]["dad"] = True
             await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
+        await self.updateoptions()
+
+    @commands.command(name="togglemama", help="Toggle the automatic Yo Mama jokes")
+    async def togglemama(self, ctx):
+        global allOptions
+        if allOptions["toggles"]["yoMama"] == True:
+            allOptions["toggles"]["yoMama"] = False
+            await ctx.send("Yo Mama jokes turned off.")
+        elif allOptions["toggles"]["yoMama"] == False:
+            allOptions["toggles"]["yoMama"] = True
+            await ctx.send("Yo Mama jokes turned on.")
         await self.updateoptions()
 
 class Messages(commands.Cog):
