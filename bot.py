@@ -1,4 +1,6 @@
 # bot.py
+print("Starting...")
+
 import os
 import re
 import discord
@@ -7,8 +9,6 @@ from random import choice, randint
 from discord.ext import commands
 from dotenv import load_dotenv
 from time import sleep
-
-print("Starting...")
 
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -392,4 +392,7 @@ bot.add_cog(Converters(bot))
 bot.add_cog(Games(bot))
 bot.add_cog(Actions(bot))
 
-bot.run(TOKEN)
+try:
+    bot.run(TOKEN)
+except:
+    print("Unable to connect to Discord. Check your internet connection!")
