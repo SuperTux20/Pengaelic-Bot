@@ -46,11 +46,14 @@ async def on_message(message):
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
+    if message.content == "I want to see the list of all the servers.":
+        await message.channel.send(discord.Client.guilds)
+        
     # this section is for Dad Bot-like responses
     if allOptions["toggles"]["dad"] == True:
         dadprefixes = ["I'm ", "Im ", "I am "]
         for dad in range(len(dadprefixes)):
-            if dadprefixes[dad] in message.content or dadprefixes[dad].lower() in message.content:
+            if dadprefixes[dad] == message.content[0:len(dadprefixes[dad])] or dadprefixes[dad].lower() == message.content[0:len(dadprefixes[dad])]:
                 dadjoke = dadprefixes[dad]
                 if dadprefixes[dad].lower() in message.content:
                     dadjoke = dadjoke.lower()
@@ -86,13 +89,13 @@ async def on_message(message):
 
     # this section randomizes yo mama jokes
     if allOptions["toggles"]["yoMama"] == True:
-        mamatypes = ["fat", "stupid", "short", "hairy", "ugly", "poor"]
-        failedtypes = []
         with open(r"Yo Mama Jokes.json", "r") as AllTheJokes:
             jokes = load(AllTheJokes)
+            mamatypes = list(jokes.keys())
+        failedtypes = []
         for mom in range(len(mamatypes)):
-            if "Yo mama so " in message.content or "yo mama so " in message.content:
-                if mamatypes[mom] in message.content or mamatypes[mom] in message.content:
+            if "Yo mama so " == message.content[0:11] or "yo mama so " in message.content[0:11]:
+                if mamatypes[mom] in message.content:
                     await message.channel.send(choice(jokes[mamatypes[mom]]))
                 else:
                     failedtypes.append(mamatypes[mom])
