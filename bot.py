@@ -16,15 +16,15 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 bot = commands.Bot(command_prefix="p!")
 
 try:
-    with open(r"options.json", "r") as optionsfile:
+    with open(r"../options.json", "r") as optionsfile:
         allOptions = load(optionsfile)
 except:
     try:
-        open(r"options.json", "x").close()
+        open(r"../options.json", "x").close()
     except FileExistsError:
         pass
     allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
-    with open(r"options.json", "w") as optionsfile:
+    with open(r"../options.json", "w") as optionsfile:
         dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
 try:
@@ -116,13 +116,13 @@ class Misc(commands.Cog):
 class Options(commands.Cog):
     async def updateoptions(self):
         global allOptions
-        with open(r"options.json", "w+") as optionsfile:
+        with open(r"../options.json", "w+") as optionsfile:
             dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
     @commands.command(name="options", help="Show a list of all options.")
     async def showoptions(self, ctx):
         global allOptions
-        with open(r"options.json", "r") as optionsfile:
+        with open(r"../options.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
     @commands.command(name="resetdefaults", help="Reset to the default options.")
