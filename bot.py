@@ -125,6 +125,14 @@ class Options(commands.Cog):
         with open(r"options.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
+    @commands.command(name="resetdefaults", help="Reset to the default options.")
+    async def resetoptions(self, ctx):
+        global allOptions
+        allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
+        await self.updateoptions()
+        await ctx.send("Options reset to defaults.")
+        await self.showoptions(ctx)
+
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
     async def togglecensor(self, ctx):
         global allOptions
