@@ -61,7 +61,7 @@ async def on_message(message):
                     if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
                         await message.channel.send("You're not the Pengaelic Bot, I am!")
                     else:
-                        await message.channel.send("Hi " + message.content[len(dadjoke):] + ", I'm the Pengaelic Bot!")
+                        await message.channel.send(f"Hi {message.content[len(dadjoke):]}, I'm the Pengaelic Bot!")
 
     # this section is to auto-delete messages containing a keyword contained in the text file
     if allOptions["toggles"]["censor"] == True:
@@ -84,7 +84,7 @@ async def on_message(message):
                         defenseP1 = ["Hey", "Dude", "Whoa"]
                         defenseP2 = ["be nice to " + bots[bot], "be nice", "chill out"]
                         defenseP3 = ["its job", "what it was told", "what it's supposed to"]
-                        await message.channel.send(choice(defenseP1) + ", " + choice(defenseP2) + ", it's only doing " + choice(defenseP3) + "!")
+                        await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
 
 
     # this section randomizes yo mama jokes
@@ -104,7 +104,7 @@ async def on_message(message):
                 break
         if failedtypes == mamatypes:
             mamatype = choice(mamatypes)
-            await message.channel.send("Invalid Yo Mama type detected... Sending a " + mamatype + " joke.")
+            await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
             await message.channel.send(choice(jokes[mamatype]))
                 
     # this lets all the commands below work as normal
@@ -277,7 +277,7 @@ class Games(commands.Cog):
             "Yes, definitely.",
             "You may rely on it."]
         if question:
-            await ctx.send(choice(ballResponses) + ".")
+            await ctx.send(choice(ballResponses))
         else:
             await ctx.send("You didn't ask the 8-ball anything.")
 
@@ -293,7 +293,7 @@ class Games(commands.Cog):
             if dice == 1:
                 await ctx.send("You rolled a [ERROR]-sided die and got `404`")
             if dice > 1:
-                await ctx.send("You rolled " + str(dice) + " `err`-sided dice and got [NULL]")
+                await ctx.sendf(f"You rolled {dice} `err`-sided dice and got [NULL]")
         else:
             sideList = []
             rollResults = []
@@ -303,16 +303,16 @@ class Games(commands.Cog):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
-                response = "You rolled " + str(rollResults[:-1])[1:-1] + ", and " + str(rollResults[-1]) + ", totalling " + str(total)
+                response = f"You rolled {rollResults[:-1][1:-1]} and {rollResults[-1]} totalling {total}"
             else:
-                response = "You rolled " + str(total)
+                response = f"You rolled {total}"
             await ctx.send(response)
 
     @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip", "coins", "flipcoin", "flipcoins"])
     async def flipem(self, ctx, coins: int=1):
         results = []
         if coins == 1:
-            await ctx.send("You flipped a " + choice(["head","tail"]))
+            await ctx.send(f"You flipped a {choice(["head","tail"])}")
         elif coins == 0:
             await ctx.send("You flicked your thumb in the air.")
         elif coins == -1:
@@ -322,7 +322,7 @@ class Games(commands.Cog):
         else:
             for _ in range(int(str(coins))):
                 results.append(choice(["h","t"]))
-            await ctx.send("You flipped " + str(results.count("h")) + " heads and " + str(results.count("t")) + " tails.")
+            await ctx.send(f"You flipped {results.count("h")} heads and {results.count("t")} tails.")
             
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
@@ -347,7 +347,7 @@ class Games(commands.Cog):
         else:
             for _ in range(cards):
                 drawn.append(str(choice(values)) + " of " + choice(suits))
-        await ctx.send("You drew " + str(drawn))
+        await ctx.send(f"You drew {drawn}")
 
     @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap" "bubbles"])
     async def summonsheet(self, ctx, width: int=5, height: int=5):
