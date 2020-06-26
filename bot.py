@@ -476,6 +476,24 @@ class Actions(commands.Cog):
             if str(nom.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
+    @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
+    async def tickle(self, ctx, tickle: discord.User=""):
+        tickler = str(ctx.author.mention)
+        try:
+            tickled = "<@" + str(tickle.id) + ">"
+        except:
+            await ctx.send("You can't just tickle thin air! (Unless you're tickling a ghost?)")
+            return
+        responses = [tickled + " just got tickled by " + tickler, tickler + " tickled " + tickled]
+        selfresponses = ["You try to tickle yourself, but your body reflexively flinches away.", "You tickle yourself, and you burst out laughing the moment your finger touches that sweet spot of ticklishness..", "You try to tickle yourself, but nothing happens."]
+        botresponses = ["hahahahahahahaha", "eeeeeehahahahaha", "aaaaaahahahahahaahaSTAHPhahahaha"]
+        if tickle == ctx.author:
+            await ctx.send(choice(selfresponses))
+        else:
+            await ctx.send(choice(responses))
+            if str(tickle.id) == "721092139953684580":
+                await ctx.send(choice(botresponses))
+
 client.add_cog(Tools(client))
 client.add_cog(Options(client))
 client.add_cog(Messages(client))
