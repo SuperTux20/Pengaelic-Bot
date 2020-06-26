@@ -236,7 +236,7 @@ class Converters(commands.Cog):
                     elif arg[char] == "?":
                         textlist.append(":question: ")
                     else:
-                        textlist.append(":regional_indicator_" + arg[char] + ": ")
+                        textlist.append(":regional_indicator_" + arg[char].lower() + ": ")
         for beeg in range(len(textlist)):
             finaltext = finaltext + textlist[beeg]
         await ctx.send(finaltext)
