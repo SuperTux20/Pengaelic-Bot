@@ -13,7 +13,7 @@ from time import sleep
 
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
-bot = commands.Bot(command_prefix="p!")
+client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Test description, where does it show up?")
 
 try:
     with open(r"../options.json", "r") as optionsfile:
@@ -32,22 +32,22 @@ try:
 except FileExistsError:
     pass
 
-@bot.event
+@client.event
 async def on_ready():
     print("Connected!")
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
     print("Status changed to \"Listening to " + artist + "\"")
 
-@bot.event
+@client.event
 async def on_message(message):
-    global bot
+    global client
     global allOptions
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
-    if message.content == "I want to see the list of all the servers.":
-        await message.channel.send(discord.Client.guilds)
+    if message.content == "I want to see the list of all the servers the bot is in.":
+        pass # how do i get a list of em all reeeeee
         
     # this section is for Dad Bot-like responses
     if allOptions["toggles"]["dad"] == True:
@@ -99,16 +99,19 @@ async def on_message(message):
                     await message.channel.send(choice(jokes[mamatypes[mom]]))
                 else:
                     failedtypes.append(mamatypes[mom])
+            elif "Yo mama list" == message.content or "yo mama list" in message.content:
+                await message.channel.send(str(mamatypes).replace("'","").replace("[","").replace("]",""))
+                break
         if failedtypes == mamatypes:
             mamatype = choice(mamatypes)
             await message.channel.send("Invalid Yo Mama type detected... Sending a " + mamatype + " joke.")
             await message.channel.send(choice(jokes[mamatype]))
                 
     # this lets all the commands below work as normal
-    await bot.process_commands(message)
+    await client.process_commands(message)
 
-class Misc(commands.Cog):
-    @commands.command(name="os", help="Read out what OS I'm running on!")
+class Tools(commands.Cog):
+    @commands.command(name="os", help="Read out what OS I'm running on!", aliases=["getos"])
     async def showos(self, ctx):
         defaultmsg = "I'm running on " + platform.system() + " "
         if platform.release() == "10":
@@ -116,19 +119,23 @@ class Misc(commands.Cog):
         else:
             await ctx.send(defaultmsg + platform.release() + " " + platform.version())
 
+    @commands.command(name="ping", help="How slow am I to respond?", aliases="ng")
+    async def ping(self, ctx):
+        await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
+
 class Options(commands.Cog):
     async def updateoptions(self):
         global allOptions
         with open(r"../options.json", "w+") as optionsfile:
             dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
-    @commands.command(name="options", help="Show a list of all options.")
+    @commands.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
     async def showoptions(self, ctx):
         global allOptions
         with open(r"../options.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
-    @commands.command(name="resetdefaults", help="Reset to the default options.")
+    @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
     async def resetoptions(self, ctx):
         global allOptions
         allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
@@ -170,25 +177,25 @@ class Options(commands.Cog):
         await self.updateoptions()
 
 class Messages(commands.Cog):
-    @commands.command(name="hi", help="You say hi, I greet you back!")
+    @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
     async def say_hi_back(self, ctx, delete=None):
         await ctx.send(choice(["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]))
         if delete:
             await ctx.message.delete()
 
-    @commands.command(name="bye", help="You say bye, I bid you farewell.")
+    @commands.command(name="bye", help="You say bye, I bid you farewell.", aliases=["seeya", "cya", "goodbye"])
     async def say_bye_back(self, ctx, delete=None):
         await ctx.send(choice(["See you next time!", "Bye!", "So long, Gay Bowser!"]))
         if delete:
             await ctx.message.delete()
 
-    @commands.command(name="say", help="Make me say something!", pass_context=True)
+    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"])
     async def say_back(self, ctx, *, arg):
         await ctx.send(arg)
         await ctx.message.delete()
 
 class Converters(commands.Cog):
-    @commands.command(name="novowels", help="Remove all vowels from whatever text you put in.")
+    @commands.command(name="novowels", help="Remove all vowels from whatever text you put in.", aliases=["vowelremover", "removevowels"])
     async def vowelRemover(self, ctx, *, arg):
         vowels = "aeiouAEIOU"
         outputString = arg
@@ -196,12 +203,12 @@ class Converters(commands.Cog):
                 outputString = outputString.replace(vowels[vowel],"")
         await ctx.send(outputString.replace("  ", " ")) # fix doubled spaces
 
-    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this")
+    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["furry"])
     async def owoConverter(self, ctx, *, arg):
         await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
         await ctx.message.delete()
 
-    @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.")
+    @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg"])
     async def embiggener(self, ctx, *, arg):
         alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!"
         textlist = []
@@ -222,7 +229,10 @@ class Converters(commands.Cog):
         await ctx.send(finaltext)
 
 class Games(commands.Cog):
-    @commands.command(name="roll", help="Roll some dice!")
+    @commands.command(name="8ball", help="Ask the ball a yes-or-no question!")
+
+
+    @commands.command(name="roll", help="Roll some dice!", aliases=["dice", "rolldice", "diceroll"])
     async def rollem(self, ctx, dice: int=1, sides: int=6):
         if dice == 0:
             await ctx.send("You didn't roll any dice.")
@@ -249,7 +259,7 @@ class Games(commands.Cog):
                 response = "You rolled " + str(total)
             await ctx.send(response)
 
-    @commands.command(name="flip", help="Flip some coins!")
+    @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip", "coins", "flipcoin", "flipcoins"])
     async def flipem(self, ctx, coins: int=1):
         results = []
         if coins == 1:
@@ -266,7 +276,7 @@ class Games(commands.Cog):
             await ctx.send("You flipped " + str(results.count("h")) + " heads and " + str(results.count("t")) + " tails.")
             
 
-    @commands.command(name="draw", help="Draw some cards!")
+    @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
         suits = ['Diamonds', 'Spades', 'Hearts', 'Clubs']
         values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
@@ -290,7 +300,7 @@ class Games(commands.Cog):
                 drawn.append(str(choice(values)) + " of " + choice(suits))
         await ctx.send("You drew " + str(drawn))
 
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.")
+    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap" "bubbles"])
     async def summonsheet(self, ctx, width: int=5, height: int=5):
         if width == 1 and height == 1:
             await ctx.send(r"""```
@@ -393,14 +403,14 @@ class Actions(commands.Cog):
             if str(pat.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
-bot.add_cog(Misc(bot))
-bot.add_cog(Options(bot))
-bot.add_cog(Messages(bot))
-bot.add_cog(Converters(bot))
-bot.add_cog(Games(bot))
-bot.add_cog(Actions(bot))
+client.add_cog(Tools(client))
+client.add_cog(Options(client))
+client.add_cog(Messages(client))
+client.add_cog(Converters(client))
+client.add_cog(Games(client))
+client.add_cog(Actions(client))
 
 try:
-    bot.run(TOKEN)
+    client.run(TOKEN)
 except:
     print("Unable to connect to Discord. Check your internet connection!")
