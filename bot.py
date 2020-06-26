@@ -458,6 +458,24 @@ class Actions(commands.Cog):
             if str(pat.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
+    @commands.command(name="nom", help="Give someone a good nom >:3")
+    async def nom(self, ctx, nom: discord.User=""):
+        nommer = str(ctx.author.mention)
+        try:
+            nommed = "<@" + str(nom.id) + ">"
+        except:
+            await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
+            return
+        responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed + " O_o"]
+        selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew off your finger. Why...?", "Uh..."]
+        botresponses = ["mmmph!", "mmmmmmmmph!", "mmmmmnnnn!!"]
+        if nom == ctx.author:
+            await ctx.send(choice(selfresponses))
+        else:
+            await ctx.send(choice(responses))
+            if str(nom.id) == "721092139953684580":
+                await ctx.send(choice(botresponses))
+
 client.add_cog(Tools(client))
 client.add_cog(Options(client))
 client.add_cog(Messages(client))
