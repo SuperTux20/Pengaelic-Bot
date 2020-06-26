@@ -9,7 +9,7 @@ from json import load, dump
 from random import choice, randint
 from discord.ext import commands
 from dotenv import load_dotenv
-from time import sleep
+from asyncio import sleep
 
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -113,7 +113,7 @@ async def on_message(message):
 class Tools(commands.Cog):
     @commands.command(name="os", help="Read out what OS I'm running on!", aliases=["getos"])
     async def showos(self, ctx):
-        defaultmsg = "I'm running on " + platform.system() + " "
+        defaultmsg = f"I'm running on {platform.system()} "
         if platform.release() == "10":
             await ctx.send(defaultmsg + platform.version())
         else:
@@ -122,6 +122,19 @@ class Tools(commands.Cog):
     @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
     async def ping(self, ctx):
         await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
+
+    @commands.command(name="clear", help="Clear some messages away.")
+    @commands.has_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
+    async def clear(self, ctx, msgcount: int=5):
+        await ctx.channel.purge(limit=msgcount + 1)
+        report = await ctx.send(str(msgcount) + " messages deleted.")
+        await sleep(3)
+        await report.delete()
+
+    @clear.error
+    async def clearError(self, ctx, error):
+        await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Messages)")
 
 class Options(commands.Cog):
     async def updateoptions(self):
@@ -230,8 +243,32 @@ class Converters(commands.Cog):
 
 class Games(commands.Cog):
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
-    async def _8ball(self, ctx):
-        await ctx.send(choice(["Yes", "No", "Certainly", "Don't count on it", "Reply hazy, try again later"]) + ".")
+    async def _8ball(self, ctx, *, question):
+        ballResponses = [
+            "As I see it, yes.",
+            "Ask again later.",
+            "Better not tell you now.",
+            "Cannot predict now.",
+            "Concentrate and ask again.",
+            "Don’t count on it.",
+            "It is certain.",
+            "It is decidedly so.",
+            "Most likely.",
+            "My reply is no.",
+            "My sources say no.",
+            "Outlook not so good.",
+            "Outlook good.",
+            "Reply hazy, try again.",
+            "Signs point to yes.",
+            "Very doubtful.",
+            "Without a doubt.",
+            "Yes.",
+            "Yes, definitely.",
+            "You may rely on it."]
+        if question:
+            await ctx.send(choice(ballResponses) + ".")
+        else:
+            await ctx.send("You didn't ask the 8-ball anything.")
 
     @commands.command(name="roll", help="Roll some dice!", aliases=["dice", "rolldice", "diceroll"])
     async def rollem(self, ctx, dice: int=1, sides: int=6):
@@ -414,4 +451,4 @@ client.add_cog(Actions(client))
 try:
     client.run(TOKEN)
 except:
-    print("Unable to connect to Discord. Check your internet connection!")
+    print("Unable to connect to Discord. Check your internet connection?")
