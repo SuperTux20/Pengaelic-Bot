@@ -119,7 +119,7 @@ class Tools(commands.Cog):
         else:
             await ctx.send(defaultmsg + platform.release() + " " + platform.version())
 
-    @commands.command(name="ping", help="How slow am I to respond?", aliases="ng")
+    @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
     async def ping(self, ctx):
         await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
 
