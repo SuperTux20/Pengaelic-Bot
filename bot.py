@@ -312,7 +312,7 @@ class Games(commands.Cog):
     async def flipem(self, ctx, coins: int=1):
         results = []
         if coins == 1:
-            await ctx.send(f"You flipped a {choice(["head","tail"])}")
+            await ctx.send(f"You flipped a {choice(['head','tail'])}")
         elif coins == 0:
             await ctx.send("You flicked your thumb in the air.")
         elif coins == -1:
@@ -322,7 +322,7 @@ class Games(commands.Cog):
         else:
             for _ in range(int(str(coins))):
                 results.append(choice(["h","t"]))
-            await ctx.send(f"You flipped {results.count("h")} heads and {results.count("t")} tails.")
+            await ctx.send(f"You flipped {results.count('h')} heads and {results.count('t')} tails.")
             
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
