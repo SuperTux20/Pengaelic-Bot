@@ -229,8 +229,9 @@ class Converters(commands.Cog):
         await ctx.send(finaltext)
 
 class Games(commands.Cog):
-    @commands.command(name="8ball", help="Ask the ball a yes-or-no question!")
-
+    @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
+    async def _8ball(self, ctx):
+        await ctx.send(choice(["Yes", "No", "Certainly", "Don't count on it", "Reply hazy, try again later"]) + ".")
 
     @commands.command(name="roll", help="Roll some dice!", aliases=["dice", "rolldice", "diceroll"])
     async def rollem(self, ctx, dice: int=1, sides: int=6):
