@@ -137,17 +137,15 @@ class Tools(commands.Cog):
         await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Messages)")
 
     @commands.command(name="purge", help="Purge a channel. :warning:WARNING:warning: This command clears an ENTIRE channel!")
-    @commands.has_permissions(manage_messages=True)
-    @commands.bot_has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_channels=True)
+    @commands.bot_has_permissions(manage_channels=True)
     async def purge(self, ctx, msgcount: int=5):
-        await ctx.channel.purge()
-        report = await ctx.send("ALL MESSAGES DELETED")
-        await sleep(3)
-        await report.delete()
+        await ctx.channel.clone()
+        await ctx.channel.delete()
 
     @purge.error
     async def purgeError(self, ctx, error):
-        await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Messages)")
+        await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Channels)")
 
 class Options(commands.Cog):
     async def updateoptions(self):
