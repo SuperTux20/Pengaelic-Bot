@@ -111,6 +111,7 @@ async def on_message(message):
     await client.process_commands(message)
 
 class Tools(commands.Cog):
+    purgeconfirm = False
     @commands.command(name="os", help="Read out what OS I'm running on!", aliases=["getos"])
     async def showos(self, ctx):
         defaultmsg = f"I'm running on {platform.system()} "
@@ -140,8 +141,13 @@ class Tools(commands.Cog):
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
     async def purge(self, ctx, msgcount: int=5):
-        await ctx.channel.clone()
-        await ctx.channel.delete()
+        if self.purgeconfirm == False:
+            await ctx.send("Are you **really** sure you want to wipe this channel? Type p!purge again to confirm.")
+            self.purgeconfirm = True
+        elif self.purgeconfirm == True:
+            await ctx.channel.clone()
+            await ctx.channel.delete()
+            self.purgeconfirm = False
 
     @purge.error
     async def purgeError(self, ctx, error):
