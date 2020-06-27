@@ -7,13 +7,15 @@ import discord
 import platform
 from json import load, dump
 from random import choice, randint
+from discord.utils import get
 from discord.ext import commands
 from dotenv import load_dotenv
 from asyncio import sleep
+from time import sleep as staticsleep
 
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
-client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Test description, where does it show up?")
+client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot commands")
 
 try:
     with open(r"../options.json", "r") as optionsfile:
@@ -109,6 +111,14 @@ async def on_message(message):
                 
     # this lets all the commands below work as normal
     await client.process_commands(message)
+
+@client.event
+async def on_reaction_add(reaction, user):
+    if reaction.emoji == "👄":
+        if user.id != 721092139953684580:
+            if Actions.isNomming == True:
+                Actions.isNomming = False
+                Actions.nomSuccess = False
 
 class Tools(commands.Cog):
     purgeconfirm = False
@@ -381,6 +391,8 @@ class Games(commands.Cog):
             await ctx.send(sheet)
 
 class Actions(commands.Cog):
+    isNomming = True
+    nomSuccess = False
     @commands.command(name="slap", help="Slap someone...?", command_category="Interactions")
     async def slap(self, ctx, slap: discord.User=""):
         slapper = str(ctx.author.mention)
@@ -458,7 +470,7 @@ class Actions(commands.Cog):
             if str(pat.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
-    @commands.command(name="nom", help="Give someone a good nom >:3")
+    """@commands.command(name="nom", help="Give someone a good nom >:3")
     async def nom(self, ctx, nom: discord.User=""):
         nommer = str(ctx.author.mention)
         try:
@@ -466,15 +478,36 @@ class Actions(commands.Cog):
         except:
             await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
             return
-        responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed + " O_o"]
-        selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew off your finger. Why...?", "Uh..."]
+        responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed]
+        selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your finger. Why...?", "Uh..."]
         botresponses = ["mmmph!", "mmmmmmmmph!", "mmmmmnnnn!!"]
         if nom == ctx.author:
             await ctx.send(choice(selfresponses))
         else:
-            await ctx.send(choice(responses))
             if str(nom.id) == "721092139953684580":
+                await ctx.send(choice(responses))
                 await ctx.send(choice(botresponses))
+            else:
+                Actions.isNomming = True
+                Actions.nomSuccess = False
+                NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
+                await NoNomSense.add_reaction("👄")
+                for i in range(5):
+                    staticsleep(1)
+                    print(i)
+                    if Actions.isNomming == False:
+                        await ctx.send("loop broken")
+                        break
+                if Actions.isNomming == True:
+                    await ctx.send("success undetermined")
+                    Actions.isNomming = False
+                    Actions.nomSuccess = True
+                if Actions.nomSuccess == True:
+                    # await ctx.send(choice(responses))
+                    await ctx.send("success successful")
+                else:
+                    # await ctx.send(nommed + " got away!")
+                    await ctx.send("success unsuccessful")"""
 
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
     async def tickle(self, ctx, tickle: discord.User=""):
