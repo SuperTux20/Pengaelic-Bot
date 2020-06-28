@@ -75,7 +75,7 @@ async def on_message(message):
                     await message.delete()
 
     # this section reprimands people when they're rude to the bots
-    insults = ["Your mother was a calculator and your dad ran on Windows Vista", "fuck you", "screw you", "stfu", "shut up"]
+    insults = ["Your mother was a calculator and your dad ran on Windows Vista", "Fuck you", "Screw you", "Stfu", "Shut up"]
     bots = [str(member)[:-5] for member in message.guild.members if member.bot is True]
     if "YAGPDB.xyz" in bots:
         bots.append("YAGPBD")
@@ -226,7 +226,7 @@ class Tools(commands.Cog):
                 helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
                 helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
                 helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
-            helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (arg)] = default option")
+            helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option")
             await ctx.send(content=None, embed=helpMenu)
 
 class Options(commands.Cog):
@@ -385,7 +385,7 @@ class Games(commands.Cog):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
-                response = f"You rolled {rollResults[:-1][1:-1]} and {rollResults[-1]} totalling {total}"
+                response = f"You rolled {str(rollResults[:-1])[1:-1]} and {rollResults[-1]}, totalling {total}"
             else:
                 response = f"You rolled {total}"
             await ctx.send(response)
@@ -402,10 +402,12 @@ class Games(commands.Cog):
         elif coins < -1:
             await ctx.semd("You flipped NaN heads and [ERROR] tails.")
         else:
-            for _ in range(int(str(coins))):
-                results.append(choice(["h","t"]))
-            await ctx.send(f"You flipped {results.count('h')} heads and {results.count('t')} tails.")
-            
+            if coins > 1000000:
+                await ctx.send(coins + " coins? That's just silly.")
+            else:
+                for _ in range(int(str(coins))):
+                    results.append(choice(["h","t"]))
+                await ctx.send(f"You flipped {results.count('h')} heads and {results.count('t')} tails.")
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
