@@ -71,14 +71,17 @@ async def on_message(message):
         with open(r"Bad words (Caution, NSFW).txt", "r") as bads_file:
             all_bads = bads_file.read().split(" ")
             for bad in range(len(all_bads)):
-                if all_bads[bad] in message.content or all_bads[bad].lower() in message.content:
+                if all_bads[bad] + " " in message.content or all_bads[bad].lower() + " " in message.content or " " + all_bads[bad] in message.content or " " + all_bads[bad].lower() in message.content or all_bads[bad] == message.content:
                     await message.delete()
 
     # this section reprimands people when they're rude to the bots
     insults = ["Your mother was a calculator and your dad ran on Windows Vista", "fuck you", "screw you", "stfu", "shut up"]
-    bots = ["MEE6", "Mantaro", "Dyno", "Nadeko", "Dad Bot"]
+    bots = [str(member)[:-5] for member in message.guild.members if member.bot is True]
+    if "YAGPDB.xyz" in bots:
+        bots.append("YAGPBD")
+        bots.append("YAG")
     for insult in range(len(insults)):
-        if insults[insult] in message.content:
+        if insults[insult] in message.content or insults[insult].lower() in message.content:
             if "pengaelicbot" in message.content or "pengaelic bot" in message.content or "Pengaelic bot" in message.content or "Pengaelic Bot" in message.content:
                 await message.channel.send(choice([";-;", ":sob:", ":cry:"]))
             else:
@@ -88,7 +91,6 @@ async def on_message(message):
                         defenseP2 = ["be nice to " + bots[bot], "be nice", "chill out"]
                         defenseP3 = ["its job", "what it was told", "what it's supposed to"]
                         await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
-
 
     # this section randomizes yo mama jokes
     if allOptions["toggles"]["yoMama"] == True:
@@ -216,9 +218,9 @@ class Tools(commands.Cog):
                 helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
                 helpMenu.add_field(name="os\ngetos", value="Read out what OS I'm running on!")
                 helpMenu.add_field(name="ping\nng", value="How slow am I to respond?")
-                helpMenu.add_field(name="clear", value="Clear away some messages. (Requires Manage Messages permission)")
+                helpMenu.add_field(name="clear [number of messages]", value="Clear away some messages. (Requires Manage Messages permission)")
                 helpMenu.add_field(name="purge", value="Clear an entire channel. (Requires Manage Channels permission)")
-                helpMenu.add_field(name="help", value="Show the message from earlier!")
+                helpMenu.add_field(name="help [category]", value="Show the message from earlier!")
             if selectedCategory == "Non-commands" or selectedCategory == "Non-Commands" or selectedCategory == "non-commands" or selectedCategory == "noncommands" or selectedCategory == "Noncommands" or selectedCategory == "NonCommands":
                 helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
                 helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
