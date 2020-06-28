@@ -403,11 +403,28 @@ class Games(commands.Cog):
             await ctx.semd("You flipped NaN heads and [ERROR] tails.")
         else:
             if coins > 1000000:
-                await ctx.send(coins + " coins? That's just silly.")
+                await ctx.send(f"{coins} coins? That's just silly.")
             else:
                 for _ in range(int(str(coins))):
-                    results.append(choice(["h","t"]))
-                await ctx.send(f"You flipped {results.count('h')} heads and {results.count('t')} tails.")
+                    result = randint(0,2)
+                    if result == 2:
+                        result = randint(0,2)
+                        if result == 2:
+                            result = randint(0,2)
+                            if result == 2:
+                                result = randint(0,2)
+                                if result == 2:
+                                    result = randint(0,2)
+                                    if result == 2:
+                                        result = randint(0,2)
+                    results.append(result)
+                if results.count(2) > 0:
+                    if results.count(2) == 1:
+                        await ctx.send(f"You flipped {results.count(0)} heads and {results.count(1)} tails, and a coin even landed on its edge.")
+                    else:
+                        await ctx.send(f"You flipped {results.count(0)} heads and {results.count(1)} tails, and {results.count(2)} coins landed on their edges.")
+                else:
+                    await ctx.send(f"You flipped {results.count(0)} heads and {results.count(1)} tails.")
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
