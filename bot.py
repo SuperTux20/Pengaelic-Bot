@@ -428,27 +428,60 @@ class Games(commands.Cog):
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
-        suits = ['Diamonds', 'Spades', 'Hearts', 'Clubs']
-        values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
+        suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
+        values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         allCards = []
+        faces = []
+        nums = []
         drawn = []
         if replaceCards == "no":
-            for suit in range(len(suits)):
+            for suit in range(int(len(suits)/1)):
                 for value in range(len(values)):
-                    allCards.append(str(values[value]) + " of " + suits[suit])
-            if cards == 52:
-                await ctx.send("You picked up the entire deck. What was the point of that?")
-                return
-            elif cards > 52:
+                    if values[value] == 10:
+                        length = 2
+                    elif values[value] == 1:
+                        length = 3
+                    elif values[value] == 11 or values[value] == 13:
+                        length = 4
+                    elif values[value] == 12:
+                        length = 5
+                    else:
+                        length = 1
+                    allCards.append(str(values[value]) + (" " * (6 - length) + "of ") + suits[suit])
+            if cards > 52:
                 await ctx.send("You can't draw more than the entire deck!")
                 return
+            # elif cards == 52:
+                # await ctx.send("You picked up the entire deck. What was the point of that?")
+                # return
             else:
                 for _ in range(cards):
-                    drawn.append(str(choice(allCards)))
+                    card = choice(allCards)
+                    if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
+                        faces.append(card)
+                    else:
+                        nums.append(card)
+                    allCards.remove(card)
+                faces = sorted(faces, reverse=True)
+                nums = sorted(nums, reverse=True)
+                drawn = faces + nums
         else:
             for _ in range(cards):
-                drawn.append(str(choice(values)) + " of " + choice(suits))
-        await ctx.send(f"You drew {drawn}")
+                chosenValue = str(choice(values))
+                card = str(chosenValue + (" " * (len(chosenValue) - 6) + "of ") + choice(suits))
+                if card[0] == "J" or card[0] == "Q" or card[0] == "K":
+                    faces.append(card)
+                else:
+                    nums.append(card)
+                faces = sorted(faces, reverse=True)
+                nums = sorted(nums, reverse=True)
+                drawn = faces + nums
+        for card in range(len(drawn)):
+            drawn[card] = drawn[card].replace("11","Jack").replace("12","Queen").replace("13","King").replace("1 ", "Ace ")
+        if cards == 1:
+            await ctx.send("You drew " + drawn[0])
+        else:
+            await ctx.send("You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
 
     @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap" "bubbles"])
     async def summonsheet(self, ctx, width: int=5, height: int=5):
