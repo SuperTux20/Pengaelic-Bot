@@ -451,9 +451,9 @@ class Games(commands.Cog):
             if cards > 52:
                 await ctx.send("You can't draw more than the entire deck!")
                 return
-            # elif cards == 52:
-                # await ctx.send("You picked up the entire deck. What was the point of that?")
-                # return
+            elif cards == 52:
+                await ctx.send("You picked up the entire deck. What was the point of that?")
+                return
             else:
                 for _ in range(cards):
                     card = choice(allCards)
@@ -469,13 +469,13 @@ class Games(commands.Cog):
             for _ in range(cards):
                 chosenValue = str(choice(values))
                 card = str(chosenValue + (" " * (len(chosenValue) - 6) + "of ") + choice(suits))
-                if card[0] == "J" or card[0] == "Q" or card[0] == "K":
+                if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
                     faces.append(card)
                 else:
                     nums.append(card)
-                faces = sorted(faces, reverse=True)
-                nums = sorted(nums, reverse=True)
-                drawn = faces + nums
+            faces = sorted(faces, reverse=True)
+            nums = sorted(nums, reverse=True)
+            drawn = faces + nums
         for card in range(len(drawn)):
             drawn[card] = drawn[card].replace("11","Jack").replace("12","Queen").replace("13","King").replace("1 ", "Ace ")
         if cards == 1:
