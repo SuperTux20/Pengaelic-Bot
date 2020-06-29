@@ -136,7 +136,7 @@ async def on_command_error(ctx, error):
         await ctx.send("This command doesn't exist!")
     elif allOptions["numbers"]["rudeness"] == 2:
         await ctx.send("Invalid command. Type `p!help` for a list of commands.")
-    elif allOptions["numbers"]["rudeness"] == 3:
+    elif allOptions["numbers"]["rudeness"] > 2:
         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 class Tools(commands.Cog):
@@ -297,6 +297,13 @@ class Options(commands.Cog):
             allOptions["toggles"]["yoMama"] = True
             await ctx.send("Yo Mama jokes turned on.")
         await self.updateoptions()
+
+    @commands.command(name="rudenesslevel", help="Change how rude the bot can be.")
+    async def rudenesslevel(self, ctx, level: int):
+        global allOptions
+        allOptions["numbers"]["rudeness"] = level
+        await ctx.send("Rudeness level set to " + level)
+
 
 class Messages(commands.Cog):
     @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
