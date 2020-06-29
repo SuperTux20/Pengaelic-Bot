@@ -26,7 +26,7 @@ except:
         open(r"../options.json", "x").close()
     except FileExistsError:
         pass
-    allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
+    allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
     with open(r"../options.json", "w") as optionsfile:
         dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
@@ -56,7 +56,9 @@ async def on_message(message):
     if allOptions["toggles"]["dad"] == True:
         dadprefixes = ["I'm ", "Im ", "I am "]
         for dad in range(len(dadprefixes)):
-            if dadprefixes[dad] == message.content[0:len(dadprefixes[dad])] or dadprefixes[dad].lower() == message.content[0:len(dadprefixes[dad])]:
+            dadprefixes.append(dadprefixes[dad].lower())
+        for dad in range(len(dadprefixes)):
+            if dadprefixes[dad] == message.content[0:len(dadprefixes[dad])]:
                 dadjoke = dadprefixes[dad]
                 if dadprefixes[dad].lower() in message.content:
                     dadjoke = dadjoke.lower()
@@ -64,7 +66,10 @@ async def on_message(message):
                     if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
                         await message.channel.send("You're not the Pengaelic Bot, I am!")
                     else:
-                        await message.channel.send(f"Hi {message.content[len(dadjoke):]}, I'm the Pengaelic Bot!")
+                        if dadprefixes[dad] + "a " == message.content[0:len(dadprefixes[dad])+2]:
+                            await message.channel.send(f"Hi {message.content[len(dadjoke)+2:]}, I'm the Pengaelic Bot!")
+                        else:
+                            await message.channel.send(f"Hi {message.content[len(dadjoke):]}, I'm the Pengaelic Bot!")
 
     # this section is to auto-delete messages containing a keyword contained in the text file
     if allOptions["toggles"]["censor"] == True:
@@ -122,6 +127,17 @@ async def on_reaction_add(reaction, user):
             if Actions.isNomming == True:
                 Actions.isNomming = False
                 Actions.nomSuccess = False
+
+@client.event
+async def on_command_error(ctx, error):
+    if allOptions["numbers"]["rudeness"] == 0:
+        await ctx.send("Sorry, this command is invalid.")
+    elif allOptions["numbers"]["rudeness"] == 1:
+        await ctx.send("This command doesn't exist!")
+    elif allOptions["numbers"]["rudeness"] == 2:
+        await ctx.send("Invalid command. Type `p!help` for a list of commands.")
+    elif allOptions["numbers"]["rudeness"] == 3:
+        await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 class Tools(commands.Cog):
     purgeconfirm = False
@@ -652,7 +668,5 @@ client.add_cog(Converters(client))
 client.add_cog(Games(client))
 client.add_cog(Actions(client))
 
-try:
+while True:
     client.run(TOKEN)
-except:
-    print("Unable to connect to Discord. Check your internet connection?")
