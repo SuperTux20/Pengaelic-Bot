@@ -597,6 +597,7 @@ class Actions(commands.Cog):
                 Actions.isNomming = True
                 Actions.nomSuccess = False
                 stupidchannel = await ctx.guild.create_text_channel("nom-command-stupidity")
+                await stupidchannel.set_permissions(read_messages=False)
                 NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
                 await NoNomSense.add_reaction("👄")
                 for _ in range(5):
@@ -651,7 +652,7 @@ async def help(ctx, selectedCategory=None):
             helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
             helpMenu.add_field(name="boop <@mention>", value="Boop someone's nose :3")
             helpMenu.add_field(name="hug <@mention>", value="Give somebody a hug!")
-            helpMenu.add_field(name="nom <@mention>", value="Command temporarily disabled: haven't gotten reactions to work right :(")
+            helpMenu.add_field(name="nom <@mention>", value="Try to eat someone, but they can get away if they're quick enough :eyes:")
             helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
             helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
             helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
