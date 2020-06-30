@@ -40,10 +40,12 @@ except FileExistsError:
 
 @client.event
 async def on_ready():
-    print("Connected!")
-    artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=artist))
-    print("Status changed to \"Listening to " + artist + "\"")
+    print("Connected")
+    songartist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
+    game = choice(["3D Pinball: Space Cadet", "Minecraft", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon"])
+    activity = choice([discord.Activity(type=discord.ActivityType.listening, name=songartist), discord.Game(name=game)])
+    await client.change_presence(activity=activity)
+    print("Status updated")
 
 @client.event
 async def on_guild_join(guild):
