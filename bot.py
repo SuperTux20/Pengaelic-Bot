@@ -310,27 +310,9 @@ class Converters(commands.Cog):
 class Games(commands.Cog):
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
     async def _8ball(self, ctx, *, question):
-        ballResponses = [
-            "As I see it, yes.",
-            "Ask again later.",
-            "Better not tell you now.",
-            "Cannot predict now.",
-            "Concentrate and ask again.",
-            "Don’t count on it.",
-            "It is certain.",
-            "It is decidedly so.",
-            "Most likely.",
-            "My reply is no.",
-            "My sources say no.",
-            "Outlook not so good.",
-            "Outlook good.",
-            "Reply hazy, try again.",
-            "Signs point to yes.",
-            "Very doubtful.",
-            "Without a doubt.",
-            "Yes.",
-            "Yes, definitely.",
-            "You may rely on it."]
+        global allOptions
+        with open(rf"8ball_level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
+            ballResponses = responsefile.split(", ")
         if question:
             await ctx.send(choice(ballResponses))
         else:
@@ -622,7 +604,7 @@ class Actions(commands.Cog):
             if str(tickle.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
-@commands.command(name="help", help="Show this message")
+@client.command(name="help", help="Show this message")
 async def help(ctx, selectedCategory=None):
     cyan = 32639
     if not selectedCategory:
