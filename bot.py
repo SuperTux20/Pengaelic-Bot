@@ -41,9 +41,11 @@ except FileExistsError:
 @client.event
 async def on_ready():
     print("Connected")
-    songartist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro"])
-    game = choice(["3D Pinball: Space Cadet", "Minecraft", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon"])
-    activity = choice([discord.Activity(type=discord.ActivityType.listening, name=songartist), discord.Game(name=game)])
+    artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
+    game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
+    youtuber = choice(["Ethoslab", "MumboJumbo", "Blue Television Games", "The King of Random", "Phoenix SC"])
+    movie = choice(["Avengers: Endgame", "Avengers: Infinity War", "Star Wars: A New Hope", "Spiderman: Into the Spiderverse", "Back to the Future"])
+    activity = choice([discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=choice([youtuber, movie]))])
     await client.change_presence(activity=activity)
     print("Status updated")
 
