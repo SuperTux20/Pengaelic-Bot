@@ -159,18 +159,18 @@ async def on_reaction_add(reaction, user):
                 Actions.isNomming = False
                 Actions.nomSuccess = False
 
-@client.event
-async def on_command_error(ctx, error):
-    if allOptions["numbers"]["rudeness"] < 3:
-        if allOptions["numbers"]["rudeness"] == 0:
-            invalidmsg = "Sorry, this command is invalid."
-        elif allOptions["numbers"]["rudeness"] == 1:
-            invalidmsg = "Invalid command/usage."
-        elif allOptions["numbers"]["rudeness"] == 2:
-            invalidmsg = "You typed the command wrong!"
-        await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
-    else:
-        await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
+# @client.event
+# async def on_command_error(ctx, error):
+#     if allOptions["numbers"]["rudeness"] < 3:
+#         if allOptions["numbers"]["rudeness"] == 0:
+#             invalidmsg = "Sorry, this command is invalid."
+#         elif allOptions["numbers"]["rudeness"] == 1:
+#             invalidmsg = "Invalid command/usage."
+#         elif allOptions["numbers"]["rudeness"] == 2:
+#             invalidmsg = "You typed the command wrong!"
+#         await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
+#     else:
+#         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 class Tools(commands.Cog):
     purgeconfirm = False
@@ -585,8 +585,8 @@ class Actions(commands.Cog):
             await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
             return
         responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed]
-        selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your finger. Why...?", "Uh..."]
-        botresponses = ["mmmph!", "mmmmmmmmph!", "mmmmmnnnn!!"]
+        selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your own finger. Why...?", "Uh..."]
+        botresponses = ["mmmph!", "mmmmmmmmph!", "hmmmnnnnn!!"]
         if nom == ctx.author:
             await ctx.send(choice(selfresponses))
         else:
@@ -596,12 +596,12 @@ class Actions(commands.Cog):
             else:
                 Actions.isNomming = True
                 Actions.nomSuccess = False
+                stupidchannel = await ctx.guild.create_text_channel("nom-command-stupidity")
                 NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
                 await NoNomSense.add_reaction("👄")
                 for _ in range(5):
                     staticsleep(1)
-                    deletThis = await ctx.send("The command doesn't work without this message for some stupid reason.")
-                    await deletThis.delete()
+                    await stupidchannel.send("The command doesn't work without this message for some stupid reason.")
                     if Actions.isNomming == False:
                         break
                 if Actions.isNomming == True:
@@ -612,6 +612,7 @@ class Actions(commands.Cog):
                     await ctx.send(choice(responses))
                 else:
                     await ctx.send(nommed + " got away!")
+                await stupidchannel.delete()
 
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
     async def tickle(self, ctx, tickle: discord.User=""):
