@@ -79,25 +79,26 @@ async def on_message(message):
                 if all_bads[bad] + " " in message.content or all_bads[bad].lower() + " " in message.content or " " + all_bads[bad] in message.content or " " + all_bads[bad].lower() in message.content or all_bads[bad] == message.content:
                     await message.delete()
 
-    # this section reprimands people when they're rude to the bots
-    insults = ["Your mother was a calculator and your dad ran on Windows Vista", "Fuck you", "Screw you", "Stfu", "Shut up"]
-    bots = [str(member)[:-5] for member in message.guild.members if member.bot is True]
-    if "YAGPDB.xyz" in bots:
-        bots.append("YAGPBD")
-        bots.append("YAG")
-    for insult in range(len(insults)):
-        if insults[insult] in message.content or insults[insult].lower() in message.content:
-            if "pengaelicbot" in message.content or "pengaelic bot" in message.content or "Pengaelic bot" in message.content or "Pengaelic Bot" in message.content:
-                await message.channel.send(choice([";-;", ":sob:", ":cry:"]))
-            else:
-                for bot in range(len(bots)):
-                    if bots[bot] in message.content or bots[bot].lower() in message.content:
-                        defenseP1 = ["Hey", "Dude", "Whoa"]
-                        defenseP2 = ["be nice to " + bots[bot], "be nice", "chill out"]
-                        defenseP3 = ["its job", "what it was told", "what it's supposed to"]
-                        await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
+    # this section reprimands people when they're rude to the bots, does not reprimand if rudeness level is above 1
+    if allOptions["numbers"]["rudeness"] < 2:
+        insults = ["Your mother was a calculator and your dad ran on Windows Vista", "Fuck you", "Screw you", "Stfu", "Shut up"]
+        bots = [str(member)[:-5] for member in message.guild.members if member.bot is True]
+        if "YAGPDB.xyz" in bots:
+            bots.append("YAGPBD")
+            bots.append("YAG")
+        for insult in range(len(insults)):
+            if insults[insult] in message.content or insults[insult].lower() in message.content:
+                if "pengaelicbot" in message.content or "pengaelic bot" in message.content or "Pengaelic bot" in message.content or "Pengaelic Bot" in message.content:
+                    await message.channel.send(choice([";-;", ":sob:", ":cry:"]))
+                else:
+                    for bot in range(len(bots)):
+                        if bots[bot] in message.content or bots[bot].lower() in message.content:
+                            defenseP1 = ["Hey", "Dude", "Whoa"]
+                            defenseP2 = ["be nice to " + bots[bot], "be nice", "chill out"]
+                            defenseP3 = ["its job", "what it was told", "what it's supposed to"]
+                            await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
 
-    # this section randomizes yo mama jokes
+    # this section randomizes yo mama jokes, does not work if
     if allOptions["toggles"]["yoMama"] == True:
         with open(r"Yo Mama Jokes.json", "r") as AllTheJokes:
             jokes = load(AllTheJokes)
@@ -105,18 +106,28 @@ async def on_message(message):
         failedtypes = []
         for mom in range(len(mamatypes)):
             if "Yo mama so " == message.content[0:11] or "yo mama so " in message.content[0:11]:
-                if mamatypes[mom] in message.content:
-                    await message.channel.send(choice(jokes[mamatypes[mom]]))
-                else:
-                    failedtypes.append(mamatypes[mom])
+                    if mamatypes[mom] in message.content:
+                        if allOptions["numbers"]["rudeness"] > 1:
+                            await message.channel.send(choice(jokes[mamatypes[mom]]))
+                        else:
+                            await message.channel.send("Yo Mama jokes are disabled: rudeness level below 2.")
+                    else:
+                        if "dumb" in message.content or "retarded" in message.content:
+                                await message.channel.send(choice(jokes["stupid"]))
+                        else:
+                            failedtypes.append(mamatypes[mom])
             elif "Yo mama list" == message.content or "yo mama list" in message.content:
-                await message.channel.send(str(mamatypes).replace("'","").replace("[","").replace("]",""))
+                if allOptions["numbers"]["rudeness"] > 1:
+                    await message.channel.send(str(mamatypes)[1:-1].replace("'",""))
+                else:
+                    await message.channel.send("Yo Mama jokes are disabled: rudeness level below 2.")
                 break
         if failedtypes == mamatypes:
             mamatype = choice(mamatypes)
             await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
+            await message.channel.send("Yo mama so " + mamatype)
             await message.channel.send(choice(jokes[mamatype]))
-                
+
     # this lets all the commands below work as normal
     await client.process_commands(message)
 
@@ -130,13 +141,15 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_command_error(ctx, error):
-    if allOptions["numbers"]["rudeness"] == 0:
-        await ctx.send("Sorry, this command is invalid.")
-    elif allOptions["numbers"]["rudeness"] == 1:
-        await ctx.send("This command doesn't exist!")
-    elif allOptions["numbers"]["rudeness"] == 2:
-        await ctx.send("Invalid command. Type `p!help` for a list of commands.")
-    elif allOptions["numbers"]["rudeness"] > 2:
+    if allOptions["numbers"]["rudeness"] < 3:
+        if allOptions["numbers"]["rudeness"] == 0:
+            invalidmsg = "Sorry, this command is invalid."
+        elif allOptions["numbers"]["rudeness"] == 1:
+            invalidmsg = "Unknown command."
+        elif allOptions["numbers"]["rudeness"] == 2:
+            invalidmsg = "You typed the command wrong!"
+        await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
+    else:
         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 class Tools(commands.Cog):
@@ -182,69 +195,6 @@ class Tools(commands.Cog):
     async def purgeError(self, ctx, error):
         await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Channels)")
 
-    @commands.command(name="help", help="Show this message")
-    async def help(self, ctx, selectedCategory=None):
-        "Messages" "Options" "Tools"
-        cyan = 32639
-        if not selectedCategory:
-            rootHelpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
-            rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
-            rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
-            rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
-            rootHelpMenu.add_field(name="Messages", value="Make the bot say things!")
-            rootHelpMenu.add_field(name="Options", value="Settings for the bot. (WIP but functional)")
-            rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
-            rootHelpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
-            rootHelpMenu.set_footer(text="Command prefix: `p!`")
-            await ctx.send(content=None, embed=rootHelpMenu)
-        else:
-            if selectedCategory == "Actions" or selectedCategory == "actions":
-                helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
-                helpMenu.add_field(name="boop <@mention>", value="Boop someone's nose :3")
-                helpMenu.add_field(name="hug <@mention>", value="Give somebody a hug!")
-                helpMenu.add_field(name="nom <@mention>", value="Command temporarily disabled: haven't gotten reactions to work right :(")
-                helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
-                helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
-                helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
-            if selectedCategory == "Converters" or selectedCategory == "converters":
-                helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
-                helpMenu.add_field(name="novowels\n<input string>", value="Remove all vowels from whatever text you put in.")
-                helpMenu.add_field(name="owo\n<input string>", value="Convert whatever text into owo-speak... oh god why did i make this")
-                helpMenu.add_field(name="beegtext\nbigtext\nbeeg\nbig\n<input string>", value="Turn text into\n:regional_indicator_b: :regional_indicator_e: :regional_indicator_e: :regional_indicator_g:\n:regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t: :exclamation:")
-            if selectedCategory == "Games" or selectedCategory == "games":
-                helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
-                helpMenu.add_field(name="8ball\n[question]", value="Ask the ball a yes-or-no question, and it shall respond...")
-                helpMenu.add_field(name="pop\nbubblewrap\n[width of sheet (5)]\n[height of sheet (5)]", value="Pop some bubble wrap!")
-                helpMenu.add_field(name="draw\ncard\n[number of cards (1)]\n[replace cards? yes/no (no)]", value="Draw some cards!")
-                helpMenu.add_field(name="flip\ncoin\n[number of coins (1)]", value="Flip some coins!")
-                helpMenu.add_field(name="roll\ndice\n[number of dice (1)]\n[number of sides (6)]", value="Roll some dice!")
-            if selectedCategory == "Messages" or selectedCategory == "messages":
-                helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
-                helpMenu.add_field(name="hi\nhello\nsup\n[delete your command message?]", value="You say hi, I greet you back!")
-                helpMenu.add_field(name="bye\ncya\ngoodbye\n[delete your command message?]", value="You say bye, I bid you farewell.")
-                helpMenu.add_field(name="say\nrepeat\nparrot\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
-            if selectedCategory == "Options" or selectedCategory == "options":
-                helpMenu = discord.Embed(title="Options", description="Settings for the bot. (WIP but functional)", color=cyan)
-                helpMenu.add_field(name="options\nconfig\nprefs\ncfg", value="Show a list of all options.")
-                helpMenu.add_field(name="resetdefaults\ndefaultoptions\nreset", value="Reset all options to their defaults.")
-                helpMenu.add_field(name="togglecensor", value="Toggle the automatic deletion of messages containing specific keywords.")
-                helpMenu.add_field(name="toggledad", value="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-                helpMenu.add_field(name="togglemama", value="Toggle the automatic Yo Mama jokes.")
-            if selectedCategory == "Tools" or selectedCategory == "tools":
-                helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
-                helpMenu.add_field(name="os\ngetos", value="Read out what OS I'm running on!")
-                helpMenu.add_field(name="ping\nng", value="How slow am I to respond?")
-                helpMenu.add_field(name="clear [number of messages]", value="Clear away some messages. (Requires Manage Messages permission)")
-                helpMenu.add_field(name="purge", value="Clear an entire channel. (Requires Manage Channels permission)")
-                helpMenu.add_field(name="help [category]", value="Show the message from earlier!")
-            if selectedCategory == "Non-commands" or selectedCategory == "Non-Commands" or selectedCategory == "non-commands" or selectedCategory == "noncommands" or selectedCategory == "Noncommands" or selectedCategory == "NonCommands":
-                helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
-                helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
-                helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
-                helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
-            helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option")
-            await ctx.send(content=None, embed=helpMenu)
-
 class Options(commands.Cog):
     async def updateoptions(self):
         global allOptions
@@ -260,7 +210,7 @@ class Options(commands.Cog):
     @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
     async def resetoptions(self, ctx):
         global allOptions
-        allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}}
+        allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
         await self.updateoptions()
         await ctx.send("Options reset to defaults.")
         await self.showoptions(ctx)
@@ -302,8 +252,8 @@ class Options(commands.Cog):
     async def rudenesslevel(self, ctx, level: int):
         global allOptions
         allOptions["numbers"]["rudeness"] = level
-        await ctx.send("Rudeness level set to " + level)
-
+        await ctx.send("Rudeness level set to " + str(level))
+        await self.updateoptions()
 
 class Messages(commands.Cog):
     @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
@@ -534,23 +484,27 @@ class Games(commands.Cog):
 class Actions(commands.Cog):
     isNomming = True
     nomSuccess = False
+    global allOptions
     @commands.command(name="slap", help="Slap someone...?")
     async def slap(self, ctx, slap: discord.User=""):
-        slapper = str(ctx.author.mention)
-        try:
-            slapped = "<@" + str(slap.id) + ">"
-        except:
-            await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
-            return
-        responses = [slapped + " just got slapped by " + slapper, slapper + " slapped " + slapped]
-        selfresponses = ["Hey, you can't slap yourself!", "Please don't", "y tho"]
-        botresponses = [";-;", "ow! ;-;", "ow!"]
-        if slap == ctx.author:
-            await ctx.send(choice(selfresponses) + " :(")
+        if allOptions["counters"]["rudeness"] == 0:
+            slapper = str(ctx.author.mention)
+            try:
+                slapped = "<@" + str(slap.id) + ">"
+            except:
+                await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
+                return
+            responses = [slapped + " just got slapped by " + slapper, slapper + " slapped " + slapped]
+            selfresponses = ["Hey, you can't slap yourself!", "Please don't", "y tho"]
+            botresponses = [";-;", "ow! ;-;", "ow!"]
+            if slap == ctx.author:
+                await ctx.send(choice(selfresponses) + " :(")
+            else:
+                await ctx.send(choice(responses))
+                if str(slap.id) == "721092139953684580":
+                    await ctx.send(choice(botresponses))
         else:
-            await ctx.send(choice(responses))
-            if str(slap.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
+            await ctx.send("Slapping is disabled: Rudeness level is 0")
 
     @commands.command(name="hug", help="Give somebody a hug!")
     async def hug(self, ctx, hug: discord.User=""):
