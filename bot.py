@@ -189,9 +189,16 @@ class Tools(commands.Cog):
     @commands.command(name="clear", help="Clear some messages away.")
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def clear(self, ctx, msgcount: int=5):
-        await ctx.channel.purge(limit=msgcount + 1)
-        report = await ctx.send(str(msgcount) + " messages deleted.")
+    async def clear(self, ctx, msgcount: int=5, channel: discord.TextChannel=None):
+        channel = channel or ctx.channel
+        allmsgcount = 0
+        async for _ in channel.history(limit=None):
+            allmsgcount += 1
+        await channel.purge(limit=msgcount + 1)
+        if allmsgcount > msgcount:
+            report = await ctx.send(str(msgcount) + " messages deleted.")
+        else:
+            report = await ctx.send(str(allmsgcount - 1) + " messages deleted.")
         await sleep(3)
         await report.delete()
 
