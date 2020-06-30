@@ -145,7 +145,7 @@ async def on_command_error(ctx, error):
         if allOptions["numbers"]["rudeness"] == 0:
             invalidmsg = "Sorry, this command is invalid."
         elif allOptions["numbers"]["rudeness"] == 1:
-            invalidmsg = "Unknown command."
+            invalidmsg = "Invalid command/usage."
         elif allOptions["numbers"]["rudeness"] == 2:
             invalidmsg = "You typed the command wrong!"
         await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
@@ -314,23 +314,23 @@ class Games(commands.Cog):
         with open(rf"8ball_level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
             ballResponses = responsefile.read().split(", ")
         if question:
-            await ctx.send(choice(ballResponses))
+            await ctx.send(":8ball:" + choice(ballResponses))
         else:
-            await ctx.send("You didn't ask the 8-ball anything.")
+            await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
     @commands.command(name="roll", help="Roll some dice!", aliases=["dice", "rolldice", "diceroll"])
     async def rollem(self, ctx, dice: int=1, sides: int=6):
         if dice == 0:
-            await ctx.send("You didn't roll any dice.")
+            await ctx.send(":game_die:You didn't roll any dice.")
         elif sides == 0:
-            await ctx.send("You rolled thin air.")
+            await ctx.send(":game_die:You rolled thin air.")
         elif dice < 0:
-            await ctx.send("You rolled NaN dice and got [REDACTED]")
+            await ctx.send(":game_die:You rolled NaN dice and got [REDACTED]")
         elif sides < 0:
             if dice == 1:
-                await ctx.send("You rolled a [ERROR]-sided die and got `404`")
+                await ctx.send(":game_die:You rolled a [ERROR]-sided die and got `DivideByZeroError`")
             if dice > 1:
-                await ctx.sendf(f"You rolled {dice} `err`-sided dice and got [NULL]")
+                await ctx.sendf(f":game_die:You rolled {dice} `err`-sided dice and got [NULL]")
         else:
             sideList = []
             rollResults = []
@@ -340,25 +340,25 @@ class Games(commands.Cog):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
-                response = f"You rolled {str(rollResults[:-1])[1:-1]} and {rollResults[-1]}, totalling {total}"
+                response = f":game_die:You rolled {str(rollResults[:-1])[1:-1]} and {rollResults[-1]}, totalling {total}"
             else:
-                response = f"You rolled {total}"
+                response = f":game_die:You rolled {total}"
             await ctx.send(response)
 
     @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip", "coins", "flipcoin", "flipcoins"])
     async def flipem(self, ctx, coins: int=1):
         results = []
         if coins == 1:
-            await ctx.send(f"You flipped a {choice(['head','tail'])}")
+            await ctx.send(f":moneybag:You flipped a {choice(['head','tail'])}")
         elif coins == 0:
-            await ctx.send("You flicked your thumb in the air.")
+            await ctx.send(":moneybag:You flicked your thumb in the air.")
         elif coins == -1:
-            await ctx.send("You flipped a [REDACTED]")
+            await ctx.send(":moneybag:You flipped a [REDACTED]")
         elif coins < -1:
-            await ctx.semd("You flipped NaN heads and [ERROR] tails.")
+            await ctx.semd(":moneybag:You flipped NaN heads and [ERROR] tails.")
         else:
             if coins > 1000000:
-                await ctx.send(f"{coins} coins? That's just silly.")
+                await ctx.send(f":moneybag:{coins} coins? That's just silly.")
             else:
                 for _ in range(int(str(coins))):
                     result = randint(0,2)
@@ -375,11 +375,11 @@ class Games(commands.Cog):
                     results.append(result)
                 if results.count(2) > 0:
                     if results.count(2) == 1:
-                        await ctx.send(f"You flipped {results.count(0)} heads and {results.count(1)} tails, and a coin even landed on its edge.")
+                        await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails, and a coin even landed on its edge.")
                     else:
-                        await ctx.send(f"You flipped {results.count(0)} heads and {results.count(1)} tails, and {results.count(2)} coins landed on their edges.")
+                        await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails, and {results.count(2)} coins landed on their edges.")
                 else:
-                    await ctx.send(f"You flipped {results.count(0)} heads and {results.count(1)} tails.")
+                    await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails.")
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
@@ -404,10 +404,10 @@ class Games(commands.Cog):
                         length = 1
                     allCards.append(str(values[value]) + (" " * (6 - length) + "of ") + suits[suit])
             if cards > 52:
-                await ctx.send("You can't draw more than the entire deck!")
+                await ctx.send(":black_joker:You can't draw more than the entire deck!")
                 return
             elif cards == 52:
-                await ctx.send("You picked up the entire deck. What was the point of that?")
+                await ctx.send(":black_joker:You picked up the entire deck. What was the point of that?")
                 return
             else:
                 for _ in range(cards):
@@ -434,9 +434,9 @@ class Games(commands.Cog):
         for card in range(len(drawn)):
             drawn[card] = drawn[card].replace("11","Jack").replace("12","Queen").replace("13","King").replace("1 ", "Ace ")
         if cards == 1:
-            await ctx.send("You drew " + drawn[0])
+            await ctx.send(":black_joker:You drew " + drawn[0])
         else:
-            await ctx.send("You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
+            await ctx.send(":black_joker:You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
 
     @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap" "bubbles"])
     async def summonsheet(self, ctx, width: int=5, height: int=5):
