@@ -622,6 +622,69 @@ class Actions(commands.Cog):
             if str(tickle.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
+@commands.command(name="help", help="Show this message")
+async def help(ctx, selectedCategory=None):
+    cyan = 32639
+    if not selectedCategory:
+        rootHelpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
+        rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
+        rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
+        rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
+        rootHelpMenu.add_field(name="Messages", value="Make the bot say things!")
+        rootHelpMenu.add_field(name="Options", value="Settings for the bot. (WIP but functional)")
+        rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
+        rootHelpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
+        rootHelpMenu.set_footer(text="Command prefix: `p!`")
+        await ctx.send(content=None, embed=rootHelpMenu)
+    else:
+        if selectedCategory == "Actions" or selectedCategory == "actions":
+            helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
+            helpMenu.add_field(name="boop <@mention>", value="Boop someone's nose :3")
+            helpMenu.add_field(name="hug <@mention>", value="Give somebody a hug!")
+            helpMenu.add_field(name="nom <@mention>", value="Command temporarily disabled: haven't gotten reactions to work right :(")
+            helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
+            helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
+            helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
+        if selectedCategory == "Converters" or selectedCategory == "converters":
+            helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
+            helpMenu.add_field(name="novowels\n<input string>", value="Remove all vowels from whatever text you put in.")
+            helpMenu.add_field(name="owo\n<input string>", value="Convert whatever text into owo-speak... oh god why did i make this")
+            helpMenu.add_field(name="beegtext\nbigtext\nbeeg\nbig\n<input string>", value="Turn text into\n:regional_indicator_b: :regional_indicator_e: :regional_indicator_e: :regional_indicator_g:\n:regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t: :exclamation:")
+        if selectedCategory == "Games" or selectedCategory == "games":
+            helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
+            helpMenu.add_field(name="8ball\n[question]", value="Ask the ball a yes-or-no question, and it shall respond...")
+            helpMenu.add_field(name="pop\nbubblewrap\n[width of sheet (5)]\n[height of sheet (5)]", value="Pop some bubble wrap!")
+            helpMenu.add_field(name="draw\ncard\n[number of cards (1)]\n[replace cards? yes/no (no)]", value="Draw some cards!")
+            helpMenu.add_field(name="flip\ncoin\n[number of coins (1)]", value="Flip some coins!")
+            helpMenu.add_field(name="roll\ndice\n[number of dice (1)]\n[number of sides (6)]", value="Roll some dice!")
+        if selectedCategory == "Messages" or selectedCategory == "messages":
+            helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
+            helpMenu.add_field(name="hi\nhello\nsup\n[delete your command message?]", value="You say hi, I greet you back!")
+            helpMenu.add_field(name="bye\ncya\ngoodbye\n[delete your command message?]", value="You say bye, I bid you farewell.")
+            helpMenu.add_field(name="say\nrepeat\nparrot\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
+        if selectedCategory == "Options" or selectedCategory == "options":
+            helpMenu = discord.Embed(title="Options", description="Settings for the bot. (I need to figure out how to make them different on different servers :grimacing:)", color=cyan)
+            helpMenu.add_field(name="options\nconfig\nprefs\ncfg", value="Show a list of all options.")
+            helpMenu.add_field(name="resetdefaults\ndefaultoptions\nreset", value="Reset all options to their defaults.")
+            helpMenu.add_field(name="togglecensor", value="Toggle the automatic deletion of messages containing specific keywords.")
+            helpMenu.add_field(name="toggledad", value="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+            helpMenu.add_field(name="togglemama", value="Toggle the automatic Yo Mama jokes.")
+            helpMenu.add_field(name="rudenesslevel <value from 0 to 3>", value="Set how rude the bot can be, and open up more commands.")
+        if selectedCategory == "Tools" or selectedCategory == "tools":
+            helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
+            helpMenu.add_field(name="os\ngetos", value="Read out what OS I'm running on!")
+            helpMenu.add_field(name="ping\nng", value="How slow am I to respond?")
+            helpMenu.add_field(name="clear [number of messages]", value="Clear away some messages. (Requires Manage Messages permission)")
+            helpMenu.add_field(name="purge", value="Clear an entire channel. (Requires Manage Channels permission)")
+            helpMenu.add_field(name="help [category]", value="Show the message from earlier!")
+        if selectedCategory == "Non-commands" or selectedCategory == "Non-Commands" or selectedCategory == "non-commands" or selectedCategory == "noncommands" or selectedCategory == "Noncommands" or selectedCategory == "NonCommands":
+            helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
+            helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
+            helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
+            helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
+        helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option")
+        await ctx.send(content=None, embed=helpMenu)
+
 client.add_cog(Tools(client))
 client.add_cog(Options(client))
 client.add_cog(Messages(client))
