@@ -309,10 +309,10 @@ class Converters(commands.Cog):
 
 class Games(commands.Cog):
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
-    async def _8ball(self, ctx, *, question):
+    async def _8ball(self, ctx, *, question = None):
         global allOptions
         with open(rf"8ball_level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
-            ballResponses = responsefile.split(", ")
+            ballResponses = responsefile.read().split(", ")
         if question:
             await ctx.send(choice(ballResponses))
         else:
