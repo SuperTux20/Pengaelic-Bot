@@ -576,7 +576,7 @@ class Actions(commands.Cog):
             if str(pat.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
-    """@commands.command(name="nom", help="Give someone a good nom >:3")
+    @commands.command(name="nom", help="Give someone a good nom >:3")
     async def nom(self, ctx, nom: discord.User=""):
         nommer = str(ctx.author.mention)
         try:
@@ -598,22 +598,20 @@ class Actions(commands.Cog):
                 Actions.nomSuccess = False
                 NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
                 await NoNomSense.add_reaction("👄")
-                for i in range(5):
+                for _ in range(5):
                     staticsleep(1)
-                    print(i)
+                    deletThis = await ctx.send("The command doesn't work without this message for some stupid reason.")
+                    await deletThis.delete()
                     if Actions.isNomming == False:
-                        await ctx.send("loop broken")
                         break
                 if Actions.isNomming == True:
-                    await ctx.send("success undetermined")
                     Actions.isNomming = False
                     Actions.nomSuccess = True
+                await NoNomSense.delete()
                 if Actions.nomSuccess == True:
-                    # await ctx.send(choice(responses))
-                    await ctx.send("success successful")
+                    await ctx.send(choice(responses))
                 else:
-                    # await ctx.send(nommed + " got away!")
-                    await ctx.send("success unsuccessful")"""
+                    await ctx.send(nommed + " got away!")
 
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
     async def tickle(self, ctx, tickle: discord.User=""):
