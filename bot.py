@@ -3,6 +3,7 @@ print("Starting...")
 
 import os
 import re
+import fnmatch
 import discord
 import platform
 from json import load, dump
@@ -16,6 +17,7 @@ from time import sleep as staticsleep
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot commands")
+# Even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands.
 client.remove_command("help")
 
 try:
@@ -43,6 +45,23 @@ async def on_ready():
     print("Status changed to \"Listening to " + artist + "\"")
 
 @client.event
+async def on_guild_join(guild):
+    welcomeEmbed = discord.Embed(title="Howdy fellas! I'm the Pengaelic Bot!", description="Type `p!help` for a list of commands.", color=32639)
+    welcomeEmbed.set_thumbnail(url=client.user.avatar_url)
+    allchannels = list(guild.text_channels)
+    for channel in range(len(allchannels)):
+        allchannels[channel] = str(allchannels[channel])
+    generals = [channel for channel in allchannels if "general" in channel]
+    for gen in range(len(generals)):
+        if "2" in generals[gen]:
+            generals.remove(generals[gen])
+    if get(guild.text_channels, name="general"):
+        await get(guild.text_channels, name="general").send(embed=welcomeEmbed)
+    else:
+        for channel in range(len(generals)):
+            await get(guild.text_channels, name=generals[channel]).send(embed=welcomeEmbed)
+
+@client.event
 async def on_message(message):
     global client
     global allOptions
@@ -50,8 +69,9 @@ async def on_message(message):
         return
 
     if message.content == "I want to see the list of all the servers the bot is in.":
-        pass # how do i get a list of em all reeeeee
-        
+        thelistofalltheserversthebotisin = await client.fetch_guilds(limit=150).flatten()
+        await message.channel.send(thelistofalltheserversthebotisin)
+
     # this section is for Dad Bot-like responses
     if allOptions["toggles"]["dad"] == True:
         dadprefixes = ["I'm ", "Im ", "I am "]
@@ -340,7 +360,7 @@ class Games(commands.Cog):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
-                response = f":game_die:You rolled {str(rollResults[:-1])[1:-1]} and {rollResults[-1]}, totalling {total}"
+                response = f":game_die:You rolled {str(rollResults[:-1])[1:-1]}, and {rollResults[-1]}, totalling {total}"
             else:
                 response = f":game_die:You rolled {total}"
             await ctx.send(response)
@@ -434,6 +454,8 @@ class Games(commands.Cog):
         for card in range(len(drawn)):
             drawn[card] = drawn[card].replace("11","Jack").replace("12","Queen").replace("13","King").replace("1 ", "Ace ")
         if cards == 1:
+            while "  " in drawn[0]:
+                drawn[0] = drawn[0].replace("  "," ")
             await ctx.send(":black_joker:You drew " + drawn[0])
         else:
             await ctx.send(":black_joker:You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
