@@ -17,8 +17,9 @@ from time import sleep as staticsleep
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot commands")
-# Even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands.
+# even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
 client.remove_command("help")
+errorAlreadyHandled = False
 
 try:
     with open(r"../options.json", "r") as optionsfile:
@@ -159,18 +160,19 @@ async def on_reaction_add(reaction, user):
                 Actions.isNomming = False
                 Actions.nomSuccess = False
 
-# @client.event
-# async def on_command_error(ctx, error):
-#     if allOptions["numbers"]["rudeness"] < 3:
-#         if allOptions["numbers"]["rudeness"] == 0:
-#             invalidmsg = "Sorry, this command is invalid."
-#         elif allOptions["numbers"]["rudeness"] == 1:
-#             invalidmsg = "Invalid command/usage."
-#         elif allOptions["numbers"]["rudeness"] == 2:
-#             invalidmsg = "You typed the command wrong!"
-#         await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
-#     else:
-#         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
+@client.event
+async def on_command_error(ctx, error):
+    if errorAlreadyHandled == False:
+        if allOptions["numbers"]["rudeness"] < 3:
+            if allOptions["numbers"]["rudeness"] == 0:
+                invalidmsg = "Sorry, this command is invalid."
+            elif allOptions["numbers"]["rudeness"] == 1:
+                invalidmsg = "Invalid command/usage."
+            elif allOptions["numbers"]["rudeness"] == 2:
+                invalidmsg = "You typed the command wrong!"
+            await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
+        else:
+            await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 class Tools(commands.Cog):
     purgeconfirm = False
@@ -204,7 +206,9 @@ class Tools(commands.Cog):
 
     @clear.error
     async def clearError(self, ctx, error):
+        global errorAlreadyHandled
         await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Messages)")
+        errorAlreadyHandled = True
 
     @commands.command(name="purge", help="Purge a channel. :warning:WARNING:warning: This command clears an ENTIRE channel!")
     @commands.has_permissions(manage_channels=True)
@@ -220,7 +224,9 @@ class Tools(commands.Cog):
 
     @purge.error
     async def purgeError(self, ctx, error):
+        global errorAlreadyHandled
         await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Channels)")
+        errorAlreadyHandled = True
 
 class Options(commands.Cog):
     async def updateoptions(self):
@@ -703,5 +709,6 @@ client.add_cog(Converters(client))
 client.add_cog(Games(client))
 client.add_cog(Actions(client))
 
+# this is in a loop because it auto-reconnects if internet is lost
 while True:
     client.run(TOKEN)
