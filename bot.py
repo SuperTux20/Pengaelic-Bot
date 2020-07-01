@@ -11,6 +11,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from asyncio import sleep
 from time import sleep as staticsleep
+
 print("Starting")
 
 load_dotenv("../pengaelicbot.env")
@@ -20,10 +21,13 @@ client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pen
 client.remove_command("help")
 errorAlreadyHandled = False
 
+# try to read the options file
 try:
     with open(r"../options.json", "r") as optionsfile:
         allOptions = load(optionsfile)
+# if something goes wrong...
 except:
+    # ...try creating it
     try:
         open(r"../options.json", "x").close()
     except FileExistsError:
@@ -31,11 +35,6 @@ except:
     allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
     with open(r"../options.json", "w") as optionsfile:
         dump(allOptions, optionsfile, sort_keys=True, indent=4)
-
-try:
-    open(rf"badwords/level_{allOptions['numbers']['rudeness']}.txt", "x").close()
-except FileExistsError:
-    pass
 
 @client.event
 async def on_ready():
