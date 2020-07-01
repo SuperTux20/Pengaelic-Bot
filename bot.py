@@ -1,6 +1,4 @@
 # bot.py
-print("Starting...")
-
 import os
 import re
 import fnmatch
@@ -13,6 +11,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from asyncio import sleep
 from time import sleep as staticsleep
+print("Starting")
 
 load_dotenv("../pengaelicbot.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -34,7 +33,7 @@ except:
         dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
 try:
-    open(r"Bad words (Caution, NSFW).txt", "x").close()
+    open(rf"badwords/level_{allOptions['numbers']['rudeness']}.txt", "x").close()
 except FileExistsError:
     pass
 
@@ -353,7 +352,7 @@ class Games(commands.Cog):
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
     async def _8ball(self, ctx, *, question = None):
         global allOptions
-        with open(rf"8ball_level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
+        with open(rf"8ball/level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
             ballResponses = responsefile.read().split(", ")
         if question:
             await ctx.send(":8ball:" + choice(ballResponses))
