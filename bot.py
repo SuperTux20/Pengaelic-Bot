@@ -13,12 +13,11 @@ from asyncio import sleep
 
 print("Starting")
 
-load_dotenv("../pengaelicbot.env")
+load_dotenv("../pengaelicbot.data/.env")
 TOKEN = os.getenv("DISCORD_TOKEN")
-client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot commands")
-# even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
-client.remove_command("help")
 errorAlreadyHandled = False
+# even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
+client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot commands", help_command=None)
 
 @client.event
 async def on_ready():
@@ -33,19 +32,19 @@ async def on_ready():
     for guild in range(len(client.guilds)):
         # try to read the options file
         try:
-            with open(rf"../options/{client.guilds[guild].id}.json", "r") as optionsfile:
+            with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "r") as optionsfile:
                 allOptions = load(optionsfile)
                 print("Options file loaded for " + str(client.guilds[guild].name))
         # if something goes wrong...
         except:
             # ...try creating it
                 try:
-                    open(rf"../options/{client.guilds[guild].id}.json", "x").close()
+                    open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "x").close()
                 except FileExistsError:
                     pass
                 with open(r"default_options.json", "r") as defaultsfile:
                     allOptions = load(defaultsfile)
-                with open(rf"../options/{client.guilds[guild].id}.json", "w") as optionsfile:
+                with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "w") as optionsfile:
                     dump(allOptions, optionsfile, sort_keys=True, indent=4)
                 print("Options file created for " + str(client.guilds[guild].name))
 
@@ -68,7 +67,7 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_message(message):
-    with open(rf"../options/{message.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{message.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
     global client
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
@@ -99,11 +98,19 @@ async def on_message(message):
 
     # this section is to auto-delete messages containing a keyword contained in the text file
     if allOptions["toggles"]["censor"] == True:
-        with open(rf"badwords/level_{allOptions['numbers']['rudeness']}.txt", "r") as bads_file:
-            all_bads = bads_file.read().split(" ")
-            for bad in range(len(all_bads)):
-                if all_bads[bad] + " " in message.content or all_bads[bad].lower() + " " in message.content or " " + all_bads[bad] in message.content or " " + all_bads[bad].lower() in message.content or all_bads[bad] == message.content:
-                    await message.delete()
+        try:
+            open(rf"../pengaelicbot.data/censorfilters/{message.guild.id}.txt", "x").close()
+            print("Censor file created for " + str(message.guild.name))
+        except FileExistsError:
+            pass
+        with open(rf"../pengaelicbot.data/censorfilters/{message.guild.id}.txt", "r") as bads_file:
+            all_bads = bads_file.read().split(", ")
+            if all_bads == [""]:
+                pass
+            else:
+                for bad in range(len(all_bads)):
+                    if all_bads[bad] in message.content or all_bads[bad].lower() in message.content or all_bads[bad] == message.content:
+                        await message.delete()
 
     # this section reprimands people when they're rude to the bots, does not reprimand if rudeness level is above 1
     if allOptions["numbers"]["rudeness"] < 2:
@@ -158,7 +165,7 @@ async def on_message(message):
 
 @client.event
 async def on_command_error(ctx, error):
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
     if errorAlreadyHandled == False:
         if allOptions["numbers"]["rudeness"] < 3:
@@ -173,13 +180,13 @@ async def on_command_error(ctx, error):
             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 async def updateoptions(guild_id, options2dump):
-    with open(rf"../options/{guild_id}.json", "w+") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{guild_id}.json", "w+") as optionsfile:
         dump(options2dump, optionsfile, sort_keys=True, indent=4)
 
 @client.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
 @commands.has_permissions(kick_members=True)
 async def showoptions(ctx):
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
 @client.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
@@ -193,7 +200,7 @@ async def resetoptions(ctx):
 @client.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
 @commands.has_permissions(kick_members=True)
 async def togglecensor(ctx):
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
     if allOptions["toggles"]["censor"] == True:
         allOptions["toggles"]["censor"] = False
@@ -206,7 +213,7 @@ async def togglecensor(ctx):
 @client.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
 @commands.has_permissions(kick_members=True)
 async def toggledad(ctx):
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
     if allOptions["toggles"]["dad"] == True:
         allOptions["toggles"]["dad"] = False
@@ -219,7 +226,7 @@ async def toggledad(ctx):
 @client.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
 @commands.has_permissions(kick_members=True)
 async def togglemama(ctx):
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
     if allOptions["toggles"]["yoMama"] == True:
         allOptions["toggles"]["yoMama"] = False
@@ -232,7 +239,7 @@ async def togglemama(ctx):
 @client.command(name="rudenesslevel", help="Change how rude the bot can be.")
 @commands.has_permissions(kick_members=True)
 async def rudenesslevel(ctx, level: int=-1):
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
     if level == -1:
         await ctx.send("Current rudeness level is " + str(allOptions["numbers"]["rudeness"]))
@@ -249,6 +256,70 @@ async def rudenesslevel(ctx, level: int=-1):
                 allOptions["numbers"]["rudeness"] = level
                 await ctx.send("Rudeness level set to " + str(level))
                 await updateoptions(ctx.guild.id, allOptions)
+
+@client.command(name="showcensor", help="Display the contents of the censorship filter.", aliases=["showfilter", "getcensor", "getfilter"])
+@commands.has_permissions(manage_messages=True)
+async def showfilter(ctx):
+    with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
+        if bads_file.read().split(' ') == ['']:
+            await ctx.send("Filter is empty.")
+        else:
+            await ctx.send(f"```{bads_file.read().split(' ')}```")
+
+@client.command(name="addcensor", help="Add a word to the censorship filter.", aliases=["addfilter"])
+@commands.has_permissions(manage_messages=True)
+async def addfilter(ctx, word2add):
+    with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
+        all_bads = bads_file.read()
+        oneword = []
+        if ", " in all_bads:
+            all_bads = all_bads.split(", ")
+        else:
+            oneword.append(all_bads)
+            all_bads = oneword
+        if all_bads == [""]:
+            all_bads = []
+        if word2add in all_bads:
+            await ctx.send("That word is already in the filter.")
+        else:
+            all_bads.append(word2add)
+            all_bads.sort()
+            finalbads = str(all_bads)[1:-1].replace("'","")
+            with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
+                bads_file_to.write(finalbads)
+                await ctx.send("Word added to the filter.")
+
+@client.command(name="delcensor", help="Remove a word from the censorship filter.", aliases=["delfilter"])
+@commands.has_permissions(manage_messages=True)
+async def delfilter(ctx, word2del):
+    with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
+        all_bads = bads_file.read()
+        try:
+            await ctx.send(bads_file.read())
+        except:
+            pass
+        oneword = []
+        if ", " in all_bads:
+            all_bads = all_bads.split(", ")
+            await ctx.send("LIST: " + str(all_bads))
+        else:
+            oneword.append(all_bads)
+            await ctx.send(str(oneword))
+            all_bads = oneword
+            await ctx.send(str(all_bads))
+        if all_bads == [""]:
+            all_bads = []
+        if word2del not in all_bads:
+            await ctx.send("That word is not in the filter.")
+        else:
+            all_bads.remove(word2del)
+            await ctx.send(str(all_bads))
+            all_bads.sort()
+            await ctx.send(str(all_bads))
+            finalbads = str(all_bads)[1:-1].replace("'","")
+            with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
+                bads_file_to.write(finalbads)
+                await ctx.send("Word removed from the filter.")
 
 @showoptions.error
 @resetoptions.error
@@ -271,7 +342,7 @@ async def redoWelcome(ctx):
 async def loadcog(ctx, cog2load=None):
     activecogs = []
     inactivecogs = []
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
         cogs = list(allOptions["toggles"]["cogs"].keys())
         enabled = list(allOptions["toggles"]["cogs"].values())
@@ -286,7 +357,7 @@ async def loadcog(ctx, cog2load=None):
     else:
         if cog2load:
             try:
-                with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+                with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
                     allOptions = load(optionsfile)
                     _ = allOptions["toggles"]["cogs"][cog2load]
                     allOptions["toggles"]["cogs"][cog2load] = True
@@ -301,7 +372,7 @@ async def loadcog(ctx, cog2load=None):
 @commands.has_permissions(kick_members=True)
 async def unloadcog(ctx, cog2unload=None):
     activecogs = []
-    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
         cogs = list(allOptions["toggles"]["cogs"].keys())
         enabled = list(allOptions["toggles"]["cogs"].values())
@@ -314,7 +385,7 @@ async def unloadcog(ctx, cog2unload=None):
     else:
         if cog2unload:
             try:
-                with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+                with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
                     allOptions = load(optionsfile)
                     _ = allOptions["toggles"]["cogs"][cog2unload]
                     allOptions["toggles"]["cogs"][cog2unload] = False
@@ -330,7 +401,7 @@ async def help(ctx, selectedCategory=None):
     cyan = 32639
     if not selectedCategory:
         rootHelpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
             if allOptions["toggles"]["cogs"]["actions"] == True:
                 rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
@@ -397,6 +468,7 @@ async def help(ctx, selectedCategory=None):
         helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option")
         await ctx.send(embed=helpMenu)
 
+# load all the cogs
 for cog in os.listdir("./cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
