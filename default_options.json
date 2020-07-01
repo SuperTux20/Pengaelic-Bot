@@ -1,16 +1,16 @@
 {
-    "cogs": {
-        "actions": true,
-        "converters": true,
-        "games": true,
-        "messages": true,
-        "tools": true
-    },
     "numbers": {
         "rudeness": 0
     },
     "toggles": {
         "censor": true,
+        "cogs": {
+            "actions": true,
+            "converters": true,
+            "games": true,
+            "messages": true,
+            "tools": true
+        },
         "dad": false,
         "yoMama": false
     }

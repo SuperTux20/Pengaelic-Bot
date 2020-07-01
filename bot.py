@@ -156,21 +156,21 @@ async def on_message(message):
     # this lets all the commands below work as normal
     await client.process_commands(message)
 
-# @client.event
-# async def on_command_error(ctx, error):
-#     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-#         allOptions = load(optionsfile)
-#     if errorAlreadyHandled == False:
-#         if allOptions["numbers"]["rudeness"] < 3:
-#             if allOptions["numbers"]["rudeness"] == 0:
-#                 invalidmsg = "Sorry, this command is invalid."
-#             elif allOptions["numbers"]["rudeness"] == 1:
-#                 invalidmsg = "Invalid command/usage."
-#             elif allOptions["numbers"]["rudeness"] == 2:
-#                 invalidmsg = "You typed the command wrong!"
-#             await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
-#         else:
-#             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
+@client.event
+async def on_command_error(ctx, error):
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+    if errorAlreadyHandled == False:
+        if allOptions["numbers"]["rudeness"] < 3:
+            if allOptions["numbers"]["rudeness"] == 0:
+                invalidmsg = "Sorry, this command is invalid."
+            elif allOptions["numbers"]["rudeness"] == 1:
+                invalidmsg = "Invalid command/usage."
+            elif allOptions["numbers"]["rudeness"] == 2:
+                invalidmsg = "You typed the command wrong!"
+            await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
+        else:
+            await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 async def updateoptions(guild_id, options2dump):
     with open(rf"../options/{guild_id}.json", "w+") as optionsfile:
@@ -231,12 +231,18 @@ async def togglemama(ctx):
 
 @client.command(name="rudenesslevel", help="Change how rude the bot can be.")
 @commands.has_permissions(kick_members=True)
-async def rudenesslevel(ctx, level: int):
+async def rudenesslevel(ctx, level: int=-1):
     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
-    allOptions["numbers"]["rudeness"] = level
-    await ctx.send("Rudeness level set to " + str(level))
-    await updateoptions(ctx.guild.id, allOptions)
+    if level == -1:
+        await ctx.send("Current rudeness level is " + str(allOptions["numbers"]["rudeness"]))
+    else:
+        if level < 0:
+            await ctx.send("Wait- What would negative rudeness even mean?")
+        else:
+            allOptions["numbers"]["rudeness"] = level
+            await ctx.send("Rudeness level set to " + str(level))
+            await updateoptions(ctx.guild.id, allOptions)
 
 @showoptions.error
 @resetoptions.error
@@ -260,8 +266,8 @@ async def loadcog(ctx, cog2load=None):
     inactivecogs = []
     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
-        cogs = list(allOptions["cogs"].keys())
-        enabled = list(allOptions["cogs"].values())
+        cogs = list(allOptions["toggles"]["cogs"].keys())
+        enabled = list(allOptions["toggles"]["cogs"].values())
         for cog in range(len(cogs)):
             if enabled[cog] == True:
                 activecogs.append(cogs[cog])
@@ -275,8 +281,8 @@ async def loadcog(ctx, cog2load=None):
             try:
                 with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
                     allOptions = load(optionsfile)
-                    _ = allOptions["cogs"][cog2load]
-                    allOptions["cogs"][cog2load] = True
+                    _ = allOptions["toggles"]["cogs"][cog2load]
+                    allOptions["toggles"]["cogs"][cog2load] = True
                     await updateoptions(ctx.guild.id, allOptions)
                 await ctx.send(f"Cog '{cog2load}' loaded. Type `p!help {cog2load}` to see how it works.")
             except:
@@ -289,8 +295,8 @@ async def unloadcog(ctx, cog2unload=None):
     activecogs = []
     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
-        cogs = list(allOptions["cogs"].keys())
-        enabled = list(allOptions["cogs"].values())
+        cogs = list(allOptions["toggles"]["cogs"].keys())
+        enabled = list(allOptions["toggles"]["cogs"].values())
         for cog in range(len(cogs)):
             if enabled[cog] == True:
                 activecogs.append(cogs[cog])
@@ -302,8 +308,8 @@ async def unloadcog(ctx, cog2unload=None):
             try:
                 with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
                     allOptions = load(optionsfile)
-                    _ = allOptions["cogs"][cog2unload]
-                    allOptions["cogs"][cog2unload] = False
+                    _ = allOptions["toggles"]["cogs"][cog2unload]
+                    allOptions["toggles"]["cogs"][cog2unload] = False
                     await updateoptions(ctx.guild.id, allOptions)
                 await ctx.send(f"Cog '{cog2unload}' unloaded.")
             except:
@@ -316,20 +322,22 @@ async def help(ctx, selectedCategory=None):
     cyan = 32639
     if not selectedCategory:
         rootHelpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
-        if "Actions" in client.cogs.keys():
-            rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
-        if "Converters" in client.cogs.keys():
-            rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
-        if "Games" in client.cogs.keys():
-            rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
-        if "Messages" in client.cogs.keys():
-            rootHelpMenu.add_field(name="Messages", value="Make the bot say things!")
-        rootHelpMenu.add_field(name="Options", value="Settings for the bot. (WIP but functional)")
-        if "Tools" in client.cogs.keys():
-            rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
-        rootHelpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
-        rootHelpMenu.set_footer(text="Command prefix: `p!`")
-        await ctx.send(content=None, embed=rootHelpMenu)
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+            if allOptions["toggles"]["cogs"]["actions"] == True:
+                rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
+            if allOptions["toggles"]["cogs"]["converters"] == True:
+                rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
+            if allOptions["toggles"]["cogs"]["games"] == True:
+                rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
+            if allOptions["toggles"]["cogs"]["messages"] == True:
+                rootHelpMenu.add_field(name="Messages", value="M a k e   m e   s a y   t h i n g s")
+            rootHelpMenu.add_field(name="Options", value="My settings.")
+            if allOptions["toggles"]["cogs"]["tools"] == True:
+                rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
+            rootHelpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
+            rootHelpMenu.set_footer(text="Command prefix: `p!`")
+            await ctx.send(content=None, embed=rootHelpMenu)
     else:
         if selectedCategory == "Actions" or selectedCategory == "actions":
             helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
@@ -364,6 +372,8 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="toggledad", value="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
             helpMenu.add_field(name="togglemama", value="Toggle the automatic Yo Mama jokes.")
             helpMenu.add_field(name="rudenesslevel <value from 0 to 3>", value="Set how rude the bot can be, and open up more commands.")
+            helpMenu.add_field(name="load [module name]", value="Load a module. Leave blank to see unloaded modules.")
+            helpMenu.add_field(name="unload [module name]", value="Unload a module. Leave blank to see loaded modules.")
         if selectedCategory == "Tools" or selectedCategory == "tools":
             helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
             helpMenu.add_field(name="os\ngetos", value="Read out what OS I'm running on!")
