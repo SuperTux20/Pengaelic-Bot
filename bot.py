@@ -149,8 +149,7 @@ async def on_message(message):
         if failedtypes == mamatypes:
             mamatype = choice(mamatypes)
             await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
-            await message.channel.send("Yo mama so " + mamatype)
-            await message.channel.send(choice(jokes[mamatype]))
+            await message.channel.send(f"Yo mama so {mamatype}")
 
     # this lets all the commands below work as normal
     await client.process_commands(message)
@@ -177,7 +176,7 @@ async def on_command_error(ctx, error):
         else:
             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
-@client.command(name="welcome", help="Show the welcome message if it doesn't show up")
+@client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
 async def redoWelcome(ctx):
     await on_guild_join(ctx.guild)
     await ctx.message.delete()
@@ -215,7 +214,7 @@ class Tools(commands.Cog):
     @clear.error
     async def clearError(self, ctx, error):
         global errorAlreadyHandled
-        await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Messages)")
+        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
         errorAlreadyHandled = True
 
     @commands.command(name="purge", help="Purge a channel. :warning:WARNING:warning: This command clears an ENTIRE channel!")
@@ -233,7 +232,7 @@ class Tools(commands.Cog):
     @purge.error
     async def purgeError(self, ctx, error):
         global errorAlreadyHandled
-        await ctx.send(f"Sorry {ctx.author.mention}, you don't have the correct permissions! (Manage Channels)")
+        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)")
         errorAlreadyHandled = True
 
 class Options(commands.Cog):
@@ -243,12 +242,14 @@ class Options(commands.Cog):
             dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
     @commands.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
+    @commands.has_permissions(kick_members=True)
     async def showoptions(self, ctx):
         global allOptions
         with open(r"../options.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
     @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
+    @commands.has_permissions(kick_members=True)
     async def resetoptions(self, ctx):
         global allOptions
         allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
@@ -257,6 +258,7 @@ class Options(commands.Cog):
         await self.showoptions(ctx)
 
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
+    @commands.has_permissions(kick_members=True)
     async def togglecensor(self, ctx):
         global allOptions
         if allOptions["toggles"]["censor"] == True:
@@ -268,6 +270,7 @@ class Options(commands.Cog):
         await self.updateoptions()
 
     @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+    @commands.has_permissions(kick_members=True)
     async def toggledad(self, ctx):
         global allOptions
         if allOptions["toggles"]["dad"] == True:
@@ -279,6 +282,7 @@ class Options(commands.Cog):
         await self.updateoptions()
 
     @commands.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
+    @commands.has_permissions(kick_members=True)
     async def togglemama(self, ctx):
         global allOptions
         if allOptions["toggles"]["yoMama"] == True:
@@ -290,11 +294,23 @@ class Options(commands.Cog):
         await self.updateoptions()
 
     @commands.command(name="rudenesslevel", help="Change how rude the bot can be.")
+    @commands.has_permissions(kick_members=True)
     async def rudenesslevel(self, ctx, level: int):
         global allOptions
         allOptions["numbers"]["rudeness"] = level
         await ctx.send("Rudeness level set to " + str(level))
         await self.updateoptions()
+
+    @showoptions.error
+    @resetoptions.error
+    @togglecensor.error
+    @toggledad.error
+    @togglemama.error
+    @rudenesslevel.error
+    async def optionsError(self, ctx, error):
+        global errorAlreadyHandled
+        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
+        errorAlreadyHandled = True
 
 class Messages(commands.Cog):
     @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
@@ -350,7 +366,7 @@ class Converters(commands.Cog):
 
 class Games(commands.Cog):
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
-    async def _8ball(self, ctx, *, question = None):
+    async def _8ball(self, ctx, *, question=None):
         global allOptions
         with open(rf"8ball/level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
             ballResponses = responsefile.read().split(", ")
@@ -512,7 +528,7 @@ class Actions(commands.Cog):
     global allOptions
     @commands.command(name="slap", help="Slap someone...?")
     async def slap(self, ctx, slap: discord.User=""):
-        if allOptions["counters"]["rudeness"] == 0:
+        if allOptions["numbers"]["rudeness"] > 0:
             slapper = str(ctx.author.mention)
             try:
                 slapped = "<@" + str(slap.id) + ">"
@@ -688,7 +704,7 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="bye\ncya\ngoodbye\n[delete your command message?]", value="You say bye, I bid you farewell.")
             helpMenu.add_field(name="say\nrepeat\nparrot\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
         if selectedCategory == "Options" or selectedCategory == "options":
-            helpMenu = discord.Embed(title="Options", description="Settings for the bot. (I need to figure out how to make them different on different servers :grimacing:)", color=cyan)
+            helpMenu = discord.Embed(title="Options", description="Settings for the bot. (I need to figure out how to make them different on different servers :grimacing:) (All options require the \"Kick Members\" permission)", color=cyan)
             helpMenu.add_field(name="options\nconfig\nprefs\ncfg", value="Show a list of all options.")
             helpMenu.add_field(name="resetdefaults\ndefaultoptions\nreset", value="Reset all options to their defaults.")
             helpMenu.add_field(name="togglecensor", value="Toggle the automatic deletion of messages containing specific keywords.")
@@ -708,7 +724,7 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
             helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
         helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option")
-        await ctx.send(content=None, embed=helpMenu)
+        await ctx.send(embed=helpMenu)
 
 client.add_cog(Tools(client))
 client.add_cog(Options(client))
