@@ -178,6 +178,11 @@ async def on_command_error(ctx, error):
         else:
             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
+@client.command(name="welcome", help="Show the welcome message if it doesn't show up")
+async def redoWelcome(ctx):
+    await on_guild_join(ctx.guild)
+    await ctx.message.delete()
+
 class Tools(commands.Cog):
     purgeconfirm = False
     @commands.command(name="os", help="Read out what OS I'm running on!", aliases=["getos"])
