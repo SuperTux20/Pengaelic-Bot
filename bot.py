@@ -20,11 +20,9 @@ client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pen
 # even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
 client.remove_command("help")
 errorAlreadyHandled = False
-allOptions = {}
 
 @client.event
 async def on_ready():
-    global allOptions
     print("Connected")
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
     game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
@@ -71,8 +69,9 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_message(message):
+    with open(rf"../options/{message.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
     global client
-    global allOptions
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
@@ -168,6 +167,8 @@ async def on_reaction_add(reaction, user):
 
 @client.event
 async def on_command_error(ctx, error):
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
     if errorAlreadyHandled == False:
         if allOptions["numbers"]["rudeness"] < 3:
             if allOptions["numbers"]["rudeness"] == 0:
@@ -240,81 +241,82 @@ class Tools(commands.Cog):
         errorAlreadyHandled = True
 
 class Options(commands.Cog):
-    async def updateoptions(self, guild):
-        global allOptions
+    async def updateoptions(self, guild, options2dump=None):
         with open(rf"../options/{guild}.json", "w+") as optionsfile:
-            dump(allOptions, optionsfile, sort_keys=True, indent=4)
+            dump(options2dump, optionsfile, sort_keys=True, indent=4)
 
     @commands.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
     @commands.has_permissions(kick_members=True)
     async def showoptions(self, ctx):
-        global allOptions
         with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
     @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
     @commands.has_permissions(kick_members=True)
     async def resetoptions(self, ctx):
-        global allOptions
         allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
-        await self.updateoptions(ctx.guild.id)
+        await self.updateoptions(ctx.guild.id, allOptions)
         await ctx.send("Options reset to defaults.")
         await self.showoptions(ctx)
 
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
     @commands.has_permissions(kick_members=True)
     async def togglecensor(self, ctx):
-        global allOptions
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
         if allOptions["toggles"]["censor"] == True:
             allOptions["toggles"]["censor"] = False
             await ctx.send("Censorship turned off.")
         elif allOptions["toggles"]["censor"] == False:
             allOptions["toggles"]["censor"] = True
             await ctx.send("Censorship turned on.")
-        await self.updateoptions(ctx.guild.id)
+        await self.updateoptions(ctx.guild.id, allOptions)
 
     @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(kick_members=True)
     async def toggledad(self, ctx):
-        global allOptions
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
         if allOptions["toggles"]["dad"] == True:
             allOptions["toggles"]["dad"] = False
             await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
         elif allOptions["toggles"]["dad"] == False:
             allOptions["toggles"]["dad"] = True
             await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
-        await self.updateoptions(ctx.guild.id)
+        await self.updateoptions(ctx.guild.id, allOptions)
 
     @commands.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
     @commands.has_permissions(kick_members=True)
     async def togglemama(self, ctx):
-        global allOptions
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
         if allOptions["toggles"]["yoMama"] == True:
             allOptions["toggles"]["yoMama"] = False
             await ctx.send("Yo Mama jokes turned off.")
         elif allOptions["toggles"]["yoMama"] == False:
             allOptions["toggles"]["yoMama"] = True
             await ctx.send("Yo Mama jokes turned on.")
-        await self.updateoptions(ctx.guild.id)
+        await self.updateoptions(ctx.guild.id, allOptions)
 
     @commands.command(name="rudenesslevel", help="Change how rude the bot can be.")
     @commands.has_permissions(kick_members=True)
     async def rudenesslevel(self, ctx, level: int):
-        global allOptions
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
         allOptions["numbers"]["rudeness"] = level
         await ctx.send("Rudeness level set to " + str(level))
-        await self.updateoptions(ctx.guild.id)
+        await self.updateoptions(ctx.guild.id, allOptions)
 
-    @showoptions.error
-    @resetoptions.error
-    @togglecensor.error
-    @toggledad.error
-    @togglemama.error
-    @rudenesslevel.error
-    async def optionsError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
-        errorAlreadyHandled = True
+    # @showoptions.error
+    # @resetoptions.error
+    # @togglecensor.error
+    # @toggledad.error
+    # @togglemama.error
+    # @rudenesslevel.error
+    # async def optionsError(self, ctx, error):
+    #     global errorAlreadyHandled
+    #     await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
+    #     errorAlreadyHandled = True
 
 class Messages(commands.Cog):
     @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
@@ -371,7 +373,8 @@ class Converters(commands.Cog):
 class Games(commands.Cog):
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
     async def _8ball(self, ctx, *, question=None):
-        global allOptions
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+                allOptions = load(optionsfile)
         with open(rf"8ball/level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
             ballResponses = responsefile.read().split(", ")
         if question:
@@ -529,9 +532,10 @@ class Games(commands.Cog):
 class Actions(commands.Cog):
     isNomming = True
     nomSuccess = False
-    global allOptions
     @commands.command(name="slap", help="Slap someone...?")
     async def slap(self, ctx, slap: discord.User=""):
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+                allOptions = load(optionsfile)
         if allOptions["numbers"]["rudeness"] > 0:
             slapper = str(ctx.author.mention)
             try:
@@ -708,7 +712,7 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="bye\ncya\ngoodbye\n[delete your command message?]", value="You say bye, I bid you farewell.")
             helpMenu.add_field(name="say\nrepeat\nparrot\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
         if selectedCategory == "Options" or selectedCategory == "options":
-            helpMenu = discord.Embed(title="Options", description="Settings for the bot. (I need to figure out how to make them different on different servers :grimacing:) (All options require the \"Kick Members\" permission)", color=cyan)
+            helpMenu = discord.Embed(title="Options", description="Settings for the bot. (All options require the \"Kick Members\" permission)", color=cyan)
             helpMenu.add_field(name="options\nconfig\nprefs\ncfg", value="Show a list of all options.")
             helpMenu.add_field(name="resetdefaults\ndefaultoptions\nreset", value="Reset all options to their defaults.")
             helpMenu.add_field(name="togglecensor", value="Toggle the automatic deletion of messages containing specific keywords.")
