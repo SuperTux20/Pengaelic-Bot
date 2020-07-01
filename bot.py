@@ -20,24 +20,11 @@ client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pen
 # even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
 client.remove_command("help")
 errorAlreadyHandled = False
-
-# try to read the options file
-try:
-    with open(r"../options.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-# if something goes wrong...
-except:
-    # ...try creating it
-    try:
-        open(r"../options.json", "x").close()
-    except FileExistsError:
-        pass
-    allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
-    with open(r"../options.json", "w") as optionsfile:
-        dump(allOptions, optionsfile, sort_keys=True, indent=4)
+allOptions = {}
 
 @client.event
 async def on_ready():
+    global allOptions
     print("Connected")
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
     game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
@@ -46,6 +33,24 @@ async def on_ready():
     activity = choice([discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=choice([youtuber, movie]))])
     await client.change_presence(activity=activity)
     print("Status updated")
+    for guild in range(len(client.guilds)):
+        # try to read the options file
+        try:
+            with open(rf"../options/{client.guilds[guild].id}.json", "r") as optionsfile:
+                allOptions = load(optionsfile)
+                print("Options file loaded for " + str(client.guilds[guild].name))
+        # if something goes wrong...
+        except:
+            # ...try creating it
+                try:
+                    open(rf"../options/{client.guilds[guild].id}.json", "x").close()
+                except FileExistsError:
+                    pass
+                with open(r"default_options.json", "r") as defaultsfile:
+                    allOptions = load(defaultsfile)
+                with open(rf"../options/{client.guilds[guild].id}.json", "w") as optionsfile:
+                    dump(allOptions, optionsfile, sort_keys=True, indent=4)
+                print("Options file created for " + str(client.guilds[guild].name))
 
 @client.event
 async def on_guild_join(guild):
@@ -96,7 +101,7 @@ async def on_message(message):
 
     # this section is to auto-delete messages containing a keyword contained in the text file
     if allOptions["toggles"]["censor"] == True:
-        with open(r"Bad words (Caution, NSFW).txt", "r") as bads_file:
+        with open(rf"badwords/level_{allOptions['numbers']['rudeness']}.txt", "r") as bads_file:
             all_bads = bads_file.read().split(" ")
             for bad in range(len(all_bads)):
                 if all_bads[bad] + " " in message.content or all_bads[bad].lower() + " " in message.content or " " + all_bads[bad] in message.content or " " + all_bads[bad].lower() in message.content or all_bads[bad] == message.content:
@@ -235,16 +240,16 @@ class Tools(commands.Cog):
         errorAlreadyHandled = True
 
 class Options(commands.Cog):
-    async def updateoptions(self):
+    async def updateoptions(self, guild):
         global allOptions
-        with open(r"../options.json", "w+") as optionsfile:
+        with open(rf"../options/{guild}.json", "w+") as optionsfile:
             dump(allOptions, optionsfile, sort_keys=True, indent=4)
 
     @commands.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
     @commands.has_permissions(kick_members=True)
     async def showoptions(self, ctx):
         global allOptions
-        with open(r"../options.json", "r") as optionsfile:
+        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
             await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
 
     @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
@@ -252,7 +257,7 @@ class Options(commands.Cog):
     async def resetoptions(self, ctx):
         global allOptions
         allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
-        await self.updateoptions()
+        await self.updateoptions(ctx.guild.id)
         await ctx.send("Options reset to defaults.")
         await self.showoptions(ctx)
 
@@ -266,7 +271,7 @@ class Options(commands.Cog):
         elif allOptions["toggles"]["censor"] == False:
             allOptions["toggles"]["censor"] = True
             await ctx.send("Censorship turned on.")
-        await self.updateoptions()
+        await self.updateoptions(ctx.guild.id)
 
     @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(kick_members=True)
@@ -278,7 +283,7 @@ class Options(commands.Cog):
         elif allOptions["toggles"]["dad"] == False:
             allOptions["toggles"]["dad"] = True
             await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
-        await self.updateoptions()
+        await self.updateoptions(ctx.guild.id)
 
     @commands.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
     @commands.has_permissions(kick_members=True)
@@ -290,7 +295,7 @@ class Options(commands.Cog):
         elif allOptions["toggles"]["yoMama"] == False:
             allOptions["toggles"]["yoMama"] = True
             await ctx.send("Yo Mama jokes turned on.")
-        await self.updateoptions()
+        await self.updateoptions(ctx.guild.id)
 
     @commands.command(name="rudenesslevel", help="Change how rude the bot can be.")
     @commands.has_permissions(kick_members=True)
@@ -298,7 +303,7 @@ class Options(commands.Cog):
         global allOptions
         allOptions["numbers"]["rudeness"] = level
         await ctx.send("Rudeness level set to " + str(level))
-        await self.updateoptions()
+        await self.updateoptions(ctx.guild.id)
 
     @showoptions.error
     @resetoptions.error

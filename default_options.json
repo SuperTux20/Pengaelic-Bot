@@ -1,0 +1,10 @@
+{
+    "numbers": {
+        "rudeness": 0
+    },
+    "toggles": {
+        "censor": true,
+        "dad": false,
+        "yoMama": false
+    }
+}
