@@ -261,6 +261,7 @@ async def redoWelcome(ctx):
     await ctx.message.delete()
 
 @client.command(name="load", help="Load a cog")
+@commands.has_permissions(kick_members=True)
 async def loadcog(ctx, cog2load=None):
     activecogs = []
     inactivecogs = []
@@ -291,6 +292,7 @@ async def loadcog(ctx, cog2load=None):
             await ctx.send("Please specify a cog to load. Avaliable options are " + str(inactivecogs)[1:-1].replace("\'",""))
 
 @client.command(name="unload", help="Unload a cog")
+@commands.has_permissions(kick_members=True)
 async def unloadcog(ctx, cog2unload=None):
     activecogs = []
     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
