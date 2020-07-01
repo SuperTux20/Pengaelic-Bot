@@ -240,9 +240,15 @@ async def rudenesslevel(ctx, level: int=-1):
         if level < 0:
             await ctx.send("Wait- What would negative rudeness even mean?")
         else:
-            allOptions["numbers"]["rudeness"] = level
-            await ctx.send("Rudeness level set to " + str(level))
-            await updateoptions(ctx.guild.id, allOptions)
+            if level > 3:
+                await ctx.send("Sorry pal, 3 is the highest it can go.")
+                allOptions["numbers"]["rudeness"] = 3
+                await ctx.send("Rudeness level set to 3")
+                await updateoptions(ctx.guild.id, allOptions)
+            else:
+                allOptions["numbers"]["rudeness"] = level
+                await ctx.send("Rudeness level set to " + str(level))
+                await updateoptions(ctx.guild.id, allOptions)
 
 @showoptions.error
 @resetoptions.error
