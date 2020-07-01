@@ -10,7 +10,6 @@ from discord.utils import get
 from discord.ext import commands
 from dotenv import load_dotenv
 from asyncio import sleep
-from time import sleep as staticsleep
 
 print("Starting")
 
@@ -157,531 +156,177 @@ async def on_message(message):
     # this lets all the commands below work as normal
     await client.process_commands(message)
 
-@client.event
-async def on_reaction_add(reaction, user):
-    if reaction.emoji == "👄":
-        if user.id != 721092139953684580:
-            if Actions.isNomming == True:
-                Actions.isNomming = False
-                Actions.nomSuccess = False
+# @client.event
+# async def on_command_error(ctx, error):
+#     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+#         allOptions = load(optionsfile)
+#     if errorAlreadyHandled == False:
+#         if allOptions["numbers"]["rudeness"] < 3:
+#             if allOptions["numbers"]["rudeness"] == 0:
+#                 invalidmsg = "Sorry, this command is invalid."
+#             elif allOptions["numbers"]["rudeness"] == 1:
+#                 invalidmsg = "Invalid command/usage."
+#             elif allOptions["numbers"]["rudeness"] == 2:
+#                 invalidmsg = "You typed the command wrong!"
+#             await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
+#         else:
+#             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
-@client.event
-async def on_command_error(ctx, error):
+async def updateoptions(guild_id, options2dump):
+    with open(rf"../options/{guild_id}.json", "w+") as optionsfile:
+        dump(options2dump, optionsfile, sort_keys=True, indent=4)
+
+@client.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
+@commands.has_permissions(kick_members=True)
+async def showoptions(ctx):
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
+
+@client.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
+@commands.has_permissions(kick_members=True)
+async def resetoptions(ctx):
+    with open(r"default_options.json", "r") as defaultoptions:
+        await updateoptions(ctx.guild.id, load(defaultoptions))
+    await ctx.send("Options reset to defaults.")
+    await showoptions(ctx)
+
+@client.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
+@commands.has_permissions(kick_members=True)
+async def togglecensor(ctx):
     with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
-    if errorAlreadyHandled == False:
-        if allOptions["numbers"]["rudeness"] < 3:
-            if allOptions["numbers"]["rudeness"] == 0:
-                invalidmsg = "Sorry, this command is invalid."
-            elif allOptions["numbers"]["rudeness"] == 1:
-                invalidmsg = "Invalid command/usage."
-            elif allOptions["numbers"]["rudeness"] == 2:
-                invalidmsg = "You typed the command wrong!"
-            await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
-        else:
-            await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
+    if allOptions["toggles"]["censor"] == True:
+        allOptions["toggles"]["censor"] = False
+        await ctx.send("Censorship turned off.")
+    elif allOptions["toggles"]["censor"] == False:
+        allOptions["toggles"]["censor"] = True
+        await ctx.send("Censorship turned on.")
+    await updateoptions(ctx.guild.id, allOptions)
+
+@client.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+@commands.has_permissions(kick_members=True)
+async def toggledad(ctx):
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+    if allOptions["toggles"]["dad"] == True:
+        allOptions["toggles"]["dad"] = False
+        await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
+    elif allOptions["toggles"]["dad"] == False:
+        allOptions["toggles"]["dad"] = True
+        await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
+    await updateoptions(ctx.guild.id, allOptions)
+
+@client.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
+@commands.has_permissions(kick_members=True)
+async def togglemama(ctx):
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+    if allOptions["toggles"]["yoMama"] == True:
+        allOptions["toggles"]["yoMama"] = False
+        await ctx.send("Yo Mama jokes turned off.")
+    elif allOptions["toggles"]["yoMama"] == False:
+        allOptions["toggles"]["yoMama"] = True
+        await ctx.send("Yo Mama jokes turned on.")
+    await updateoptions(ctx.guild.id, allOptions)
+
+@client.command(name="rudenesslevel", help="Change how rude the bot can be.")
+@commands.has_permissions(kick_members=True)
+async def rudenesslevel(ctx, level: int):
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+    allOptions["numbers"]["rudeness"] = level
+    await ctx.send("Rudeness level set to " + str(level))
+    await updateoptions(ctx.guild.id, allOptions)
+
+@showoptions.error
+@resetoptions.error
+@togglecensor.error
+@toggledad.error
+@togglemama.error
+@rudenesslevel.error
+async def optionsError(ctx, error):
+    global errorAlreadyHandled
+    await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
+    errorAlreadyHandled = True
 
 @client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
 async def redoWelcome(ctx):
     await on_guild_join(ctx.guild)
     await ctx.message.delete()
 
-class Tools(commands.Cog):
-    purgeconfirm = False
-    @commands.command(name="os", help="Read out what OS I'm running on!", aliases=["getos"])
-    async def showos(self, ctx):
-        defaultmsg = f"I'm running on {platform.system()} "
-        if platform.release() == "10":
-            await ctx.send(defaultmsg + platform.version())
-        else:
-            await ctx.send(defaultmsg + platform.release() + " " + platform.version())
-
-    @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
-    async def ping(self, ctx):
-        await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
-
-    @commands.command(name="clear", help="Clear some messages away.")
-    @commands.has_permissions(manage_messages=True)
-    @commands.bot_has_permissions(manage_messages=True)
-    async def clear(self, ctx, msgcount: int=5, channel: discord.TextChannel=None):
-        channel = channel or ctx.channel
-        allmsgcount = 0
-        async for _ in channel.history(limit=None):
-            allmsgcount += 1
-        await channel.purge(limit=msgcount + 1)
-        if allmsgcount > msgcount:
-            report = await ctx.send(str(msgcount) + " messages deleted.")
-        else:
-            report = await ctx.send(str(allmsgcount - 1) + " messages deleted.")
-        await sleep(3)
-        await report.delete()
-
-    @clear.error
-    async def clearError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-        errorAlreadyHandled = True
-
-    @commands.command(name="purge", help="Purge a channel. :warning:WARNING:warning: This command clears an ENTIRE channel!")
-    @commands.has_permissions(manage_channels=True)
-    @commands.bot_has_permissions(manage_channels=True)
-    async def purge(self, ctx, msgcount: int=5):
-        if self.purgeconfirm == False:
-            await ctx.send("Are you **really** sure you want to wipe this channel? Type p!purge again to confirm.")
-            self.purgeconfirm = True
-        elif self.purgeconfirm == True:
-            await ctx.channel.clone()
-            await ctx.channel.delete()
-            self.purgeconfirm = False
-
-    @purge.error
-    async def purgeError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)")
-        errorAlreadyHandled = True
-
-class Options(commands.Cog):
-    async def updateoptions(self, guild, options2dump=None):
-        with open(rf"../options/{guild}.json", "w+") as optionsfile:
-            dump(options2dump, optionsfile, sort_keys=True, indent=4)
-
-    @commands.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
-    @commands.has_permissions(kick_members=True)
-    async def showoptions(self, ctx):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-            await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
-
-    @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
-    @commands.has_permissions(kick_members=True)
-    async def resetoptions(self, ctx):
-        allOptions = {"toggles": {"censor": True, "dad": False, "yoMama": True}, "numbers": {"rudeness": 0}}
-        await self.updateoptions(ctx.guild.id, allOptions)
-        await ctx.send("Options reset to defaults.")
-        await self.showoptions(ctx)
-
-    @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
-    @commands.has_permissions(kick_members=True)
-    async def togglecensor(self, ctx):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-            allOptions = load(optionsfile)
-        if allOptions["toggles"]["censor"] == True:
-            allOptions["toggles"]["censor"] = False
-            await ctx.send("Censorship turned off.")
-        elif allOptions["toggles"]["censor"] == False:
-            allOptions["toggles"]["censor"] = True
-            await ctx.send("Censorship turned on.")
-        await self.updateoptions(ctx.guild.id, allOptions)
-
-    @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-    @commands.has_permissions(kick_members=True)
-    async def toggledad(self, ctx):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-            allOptions = load(optionsfile)
-        if allOptions["toggles"]["dad"] == True:
-            allOptions["toggles"]["dad"] = False
-            await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
-        elif allOptions["toggles"]["dad"] == False:
-            allOptions["toggles"]["dad"] = True
-            await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
-        await self.updateoptions(ctx.guild.id, allOptions)
-
-    @commands.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
-    @commands.has_permissions(kick_members=True)
-    async def togglemama(self, ctx):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-            allOptions = load(optionsfile)
-        if allOptions["toggles"]["yoMama"] == True:
-            allOptions["toggles"]["yoMama"] = False
-            await ctx.send("Yo Mama jokes turned off.")
-        elif allOptions["toggles"]["yoMama"] == False:
-            allOptions["toggles"]["yoMama"] = True
-            await ctx.send("Yo Mama jokes turned on.")
-        await self.updateoptions(ctx.guild.id, allOptions)
-
-    @commands.command(name="rudenesslevel", help="Change how rude the bot can be.")
-    @commands.has_permissions(kick_members=True)
-    async def rudenesslevel(self, ctx, level: int):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-            allOptions = load(optionsfile)
-        allOptions["numbers"]["rudeness"] = level
-        await ctx.send("Rudeness level set to " + str(level))
-        await self.updateoptions(ctx.guild.id, allOptions)
-
-    # @showoptions.error
-    # @resetoptions.error
-    # @togglecensor.error
-    # @toggledad.error
-    # @togglemama.error
-    # @rudenesslevel.error
-    # async def optionsError(self, ctx, error):
-    #     global errorAlreadyHandled
-    #     await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
-    #     errorAlreadyHandled = True
-
-class Messages(commands.Cog):
-    @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
-    async def say_hi_back(self, ctx, delete=None):
-        await ctx.send(choice(["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]))
-        if delete:
-            await ctx.message.delete()
-
-    @commands.command(name="bye", help="You say bye, I bid you farewell.", aliases=["seeya", "cya", "goodbye"])
-    async def say_bye_back(self, ctx, delete=None):
-        await ctx.send(choice(["See you next time!", "Bye!", "So long, Gay Bowser!"]))
-        if delete:
-            await ctx.message.delete()
-
-    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"])
-    async def say_back(self, ctx, *, arg):
-        await ctx.send(arg)
-        await ctx.message.delete()
-
-class Converters(commands.Cog):
-    @commands.command(name="novowels", help="Remove all vowels from whatever text you put in.", aliases=["vowelremover", "removevowels"])
-    async def vowelRemover(self, ctx, *, arg):
-        vowels = "aeiouAEIOU"
-        outputString = arg
-        for vowel in range(len(vowels)):
-                outputString = outputString.replace(vowels[vowel],"")
-        await ctx.send(outputString.replace("  ", " ")) # fix doubled spaces
-
-    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["furry"])
-    async def owoConverter(self, ctx, *, arg):
-        await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
-        await ctx.message.delete()
-
-    @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg"])
-    async def embiggener(self, ctx, *, arg):
-        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!"
-        textlist = []
-        finaltext = ""
-        for char in range(len(arg)):
-            for letter in range(len(alphabet)):
-                if alphabet[letter] == arg[char] or alphabet[letter].lower() == arg[char]:
-                    if arg[char] == " ":
-                        textlist.append("\n")
-                    elif arg[char] == "!":
-                        textlist.append(":exclamation: ")
-                    elif arg[char] == "?":
-                        textlist.append(":question: ")
-                    else:
-                        textlist.append(":regional_indicator_" + arg[char].lower() + ": ")
-        for beeg in range(len(textlist)):
-            finaltext = finaltext + textlist[beeg]
-        await ctx.send(finaltext)
-
-class Games(commands.Cog):
-    @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
-    async def _8ball(self, ctx, *, question=None):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-                allOptions = load(optionsfile)
-        with open(rf"8ball/level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
-            ballResponses = responsefile.read().split(", ")
-        if question:
-            await ctx.send(":8ball:" + choice(ballResponses))
-        else:
-            await ctx.send(":8ball:You didn't ask the 8-ball anything.")
-
-    @commands.command(name="roll", help="Roll some dice!", aliases=["dice", "rolldice", "diceroll"])
-    async def rollem(self, ctx, dice: int=1, sides: int=6):
-        if dice == 0:
-            await ctx.send(":game_die:You didn't roll any dice.")
-        elif sides == 0:
-            await ctx.send(":game_die:You rolled thin air.")
-        elif dice < 0:
-            await ctx.send(":game_die:You rolled NaN dice and got [REDACTED]")
-        elif sides < 0:
-            if dice == 1:
-                await ctx.send(":game_die:You rolled a [ERROR]-sided die and got `DivideByZeroError`")
-            if dice > 1:
-                await ctx.sendf(f":game_die:You rolled {dice} `err`-sided dice and got [NULL]")
-        else:
-            sideList = []
-            rollResults = []
-            for side in range(sides):
-                sideList.append(side + 1)
-            for _ in range(dice):
-                rollResults.append(sideList[randint(0, sideList[-1])-1])
-            total = sum(rollResults)
-            if dice > 1:
-                response = f":game_die:You rolled {str(rollResults[:-1])[1:-1]}, and {rollResults[-1]}, totalling {total}"
+@client.command(name="load", help="Load a cog")
+async def loadcog(ctx, cog2load=None):
+    activecogs = []
+    inactivecogs = []
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+        cogs = list(allOptions["cogs"].keys())
+        enabled = list(allOptions["cogs"].values())
+        for cog in range(len(cogs)):
+            if enabled[cog] == True:
+                activecogs.append(cogs[cog])
             else:
-                response = f":game_die:You rolled {total}"
-            await ctx.send(response)
+                inactivecogs.append(cogs[cog])
 
-    @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip", "coins", "flipcoin", "flipcoins"])
-    async def flipem(self, ctx, coins: int=1):
-        results = []
-        if coins == 1:
-            await ctx.send(f":moneybag:You flipped a {choice(['head','tail'])}")
-        elif coins == 0:
-            await ctx.send(":moneybag:You flicked your thumb in the air.")
-        elif coins == -1:
-            await ctx.send(":moneybag:You flipped a [REDACTED]")
-        elif coins < -1:
-            await ctx.semd(":moneybag:You flipped NaN heads and [ERROR] tails.")
-        else:
-            if coins > 1000000:
-                await ctx.send(f":moneybag:{coins} coins? That's just silly.")
-            else:
-                for _ in range(int(str(coins))):
-                    result = randint(0,2)
-                    if result == 2:
-                        result = randint(0,2)
-                        if result == 2:
-                            result = randint(0,2)
-                            if result == 2:
-                                result = randint(0,2)
-                                if result == 2:
-                                    result = randint(0,2)
-                                    if result == 2:
-                                        result = randint(0,2)
-                    results.append(result)
-                if results.count(2) > 0:
-                    if results.count(2) == 1:
-                        await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails, and a coin even landed on its edge.")
-                    else:
-                        await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails, and {results.count(2)} coins landed on their edges.")
-                else:
-                    await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails.")
-
-    @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
-    async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
-        suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-        allCards = []
-        faces = []
-        nums = []
-        drawn = []
-        if replaceCards == "no":
-            for suit in range(int(len(suits)/1)):
-                for value in range(len(values)):
-                    if values[value] == 10:
-                        length = 2
-                    elif values[value] == 1:
-                        length = 3
-                    elif values[value] == 11 or values[value] == 13:
-                        length = 4
-                    elif values[value] == 12:
-                        length = 5
-                    else:
-                        length = 1
-                    allCards.append(str(values[value]) + (" " * (6 - length) + "of ") + suits[suit])
-            if cards > 52:
-                await ctx.send(":black_joker:You can't draw more than the entire deck!")
-                return
-            elif cards == 52:
-                await ctx.send(":black_joker:You picked up the entire deck. What was the point of that?")
-                return
-            else:
-                for _ in range(cards):
-                    card = choice(allCards)
-                    if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
-                        faces.append(card)
-                    else:
-                        nums.append(card)
-                    allCards.remove(card)
-                faces = sorted(faces, reverse=True)
-                nums = sorted(nums, reverse=True)
-                drawn = faces + nums
-        else:
-            for _ in range(cards):
-                chosenValue = str(choice(values))
-                card = str(chosenValue + (" " * (len(chosenValue) - 6) + "of ") + choice(suits))
-                if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
-                    faces.append(card)
-                else:
-                    nums.append(card)
-            faces = sorted(faces, reverse=True)
-            nums = sorted(nums, reverse=True)
-            drawn = faces + nums
-        for card in range(len(drawn)):
-            drawn[card] = drawn[card].replace("11","Jack").replace("12","Queen").replace("13","King").replace("1 ", "Ace ")
-        if cards == 1:
-            while "  " in drawn[0]:
-                drawn[0] = drawn[0].replace("  "," ")
-            await ctx.send(":black_joker:You drew " + drawn[0])
-        else:
-            await ctx.send(":black_joker:You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
-
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap" "bubbles"])
-    async def summonsheet(self, ctx, width: int=5, height: int=5):
-        if width == 1 and height == 1:
-            await ctx.send(r"""```
- ____   ___  ____
-|  _ \ / _ \|  _ \
-| |_) | | | | |_) |
-|  __/| |_| |  __/
-|_|    \___/|_|
-```""")
-        else:
-            sheet = ""
-            for _ in range(height):
-                row = ""
-                for _ in range(width):
-                    if width < 5 and height < 5:
-                        if width == 2 and height == 2:
-                            row = row + "||:regional_indicator_p: :regional_indicator_o: :regional_indicator_p:||"
-                        else:
-                            row = row + "||POP||"
-                    else:
-                        row = row + "||pop||"
-                sheet = sheet + row + "\n"
-            await ctx.send(sheet)
-
-class Actions(commands.Cog):
-    isNomming = True
-    nomSuccess = False
-    @commands.command(name="slap", help="Slap someone...?")
-    async def slap(self, ctx, slap: discord.User=""):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
-                allOptions = load(optionsfile)
-        if allOptions["numbers"]["rudeness"] > 0:
-            slapper = str(ctx.author.mention)
+    if len(inactivecogs) == 0:
+        await ctx.send("All cogs are already loaded, you can't load anymore.")
+    else:
+        if cog2load:
             try:
-                slapped = "<@" + str(slap.id) + ">"
+                with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+                    allOptions = load(optionsfile)
+                    _ = allOptions["cogs"][cog2load]
+                    allOptions["cogs"][cog2load] = True
+                    await updateoptions(ctx.guild.id, allOptions)
+                await ctx.send(f"Cog '{cog2load}' loaded. Type `p!help {cog2load}` to see how it works.")
             except:
-                await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
-                return
-            responses = [slapped + " just got slapped by " + slapper, slapper + " slapped " + slapped]
-            selfresponses = ["Hey, you can't slap yourself!", "Please don't", "y tho"]
-            botresponses = [";-;", "ow! ;-;", "ow!"]
-            if slap == ctx.author:
-                await ctx.send(choice(selfresponses) + " :(")
-            else:
-                await ctx.send(choice(responses))
-                if str(slap.id) == "721092139953684580":
-                    await ctx.send(choice(botresponses))
+                await ctx.send(f"Invalid cog '{cog2load}'")
         else:
-            await ctx.send("Slapping is disabled: Rudeness level is 0")
+            await ctx.send("Please specify a cog to load. Avaliable options are " + str(inactivecogs)[1:-1].replace("\'",""))
 
-    @commands.command(name="hug", help="Give somebody a hug!")
-    async def hug(self, ctx, hug: discord.User=""):
-        hugger = str(ctx.author.mention)
-        try:
-            hugged = "<@" + str(hug.id) + ">"
-        except:
-            await ctx.send("You can't just hug thin air! (Unless you're hugging a ghost?)")
-            return
-        responses = [hugged + " just got hugged by " + hugger, hugger + " hugged " + hugged, hugger + " gave a hug to " + hugged]
-        selfresponses = ["You wrap your arms tightly around yourself.", "Reaching through the 4th dimension, you manage to give yourself a hug.", "You hug yourself, somehow."]
-        botresponses = ["aww!", "thanks <:happy:708534449310138379>", "*gasp*"]
-        if hug == ctx.author:
-            await ctx.send(choice(selfresponses))
-        else:
-            await ctx.send(choice(responses))
-            if str(hug.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
+@client.command(name="unload", help="Unload a cog")
+async def unloadcog(ctx, cog2unload=None):
+    activecogs = []
+    with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+        cogs = list(allOptions["cogs"].keys())
+        enabled = list(allOptions["cogs"].values())
+        for cog in range(len(cogs)):
+            if enabled[cog] == True:
+                activecogs.append(cogs[cog])
 
-    @commands.command(name="boop", help="Boop someone's nose :3")
-    async def boop(self, ctx, boop: discord.User=""):
-        booper = str(ctx.author.mention)
-        try:
-            booped = "<@" + str(boop.id) + ">"
-        except:
-            await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
-            return
-        responses = [booped + " just got booped by " + booper, booper + " booped " + booped, booper + " booped " + booped + "'s nose!", booper + " booped " + booped + " on the nose!"]
-        selfresponses = ["You boop your own nose, I guess...? ", "You miss your nose and poke yourself in the eye. ", "Somehow, your hand clips through your nose and appears on the other side of your head. "]
-        botresponses = ["<:happy:708534449310138379>", "<:uwu:708534448949559328>", "thaaanks :3"]
-        if booped == "":
-            await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
-        elif boop == ctx.author:
-            oops = choice(selfresponses)
-            if oops == selfresponses[1]:
-                await ctx.send(oops + choice(["Ouch", "Oops", "Whoops"]) + "!")
-            else:
-                await ctx.send(oops)
+    if len(activecogs) == 0:
+        await ctx.send("No cogs are loaded, you can't unload any more.")
+    else:
+        if cog2unload:
+            try:
+                with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+                    allOptions = load(optionsfile)
+                    _ = allOptions["cogs"][cog2unload]
+                    allOptions["cogs"][cog2unload] = False
+                    await updateoptions(ctx.guild.id, allOptions)
+                await ctx.send(f"Cog '{cog2unload}' unloaded.")
+            except:
+                await ctx.send(f"Invalid cog '{cog2unload}'")
         else:
-            await ctx.send(choice(responses))
-            if str(boop.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
-
-    @commands.command(name="pat", help="Pat someone on the head!")
-    async def pat(self, ctx, pat: discord.User="", *, bodypart="head"):
-        patter = str(ctx.author.mention)
-        try:
-            patted = "<@" + str(pat.id) + ">"
-        except:
-            await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
-            return
-        responses = [patted + " just got patted on the " + bodypart + " by " + patter, patter + " patted " + patted + " on the " + bodypart + "."]
-        botresponses = ["<:happy:708534449310138379>", "hehe", "aw, you're cute :3"]
-        if pat == ctx.author:
-            await ctx.send("You pat yourself on the " + bodypart + ".")
-        else:
-            await ctx.send(choice(responses))
-            if str(pat.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
-
-    @commands.command(name="nom", help="Give someone a good nom >:3")
-    async def nom(self, ctx, nom: discord.User=""):
-        nommer = str(ctx.author.mention)
-        try:
-            nommed = "<@" + str(nom.id) + ">"
-        except:
-            await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
-            return
-        responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed]
-        selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your own finger. Why...?", "Uh..."]
-        botresponses = ["mmmph!", "mmmmmmmmph!", "hmmmnnnnn!!"]
-        if nom == ctx.author:
-            await ctx.send(choice(selfresponses))
-        else:
-            if str(nom.id) == "721092139953684580":
-                await ctx.send(choice(responses))
-                await ctx.send(choice(botresponses))
-            else:
-                Actions.isNomming = True
-                Actions.nomSuccess = False
-                stupidchannel = await ctx.guild.create_text_channel("nom-command-stupidity")
-                await stupidchannel.set_permissions(read_messages=False)
-                NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
-                await NoNomSense.add_reaction("👄")
-                for _ in range(5):
-                    staticsleep(1)
-                    await stupidchannel.send("The command doesn't work without this message for some stupid reason.")
-                    if Actions.isNomming == False:
-                        break
-                if Actions.isNomming == True:
-                    Actions.isNomming = False
-                    Actions.nomSuccess = True
-                await NoNomSense.delete()
-                if Actions.nomSuccess == True:
-                    await ctx.send(choice(responses))
-                else:
-                    await ctx.send(nommed + " got away!")
-                await stupidchannel.delete()
-
-    @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
-    async def tickle(self, ctx, tickle: discord.User=""):
-        tickler = str(ctx.author.mention)
-        try:
-            tickled = "<@" + str(tickle.id) + ">"
-        except:
-            await ctx.send("You can't just tickle thin air! (Unless you're tickling a ghost?)")
-            return
-        responses = [tickled + " just got tickled by " + tickler, tickler + " tickled " + tickled]
-        selfresponses = ["You try to tickle yourself, but your body reflexively flinches away.", "You tickle yourself, and you burst out laughing the moment your finger touches that sweet spot of ticklishness..", "You try to tickle yourself, but nothing happens."]
-        botresponses = ["hahahahahahahaha", "eeeeeehahahahaha", "aaaaaahahahahahaahaSTAHPhahahaha"]
-        if tickle == ctx.author:
-            await ctx.send(choice(selfresponses))
-        else:
-            await ctx.send(choice(responses))
-            if str(tickle.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
+            await ctx.send("Please specify a cog to unload. Avaliable options are " + str(activecogs).lower()[1:-1].replace("\'",""))
 
 @client.command(name="help", help="Show this message")
 async def help(ctx, selectedCategory=None):
     cyan = 32639
     if not selectedCategory:
         rootHelpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
-        rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
-        rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
-        rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
-        rootHelpMenu.add_field(name="Messages", value="Make the bot say things!")
+        if "Actions" in client.cogs.keys():
+            rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
+        if "Converters" in client.cogs.keys():
+            rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
+        if "Games" in client.cogs.keys():
+            rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
+        if "Messages" in client.cogs.keys():
+            rootHelpMenu.add_field(name="Messages", value="Make the bot say things!")
         rootHelpMenu.add_field(name="Options", value="Settings for the bot. (WIP but functional)")
-        rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
+        if "Tools" in client.cogs.keys():
+            rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
         rootHelpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
         rootHelpMenu.set_footer(text="Command prefix: `p!`")
         await ctx.send(content=None, embed=rootHelpMenu)
@@ -734,13 +379,10 @@ async def help(ctx, selectedCategory=None):
         helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option")
         await ctx.send(embed=helpMenu)
 
-client.add_cog(Tools(client))
-client.add_cog(Options(client))
-client.add_cog(Messages(client))
-client.add_cog(Converters(client))
-client.add_cog(Games(client))
-client.add_cog(Actions(client))
+for cog in os.listdir("./cogs"):
+    if cog.endswith(".py"):
+        client.load_extension(f"cogs.{cog[:-3]}")
 
-# this is in a loop because it auto-reconnects if internet is lost
+# this loop auto-reconnects if internet is lost
 while True:
     client.run(TOKEN)

@@ -1,4 +1,11 @@
 {
+    "cogs": {
+        "actions": true,
+        "converters": true,
+        "games": true,
+        "messages": true,
+        "tools": true
+    },
     "numbers": {
         "rudeness": 0
     },
