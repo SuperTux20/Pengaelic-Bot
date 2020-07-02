@@ -388,80 +388,76 @@ async def unloadcog(ctx, cog2unload=None):
 @client.command(name="help", help="Show this message")
 async def help(ctx, selectedCategory=None):
     cyan = 32639
-    if not selectedCategory:
-        rootHelpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
+    helpMenu = discord.Embed(title="Pengaelic Bot", description="Type `p!help <category name>` for a list of commands.", color=cyan)
+    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+        allOptions = load(optionsfile)
+        if allOptions["toggles"]["cogs"]["actions"] == True:
+            helpMenu.add_field(name="Actions", value="Interact with other server members!")
+        if allOptions["toggles"]["cogs"]["converters"] == True:
+            helpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
+        if allOptions["toggles"]["cogs"]["games"] == True:
+            helpMenu.add_field(name="Games", value="All sorts of fun stuff!")
+        if allOptions["toggles"]["cogs"]["messages"] == True:
+            helpMenu.add_field(name="Messages", value="M a k e   m e   s a y   t h i n g s")
+        helpMenu.add_field(name="Options", value="My settings.")
+        if allOptions["toggles"]["cogs"]["tools"] == True:
+            helpMenu.add_field(name="Tools", value="Various tools and info.")
+        helpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
+    if selectedCategory == "Actions" or selectedCategory == "actions":
+        helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
+        helpMenu.add_field(name="boop <@mention>", value="Boop someone's nose :3")
+        helpMenu.add_field(name="hug <@mention>", value="Give somebody a hug! :D")
+        helpMenu.add_field(name="kiss <@mention>", value="Gib someone a lil kiss ~3~")
+        helpMenu.add_field(name="nom <@mention>", value="Try to eat someone, but they can get away if they're quick enough :eyes:")
+        helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
+        helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
+        helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
+    elif selectedCategory == "Converters" or selectedCategory == "converters":
+        helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
+        helpMenu.add_field(name="novowels\n<input string>", value="Remove all vowels from whatever text you put in.")
+        helpMenu.add_field(name="(owo/uwu/furry)\n<input string>", value="Convert whatever text into owo-speak... oh god why did i make this")
+        helpMenu.add_field(name="(beegtext/bigtext/beeg/big)\n<input string>", value="Turn text into\n:regional_indicator_b: :regional_indicator_e: :regional_indicator_e: :regional_indicator_g:\n:regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t: :exclamation:")
+    elif selectedCategory == "Games" or selectedCategory == "games":
+        helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
+        helpMenu.add_field(name="(8ball/magic8ball)\n[question]", value="Ask the ball a yes-or-no question, and it shall respond...")
+        helpMenu.add_field(name="(pop/bubblewrap)\n[width of sheet (5)]\n[height of sheet (5)]", value="Pop some bubble wrap!")
+        helpMenu.add_field(name="(draw/card)\n[number of cards (1)]\n[replace cards? yes/no (no)]", value="Draw some cards!")
+        helpMenu.add_field(name="(flip/coin)\n[number of coins (1)]", value="Flip some coins!")
+        helpMenu.add_field(name="(roll/dice)\n[number of dice (1)]\n[number of sides (6)]", value="Roll some dice!")
+    elif selectedCategory == "Messages" or selectedCategory == "messages":
+        helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
+        helpMenu.add_field(name="(hi/hello/sup)\n[delete your command message?]", value="You say hi, I greet you back!")
+        helpMenu.add_field(name="(bye/cya/goodbye)\n[delete your command message?]", value="You say bye, I bid you farewell.")
+        helpMenu.add_field(name="(say/repeat/parrot)\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
+    elif selectedCategory == "Options" or selectedCategory == "options":
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-            if allOptions["toggles"]["cogs"]["actions"] == True:
-                rootHelpMenu.add_field(name="Actions", value="Interact with other server members!")
-            if allOptions["toggles"]["cogs"]["converters"] == True:
-                rootHelpMenu.add_field(name="Converters", value="Run some text through a converter to make it look funny!")
-            if allOptions["toggles"]["cogs"]["games"] == True:
-                rootHelpMenu.add_field(name="Games", value="All sorts of fun stuff!")
-            if allOptions["toggles"]["cogs"]["messages"] == True:
-                rootHelpMenu.add_field(name="Messages", value="M a k e   m e   s a y   t h i n g s")
-            rootHelpMenu.add_field(name="Options", value="My settings.")
-            if allOptions["toggles"]["cogs"]["tools"] == True:
-                rootHelpMenu.add_field(name="Tools", value="Various tools and info.")
-            rootHelpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
-            rootHelpMenu.set_footer(text="Command prefix: `p!`")
-            await ctx.send(content=None, embed=rootHelpMenu)
-    else:
-        if selectedCategory == "Actions" or selectedCategory == "actions":
-            helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
-            helpMenu.add_field(name="boop <@mention>", value="Boop someone's nose :3")
-            helpMenu.add_field(name="hug <@mention>", value="Give somebody a hug! :D")
-            helpMenu.add_field(name="kiss <@mention>", value="Gib someone a lil kiss ~3~")
-            helpMenu.add_field(name="nom <@mention>", value="Try to eat someone, but they can get away if they're quick enough :eyes:")
-            helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
-            helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
-            helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
-        if selectedCategory == "Converters" or selectedCategory == "converters":
-            helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
-            helpMenu.add_field(name="novowels\n<input string>", value="Remove all vowels from whatever text you put in.")
-            helpMenu.add_field(name="(owo/uwu/furry)\n<input string>", value="Convert whatever text into owo-speak... oh god why did i make this")
-            helpMenu.add_field(name="(beegtext/bigtext/beeg/big)\n<input string>", value="Turn text into\n:regional_indicator_b: :regional_indicator_e: :regional_indicator_e: :regional_indicator_g:\n:regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t: :exclamation:")
-        if selectedCategory == "Games" or selectedCategory == "games":
-            helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
-            helpMenu.add_field(name="(8ball/magic8ball)\n[question]", value="Ask the ball a yes-or-no question, and it shall respond...")
-            helpMenu.add_field(name="(pop/bubblewrap)\n[width of sheet (5)]\n[height of sheet (5)]", value="Pop some bubble wrap!")
-            helpMenu.add_field(name="(draw/card)\n[number of cards (1)]\n[replace cards? yes/no (no)]", value="Draw some cards!")
-            helpMenu.add_field(name="(flip/coin)\n[number of coins (1)]", value="Flip some coins!")
-            helpMenu.add_field(name="(roll/dice)\n[number of dice (1)]\n[number of sides (6)]", value="Roll some dice!")
-        if selectedCategory == "Messages" or selectedCategory == "messages":
-            helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
-            helpMenu.add_field(name="(hi/hello/sup)\n[delete your command message?]", value="You say hi, I greet you back!")
-            helpMenu.add_field(name="(bye/cya/goodbye)\n[delete your command message?]", value="You say bye, I bid you farewell.")
-            helpMenu.add_field(name="(say/repeat/parrot)\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
-        if selectedCategory == "Options" or selectedCategory == "options":
-            with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-                allOptions = load(optionsfile)
-                helpMenu = discord.Embed(title="Options", description="Settings for the bot. Different settings need different permissions.", color=cyan)
-                helpMenu.add_field(name="togglecensor", value=f"Toggle the automatic deletion of messages containing specific keywords.\n(Current value: `{allOptions['toggles']['censor']}`)")
-                helpMenu.add_field(name="toggledad", value=f"Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".\n(Current value: `{allOptions['toggles']['dad']}`)")
-                helpMenu.add_field(name="togglemama", value=f"Toggle the automatic Yo Mama jokes.\n(Current value: `{allOptions['toggles']['yoMama']}`)")
-                helpMenu.add_field(name="(rudenesslevel/rudeness)\n<value from 0 to 3>", value=f"Set how rude the bot can be, and open up more commands.\n(Current value: `{allOptions['numbers']['rudeness']}`)")
-                helpMenu.add_field(name="load [module name]", value="Load a module. Leave blank to see unloaded modules.")
-                helpMenu.add_field(name="unload [module name]", value="Unload a module. Leave blank to see loaded modules.")
-                helpMenu.add_field(name="(getcensor/getfilter)", value="Retrieve the list of censored words.")
-                helpMenu.add_field(name="(wipecensor/wipefilter)", value="Clear the list of censored words.")
-                helpMenu.add_field(name="(addcensor/addfilter) <word to add>", value="Add a word to the censor list.")
-                helpMenu.add_field(name="(delcensor/delfilter) <word to delete>", value="Remove a word from the censor list.")
-                helpMenu.add_field(name="(resetdefaults/defaultoptions/reset)", value="Reset all options to their defaults.")
-        if selectedCategory == "Tools" or selectedCategory == "tools":
-            helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
-            helpMenu.add_field(name="(os/getos)", value="Read out what OS I'm running on!")
-            helpMenu.add_field(name="(ping/ng)", value="How slow am I to respond?")
-            helpMenu.add_field(name="clear [number of messages]", value="Clear away some messages. (Requires Manage Messages permission)")
-            helpMenu.add_field(name="purge", value="Clear an entire channel. (Requires Manage Channels permission)")
-            helpMenu.add_field(name="help\n[category]", value="Show the message from earlier!")
-        if selectedCategory == "Non-commands" or selectedCategory == "Non-Commands" or selectedCategory == "non-commands" or selectedCategory == "noncommands" or selectedCategory == "Noncommands" or selectedCategory == "NonCommands":
-            helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
-            helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
-            helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
-            helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
-        helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option, (command/command/command) = all keywords to run the command")
-        await ctx.send(embed=helpMenu)
+            helpMenu = discord.Embed(title="Options", description="Settings for the bot. Different settings need different permissions.", color=cyan)
+            helpMenu.add_field(name="togglecensor", value=f"Toggle the automatic deletion of messages containing specific keywords.\n(Current value: `{allOptions['toggles']['censor']}`)")
+            helpMenu.add_field(name="toggledad", value=f"Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".\n(Current value: `{allOptions['toggles']['dad']}`)")
+            helpMenu.add_field(name="togglemama", value=f"Toggle the automatic Yo Mama jokes.\n(Current value: `{allOptions['toggles']['yoMama']}`)")
+            helpMenu.add_field(name="(rudenesslevel/rudeness)\n<value from 0 to 3>", value=f"Set how rude the bot can be, and open up more commands.\n(Current value: `{allOptions['numbers']['rudeness']}`)")
+            helpMenu.add_field(name="load [module name]", value="Load a module. Leave blank to see unloaded modules.")
+            helpMenu.add_field(name="unload [module name]", value="Unload a module. Leave blank to see loaded modules.")
+            helpMenu.add_field(name="(getcensor/getfilter)", value="Retrieve the list of censored words.")
+            helpMenu.add_field(name="(wipecensor/wipefilter)", value="Clear the list of censored words.")
+            helpMenu.add_field(name="(addcensor/addfilter) <word to add>", value="Add a word to the censor list.")
+            helpMenu.add_field(name="(delcensor/delfilter) <word to delete>", value="Remove a word from the censor list.")
+            helpMenu.add_field(name="(resetdefaults/defaultoptions/reset)", value="Reset all options to their defaults.")
+    elif selectedCategory == "Tools" or selectedCategory == "tools":
+        helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
+        helpMenu.add_field(name="(os/getos)", value="Read out what OS I'm running on!")
+        helpMenu.add_field(name="(ping/ng)", value="How slow am I to respond?")
+        helpMenu.add_field(name="clear [number of messages]", value="Clear away some messages. (Requires Manage Messages permission)")
+        helpMenu.add_field(name="purge", value="Clear an entire channel. (Requires Manage Channels permission)")
+        helpMenu.add_field(name="help\n[category]", value="Show the message from earlier!")
+    elif selectedCategory == "Non-commands" or selectedCategory == "Non-Commands" or selectedCategory == "non-commands" or selectedCategory == "noncommands" or selectedCategory == "Noncommands" or selectedCategory == "NonCommands":
+        helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
+        helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
+        helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
+        helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
+    helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option, (command/command/command) = all keywords to run the command")
+    await ctx.send(embed=helpMenu)
 
 @resetoptions.error
 @togglecensor.error
