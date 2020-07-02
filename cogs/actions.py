@@ -110,7 +110,7 @@ class Actions(commands.Cog):
             return
         responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed]
         selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your own finger. Why...?", "Uh..."]
-        botresponses = ["mmmph!", "mmmmmmmmph!", "hmmmnnnnn!!"]
+        botresponses = ["mmmph!", "nmmmmmmmph!", "hmmmnnnnn!!"]
         if nom == ctx.author:
             await ctx.send(choice(selfresponses))
         else:
@@ -155,6 +155,24 @@ class Actions(commands.Cog):
         else:
             await ctx.send(choice(responses))
             if str(tickle.id) == "721092139953684580":
+                await ctx.send(choice(botresponses))
+
+    @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
+    async def kiss(self, ctx, kiss: discord.User=""):
+        kisser = str(ctx.author.mention)
+        try:
+            kissed = "<@" + str(kiss.id) + ">"
+        except:
+            await ctx.send("You can't just hug thin air! (Unless you're kissing a ghost?)")
+            return
+        responses = [kissed + " just got kissed by " + kisser, kisser + " kissed " + kissed, kisser + " gave a kiss to " + kissed, kisser + " gave " + kissed + " a kiss"]
+        selfresponses = ["You... Huh... How does this work...?", "You kiss your reflection in the mirror.", "You kiss the back of your own hand."]
+        botresponses = ["aww!", "<:happy:708534449310138379>", "*gasp*"]
+        if kiss == ctx.author:
+            await ctx.send(choice(selfresponses))
+        else:
+            await ctx.send(choice(responses))
+            if str(kiss.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
 def setup(client):
