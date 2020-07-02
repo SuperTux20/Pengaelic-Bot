@@ -78,10 +78,6 @@ async def on_message(message):
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
 
-    if message.content == "I want to see the list of all the servers the bot is in.":
-        thelistofalltheserversthebotisin = await client.fetch_guilds(limit=150).flatten()
-        await message.channel.send(thelistofalltheserversthebotisin)
-
     # this section is for Dad Bot-like responses
     if allOptions["toggles"]["dad"] == True:
         dadprefixes = ["I'm ", "Im ", "I am "]
