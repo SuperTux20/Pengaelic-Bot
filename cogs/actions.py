@@ -25,7 +25,7 @@ class Actions(commands.Cog):
         if allOptions["numbers"]["rudeness"] > 0:
             slapper = str(ctx.author.mention)
             try:
-                slapped = "<@" + str(slap.id) + ">"
+                slapped = f"<@{slap.id}>"
             except:
                 await ctx.send("You can't just slap thin air! (Unless you're slapping a ghost?)")
                 return
@@ -45,7 +45,7 @@ class Actions(commands.Cog):
     async def hug(self, ctx, hug: discord.User=""):
         hugger = str(ctx.author.mention)
         try:
-            hugged = "<@" + str(hug.id) + ">"
+            hugged = f"<@{hug.id}>"
         except:
             await ctx.send("You can't just hug thin air! (Unless you're hugging a ghost?)")
             return
@@ -63,7 +63,7 @@ class Actions(commands.Cog):
     async def boop(self, ctx, boop: discord.User=""):
         booper = str(ctx.author.mention)
         try:
-            booped = "<@" + str(boop.id) + ">"
+            booped = f"<@{boop.id}>"
         except:
             await ctx.send("You can't just boop thin air! (Unless you're booping a ghost?)")
             return
@@ -87,7 +87,7 @@ class Actions(commands.Cog):
     async def pat(self, ctx, pat: discord.User="", *, bodypart="head"):
         patter = str(ctx.author.mention)
         try:
-            patted = "<@" + str(pat.id) + ">"
+            patted = f"<@{pat.id}>"
         except:
             await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
             return
@@ -104,7 +104,7 @@ class Actions(commands.Cog):
     async def nom(self, ctx, nom: discord.User=""):
         nommer = str(ctx.author.mention)
         try:
-            nommed = "<@" + str(nom.id) + ">"
+            nommed = f"<@{nom.id}>"
         except:
             await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
             return
@@ -143,7 +143,7 @@ class Actions(commands.Cog):
     async def tickle(self, ctx, tickle: discord.User=""):
         tickler = str(ctx.author.mention)
         try:
-            tickled = "<@" + str(tickle.id) + ">"
+            tickled = f"<@{tickle.id}>"
         except:
             await ctx.send("You can't just tickle thin air! (Unless you're tickling a ghost?)")
             return
@@ -161,7 +161,7 @@ class Actions(commands.Cog):
     async def kiss(self, ctx, kiss: discord.User=""):
         kisser = str(ctx.author.mention)
         try:
-            kissed = "<@" + str(kiss.id) + ">"
+            kissed = f"<@{kiss.id}>"
         except:
             await ctx.send("You can't just hug thin air! (Unless you're kissing a ghost?)")
             return
