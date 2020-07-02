@@ -14,6 +14,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 errorAlreadyHandled = False
 # even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
 client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot commands", help_command=None)
+wipecensorconfirm = False
 
 @client.event
 async def on_ready():
@@ -184,19 +185,13 @@ async def updateoptions(guild_id, options2dump):
     with open(rf"../pengaelicbot.data/configs/{guild_id}.json", "w+") as optionsfile:
         dump(options2dump, optionsfile, sort_keys=True, indent=4)
 
-@client.command(name="options", help="Show a list of all options.", aliases=["showoptions", "prefs", "config", "cfg"])
-@commands.has_permissions(kick_members=True)
-async def showoptions(ctx):
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        await ctx.send("```" + f"{str(optionsfile.read())}" + "```")
-
 @client.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
 @commands.has_permissions(kick_members=True)
 async def resetoptions(ctx):
     with open(r"default_options.json", "r") as defaultoptions:
         await updateoptions(ctx.guild.id, load(defaultoptions))
-    await ctx.send("Options reset to defaults.")
-    await showoptions(ctx)
+        await ctx.send("Options reset to defaults.")
+        await ctx.send(defaultoptions.read())
 
 @client.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
 @commands.has_permissions(kick_members=True)
@@ -238,7 +233,7 @@ async def togglemama(ctx):
     await updateoptions(ctx.guild.id, allOptions)
 
 @client.command(name="rudenesslevel", help="Change how rude the bot can be.", aliases=["rudeness"])
-@commands.has_permissions(kick_members=True)
+@commands.has_permissions(manage_messages=True)
 async def rudenesslevel(ctx, level: int=-1):
     with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
@@ -258,14 +253,15 @@ async def rudenesslevel(ctx, level: int=-1):
                 await ctx.send("Rudeness level set to " + str(level))
                 await updateoptions(ctx.guild.id, allOptions)
 
-@client.command(name="showcensor", help="Display the contents of the censorship filter.", aliases=["showfilter", "getcensor", "getfilter"])
+@client.command(name="showcensor", help="Display the contents of the censorship filter.", aliases=["showfilter", "getcensor", "getfilter", "censorlist", "filterlist"])
 @commands.has_permissions(manage_messages=True)
 async def showfilter(ctx):
     with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
-        if bads_file.read().split(' ') == ['']:
+        all_bads = bads_file.read()
+        if all_bads.split(', ') == ['']:
             await ctx.send("Filter is empty.")
         else:
-            await ctx.send(f"```{bads_file.read().split(' ')}```")
+            await ctx.send(f"```{str(all_bads)}```")
 
 @client.command(name="addcensor", help="Add a word to the censorship filter.", aliases=["addfilter"])
 @commands.has_permissions(manage_messages=True)
@@ -295,43 +291,35 @@ async def addfilter(ctx, word2add):
 async def delfilter(ctx, word2del):
     with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
         all_bads = bads_file.read()
-        try:
-            await ctx.send(bads_file.read())
-        except:
-            pass
         oneword = []
         if ", " in all_bads:
             all_bads = all_bads.split(", ")
-            await ctx.send("LIST: " + str(all_bads))
         else:
             oneword.append(all_bads)
-            await ctx.send(str(oneword))
             all_bads = oneword
-            await ctx.send(str(all_bads))
         if all_bads == [""]:
             all_bads = []
         if word2del not in all_bads:
             await ctx.send("That word is not in the filter.")
         else:
             all_bads.remove(word2del)
-            await ctx.send(str(all_bads))
             all_bads.sort()
-            await ctx.send(str(all_bads))
             finalbads = str(all_bads)[1:-1].replace("'","")
             with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
                 bads_file_to.write(finalbads)
                 await ctx.send("Word removed from the filter.")
 
-@showoptions.error
-@resetoptions.error
-@togglecensor.error
-@toggledad.error
-@togglemama.error
-@rudenesslevel.error
-async def optionsError(ctx, error):
-    global errorAlreadyHandled
-    await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
-    errorAlreadyHandled = True
+@client.command(name="wipecensor", help="Clear the censor file.", aliases=["wipefilter", "clearcensor", "clearfilter"])
+@commands.has_permissions(manage_messages=True)
+async def wipefilter(ctx):
+    global wipecensorconfirm
+    if wipecensorconfirm == False:
+        await ctx.send("Are you **really** sure you want to clear the censor filter? Type p!wipecensor again to confirm.")
+        wipecensorconfirm = True
+    else:
+        open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w").close()
+        await ctx.send("Filter cleared.")
+        wipecensorconfirm = False
 
 @client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
 async def redoWelcome(ctx):
@@ -426,7 +414,7 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="kiss <@mention>", value="Gib someone a lil kiss ~3~")
             helpMenu.add_field(name="nom <@mention>", value="Try to eat someone, but they can get away if they're quick enough :eyes:")
             helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
-            helpMenu.add_field(name="slap <@mention>", value="Slap someone...? :(")
+            helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
             helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
         if selectedCategory == "Converters" or selectedCategory == "converters":
             helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
@@ -446,15 +434,20 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="(bye/cya/goodbye)\n[delete your command message?]", value="You say bye, I bid you farewell.")
             helpMenu.add_field(name="(say/repeat/parrot)\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
         if selectedCategory == "Options" or selectedCategory == "options":
-            helpMenu = discord.Embed(title="Options", description="Settings for the bot. (All options require the \"Kick Members\" permission)", color=cyan)
-            helpMenu.add_field(name="(options/config/prefs/cfg)", value="Show a list of all options.")
-            helpMenu.add_field(name="(resetdefaults/defaultoptions/reset)", value="Reset all options to their defaults.")
-            helpMenu.add_field(name="togglecensor", value="Toggle the automatic deletion of messages containing specific keywords.")
-            helpMenu.add_field(name="toggledad", value="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-            helpMenu.add_field(name="togglemama", value="Toggle the automatic Yo Mama jokes.")
-            helpMenu.add_field(name="(rudenesslevel/rudeness)\n<value from 0 to 3>", value="Set how rude the bot can be, and open up more commands.")
-            helpMenu.add_field(name="load [module name]", value="Load a module. Leave blank to see unloaded modules.")
-            helpMenu.add_field(name="unload [module name]", value="Unload a module. Leave blank to see loaded modules.")
+            with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+                allOptions = load(optionsfile)
+                helpMenu = discord.Embed(title="Options", description="Settings for the bot. Different settings need different permissions.", color=cyan)
+                helpMenu.add_field(name="togglecensor", value=f"Toggle the automatic deletion of messages containing specific keywords.\n(Current value: `{allOptions['toggles']['censor']}`)")
+                helpMenu.add_field(name="toggledad", value=f"Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".\n(Current value: `{allOptions['toggles']['dad']}`)")
+                helpMenu.add_field(name="togglemama", value=f"Toggle the automatic Yo Mama jokes.\n(Current value: `{allOptions['toggles']['yoMama']}`)")
+                helpMenu.add_field(name="(rudenesslevel/rudeness)\n<value from 0 to 3>", value=f"Set how rude the bot can be, and open up more commands.\n(Current value: `{allOptions['numbers']['rudeness']}`)")
+                helpMenu.add_field(name="load [module name]", value="Load a module. Leave blank to see unloaded modules.")
+                helpMenu.add_field(name="unload [module name]", value="Unload a module. Leave blank to see loaded modules.")
+                helpMenu.add_field(name="(getcensor/getfilter)", value="Retrieve the list of censored words.")
+                helpMenu.add_field(name="(wipecensor/wipefilter)", value="Clear the list of censored words.")
+                helpMenu.add_field(name="(addcensor/addfilter) <word to add>", value="Add a word to the censor list.")
+                helpMenu.add_field(name="(delcensor/delfilter) <word to delete>", value="Remove a word from the censor list.")
+                helpMenu.add_field(name="(resetdefaults/defaultoptions/reset)", value="Reset all options to their defaults.")
         if selectedCategory == "Tools" or selectedCategory == "tools":
             helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
             helpMenu.add_field(name="(os/getos)", value="Read out what OS I'm running on!")
@@ -467,8 +460,29 @@ async def help(ctx, selectedCategory=None):
             helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
             helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
             helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
-        helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option, (command/command/command) = aliases")
+        helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option, (command/command/command) = all keywords to run the command")
         await ctx.send(embed=helpMenu)
+
+@resetoptions.error
+@togglecensor.error
+@toggledad.error
+@togglemama.error
+@loadcog.error
+@unloadcog.error
+async def kickError(ctx, error):
+    global errorAlreadyHandled
+    await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
+    errorAlreadyHandled = True
+
+@showfilter.error
+@addfilter.error
+@delfilter.error
+@wipefilter.error
+@rudenesslevel.error
+async def messageError(ctx, error):
+    global errorAlreadyHandled
+    await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
+    errorAlreadyHandled = True
 
 # load all the cogs
 for cog in os.listdir("./cogs"):
