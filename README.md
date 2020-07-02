@@ -11,6 +11,7 @@
 - Boop on the nose
 - Pat on the head (or back)
 - Hug
+- Kiss
 - Nom
 - Tickle
 - Slap
@@ -22,13 +23,12 @@
 ### Text converters
 - Convewt any text into fuwwy speak uwu
 - Convert text to regional indicator characters (the big blue ones)
-- Phonetically convert text into greek letters
+- Phonetically convert text into Γρεεκ λεττερσ
 ### Configurable options
 - Toggle any of the auto-responses mentioned below
 - "Rudeness level", set from 0 to 3 (for now) that slightly alters how the bot responds. Slaps are disabled at level 0, Yo Mama jokes are enabled from level 2 upward
 - Enable or disable ANY of the modules mentioned above!
 - Change what keywords the censor deletes
 ### Auto-responses
-- like Dad Bot ("Hi hungry, I'm the Pengaelic Bot!") (Triggered with "I'm (insert text here)")
-- Message deletion based on a text file of keywords (Triggered with whatever word from the file is detected, empty by default)
+- Dad jokes ("Hi hungry, I'm the Pengaelic Bot!") (Triggered with "I'm (insert text here)")
 - Yo Mama jokes (Triggered with "Yo mama so [mama type]")
