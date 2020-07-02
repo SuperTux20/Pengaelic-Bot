@@ -9,7 +9,7 @@ class Games(commands.Cog):
 
     @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
     async def _8ball(self, ctx, *, question=None):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
                 allOptions = load(optionsfile)
         with open(rf"8ball/level_{allOptions['numbers']['rudeness']}.txt", "r") as responsefile:
             ballResponses = responsefile.read().split(", ")

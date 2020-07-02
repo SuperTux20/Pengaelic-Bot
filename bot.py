@@ -1,15 +1,11 @@
 # bot.py
 import os
-import re
-import fnmatch
 import discord
-import platform
 from json import load, dump
-from random import choice, randint
+from random import choice
 from discord.utils import get
 from discord.ext import commands
 from dotenv import load_dotenv
-from asyncio import sleep
 
 print("Starting")
 
@@ -50,6 +46,7 @@ async def on_ready():
 
 @client.event
 async def on_guild_join(guild):
+    print("Joined " + str(guild.name))
     welcomeEmbed = discord.Embed(title="Howdy fellas! I'm the Pengaelic Bot!", description="Type `p!help` for a list of commands.", color=32639)
     welcomeEmbed.set_thumbnail(url=client.user.avatar_url)
     allchannels = list(guild.text_channels)
@@ -64,6 +61,14 @@ async def on_guild_join(guild):
     else:
         for channel in range(len(generals)):
             await get(guild.text_channels, name=generals[channel]).send(embed=welcomeEmbed)
+
+    # create fresh options file for new server
+    open(rf"../pengaelicbot.data/configs/{guild.id}.json", "x").close()
+    with open(r"default_options.json", "r") as defaultsfile:
+        allOptions = load(defaultsfile)
+    with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w") as optionsfile:
+        dump(allOptions, optionsfile, sort_keys=True, indent=4)
+    print("Options file created for " + str(guild.name))
 
 @client.event
 async def on_message(message):
@@ -353,7 +358,7 @@ async def loadcog(ctx, cog2load=None):
                 inactivecogs.append(cogs[cog])
 
     if len(inactivecogs) == 0:
-        await ctx.send("All cogs are already loaded, you can't load anymore.")
+        await ctx.send("All cogs are already loaded, you can't load any more.")
     else:
         if cog2load:
             try:
