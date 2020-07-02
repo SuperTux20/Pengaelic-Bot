@@ -21,7 +21,7 @@ class Tools(commands.Cog):
     async def ping(self, ctx):
         await ctx.send(f"Pong! {round(self.client.latency * 1000)}ms")
 
-    @commands.command(name="clear", help="Clear some messages away.")
+    @commands.command(name="clear", help="Clear some messages away.", aliases=["delmsgs"])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def clear(self, ctx, msgcount: int=5, channel: discord.TextChannel=None):
@@ -43,7 +43,7 @@ class Tools(commands.Cog):
         await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
         errorAlreadyHandled = True
 
-    @commands.command(name="purge", help="Purge a channel. :warning:WARNING:warning: This command clears an ENTIRE channel!")
+    @commands.command(name="purge", help="Purge a channel. :warning:WARNING:warning: This command clears an ENTIRE channel!", aliases=["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
     async def purge(self, ctx, msgcount: int=5):

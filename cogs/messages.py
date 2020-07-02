@@ -6,7 +6,7 @@ class Messages(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy"])
+    @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy", "hey", "heya"])
     async def say_hi_back(self, ctx, delete=None):
         await ctx.send(choice(["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]))
         if delete:

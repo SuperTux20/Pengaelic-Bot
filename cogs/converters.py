@@ -12,7 +12,7 @@ class Converters(commands.Cog):
         outputString = arg
         for vowel in range(len(vowels)):
                 outputString = outputString.replace(vowels[vowel],"")
-        await ctx.send(outputString.replace("  ", " ")) # fix doubled spaces
+        await ctx.send(outputString.replace("  ", " ")) # remove doubled spaces
 
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
     async def owoConverter(self, ctx, *, arg):
@@ -34,7 +34,7 @@ class Converters(commands.Cog):
                     elif arg[char] == "?":
                         textlist.append(":question: ")
                     else:
-                        textlist.append(":regional_indicator_" + arg[char].lower() + ": ")
+                        textlist.append(f":regional_indicator_{arg[char].lower()}: ")
         for beeg in range(len(textlist)):
             finaltext = finaltext + textlist[beeg]
         await ctx.send(finaltext)
