@@ -4,10 +4,12 @@ from random import choice, randint
 from json import load
 
 class Games(commands.Cog):
+    name = "games"
+    description = "All sorts of fun stuff!"
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name="8ball", help="Ask the ball a yes-or-no question!", aliases=["magic8ball"])
+    @commands.command(name="8ball", help="Ask the ball and receive wisdom... :eyes:", aliases=["magic8ball"], usage="[question]")
     async def _8ball(self, ctx, *, question=None):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
                 allOptions = load(optionsfile)
@@ -18,7 +20,7 @@ class Games(commands.Cog):
         else:
             await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
-    @commands.command(name="roll", help="Roll some dice!", aliases=["dice", "rolldice", "diceroll"])
+    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)] [number of sides (6)]")
     async def rollem(self, ctx, dice: int=1, sides: int=6):
         if dice == 0:
             await ctx.send(":game_die:You didn't roll any dice.")
@@ -45,7 +47,7 @@ class Games(commands.Cog):
                 response = f":game_die:You rolled {total}"
             await ctx.send(response)
 
-    @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip", "coins", "flipcoin", "flipcoins"])
+    @commands.command(name="flip", help="Flip some coins!", aliases=["coin"], usage="[number of coins (1)]")
     async def flipem(self, ctx, coins: int=1):
         results = []
         if coins == 1:
@@ -81,7 +83,7 @@ class Games(commands.Cog):
                 else:
                     await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails.")
 
-    @commands.command(name="draw", help="Draw some cards!", aliases=["drawcard", "drawcards", "card", "cards"])
+    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)] [replace cards in deck (no)]")
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
         suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
         values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
@@ -140,7 +142,7 @@ class Games(commands.Cog):
         else:
             await ctx.send(":black_joker:You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
 
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap" "bubbles"])
+    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap", "bubbles"], usage="[width of sheet (5)] [height of sheet (5)]")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
         if width == 1 and height == 1:
             await ctx.send(r"""```

@@ -3,6 +3,8 @@ from discord.ext import commands
 from random import choice
 
 class Messages(commands.Cog):
+    name = "messages"
+    description = "M a k e   m e   s a y   t h i n g s"
     def __init__(self, client):
         self.client = client
 
@@ -18,7 +20,7 @@ class Messages(commands.Cog):
         if delete:
             await ctx.message.delete()
 
-    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"])
+    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
     async def say_back(self, ctx, *, arg):
         await ctx.send(arg)
         await ctx.message.delete()
