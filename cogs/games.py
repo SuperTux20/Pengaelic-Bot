@@ -4,6 +4,8 @@ from random import choice, randint
 from json import load
 
 class Games(commands.Cog):
+    name = "games"
+    description = "All sorts of fun stuff!"
     def __init__(self, client):
         self.client = client
 

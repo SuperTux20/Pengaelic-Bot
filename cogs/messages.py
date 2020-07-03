@@ -3,6 +3,8 @@ from discord.ext import commands
 from random import choice
 
 class Messages(commands.Cog):
+    name = "messages"
+    description = "M a k e   m e   s a y   t h i n g s"
     def __init__(self, client):
         self.client = client
 

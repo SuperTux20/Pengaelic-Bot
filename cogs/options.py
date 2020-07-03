@@ -3,8 +3,11 @@ from discord.ext import commands
 from json import load, dump
 
 class Options(commands.Cog):
+    name = "options"
+    description = "My settings."
     def __init__(self, client):
         self.client = client
+        self.wipecensorcinfirm = False
 
     async def updateoptions(self, guild, options2dump):
         with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w+") as optionsfile:
@@ -140,15 +143,14 @@ class Options(commands.Cog):
     @commands.command(name="wipecensor", help="Clear the censor file.", aliases=["wipefilter", "clearcensor", "clearfilter"])
     @commands.has_permissions(manage_messages=True)
     async def wipefilter(self, ctx):
-        global wipecensorconfirm
-        if wipecensorconfirm == False:
+        if self.wipecensorcinfirm == False:
             await ctx.send("Are you **really** sure you want to clear the censor filter? Type p!wipecensor again to confirm.")
-            wipecensorconfirm = True
+            self.wipecensorcinfirm = True
         else:
             open(rf"../pengaelicbot.data/censorfilters/{self.client.guild.id}.txt", "w").close()
             await ctx.send("Filter cleared.")
             print("Censor file wiped for " + self.client.guild.name)
-            wipecensorconfirm = False
+            self.wipecensorcinfirm = False
 
     @commands.command(name="load", help="Load a cog.", usage="[cog to load]")
     @commands.has_permissions(kick_members=True)

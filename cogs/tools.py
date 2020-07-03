@@ -5,7 +5,8 @@ from asyncio import sleep
 
 class Tools(commands.Cog):
     purgeconfirm = False
-    
+    name="tools"
+    description ="Various tools and info."
     def __init__(self, client):
         self.client = client
 

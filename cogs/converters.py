@@ -3,6 +3,8 @@ from discord.ext import commands
 from random import choice
 
 class Converters(commands.Cog):
+    name = "converters"
+    description = "Run some text through a converter to make it look funny!"
     def __init__(self, client):
         self.client = client
 

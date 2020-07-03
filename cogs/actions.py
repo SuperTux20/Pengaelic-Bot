@@ -5,7 +5,9 @@ from os import listdir
 from json import load
 from time import sleep
 
-class Actions(commands.Cog):    
+class Actions(commands.Cog):
+    name = "actions"
+    description = "Interact with other server members!"
     def __init__(self, client):
         self.client = client
         self.isNomming = True
@@ -180,6 +182,7 @@ class Actions(commands.Cog):
     @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
     async def kiss(self, ctx, kiss: discord.User=""):
         kisser = ctx.author.display_name
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/kiss/{randint(1,len(listdir('images/gifs/kiss')))}.gif"
         try:
             kissed = kiss.display_name
         except:
@@ -191,9 +194,9 @@ class Actions(commands.Cog):
         embed = discord.Embed(title=choice(responses),color=self.cyan)
         embed.set_image(url=gif)
         if kiss == ctx.author:
-            await ctx.send(embed=embed)
+            await ctx.send(choice(selfresponses))
         else:
-            await ctx.send(choice(responses))
+            await ctx.send(embed=embed)
             if str(kiss.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
