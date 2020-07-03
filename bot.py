@@ -168,231 +168,26 @@ async def on_message(message):
     # this lets all the commands below work as normal
     await client.process_commands(message)
 
-@client.event
-async def on_command_error(ctx, error):
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-    if errorAlreadyHandled == False:
-        if allOptions["numbers"]["rudeness"] < 3:
-            if allOptions["numbers"]["rudeness"] == 0:
-                invalidmsg = "Sorry, this command is invalid."
-            elif allOptions["numbers"]["rudeness"] == 1:
-                invalidmsg = "Invalid command/usage."
-            elif allOptions["numbers"]["rudeness"] == 2:
-                invalidmsg = "You typed the command wrong!"
-            await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
-        else:
-            await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
-
-async def updateoptions(guild, options2dump):
-    with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w+") as optionsfile:
-        dump(options2dump, optionsfile, sort_keys=True, indent=4)
-        print("Options file updated for " + guild.name)
-
-@client.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
-@commands.has_permissions(kick_members=True)
-async def resetoptions(ctx):
-    with open(r"default_options.json", "r") as defaultoptions:
-        await updateoptions(ctx.guild, load(defaultoptions))
-        await ctx.send("Options reset to defaults.")
-        await ctx.send(defaultoptions.read())
-
-@client.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
-@commands.has_permissions(kick_members=True)
-async def togglecensor(ctx):
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-    if allOptions["toggles"]["censor"] == True:
-        allOptions["toggles"]["censor"] = False
-        await ctx.send("Censorship turned off.")
-    elif allOptions["toggles"]["censor"] == False:
-        allOptions["toggles"]["censor"] = True
-        await ctx.send("Censorship turned on.")
-    await updateoptions(ctx.guild, allOptions)
-
-@client.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-@commands.has_permissions(kick_members=True)
-async def toggledad(ctx):
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-    if allOptions["toggles"]["dad"] == True:
-        allOptions["toggles"]["dad"] = False
-        await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
-    elif allOptions["toggles"]["dad"] == False:
-        allOptions["toggles"]["dad"] = True
-        await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
-    await updateoptions(ctx.guild, allOptions)
-
-@client.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
-@commands.has_permissions(kick_members=True)
-async def togglemama(ctx):
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-    if allOptions["toggles"]["yoMama"] == True:
-        allOptions["toggles"]["yoMama"] = False
-        await ctx.send("Yo Mama jokes turned off.")
-    elif allOptions["toggles"]["yoMama"] == False:
-        allOptions["toggles"]["yoMama"] = True
-        await ctx.send("Yo Mama jokes turned on.")
-    await updateoptions(ctx.guild, allOptions)
-
-@client.command(name="rudenesslevel", help="Change how rude the bot can be.", aliases=["rudeness"])
-@commands.has_permissions(manage_messages=True)
-async def rudenesslevel(ctx, level: int=-1):
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-    if level == -1:
-        await ctx.send("Current rudeness level is " + str(allOptions["numbers"]["rudeness"]))
-    else:
-        if level < 0:
-            await ctx.send("Wait- What would negative rudeness even mean?")
-        else:
-            if level > 3:
-                await ctx.send("Sorry pal, 3 is the highest it can go.")
-                allOptions["numbers"]["rudeness"] = 3
-                await ctx.send("Rudeness level set to 3")
-                await updateoptions(ctx.guild, allOptions)
-            else:
-                allOptions["numbers"]["rudeness"] = level
-                await ctx.send("Rudeness level set to " + str(level))
-                await updateoptions(ctx.guild, allOptions)
-
-@client.command(name="showcensor", help="Display the contents of the censorship filter.", aliases=["showfilter", "getcensor", "getfilter", "censorlist", "filterlist"])
-@commands.has_permissions(manage_messages=True)
-async def showfilter(ctx):
-    with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
-        all_bads = bads_file.read()
-        if all_bads.split(', ') == ['']:
-            await ctx.send("Filter is empty.")
-        else:
-            await ctx.send(f"```{str(all_bads)}```")
-
-@client.command(name="addcensor", help="Add a word to the censorship filter.", aliases=["addfilter"])
-@commands.has_permissions(manage_messages=True)
-async def addfilter(ctx, word2add):
-    with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
-        all_bads = bads_file.read()
-        oneword = []
-        if ", " in all_bads:
-            all_bads = all_bads.split(", ")
-        else:
-            oneword.append(all_bads)
-            all_bads = oneword
-        if all_bads == [""]:
-            all_bads = []
-        if word2add in all_bads:
-            await ctx.send("That word is already in the filter.")
-        else:
-            all_bads.append(word2add)
-            all_bads.sort()
-            finalbads = str(all_bads)[1:-1].replace("'","")
-            with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
-                bads_file_to.write(finalbads)
-                await ctx.send("Word added to the filter.")
-                print("Censor file updated for " + ctx.guild.name)
-
-@client.command(name="delcensor", help="Remove a word from the censorship filter.", aliases=["delfilter"])
-@commands.has_permissions(manage_messages=True)
-async def delfilter(ctx, word2del):
-    with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "r") as bads_file:
-        all_bads = bads_file.read()
-        oneword = []
-        if ", " in all_bads:
-            all_bads = all_bads.split(", ")
-        else:
-            oneword.append(all_bads)
-            all_bads = oneword
-        if all_bads == [""]:
-            all_bads = []
-        if word2del not in all_bads:
-            await ctx.send("That word is not in the filter.")
-        else:
-            all_bads.remove(word2del)
-            all_bads.sort()
-            finalbads = str(all_bads)[1:-1].replace("'","")
-            with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
-                bads_file_to.write(finalbads)
-                await ctx.send("Word removed from the filter.")
-                print("Censor file updated for " + ctx.guild.name)
-
-@client.command(name="wipecensor", help="Clear the censor file.", aliases=["wipefilter", "clearcensor", "clearfilter"])
-@commands.has_permissions(manage_messages=True)
-async def wipefilter(ctx):
-    global wipecensorconfirm
-    if wipecensorconfirm == False:
-        await ctx.send("Are you **really** sure you want to clear the censor filter? Type p!wipecensor again to confirm.")
-        wipecensorconfirm = True
-    else:
-        open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w").close()
-        await ctx.send("Filter cleared.")
-        print("Censor file wiped for " + ctx.guild.name)
-        wipecensorconfirm = False
+# @client.event
+# async def on_command_error(ctx, error):
+#     with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+#         allOptions = load(optionsfile)
+#     if errorAlreadyHandled == False:
+#         if allOptions["numbers"]["rudeness"] < 3:
+#             if allOptions["numbers"]["rudeness"] == 0:
+#                 invalidmsg = "Sorry, this command is invalid."
+#             elif allOptions["numbers"]["rudeness"] == 1:
+#                 invalidmsg = "Invalid command/usage."
+#             elif allOptions["numbers"]["rudeness"] == 2:
+#                 invalidmsg = "You typed the command wrong!"
+#             await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
+#         else:
+#             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 @client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
 async def redoWelcome(ctx):
     await on_guild_join(ctx.guild)
     await ctx.message.delete()
-
-@client.command(name="load", help="Load a cog")
-@commands.has_permissions(kick_members=True)
-async def loadcog(ctx, cog2load=None):
-    activecogs = []
-    inactivecogs = []
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-        cogs = list(allOptions["toggles"]["cogs"].keys())
-        enabled = list(allOptions["toggles"]["cogs"].values())
-        for cog in range(len(cogs)):
-            if enabled[cog] == True:
-                activecogs.append(cogs[cog])
-            else:
-                inactivecogs.append(cogs[cog])
-
-    if len(inactivecogs) == 0:
-        await ctx.send("All cogs are already loaded, you can't load any more.")
-    else:
-        if cog2load:
-            try:
-                with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-                    allOptions = load(optionsfile)
-                    _ = allOptions["toggles"]["cogs"][cog2load]
-                    allOptions["toggles"]["cogs"][cog2load] = True
-                    await updateoptions(ctx.guild, allOptions)
-                await ctx.send(f"Cog '{cog2load}' loaded. Type `p!help {cog2load}` to see how it works.")
-                print(f"Cog '{cog2load}' loaded for {ctx.guild.name}")
-            except:
-                await ctx.send(f"Invalid cog '{cog2load}'")
-        else:
-            await ctx.send("Please specify a cog to load. Avaliable options are " + str(inactivecogs)[1:-1].replace("\'",""))
-
-@client.command(name="unload", help="Unload a cog")
-@commands.has_permissions(kick_members=True)
-async def unloadcog(ctx, cog2unload=None):
-    activecogs = []
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-        cogs = list(allOptions["toggles"]["cogs"].keys())
-        enabled = list(allOptions["toggles"]["cogs"].values())
-        for cog in range(len(cogs)):
-            if enabled[cog] == True:
-                activecogs.append(cogs[cog])
-
-    if len(activecogs) == 0:
-        await ctx.send("No cogs are loaded, you can't unload any more.")
-    else:
-        if cog2unload:
-            try:
-                with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-                    allOptions = load(optionsfile)
-                    _ = allOptions["toggles"]["cogs"][cog2unload]
-                    allOptions["toggles"]["cogs"][cog2unload] = False
-                    await updateoptions(ctx.guild, allOptions)
-                await ctx.send(f"Cog '{cog2unload}' unloaded.")
-                print(f"Cog '{cog2unload}' unloaded for {ctx.guild.name}")
-            except:
-                await ctx.send(f"Invalid cog '{cog2unload}'")
-        else:
-            await ctx.send("Please specify a cog to unload. Avaliable options are " + str(activecogs).lower()[1:-1].replace("\'",""))
 
 @client.command(name="help", help="Show this message")
 async def help(ctx, selectedCategory=None):
@@ -414,52 +209,63 @@ async def help(ctx, selectedCategory=None):
         helpMenu.add_field(name="Non-commands", value="Automatic message responses that aren't commands.")
     if selectedCategory == "Actions" or selectedCategory == "actions":
         helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
-        helpMenu.add_field(name="boop <@mention>", value="Boop someone's nose :3")
-        helpMenu.add_field(name="hug <@mention>", value="Give somebody a hug! :D")
-        helpMenu.add_field(name="kiss <@mention>", value="Gib someone a lil kiss ~3~")
-        helpMenu.add_field(name="nom <@mention>", value="Try to eat someone, but they can get away if they're quick enough :eyes:")
-        helpMenu.add_field(name="pat <@mention>", value="Pat someone on the head -w-")
-        helpMenu.add_field(name="slap <@mention>", value="Slap someone...?")
-        helpMenu.add_field(name="tickle <@mention>", value="Tickle tickle tickle... >:D")
+        cog = client.get_cog("Actions")
+        for command in cog.get_commands():
+            helpMenu.add_field(name=f"{command} <@mention>", value=command.help)
     elif selectedCategory == "Converters" or selectedCategory == "converters":
         helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
-        helpMenu.add_field(name="novowels\n<input string>", value="Remove all vowels from whatever text you put in.")
-        helpMenu.add_field(name="(owo/uwu/furry)\n<input string>", value="Convert whatever text into owo-speak... oh god why did i make this")
-        helpMenu.add_field(name="(beegtext/bigtext/beeg/big)\n<input string>", value="Turn text into\n:regional_indicator_b: :regional_indicator_e: :regional_indicator_e: :regional_indicator_g:\n:regional_indicator_t: :regional_indicator_e: :regional_indicator_x: :regional_indicator_t: :exclamation:")
+        cog = client.get_cog("Converters")
+        for command in cog.get_commands():
+            command.activations = [command.name]
+            for alias in command.aliases:
+                command.activations.append(alias)
+            helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n<text to convert>", value=command.help)
     elif selectedCategory == "Games" or selectedCategory == "games":
         helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
-        helpMenu.add_field(name="(8ball/magic8ball)\n[question]", value="Ask the ball a yes-or-no question, and it shall respond...")
-        helpMenu.add_field(name="(pop/bubblewrap)\n[width of sheet (5)]\n[height of sheet (5)]", value="Pop some bubble wrap!")
-        helpMenu.add_field(name="(draw/card)\n[number of cards (1)]\n[replace cards? yes/no (no)]", value="Draw some cards!")
-        helpMenu.add_field(name="(flip/coin)\n[number of coins (1)]", value="Flip some coins!")
-        helpMenu.add_field(name="(roll/dice)\n[number of dice (1)]\n[number of sides (6)]", value="Roll some dice!")
+        cog = client.get_cog("Games")
+        for command in cog.get_commands():
+            command.activations = [command.name]
+            for alias in command.aliases:
+                command.activations.append(alias)
+            if command.usage:
+                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
+            else:
+                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
     elif selectedCategory == "Messages" or selectedCategory == "messages":
         helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
-        helpMenu.add_field(name="(hi/hello/sup)\n[delete your command message?]", value="You say hi, I greet you back!")
-        helpMenu.add_field(name="(bye/cya/goodbye)\n[delete your command message?]", value="You say bye, I bid you farewell.")
-        helpMenu.add_field(name="(say/repeat/parrot)\n<input string>", value="Make me say whatever you say, and I might die inside in the process.")
+        cog = client.get_cog("Messages")
+        for command in cog.get_commands():
+            command.activations = [command.name]
+            for alias in command.aliases:
+                command.activations.append(alias)
+            if command.usage:
+                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
+            else:
+                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
     elif selectedCategory == "Options" or selectedCategory == "options":
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
             helpMenu = discord.Embed(title="Options", description="Settings for the bot. Different settings need different permissions.", color=cyan)
-            helpMenu.add_field(name="togglecensor", value=f"Toggle the automatic deletion of messages containing specific keywords.\n(Current value: `{allOptions['toggles']['censor']}`)")
-            helpMenu.add_field(name="toggledad", value=f"Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".\n(Current value: `{allOptions['toggles']['dad']}`)")
-            helpMenu.add_field(name="togglemama", value=f"Toggle the automatic Yo Mama jokes.\n(Current value: `{allOptions['toggles']['yoMama']}`)")
-            helpMenu.add_field(name="(rudenesslevel/rudeness)\n<value from 0 to 3>", value=f"Set how rude the bot can be, and open up more commands.\n(Current value: `{allOptions['numbers']['rudeness']}`)")
-            helpMenu.add_field(name="load [module name]", value="Load a module. Leave blank to see unloaded modules.")
-            helpMenu.add_field(name="unload [module name]", value="Unload a module. Leave blank to see loaded modules.")
-            helpMenu.add_field(name="(getcensor/getfilter)", value="Retrieve the list of censored words.")
-            helpMenu.add_field(name="(wipecensor/wipefilter)", value="Clear the list of censored words.")
-            helpMenu.add_field(name="(addcensor/addfilter) <word to add>", value="Add a word to the censor list.")
-            helpMenu.add_field(name="(delcensor/delfilter) <word to delete>", value="Remove a word from the censor list.")
-            helpMenu.add_field(name="(resetdefaults/defaultoptions/reset)", value="Reset all options to their defaults.")
+            cog = client.get_cog("Options")
+            for command in cog.get_commands():
+                command.activations = [command.name]
+                for alias in command.aliases:
+                    command.activations.append(alias)
+                if command.usage:
+                    helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
+                else:
+                    helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
     elif selectedCategory == "Tools" or selectedCategory == "tools":
         helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
-        helpMenu.add_field(name="(os/getos)", value="Read out what OS I'm running on!")
-        helpMenu.add_field(name="(ping/ng)", value="How slow am I to respond?")
-        helpMenu.add_field(name="clear [number of messages]", value="Clear away some messages. (Requires Manage Messages permission)")
-        helpMenu.add_field(name="purge", value="Clear an entire channel. (Requires Manage Channels permission)")
-        helpMenu.add_field(name="help\n[category]", value="Show the message from earlier!")
+        cog = client.get_cog("Tools")
+        for command in cog.get_commands():
+            command.activations = [command.name]
+            for alias in command.aliases:
+                command.activations.append(alias)
+            if command.usage:
+                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
+            else:
+                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
     elif selectedCategory == "Non-commands" or selectedCategory == "Non-Commands" or selectedCategory == "non-commands" or selectedCategory == "noncommands" or selectedCategory == "Noncommands" or selectedCategory == "NonCommands":
         helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
         helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
@@ -468,33 +274,12 @@ async def help(ctx, selectedCategory=None):
     helpMenu.set_footer(text="Command prefix is `p!`, <arg> = required, [arg] = optional, [arg (value)] = default option, (command/command/command) = all keywords to run the command")
     await ctx.send(embed=helpMenu)
 
-@resetoptions.error
-@togglecensor.error
-@toggledad.error
-@togglemama.error
-@loadcog.error
-@unloadcog.error
-async def kickError(ctx, error):
-    global errorAlreadyHandled
-    await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
-    errorAlreadyHandled = True
-
-@showfilter.error
-@addfilter.error
-@delfilter.error
-@wipefilter.error
-@rudenesslevel.error
-async def messageError(ctx, error):
-    global errorAlreadyHandled
-    await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-    errorAlreadyHandled = True
-
 # load all the cogs
 for cog in os.listdir("./cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
-        print(f"Cog {cog[:-3]} loaded.")
+        print(f"Cog {cog[:-3]} loaded")
 
-# this loop auto-reconnects if internet is lost
+# this loop auto-reloads if internet connection is lost
 while True:
     client.run(TOKEN)

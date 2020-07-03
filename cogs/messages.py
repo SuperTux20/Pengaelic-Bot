@@ -18,7 +18,7 @@ class Messages(commands.Cog):
         if delete:
             await ctx.message.delete()
 
-    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"])
+    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
     async def say_back(self, ctx, *, arg):
         await ctx.send(arg)
         await ctx.message.delete()
