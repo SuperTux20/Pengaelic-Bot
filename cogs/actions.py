@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
-from random import choice
+from random import choice, randint
+from os import listdir
 from json import load
 from time import sleep
 
@@ -44,6 +45,7 @@ class Actions(commands.Cog):
     @commands.command(name="hug", help="Give somebody a hug!")
     async def hug(self, ctx, hug: discord.User=""):
         hugger = str(ctx.author.mention)
+        gif = f"images/gifs/hug/{randint(1,len(listdir('images/gifs/hug')))}.gif"
         try:
             hugged = f"<@{hug.id}>"
         except:
@@ -55,13 +57,14 @@ class Actions(commands.Cog):
         if hug == ctx.author:
             await ctx.send(choice(selfresponses))
         else:
-            await ctx.send(choice(responses))
+            await ctx.send(choice(responses), file=gif)
             if str(hug.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
+                await ctx.send(choice(botresponses), file=gif)
 
     @commands.command(name="boop", help="Boop someone's nose :3")
     async def boop(self, ctx, boop: discord.User=""):
         booper = str(ctx.author.mention)
+        gif = f"images/gifs/boop/{randint(1,len(listdir('images/gifs/boop')))}.gif"
         try:
             booped = f"<@{boop.id}>"
         except:
@@ -79,13 +82,14 @@ class Actions(commands.Cog):
             else:
                 await ctx.send(oops)
         else:
-            await ctx.send(choice(responses))
+            await ctx.send(choice(responses), file=gif)
             if str(boop.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
+                await ctx.send(choice(botresponses), file=gif)
 
     @commands.command(name="pat", help="Pat someone on the head!")
     async def pat(self, ctx, pat: discord.User="", *, bodypart="head"):
         patter = str(ctx.author.mention)
+        gif = f"images/gifs/pat/{randint(1,len(listdir('images/gifs/pat')))}.gif"
         try:
             patted = f"<@{pat.id}>"
         except:
@@ -96,9 +100,9 @@ class Actions(commands.Cog):
         if pat == ctx.author:
             await ctx.send("You pat yourself on the " + bodypart + ".")
         else:
-            await ctx.send(choice(responses))
+            await ctx.send(choice(responses), file=gif)
             if str(pat.id) == "721092139953684580":
-                await ctx.send(choice(botresponses))
+                await ctx.send(choice(botresponses), file=gif)
 
     @commands.command(name="nom", help="Give someone a good nom >:3")
     async def nom(self, ctx, nom: discord.User=""):
@@ -163,7 +167,7 @@ class Actions(commands.Cog):
         try:
             kissed = f"<@{kiss.id}>"
         except:
-            await ctx.send("You can't just hug thin air! (Unless you're kissing a ghost?)")
+            await ctx.send("You can't just kiss thin air! (Unless you're kissing a ghost?)")
             return
         responses = [kissed + " just got kissed by " + kisser, kisser + " kissed " + kissed, kisser + " gave a kiss to " + kissed, kisser + " gave " + kissed + " a kiss"]
         selfresponses = ["You... Huh... How does this work...?", "You kiss your reflection in the mirror.", "You kiss the back of your own hand."]
@@ -174,6 +178,25 @@ class Actions(commands.Cog):
             await ctx.send(choice(responses))
             if str(kiss.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
+
+    @commands.command(name="squish", help="Sqweesh someone's face >3<")
+    async def squish(self, ctx, squish: discord.User=""):
+        squisher = str(ctx.author.mention)
+        gif = f"images/gifs/squish/{randint(1,len(listdir('images/gifs/squish')))}.gif"
+        try:
+            squished = f"<@{squish.id}>"
+        except:
+            await ctx.send("You can't just squish thin air! (Unless you're squishing a ghost?)")
+            return
+        responses = [squished + " just got squished by " + squisher, squisher + " squished " + squished, squisher + " gave " + squished + " a squish"]
+        selfresponses = ["You squish your own face. You look like a fish.", "You reach through the mirror and squish your reflection's face.", "For some reason, you curl your arms around your head to squish your own face."]
+        botresponses = ["hehehe", "squish...", "<:hmmph:708534447217180702>"]
+        if squish == ctx.author:
+            await ctx.send(choice(selfresponses))
+        else:
+            await ctx.send(choice(responses), file=gif)
+            if str(squish.id) == "721092139953684580":
+                await ctx.send(choice(botresponses), file=gif)
 
 def setup(client):
     client.add_cog(Actions(client))

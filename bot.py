@@ -73,8 +73,11 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_message(message):
-    with open(rf"../pengaelicbot.data/configs/{message.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
+    try:
+        with open(rf"../pengaelicbot.data/configs/{message.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+    except:
+        pass
     global client
     if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
         return
@@ -133,7 +136,7 @@ async def on_message(message):
                             defenseP3 = ["its job", "what it was told", "what it's supposed to"]
                             await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
 
-    # this section randomizes yo mama jokes, does not work if
+    # this section randomizes yo mama jokes, does not work if rudeness is below 2
     if allOptions["toggles"]["yoMama"] == True:
         with open(r"Yo Mama Jokes.json", "r") as AllTheJokes:
             jokes = load(AllTheJokes)
@@ -181,15 +184,16 @@ async def on_command_error(ctx, error):
         else:
             await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
-async def updateoptions(guild_id, options2dump):
-    with open(rf"../pengaelicbot.data/configs/{guild_id}.json", "w+") as optionsfile:
+async def updateoptions(guild, options2dump):
+    with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w+") as optionsfile:
         dump(options2dump, optionsfile, sort_keys=True, indent=4)
+        print("Options file updated for " + guild.name)
 
 @client.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
 @commands.has_permissions(kick_members=True)
 async def resetoptions(ctx):
     with open(r"default_options.json", "r") as defaultoptions:
-        await updateoptions(ctx.guild.id, load(defaultoptions))
+        await updateoptions(ctx.guild, load(defaultoptions))
         await ctx.send("Options reset to defaults.")
         await ctx.send(defaultoptions.read())
 
@@ -204,7 +208,7 @@ async def togglecensor(ctx):
     elif allOptions["toggles"]["censor"] == False:
         allOptions["toggles"]["censor"] = True
         await ctx.send("Censorship turned on.")
-    await updateoptions(ctx.guild.id, allOptions)
+    await updateoptions(ctx.guild, allOptions)
 
 @client.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
 @commands.has_permissions(kick_members=True)
@@ -217,7 +221,7 @@ async def toggledad(ctx):
     elif allOptions["toggles"]["dad"] == False:
         allOptions["toggles"]["dad"] = True
         await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
-    await updateoptions(ctx.guild.id, allOptions)
+    await updateoptions(ctx.guild, allOptions)
 
 @client.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
 @commands.has_permissions(kick_members=True)
@@ -230,7 +234,7 @@ async def togglemama(ctx):
     elif allOptions["toggles"]["yoMama"] == False:
         allOptions["toggles"]["yoMama"] = True
         await ctx.send("Yo Mama jokes turned on.")
-    await updateoptions(ctx.guild.id, allOptions)
+    await updateoptions(ctx.guild, allOptions)
 
 @client.command(name="rudenesslevel", help="Change how rude the bot can be.", aliases=["rudeness"])
 @commands.has_permissions(manage_messages=True)
@@ -247,11 +251,11 @@ async def rudenesslevel(ctx, level: int=-1):
                 await ctx.send("Sorry pal, 3 is the highest it can go.")
                 allOptions["numbers"]["rudeness"] = 3
                 await ctx.send("Rudeness level set to 3")
-                await updateoptions(ctx.guild.id, allOptions)
+                await updateoptions(ctx.guild, allOptions)
             else:
                 allOptions["numbers"]["rudeness"] = level
                 await ctx.send("Rudeness level set to " + str(level))
-                await updateoptions(ctx.guild.id, allOptions)
+                await updateoptions(ctx.guild, allOptions)
 
 @client.command(name="showcensor", help="Display the contents of the censorship filter.", aliases=["showfilter", "getcensor", "getfilter", "censorlist", "filterlist"])
 @commands.has_permissions(manage_messages=True)
@@ -285,6 +289,7 @@ async def addfilter(ctx, word2add):
             with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
                 bads_file_to.write(finalbads)
                 await ctx.send("Word added to the filter.")
+                print("Censor file updated for " + ctx.guild.name)
 
 @client.command(name="delcensor", help="Remove a word from the censorship filter.", aliases=["delfilter"])
 @commands.has_permissions(manage_messages=True)
@@ -308,6 +313,7 @@ async def delfilter(ctx, word2del):
             with open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w") as bads_file_to:
                 bads_file_to.write(finalbads)
                 await ctx.send("Word removed from the filter.")
+                print("Censor file updated for " + ctx.guild.name)
 
 @client.command(name="wipecensor", help="Clear the censor file.", aliases=["wipefilter", "clearcensor", "clearfilter"])
 @commands.has_permissions(manage_messages=True)
@@ -319,6 +325,7 @@ async def wipefilter(ctx):
     else:
         open(rf"../pengaelicbot.data/censorfilters/{ctx.guild.id}.txt", "w").close()
         await ctx.send("Filter cleared.")
+        print("Censor file wiped for " + ctx.guild.name)
         wipecensorconfirm = False
 
 @client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
@@ -350,8 +357,9 @@ async def loadcog(ctx, cog2load=None):
                     allOptions = load(optionsfile)
                     _ = allOptions["toggles"]["cogs"][cog2load]
                     allOptions["toggles"]["cogs"][cog2load] = True
-                    await updateoptions(ctx.guild.id, allOptions)
+                    await updateoptions(ctx.guild, allOptions)
                 await ctx.send(f"Cog '{cog2load}' loaded. Type `p!help {cog2load}` to see how it works.")
+                print(f"Cog '{cog2load}' loaded for {ctx.guild.name}")
             except:
                 await ctx.send(f"Invalid cog '{cog2load}'")
         else:
@@ -378,8 +386,9 @@ async def unloadcog(ctx, cog2unload=None):
                     allOptions = load(optionsfile)
                     _ = allOptions["toggles"]["cogs"][cog2unload]
                     allOptions["toggles"]["cogs"][cog2unload] = False
-                    await updateoptions(ctx.guild.id, allOptions)
+                    await updateoptions(ctx.guild, allOptions)
                 await ctx.send(f"Cog '{cog2unload}' unloaded.")
+                print(f"Cog '{cog2unload}' unloaded for {ctx.guild.name}")
             except:
                 await ctx.send(f"Invalid cog '{cog2unload}'")
         else:
@@ -484,6 +493,7 @@ async def messageError(ctx, error):
 for cog in os.listdir("./cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
+        print(f"Cog {cog[:-3]} loaded.")
 
 # this loop auto-reconnects if internet is lost
 while True:
