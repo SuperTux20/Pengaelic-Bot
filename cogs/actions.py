@@ -24,7 +24,7 @@ class Actions(commands.Cog):
 
     @commands.command(name="slap", help="Slap someone...?")
     async def slap(self, ctx, slap: discord.User=""):
-        with open(rf"../options/{ctx.guild.id}.json", "r") as optionsfile:
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
         if allOptions["numbers"]["rudeness"] > 0:
             slapper = ctx.author.display_name
