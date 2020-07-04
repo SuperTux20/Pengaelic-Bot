@@ -63,12 +63,15 @@ async def on_guild_join(guild):
             await get(guild.text_channels, name=generals[channel]).send(embed=welcomeEmbed)
 
     # create fresh options file for new server
-    open(rf"../pengaelicbot.data/configs/{guild.id}.json", "x").close()
-    with open(r"default_options.json", "r") as defaultsfile:
-        allOptions = load(defaultsfile)
-    with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w") as optionsfile:
-        dump(allOptions, optionsfile, sort_keys=True, indent=4)
-    print("Options file created for " + str(guild.name))
+    try:
+        open(rf"../pengaelicbot.data/configs/{guild.id}.json", "x").close()
+        with open(r"default_options.json", "r") as defaultsfile:
+            allOptions = load(defaultsfile)
+        with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w") as optionsfile:
+            dump(allOptions, optionsfile, sort_keys=True, indent=4)
+        print("Options file created for " + str(guild.name))
+    except:
+        pass
 
 # @client.event
 # async def on_command_error(ctx, error):
@@ -97,7 +100,6 @@ async def help(ctx, selectedCategory=None):
     helpMenu = discord.Embed(title=client.description, description="Type `p!help <category name>` for a list of commands.", color=cyan)
     cogfiles = [cog[:-3] for cog in listdir("./cogs") if cog.endswith(".py")]
     cogs = [client.get_cog(cog.capitalize()) for cog in cogfiles]
-    print(cogs)
     with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
         allCogs = list(allOptions["toggles"]["cogs"].keys())

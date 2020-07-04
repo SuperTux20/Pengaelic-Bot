@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from random import choice
+from random import choice, shuffle
 
 class Converters(commands.Cog):
     name = "converters"
@@ -51,6 +51,12 @@ class Converters(commands.Cog):
         for letter in range(len(alphabet)):
             toconvert = toconvert.replace(alphabet[letter], greekphabet[letter])
         await ctx.send(toconvert)
+    
+    @commands.command(name="stroke", help="Just freakin' shuffle it dude", aliases=["shuffle","mixup"])
+    async def shuffle(self, ctx, *, arg):
+        toshuf = list(arg)
+        shuffle(toshuf)
+        await ctx.send("".join(toshuf))
 
 def setup(client):
     client.add_cog(Converters(client))

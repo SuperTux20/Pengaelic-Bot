@@ -23,7 +23,7 @@ class Actions(commands.Cog):
                     self.nomSuccess = False
 
     @commands.command(name="slap", help="Slap someone...?")
-    async def slap(self, ctx, slap: discord.User=""):
+    async def slap(self, ctx, slap: discord.Member=None):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
         if allOptions["numbers"]["rudeness"] > 0:
@@ -49,7 +49,7 @@ class Actions(commands.Cog):
             await ctx.send("Slapping is disabled: Rudeness level is 0")
 
     @commands.command(name="hug", help="Give somebody a hug!")
-    async def hug(self, ctx, hug: discord.User=""):
+    async def hug(self, ctx, hug: discord.Member=None):
         hugger = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/hug/{randint(1,len(listdir('images/gifs/hug')))}.gif"
         try:
@@ -70,7 +70,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="boop", help="Boop someone's nose :3")
-    async def boop(self, ctx, boop: discord.User=""):
+    async def boop(self, ctx, boop: discord.Member=None):
         booper = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/boop/{randint(1,len(listdir('images/gifs/boop')))}.gif"
         try:
@@ -97,7 +97,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="pat", help="Pat someone on the head!")
-    async def pat(self, ctx, pat: discord.User="", *, bodypart="head"):
+    async def pat(self, ctx, pat: discord.Member=None, *, bodypart="head"):
         patter = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/pat/{randint(1,len(listdir('images/gifs/pat')))}.gif"
         try:
@@ -117,7 +117,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="nom", help="Possibly eat someone >:3\nThey can get away if they're fast enough :eyes:")
-    async def nom(self, ctx, nom: discord.User=""):
+    async def nom(self, ctx, nom: discord.Member=None):
         nommer = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{randint(1,len(listdir('images/gifs/nom')))}.gif"
         try:
@@ -159,7 +159,7 @@ class Actions(commands.Cog):
                 await stupidchannel.delete()
 
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
-    async def tickle(self, ctx, tickle: discord.User=""):
+    async def tickle(self, ctx, tickle: discord.Member=None):
         tickler = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/tickle/{randint(1,len(listdir('images/gifs/tickle')))}.gif"
         try:
@@ -180,7 +180,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
-    async def kiss(self, ctx, kiss: discord.User=""):
+    async def kiss(self, ctx, kiss: discord.Member=None):
         kisser = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/kiss/{randint(1,len(listdir('images/gifs/kiss')))}.gif"
         try:
@@ -201,7 +201,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="squish", help="Sqweesh someone's face >3<")
-    async def squish(self, ctx, squish: discord.User=""):
+    async def squish(self, ctx, squish: discord.Member=None):
         squisher = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/squish/{randint(1,len(listdir('images/gifs/squish')))}.gif"
         try:

@@ -24,6 +24,14 @@ class Tools(commands.Cog):
         embed.set_image(url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif")
         await ctx.send(embed=embed)
 
+    @commands.command(name="avatar", help="Get someone's avatar.")
+    async def avatar(self, ctx, *,  member: discord.Member=None):
+        await ctx.send(member.avatar_url)
+
+    @commands.command(name="icon", help="Get the icon for the server.", aliases=["servericon","servicon"])
+    async def servericon(self, ctx):
+        await ctx.send(ctx.guild.icon_url)
+
     @commands.command(name="clear", help="Clear some messages away.", aliases=["delmsgs"], usage="[number of messages (5)] [#channel-to-delete-from (current channel)]")
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
