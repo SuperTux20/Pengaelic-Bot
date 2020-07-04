@@ -175,7 +175,7 @@ class Actions(commands.Cog):
         if tickle == ctx.author:
             await ctx.send(choice(selfresponses))
         else:
-            await ctx.send(embed)
+            await ctx.send(embed=embed)
             if str(tickle.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 

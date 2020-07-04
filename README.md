@@ -21,9 +21,11 @@
 - Read the OS the bot is running on
 - Check the ping time
 ### Text converters
+- Rmv ny nd ll vwls frm wrds
 - Convewt any text into fuwwy speak uwu
-- Convert text to regional indicator characters (the big blue ones)
+- Convert text to 🇷🇪🇬🇮🇴🇳🇦🇱 🇮🇳🇩🇮🇨🇦🇹🇴🇷 characters (the big blue ones)
 - Phonetically convert text into Γρεεκ λεττερσ
+- Shuffle letters around (tlsefhfa enlureu tdSro)
 ### Configurable options
 - Toggle any of the auto-responses mentioned below
 - "Rudeness level", set from 0 to 3 (for now) that slightly alters how the bot responds. Slaps are disabled at level 0, Yo Mama jokes are enabled from level 2 upward
