@@ -102,7 +102,7 @@ class Noncommands(commands.Cog):
                 await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
                 await message.channel.send(f"Yo mama so {mamatype}")
 
-        if ("ded" in message.content or "dead" in message.content) and "chat" in message.content:
+        if ("ded" in message.content or "dead" in message.content) and ("chat" in message.content or "server" in message.content):
             await message.channel.send(f"{choice(['N','n'])}o {choice(['U','u'])}")
 
 def setup(client):

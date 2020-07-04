@@ -20,7 +20,7 @@ class Games(commands.Cog):
         else:
             await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
-    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)] [number of sides (6)]")
+    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)]\n[number of sides (6)]")
     async def rollem(self, ctx, dice: int=1, sides: int=6):
         if dice == 0:
             await ctx.send(":game_die:You didn't roll any dice.")
@@ -83,7 +83,7 @@ class Games(commands.Cog):
                 else:
                     await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails.")
 
-    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)] [replace cards in deck (no)]")
+    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (no)]\n[use emojis instead of text (no)]")
     async def drawem(self, ctx, cards: int=1, replaceCards: str="no", emoji: str="no"):
         suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
         values = {1: 'Ace', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 'Jack', 12: 'Queen', 13: 'King'}
@@ -159,7 +159,7 @@ class Games(commands.Cog):
             else:
                 await ctx.send(":black_joker:You drew...\n" + str(drawn)[1:-1].replace("'","").replace(", ","\n"))
 
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap", "bubbles"], usage="[width of sheet (5)] [height of sheet (5)]")
+    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubbles"], usage="[width of sheet (5)]\n[height of sheet (5)]")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
         if width == 1 and height == 1:
             await ctx.send(r"""```
@@ -190,7 +190,8 @@ class Games(commands.Cog):
     @drawem.error
     @summonsheet.error
     async def error(self, ctx, error):
-        await ctx.send("Sorry, you specified numbers that were too large. Try again with smaller numbers!")
+        if error == discord.errors.HTTPException:
+            await ctx.send("Sorry, you specified numbers that were too large. Try again with smaller numbers!")
 
 def setup(client):
     client.add_cog(Games(client))

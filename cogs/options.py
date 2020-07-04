@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from json import load, dump
+from json import load, dump, dumps
 
 class Options(commands.Cog):
     name = "options"
@@ -14,7 +14,7 @@ class Options(commands.Cog):
             dump(options2dump, optionsfile, sort_keys=True, indent=4)
             print("Options file updated for " + guild.name)
 
-    @commands.command(name="resetdefaults", help="Reset to the default options.", aliases=["defaultoptions", "reset"])
+    @commands.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
     @commands.has_permissions(kick_members=True)
     async def resetoptions(self, ctx):
         with open(r"default_options.json", "r") as defaultoptions:
@@ -22,7 +22,7 @@ class Options(commands.Cog):
             await ctx.send("Options reset to defaults.")
             await ctx.send(defaultoptions.read())
 
-    @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.")
+    @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["togglefilter"])
     @commands.has_permissions(kick_members=True)
     async def togglecensor(self, ctx):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
@@ -151,6 +151,13 @@ class Options(commands.Cog):
             await ctx.send("Filter cleared.")
             print("Censor file wiped for " + ctx.guild.name)
             self.wipecensorcinfirm = False
+
+    @commands.command(name="cogs", help="See a list of all cogs and their statuses.")
+    async def cogs(self, ctx, cog2load=None):
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+            cogs = dumps(allOptions["toggles"]["cogs"], indent=4)
+            await ctx.send(f"```{cogs}```")
 
     @commands.command(name="load", help="Load a cog.", usage="[cog to load]")
     @commands.has_permissions(kick_members=True)
