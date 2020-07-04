@@ -14,10 +14,11 @@ TOKEN = getenv("DISCORD_TOKEN")
 errorAlreadyHandled = False
 # even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
 client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot",help_command=None)
+connected = False
 
 @client.event
 async def on_ready():
-    print("Connected")
+    global connected
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
     game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
     youtuber = choice(["Ethoslab", "MumboJumbo", "Blue Television Games", "The King of Random", "Phoenix SC"])
@@ -30,7 +31,10 @@ async def on_ready():
         try:
             with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "r") as optionsfile:
                 allOptions = load(optionsfile)
-                print("Options file loaded for " + str(client.guilds[guild].name))
+                if connected == False:
+                    print("Options file loaded for " + str(client.guilds[guild].name))
+                else:
+                    print("Options file reloaded for " + str(client.guilds[guild].name))
         # if something goes wrong...
         except:
             # ...try creating it
@@ -43,6 +47,12 @@ async def on_ready():
                 with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "w") as optionsfile:
                     dump(allOptions, optionsfile, sort_keys=True, indent=4)
                 print("Options file created for " + str(client.guilds[guild].name))
+    if connected == False:
+        connectstatus = "C"
+    else:
+        connectstatus = "Rec"
+    print(connectstatus + "onnected to Discord")
+    connected = True
 
 @client.event
 async def on_guild_join(guild):
