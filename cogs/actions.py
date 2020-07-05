@@ -28,7 +28,7 @@ class Actions(commands.Cog):
             allOptions = load(optionsfile)
         if allOptions["numbers"]["rudeness"] > 0:
             slapper = ctx.author.display_name
-            gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/slap/{randint(1,len(listdir('images/gifs/slap')))}.gif"
+            gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/slap/{randint(1,len(listdir('images/gifs/slap'))-1)}.gif"
             try:
                 slapped = slap.display_name
             except:
@@ -51,7 +51,7 @@ class Actions(commands.Cog):
     @commands.command(name="hug", help="Give somebody a hug!")
     async def hug(self, ctx, hug: discord.Member=None):
         hugger = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/hug/{randint(1,len(listdir('images/gifs/hug')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/hug/{randint(1,len(listdir('images/gifs/hug'))-1)}.gif"
         try:
             hugged = hug.display_name
         except:
@@ -72,7 +72,7 @@ class Actions(commands.Cog):
     @commands.command(name="boop", help="Boop someone's nose :3")
     async def boop(self, ctx, boop: discord.Member=None):
         booper = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/boop/{randint(1,len(listdir('images/gifs/boop')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/boop/{randint(1,len(listdir('images/gifs/boop'))-1)}.gif"
         try:
             booped = boop.display_name
         except:
@@ -99,7 +99,7 @@ class Actions(commands.Cog):
     @commands.command(name="pat", help="Pat someone on the head!")
     async def pat(self, ctx, pat: discord.Member=None, *, bodypart="head"):
         patter = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/pat/{randint(1,len(listdir('images/gifs/pat')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/pat/{randint(1,len(listdir('images/gifs/pat'))-1)}.gif"
         try:
             patted = pat.display_name
         except:
@@ -119,7 +119,7 @@ class Actions(commands.Cog):
     @commands.command(name="nom", help="Possibly eat someone >:3\nThey can get away if they're fast enough :eyes:")
     async def nom(self, ctx, nom: discord.Member=None):
         nommer = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{randint(1,len(listdir('images/gifs/nom')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{randint(1,len(listdir('images/gifs/nom'))-1)}.gif"
         try:
             nommed = nom.display_name
         except:
@@ -161,7 +161,7 @@ class Actions(commands.Cog):
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
     async def tickle(self, ctx, tickle: discord.Member=None):
         tickler = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/tickle/{randint(1,len(listdir('images/gifs/tickle')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/tickle/{randint(1,len(listdir('images/gifs/tickle'))-1)}.gif"
         try:
             tickled = tickle.display_name
         except:
@@ -182,7 +182,7 @@ class Actions(commands.Cog):
     @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
     async def kiss(self, ctx, kiss: discord.Member=None):
         kisser = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/kiss/{randint(1,len(listdir('images/gifs/kiss')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/kiss/{randint(1,len(listdir('images/gifs/kiss'))-1)}.gif"
         try:
             kissed = kiss.display_name
         except:
@@ -203,7 +203,7 @@ class Actions(commands.Cog):
     @commands.command(name="squish", help="Sqweesh someone's face >3<")
     async def squish(self, ctx, squish: discord.Member=None):
         squisher = ctx.author.display_name
-        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/squish/{randint(1,len(listdir('images/gifs/squish')))}.gif"
+        gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/squish/{randint(1,len(listdir('images/gifs/squish'))-1)}.gif"
         try:
             squished = squish.display_name
         except:

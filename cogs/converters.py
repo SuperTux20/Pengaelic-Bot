@@ -23,7 +23,7 @@ class Converters(commands.Cog):
 
     @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg"])
     async def embiggener(self, ctx, *, arg):
-        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!"
+        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!123456789"
         textlist = []
         finaltext = ""
         for char in range(len(arg)):
@@ -35,6 +35,26 @@ class Converters(commands.Cog):
                         textlist.append(":exclamation: ")
                     elif arg[char] == "?":
                         textlist.append(":question: ")
+                    elif arg[char] == "1":
+                        textlist.append(":one: ")
+                    elif arg[char] == "2":
+                        textlist.append(":two: ")
+                    elif arg[char] == "3":
+                        textlist.append(":three: ")
+                    elif arg[char] == "4":
+                        textlist.append(":four: ")
+                    elif arg[char] == "5":
+                        textlist.append(":five: ")
+                    elif arg[char] == "6":
+                        textlist.append(":six: ")
+                    elif arg[char] == "7":
+                        textlist.append(":seven: ")
+                    elif arg[char] == "8":
+                        textlist.append(":eight: ")
+                    elif arg[char] == "9":
+                        textlist.append(":nine: ")
+                    elif arg[char] == "0":
+                        textlist.append(":zero: ")
                     else:
                         textlist.append(f":regional_indicator_{arg[char].lower()}: ")
         for beeg in range(len(textlist)):
