@@ -162,17 +162,11 @@ class Options(commands.Cog):
     @commands.command(name="load", help="Load a cog.", usage="[cog to load]")
     @commands.has_permissions(kick_members=True)
     async def loadcog(self, ctx, cog2load=None):
-        activecogs = []
-        inactivecogs = []
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
             cogs = list(allOptions["toggles"]["cogs"].keys())
             enabled = list(allOptions["toggles"]["cogs"].values())
-            for cog in range(len(cogs)):
-                if enabled[cog] == True:
-                    activecogs.append(cogs[cog])
-                else:
-                    inactivecogs.append(cogs[cog])
+            inactivecogs = [cog for cog in range(len(cogs)) if enabled[cog] == False]
 
         if len(inactivecogs) == 0:
             await ctx.send("All cogs are already loaded, you can't load any more.")
@@ -194,14 +188,11 @@ class Options(commands.Cog):
     @commands.command(name="unload", help="Unload a cog.", usage="[cog to unload]")
     @commands.has_permissions(kick_members=True)
     async def unloadcog(self, ctx, cog2unload=None):
-        activecogs = []
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
             cogs = list(allOptions["toggles"]["cogs"].keys())
             enabled = list(allOptions["toggles"]["cogs"].values())
-            for cog in range(len(cogs)):
-                if enabled[cog] == True:
-                    activecogs.append(cogs[cog])
+            activecogs = [cog for cog in range(len(cogs)) if enabled[cog] == True]
 
         if len(activecogs) == 0:
             await ctx.send("No cogs are loaded, you can't unload any more.")
@@ -227,9 +218,10 @@ class Options(commands.Cog):
     @loadcog.error
     @unloadcog.error
     async def kickError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
-        errorAlreadyHandled = True
+        if error == discord.ext.commands.errors.MissingPermissions:
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
+        else:
+            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
 
     @showfilter.error
     @addfilter.error
@@ -237,9 +229,12 @@ class Options(commands.Cog):
     @wipefilter.error
     @rudenesslevel.error
     async def messageError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-        errorAlreadyHandled = True
+        if error == discord.ext.commands.errors.MissingPermissions:
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
+        elif error == discord.ext.commands.errors.BotMissingPermissions:
+            await ctx.send(f"{ctx.author.mention}, ***I*** have insufficient permissions! (Manage Messages)")
+        else:
+            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
 
 def setup(client):
     client.add_cog(Options(client))

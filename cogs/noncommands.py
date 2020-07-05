@@ -31,7 +31,12 @@ class Noncommands(commands.Cog):
                         dadjoke = dadjoke.lower()
                     if dadjoke[0] == message.content[0] and dadjoke[1] == message.content[1]:
                         if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
-                            await message.channel.send("You're not the Pengaelic Bot, I am!")
+                            if "not" in message.content:
+                                await message.channel.send("Darn right, you're not!")
+                            else:
+                                await message.channel.send("You're not the Pengaelic Bot, I am!")
+                        elif ("chicken" in message.content and "meister" in message.content) or "Tux" in message.content or "tux" in message.content:
+                            await message.channel.send("You dare to impersonate my creator?! ***You shall be punished.***")
                         else:
                             if dadprefixes[dad] + "a " == message.content[0:len(dadprefixes[dad])+2]:
                                 await message.channel.send(f"Hi {message.content[len(dadjoke)+2:]}, I'm the Pengaelic Bot!")

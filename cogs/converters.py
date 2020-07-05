@@ -8,14 +8,6 @@ class Converters(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    @commands.command(name="novowels", help="Remove all vowels from whatever text you put in.", aliases=["vowelremover", "removevowels"])
-    async def vowelRemover(self, ctx, *, arg):
-        vowels = "aeiouAEIOU"
-        outputString = arg
-        for vowel in range(len(vowels)):
-                outputString = outputString.replace(vowels[vowel],"")
-        await ctx.send(outputString.replace("  ", " ")) # remove doubled spaces
-
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
     async def owoConverter(self, ctx, *, arg):
         await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
@@ -77,6 +69,16 @@ class Converters(commands.Cog):
         toshuf = list(arg)
         shuffle(toshuf)
         await ctx.send("".join(toshuf))
+
+    @owoConverter.error
+    @embiggener.error
+    @greekify.error
+    @shuffle.error
+    async def overcharlimit(self, ctx, error):
+        if error == discord.errors.HTTPException:
+            await ctx.send("Sending all that would put me over the 2000-character limit!")
+        else:
+            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
 
 def setup(client):
     client.add_cog(Converters(client))

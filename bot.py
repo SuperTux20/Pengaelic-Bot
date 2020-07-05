@@ -11,10 +11,8 @@ print("Starting")
 
 load_dotenv("../pengaelicbot.data/.env")
 TOKEN = getenv("DISCORD_TOKEN")
-errorAlreadyHandled = False
-# even though I'm removing the default p!help command, I'm leaving the vestigial descriptions in the commands
-client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot",help_command=None)
 connected = False
+client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot",help_command=None)
 
 @client.event
 async def on_ready():
@@ -22,7 +20,7 @@ async def on_ready():
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
     game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
     youtuber = choice(["Ethoslab", "MumboJumbo", "Blue Television Games", "The King of Random", "Phoenix SC"])
-    movie = choice(["Avengers: Endgame", "Avengers: Infinity War", "Star Wars: A New Hope", "Spiderman: Into the Spiderverse", "Back to the Future"])
+    movie = choice(["Avengers: Endgame", "Avengers: Infinity War", "Star Wars Episode IV: A New Hope", "Spiderman: Into the Spiderverse", "Back to the Future"])
     activity = choice([discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=choice([youtuber, movie]))])
     await client.change_presence(activity=activity)
     print("Status updated")
@@ -33,8 +31,6 @@ async def on_ready():
                 allOptions = load(optionsfile)
                 if connected == False:
                     print("Options file loaded for " + str(client.guilds[guild].name))
-                else:
-                    print("Options file reloaded for " + str(client.guilds[guild].name))
         # if something goes wrong...
         except:
             # ...try creating it
@@ -85,19 +81,17 @@ async def on_guild_join(guild):
 
 @client.event
 async def on_command_error(ctx, error):
+    # this checks if the individual commands have their own error handling. if not...
+    if hasattr(ctx.command, 'on_error'):
+        return
+    # ...send the global error, which differs depending on rudeness level
+    errormsgs = ["Sorry, this command is invalid.", "Invalid command/usage.", "You typed the command wrong!"]
     with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
-    if errorAlreadyHandled == False:
-        if allOptions["numbers"]["rudeness"] < 3:
-            if allOptions["numbers"]["rudeness"] == 0:
-                invalidmsg = "Sorry, this command is invalid."
-            elif allOptions["numbers"]["rudeness"] == 1:
-                invalidmsg = "Invalid command/usage."
-            elif allOptions["numbers"]["rudeness"] == 2:
-                invalidmsg = "You typed the command wrong!"
-            await ctx.send(invalidmsg + " Type `p!help` for a list of commands and their usages.")
-        else:
-            await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
+    if allOptions["numbers"]["rudeness"] < 3:
+        await ctx.send(errormsgs[allOptions["numbers"]["rudeness"]] + " Type `p!help` for a list of commands and their usages.")
+    else:
+        await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
 
 @client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
 async def redoWelcome(ctx):

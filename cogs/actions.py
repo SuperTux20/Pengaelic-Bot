@@ -12,18 +12,19 @@ class Actions(commands.Cog):
         self.client = client
         self.isNomming = True
         self.nomSuccess = False
+        self.nommed = None
         self.cyan = 32639
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if reaction.emoji == "👄":
-            if user.id != 721092139953684580:
+            if user.id != 721092139953684580 and user.id != self.nommed.id:
                 if self.isNomming == True:
                     self.isNomming = False
                     self.nomSuccess = False
 
     @commands.command(name="slap", help="Slap someone...?")
-    async def slap(self, ctx, slap: discord.Member=None):
+    async def slap(self, ctx, *, slap: discord.Member=None):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
         if allOptions["numbers"]["rudeness"] > 0:
@@ -49,7 +50,7 @@ class Actions(commands.Cog):
             await ctx.send("Slapping is disabled: Rudeness level is 0")
 
     @commands.command(name="hug", help="Give somebody a hug!")
-    async def hug(self, ctx, hug: discord.Member=None):
+    async def hug(self, ctx, *, hug: discord.Member=None):
         hugger = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/hug/{randint(1,len(listdir('images/gifs/hug'))-1)}.gif"
         try:
@@ -70,7 +71,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="boop", help="Boop someone's nose :3")
-    async def boop(self, ctx, boop: discord.Member=None):
+    async def boop(self, ctx, *, boop: discord.Member=None):
         booper = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/boop/{randint(1,len(listdir('images/gifs/boop'))-1)}.gif"
         try:
@@ -97,7 +98,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="pat", help="Pat someone on the head!")
-    async def pat(self, ctx, pat: discord.Member=None, *, bodypart="head"):
+    async def pat(self, ctx, *, pat: discord.Member=None):
         patter = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/pat/{randint(1,len(listdir('images/gifs/pat'))-1)}.gif"
         try:
@@ -105,27 +106,27 @@ class Actions(commands.Cog):
         except:
             await ctx.send("You can't just pat thin air! (Unless you're patting a ghost?)")
             return
-        responses = [patted + " just got patted on the " + bodypart + " by " + patter, patter + " patted " + patted + " on the " + bodypart + "."]
+        responses = [patted + " just got patted on the head by " + patter, patter + " patted " + patted + " on the head."]
         botresponses = ["<:happy:708534449310138379>", "hehe", "aw, you're cute :3"]
         embed = discord.Embed(title=choice(responses),color=self.cyan)
         embed.set_image(url=gif)
         if pat == ctx.author:
-            await ctx.send("You pat yourself on the " + bodypart + ".")
+            await ctx.send("You pat yourself on the head.")
         else:
             await ctx.send(embed=embed)
             if str(pat.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="nom", help="Possibly eat someone >:3\nThey can get away if they're fast enough :eyes:")
-    async def nom(self, ctx, nom: discord.Member=None):
+    async def nom(self, ctx, *, nom: discord.Member=None):
         nommer = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{randint(1,len(listdir('images/gifs/nom'))-1)}.gif"
         try:
-            nommed = nom.display_name
+            self.nommed = nom.display_name
         except:
             await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
             return
-        responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed]
+        responses = [self.nommed + " just got nommed by " + nommer, nommer + " nommed " + self.nommed, nommer + " ate " + self.nommed]
         selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your own finger. Why...?", "Uh..."]
         botresponses = ["mmmph!", "nmmmmmmmph!", "hmmmnnnnn!!"]
         embed = discord.Embed(title=choice(responses),color=self.cyan)
@@ -140,8 +141,9 @@ class Actions(commands.Cog):
                 self.isNomming = True
                 self.nomSuccess = False
                 stupidchannel = await ctx.guild.create_text_channel("nom-command-stupidity")
-                await stupidchannel.set_permissions(read_messages=False)
-                NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
+                await stupidchannel.set_permissions(ctx.guild.default_role, read_messages=False)
+                await stupidchannel.set_permissions((729373230972010586), read_messages=False)
+                NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {self.nommed}! Quick, react to get away!")
                 await NoNomSense.add_reaction("👄")
                 for _ in range(5):
                     sleep(1)
@@ -155,11 +157,11 @@ class Actions(commands.Cog):
                 if self.nomSuccess == True:
                     await ctx.send(embed=embed)
                 else:
-                    await ctx.send(nommed + " got away!")
+                    await ctx.send(self.nommed + " got away!")
                 await stupidchannel.delete()
 
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
-    async def tickle(self, ctx, tickle: discord.Member=None):
+    async def tickle(self, ctx, *, tickle: discord.Member=None):
         tickler = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/tickle/{randint(1,len(listdir('images/gifs/tickle'))-1)}.gif"
         try:
@@ -180,7 +182,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
-    async def kiss(self, ctx, kiss: discord.Member=None):
+    async def kiss(self, ctx, *, kiss: discord.Member=None):
         kisser = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/kiss/{randint(1,len(listdir('images/gifs/kiss'))-1)}.gif"
         try:
@@ -190,7 +192,7 @@ class Actions(commands.Cog):
             return
         responses = [kissed + " just got kissed by " + kisser, kisser + " kissed " + kissed, kisser + " gave a kiss to " + kissed, kisser + " gave " + kissed + " a kiss"]
         selfresponses = ["You... Huh... How does this work...?", "You kiss your reflection in the mirror.", "You kiss the back of your own hand."]
-        botresponses = ["aww!", "<:happy:708534449310138379>", "*gasp*"]
+        botresponses = [":flushed:", "<:happy:708534449310138379>", "*gasp*"]
         embed = discord.Embed(title=choice(responses),color=self.cyan)
         embed.set_image(url=gif)
         if kiss == ctx.author:
@@ -201,7 +203,7 @@ class Actions(commands.Cog):
                 await ctx.send(choice(botresponses))
 
     @commands.command(name="squish", help="Sqweesh someone's face >3<")
-    async def squish(self, ctx, squish: discord.Member=None):
+    async def squish(self, ctx, *, squish: discord.Member=None):
         squisher = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/squish/{randint(1,len(listdir('images/gifs/squish'))-1)}.gif"
         try:
@@ -220,6 +222,20 @@ class Actions(commands.Cog):
             await ctx.send(embed=embed)
             if str(squish.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
+
+    @slap.error
+    @boop.error
+    @hug.error
+    @pat.error
+    @nom.error
+    @tickle.error
+    @kiss.error
+    @squish.error
+    async def error(self, ctx, error):
+        if str(error) == 'Member "@​everyone" not found' or str(error) == 'Member "@​here" not found':
+            await ctx.send("You can't go for *everyone* on the server! :(")
+        else:
+            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
 
 def setup(client):
     client.add_cog(Actions(client))

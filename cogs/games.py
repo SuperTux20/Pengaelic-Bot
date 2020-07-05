@@ -191,7 +191,10 @@ class Games(commands.Cog):
     @summonsheet.error
     async def error(self, ctx, error):
         if error == discord.errors.HTTPException:
-            await ctx.send("Sorry, you specified numbers that were too large. Try again with smaller numbers!")
+            await ctx.send("Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!")
+        else:
+            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
+
 
 def setup(client):
     client.add_cog(Games(client))
