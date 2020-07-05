@@ -137,8 +137,8 @@ class Actions(commands.Cog):
                 await ctx.send(embed=embed)
                 await ctx.send(choice(botresponses))
             else:
-                Actions.isNomming = True
-                Actions.nomSuccess = False
+                self.isNomming = True
+                self.nomSuccess = False
                 stupidchannel = await ctx.guild.create_text_channel("nom-command-stupidity")
                 await stupidchannel.set_permissions(read_messages=False)
                 NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
