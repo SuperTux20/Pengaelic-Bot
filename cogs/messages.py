@@ -20,10 +20,18 @@ class Messages(commands.Cog):
         if delete:
             await ctx.message.delete()
 
-    @commands.command(name="say", help="Make me say something!", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
+    @commands.command(name="say", help="Make me say something! And possibly make me die inside!", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
     async def say_back(self, ctx, *, arg):
         await ctx.send(arg)
         await ctx.message.delete()
+
+    @commands.command(name="youknowtherules", help="...and so do I.", pass_context=True)
+    async def andsodoi(self, ctx):
+        responses = []
+        for _ in range(3):
+            responses.append("And so do I :pensive")
+        responses.append("It's time to die <:handgun:706698375592149013>")
+        await ctx.send(choice(responses))
 
 def setup(client):
     client.add_cog(Messages(client))
