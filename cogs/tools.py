@@ -25,14 +25,27 @@ class Tools(commands.Cog):
         embed.set_image(url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif")
         await ctx.send(embed=embed)
 
-    @commands.command(name="avatar", help="Get someone's avatar.", usage="<@mention>", aliases=["pfp", "profilepic"])
+    @commands.command(name="avatar", help="Get someone's avatar.", usage="[username or nickname or @mention]", aliases=["pfp", "profilepic"])
     async def avatar(self, ctx, *,  member: discord.Member=None):
-        await ctx.send(member.avatar_url)
+        if member:
+            if member.id == 721092139953684580:
+                avatar = member.avatar_url
+                embed = discord.Embed(title=f"Here's my avatar!", color=32639)
+            else:
+                avatar = member.avatar_url
+                embed = discord.Embed(title=f"Here's {member.display_name}'s avatar!", color=32639)
+        else:
+            avatar = ctx.author.avatar_url
+            embed = discord.Embed(title="Here's your avatar!", color=32639)
+        embed.set_image(url=avatar)
+        await ctx.send(embed=embed)
 
     @commands.command(name="icon", help="Get the icon for the server.", aliases=["servericon","servicon"])
     async def servericon(self, ctx):
         try:
-            await ctx.send(ctx.guild.icon_url)
+            embed = discord.Embed(title="Here's the server icon!", color=32639)
+            embed.set_image(url=ctx.guild.icon_url)
+            await ctx.send(embed=embed)
         except:
             await ctx.send("This server doesn't have an icon for some reason... :neutral_face:")
 
@@ -40,11 +53,14 @@ class Tools(commands.Cog):
     async def getemoji(self, ctx, emoji: str=None):
         emojis = [f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis]
         emojiurls = [f"https://cdn.discordapp.com/emojis/{em.id}.png" for em in ctx.guild.emojis]
+        embed = discord.Embed(title="Here's your emoji!", color=32639)
+        embed.set_image(url=emojiurls[emojis.index(emoji)])
         if emoji == None:
+            await ctx.send("Here's all the emojis on this server.")
             await ctx.send(str(emojis)[1:-1].replace("'","").replace(", ",""))
         else:
             if emoji in emojis:
-                await ctx.send(emojiurls[emojis.index(emoji)])
+                await ctx.send(embed=embed)
             else:
                 await ctx.send("Invalid emoji specified!")
 
