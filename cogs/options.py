@@ -14,8 +14,14 @@ class Options(commands.Cog):
             dump(options2dump, optionsfile, sort_keys=True, indent=4)
             print("Options file updated for " + guild.name)
 
+    @commands.command(name="options", help="Show the current values of all options")
+    @commands.has_permissions(manage_messages=True)
+    async def getops(self, ctx):
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+            await ctx.send(f"```{optionsfile.read()}```")
+
     @commands.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
-    @commands.has_permissions(kick_members=True)
+    @commands.has_permissions(manage_messages=True)
     async def resetoptions(self, ctx):
         with open(r"default_options.json", "r") as defaultoptions:
             await self.updateoptions(ctx.guild, load(defaultoptions))
@@ -23,7 +29,7 @@ class Options(commands.Cog):
             await ctx.send(defaultoptions.read())
 
     @commands.command(name="togglecensor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["togglefilter"])
-    @commands.has_permissions(kick_members=True)
+    @commands.has_permissions(manage_messages=True)
     async def togglecensor(self, ctx):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -36,7 +42,7 @@ class Options(commands.Cog):
         await self.updateoptions(ctx.guild, allOptions)
 
     @commands.command(name="toggledad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-    @commands.has_permissions(kick_members=True)
+    @commands.has_permissions(manage_messages=True)
     async def toggledad(self, ctx):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -49,7 +55,7 @@ class Options(commands.Cog):
         await self.updateoptions(ctx.guild, allOptions)
 
     @commands.command(name="togglemama", help="Toggle the automatic Yo Mama jokes.")
-    @commands.has_permissions(kick_members=True)
+    @commands.has_permissions(manage_messages=True)
     async def togglemama(self, ctx):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -63,10 +69,10 @@ class Options(commands.Cog):
 
     @commands.command(name="rudenesslevel", help="Change how rude the bot can be.", aliases=["rudeness"], usage="<level>")
     @commands.has_permissions(manage_messages=True)
-    async def rudenesslevel(self, ctx, level: int=-1):
+    async def rudenesslevel(self, ctx, level: int=-9999):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if level == -1:
+        if level == -9999:
             await ctx.send("Current rudeness level is " + str(allOptions["numbers"]["rudeness"]))
         else:
             if level < 0:
@@ -160,7 +166,7 @@ class Options(commands.Cog):
             await ctx.send(f"```{cogs}```")
 
     @commands.command(name="load", help="Load a cog.", usage="[cog to load]")
-    @commands.has_permissions(kick_members=True)
+    @commands.has_permissions(manage_messages=True)
     async def loadcog(self, ctx, cog2load=None):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -186,7 +192,7 @@ class Options(commands.Cog):
                 await ctx.send("Please specify a cog to load. Avaliable options are " + str(inactivecogs)[1:-1].replace("\'",""))
 
     @commands.command(name="unload", help="Unload a cog.", usage="[cog to unload]")
-    @commands.has_permissions(kick_members=True)
+    @commands.has_permissions(manage_messages=True)
     async def unloadcog(self, ctx, cog2unload=None):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -217,24 +223,14 @@ class Options(commands.Cog):
     @togglemama.error
     @loadcog.error
     @unloadcog.error
-    async def kickError(self, ctx, error):
-        if error == discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Kick Members)")
-        else:
-            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
-
     @showfilter.error
     @addfilter.error
     @delfilter.error
     @wipefilter.error
     @rudenesslevel.error
+    @getops.error
     async def messageError(self, ctx, error):
-        if error == discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-        elif error == discord.ext.commands.errors.BotMissingPermissions:
-            await ctx.send(f"{ctx.author.mention}, ***I*** have insufficient permissions! (Manage Messages)")
-        else:
-            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
+        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
 
 def setup(client):
     client.add_cog(Options(client))
