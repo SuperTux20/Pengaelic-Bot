@@ -9,16 +9,14 @@ class Messages(commands.Cog):
         self.client = client
 
     @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy", "hey", "heya"])
-    async def say_hi_back(self, ctx, delete=None):
+    async def say_hi_back(self, ctx):
         await ctx.send(choice(["Hi, I'm the Pengaelic Bot!", "Heya!", "What's up?"]))
-        if delete:
-            await ctx.message.delete()
+        await ctx.message.delete()
 
     @commands.command(name="bye", help="You say bye, I bid you farewell.", aliases=["seeya", "cya", "goodbye"])
-    async def say_bye_back(self, ctx, delete=None):
+    async def say_bye_back(self, ctx):
         await ctx.send(choice(["See you next time!", "Bye!", "So long, Gay Bowser!"]))
-        if delete:
-            await ctx.message.delete()
+        await ctx.message.delete()
 
     @commands.command(name="say", help="Make me say something! And possibly make me die inside!", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
     async def say_back(self, ctx, *, arg):
