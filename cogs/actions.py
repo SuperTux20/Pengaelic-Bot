@@ -12,13 +12,12 @@ class Actions(commands.Cog):
         self.client = client
         self.isNomming = True
         self.nomSuccess = False
-        self.nommed = None
         self.cyan = 32639
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if reaction.emoji == "👄":
-            if user.id != 721092139953684580 and user.id != self.nommed.id:
+            if user.id != 721092139953684580:
                 if self.isNomming == True:
                     self.isNomming = False
                     self.nomSuccess = False
@@ -122,11 +121,11 @@ class Actions(commands.Cog):
         nommer = ctx.author.display_name
         gif = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{randint(1,len(listdir('images/gifs/nom'))-1)}.gif"
         try:
-            self.nommed = nom.display_name
+            nommed = nom.display_name
         except:
             await ctx.send("You can't just nom thin air! (Unless you're nomming a ghost?)")
             return
-        responses = [self.nommed + " just got nommed by " + nommer, nommer + " nommed " + self.nommed, nommer + " ate " + self.nommed]
+        responses = [nommed + " just got nommed by " + nommer, nommer + " nommed " + nommed, nommer + " ate " + nommed]
         selfresponses = ["You eat yourself and create a black hole. Thanks a lot.", "You chew on your own finger. Why...?", "Uh..."]
         botresponses = ["mmmph!", "nmmmmmmmph!", "hmmmnnnnn!!"]
         embed = discord.Embed(title=choice(responses),color=self.cyan)
@@ -141,9 +140,7 @@ class Actions(commands.Cog):
                 self.isNomming = True
                 self.nomSuccess = False
                 stupidchannel = await ctx.guild.create_text_channel("nom-command-stupidity")
-                await stupidchannel.set_permissions(ctx.guild.default_role, read_messages=False)
-                await stupidchannel.set_permissions((729373230972010586), read_messages=False)
-                NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {self.nommed}! Quick, react to get away!")
+                NoNomSense = await ctx.send(f"{nommer} is trying to eat you, {nommed}! Quick, react to get away!")
                 await NoNomSense.add_reaction("👄")
                 for _ in range(5):
                     sleep(1)
@@ -157,7 +154,7 @@ class Actions(commands.Cog):
                 if self.nomSuccess == True:
                     await ctx.send(embed=embed)
                 else:
-                    await ctx.send(self.nommed + " got away!")
+                    await ctx.send(nommed + " got away!")
                 await stupidchannel.delete()
 
     @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
@@ -211,7 +208,7 @@ class Actions(commands.Cog):
         except:
             await ctx.send("You can't just squish thin air! (Unless you're squishing a ghost?)")
             return
-        responses = [squished + " just got squished by " + squisher, squisher + " squished " + squished, squisher + " gave " + squished + " a squish"]
+        responses = [squished + " just got their face squished by " + squisher, squisher + " squished " + squished + "'s face", squisher + " gave " + squished + "'s face a squish"]
         selfresponses = ["You squish your own face. You look like a fish.", "You reach through the mirror and squish your reflection's face.", "For some reason, you curl your arms around your head to squish your own face."]
         botresponses = ["hehehe", "squish...", "<:hmmph:708534447217180702>"]
         embed = discord.Embed(title=choice(responses),color=self.cyan)
@@ -234,8 +231,10 @@ class Actions(commands.Cog):
     async def error(self, ctx, error):
         if str(error) == 'Member "@​everyone" not found' or str(error) == 'Member "@​here" not found':
             await ctx.send("You can't go for *everyone* on the server! :(")
+        elif "Member" in str(error) and "not found" in str(error):
+            await ctx.send("Invalid user specified!")
         else:
-            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
+            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 def setup(client):
     client.add_cog(Actions(client))
