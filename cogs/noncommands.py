@@ -22,10 +22,11 @@ class Noncommands(commands.Cog):
 
         # this section is for Dad Bot-like responses
         if allOptions["toggles"]["dad"] == True:
-            dadprefixes = ["I'm ", "Im ", "I am "]
+            dadprefs = ["I'm ", "Im ", "I am "]
+            dadprefixes = dadprefs.copy()
             for dad in dadprefixes:
-                dadprefixes.append(dad.lower())
-            for dad in dadprefixes:
+                dadprefs.append(dad.lower())
+            for dad in dadprefs:
                 if dad == message.content[0:len(dad)]:
                     if dad[0] == message.content[0] and dad[1] == message.content[1]:
                         if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
