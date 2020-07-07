@@ -51,22 +51,17 @@ async def on_ready():
     connected = True
 
 @client.event
-async def on_guild_join(guild):
+async def on_guild_join(guild, ctx=None):
     print("Joined " + str(guild.name))
     welcomeEmbed = discord.Embed(title="Howdy fellas! I'm the Pengaelic Bot!", description="Type `p!help` for a list of commands.", color=32639)
     welcomeEmbed.set_thumbnail(url=client.user.avatar_url)
     allchannels = list(guild.text_channels)
     for channel in range(len(allchannels)):
         allchannels[channel] = str(allchannels[channel])
-    generals = [channel for channel in allchannels if "general" in channel]
-    for gen in range(len(generals)):
-        if "2" in generals[gen]:
-            generals.remove(generals[gen])
     if get(guild.text_channels, name="general"):
         await get(guild.text_channels, name="general").send(embed=welcomeEmbed)
-    else:
-        for channel in range(len(generals)):
-            await get(guild.text_channels, name=generals[channel]).send(embed=welcomeEmbed)
+    elif channel:
+        await ctx.channel.send(embed=welcomeEmbed)
 
     # create fresh options file for new server
     try:
@@ -95,7 +90,7 @@ async def on_command_error(ctx, error):
 
 @client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
 async def redoWelcome(ctx):
-    await on_guild_join(ctx.guild)
+    await on_guild_join(ctx.guild, ctx)
     await ctx.message.delete()
 
 @client.command(name="help", help="Show this message", aliases=["info", "commands"])
@@ -124,7 +119,7 @@ async def help(ctx, category=None, subcategory=None):
         helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
         cog = client.get_cog("Actions")
         for command in cog.get_commands():
-            helpMenu.add_field(name=f"{command} <@mention>", value=command.help)
+            helpMenu.add_field(name=f"{command} <username or nickname or @mention>", value=command.help)
     elif category == "Converters" or category == "converters":
         helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
         cog = client.get_cog("Converters")
