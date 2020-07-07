@@ -16,20 +16,18 @@ class Noncommands(commands.Cog):
                 allOptions = load(optionsfile)
         except:
             pass
-        if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
+
+        if message.author.id == 721092139953684580 or message.author.id == 503720029456695306: # that's the ID for Dad Bot, this is to prevent conflict.
             return
 
         # this section is for Dad Bot-like responses
         if allOptions["toggles"]["dad"] == True:
             dadprefixes = ["I'm ", "Im ", "I am "]
-            for dad in range(len(dadprefixes)):
-                dadprefixes.append(dadprefixes[dad].lower())
-            for dad in range(len(dadprefixes)):
-                if dadprefixes[dad] == message.content[0:len(dadprefixes[dad])]:
-                    dadjoke = dadprefixes[dad]
-                    if dadprefixes[dad].lower() in message.content:
-                        dadjoke = dadjoke.lower()
-                    if dadjoke[0] == message.content[0] and dadjoke[1] == message.content[1]:
+            for dad in dadprefixes:
+                dadprefixes.append(dad.lower())
+            for dad in dadprefixes:
+                if dad == message.content[0:len(dad)]:
+                    if dad[0] == message.content[0] and dad[1] == message.content[1]:
                         if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
                             if "not" in message.content:
                                 await message.channel.send("Darn right, you're not!")
@@ -38,10 +36,10 @@ class Noncommands(commands.Cog):
                         elif ("chicken" in message.content and "meister" in message.content) or "Tux" in message.content or "tux" in message.content:
                             await message.channel.send("You dare to impersonate my creator?! ***You shall be punished.***")
                         else:
-                            if dadprefixes[dad] + "a " == message.content[0:len(dadprefixes[dad])+2]:
-                                await message.channel.send(f"Hi {message.content[len(dadjoke)+2:]}, I'm the Pengaelic Bot!")
+                            if dad + "a " == message.content[0:len(dad)+2]:
+                                await message.channel.send(f"Hi {message.content[len(dad)+2:]}, I'm the Pengaelic Bot!")
                             else:
-                                await message.channel.send(f"Hi {message.content[len(dadjoke):]}, I'm the Pengaelic Bot!")
+                                await message.channel.send(f"Hi {message.content[len(dad):]}, I'm the Pengaelic Bot!")
 
         # this section is to auto-delete messages containing a keyword contained in the text file
         if allOptions["toggles"]["censor"] == True:
