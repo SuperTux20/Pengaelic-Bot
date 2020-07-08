@@ -75,10 +75,8 @@ class Tools(commands.Cog):
 
     @clear.error
     async def clearError(self, ctx, error):
-        if error == discord.ext.commands.errors.MissingPermissions:
+        if str(error) == "You are missing Manage Messages permission(s) to run this command.":
             await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-        elif error == discord.ext.commands.errors.BotMissingPermissions:
-            await ctx.send(f"{ctx.author.mention}, ***I*** have insufficient permissions! (Manage Messages)")
 
     @commands.command(name="purge", help="Purge a channel of everything.\n:warning:WARNING:warning: This command clears an ENTIRE channel!", aliases=["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels=True)
@@ -94,12 +92,10 @@ class Tools(commands.Cog):
 
     @purge.error
     async def purgeError(self, ctx, error):
-        if error == discord.ext.commands.errors.MissingPermissions:
+        if str(error) == "You are missing Manage Channels permission(s) to run this command.":
             await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)")
-        elif error == discord.ext.commands.errors.BotMissingPermissions:
-            await ctx.send(f"{ctx.author.mention}, ***I*** have insufficient permissions! (Manage Channels)")
         else:
-            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
     @avatar.error
     async def avatarError(self, ctx, error):

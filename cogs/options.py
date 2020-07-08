@@ -46,11 +46,11 @@ class Options(commands.Cog):
     async def toggledad(self, ctx):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["toggles"]["dad"] == True:
-            allOptions["toggles"]["dad"] = False
+        if allOptions["toggles"]["jokes"]["dad"] == True:
+            allOptions["toggles"]["jokes"]["dad"] = False
             await ctx.send("Bye p!toggledad, I'm the Pengaelic Bot!")
-        elif allOptions["toggles"]["dad"] == False:
-            allOptions["toggles"]["dad"] = True
+        elif allOptions["toggles"]["jokes"]["dad"] == False:
+            allOptions["toggles"]["jokes"]["dad"] = True
             await ctx.send("Hi p!toggledad, I'm the Pengaelic Bot!")
         await self.updateoptions(ctx.guild, allOptions)
 
@@ -59,12 +59,25 @@ class Options(commands.Cog):
     async def togglemama(self, ctx):
         with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["toggles"]["yoMama"] == True:
-            allOptions["toggles"]["yoMama"] = False
+        if allOptions["toggles"]["jokes"]["yoMama"] == True:
+            allOptions["toggles"]["jokes"]["yoMama"] = False
             await ctx.send("Yo Mama jokes turned off.")
-        elif allOptions["toggles"]["yoMama"] == False:
-            allOptions["toggles"]["yoMama"] = True
+        elif allOptions["toggles"]["jokes"]["yoMama"] == False:
+            allOptions["toggles"]["jokes"]["yoMama"] = True
             await ctx.send("Yo Mama jokes turned on.")
+        await self.updateoptions(ctx.guild, allOptions)
+        
+    @commands.command(name="togglewelcome", help="Toggle the automatic welcome messages.")
+    @commands.has_permissions(manage_messages=True)
+    async def togglewelcome(self, ctx):
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+        if allOptions["toggles"]["welcome"] == True:
+            allOptions["toggles"]["welcome"] = False
+            await ctx.send("Welcome message turned off.")
+        elif allOptions["toggles"]["welcome"] == False:
+            allOptions["toggles"]["welcome"] = True
+            await ctx.send("Welcome message turned on.")
         await self.updateoptions(ctx.guild, allOptions)
 
     @commands.command(name="rudenesslevel", help="Change how rude the bot can be.", aliases=["rudeness"], usage="<level>")
@@ -221,6 +234,7 @@ class Options(commands.Cog):
     @togglecensor.error
     @toggledad.error
     @togglemama.error
+    @togglewelcome.error
     @loadcog.error
     @unloadcog.error
     @showfilter.error
@@ -230,7 +244,10 @@ class Options(commands.Cog):
     @rudenesslevel.error
     @getops.error
     async def messageError(self, ctx, error):
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
+        if str(error) == "You are missing Manage Messages permission(s) to run this command.":
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
+        else:
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 def setup(client):
     client.add_cog(Options(client))

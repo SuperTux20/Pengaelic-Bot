@@ -230,7 +230,7 @@ class Actions(commands.Cog):
     @squish.error
     async def error(self, ctx, error):
         if str(error) == 'Member "@​everyone" not found' or str(error) == 'Member "@​here" not found':
-            await ctx.send("You can't go for *everyone* on the server! :(")
+            await ctx.send("You can't go for everyone at once! :(")
         elif "Member" in str(error) and "not found" in str(error):
             await ctx.send("Invalid user specified!")
         else:

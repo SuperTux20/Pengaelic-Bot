@@ -1,4 +1,5 @@
 import discord
+from discord.utils import get
 from discord.ext import commands
 from json import load
 from random import choice
@@ -8,6 +9,20 @@ class Noncommands(commands.Cog):
     description = "Automatic message responses that aren't commands."
     def __init__(self, client):
         self.client = client
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        with open(rf"../pengaelicbot.data/configs/{member.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+        if allOptions["toggles"]["welcome"] == True:
+            possiblechannels = ["welcome", "arrivals", "entrance", "entry", "general", "bot-commands", "commands"]
+            for channel in possiblechannels:
+                try:
+                    await get(member.guild.text_channels, name=channel).send(f"Welcome to {member.guild.name}, {member.mention}!")
+                    break
+                except:
+                    continue
+            print(f"{member} has joined {member.guild.name}.")
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -21,7 +36,7 @@ class Noncommands(commands.Cog):
             return
 
         # this section is for Dad Bot-like responses
-        if allOptions["toggles"]["dad"] == True:
+        if allOptions["toggles"]["jokes"]["dad"] == True:
             dadprefs = ["I'm ", "Im ", "I am "]
             dadprefixes = dadprefs.copy()
             for dad in dadprefixes:
@@ -78,7 +93,7 @@ class Noncommands(commands.Cog):
                                 await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
 
         # this section randomizes yo mama jokes, does not work if rudeness is below 2
-        if allOptions["toggles"]["yoMama"] == True:
+        if allOptions["toggles"]["jokes"]["yoMama"] == True:
             with open(r"Yo Mama Jokes.json", "r") as AllTheJokes:
                 jokes = load(AllTheJokes)
                 mamatypes = list(jokes.keys())
@@ -106,7 +121,7 @@ class Noncommands(commands.Cog):
                 await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
                 await message.channel.send(f"Yo mama so {mamatype}")
 
-        if ("ded" in message.content or "dead" in message.content) and ("chat" in message.content or "server" in message.content):
+        if (any(["ded" == word for word in message.content.split()]) or any(["dead" == word for word in message.content.split()])) and (any(["chat" == word for word in message.content.split()]) or any(["server" == word for word in message.content.split()])):
             await message.channel.send(f"{choice(['N','n'])}o {choice(['U','u'])}")
 
 def setup(client):

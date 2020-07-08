@@ -86,8 +86,10 @@ async def on_command_error(ctx, error):
         await ctx.send(errormsgs[allOptions["numbers"]["rudeness"]] + " Type `p!help` for a list of commands and their usages.")
     else:
         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
+    print(error)
+    print(f'Invalid command p!{ctx.command} sent in {ctx.guild} in #{ctx.channel} by {ctx.message.author.name}#{ctx.message.author.discriminator}, AKA "{ctx.message.author.nick}"')
 
-@client.command(name="welcome", help="Show the welcome message if it doesn't show up automatically")
+@client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redoWelcome(ctx):
     await on_guild_join(ctx.guild, ctx)
     await ctx.message.delete()
