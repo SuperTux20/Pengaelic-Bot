@@ -1,4 +1,3 @@
-# bot.py
 import discord
 from json import load, dump
 from discord.utils import get
@@ -93,7 +92,7 @@ async def redoWelcome(ctx):
     await on_guild_join(ctx.guild, ctx)
     await ctx.message.delete()
 
-@client.command(name="help", help="Show this message", aliases=["info", "commands"])
+@client.command(name="help", help="Show this message", aliases=["info", "commands", "h"])
 async def help(ctx, category=None, subcategory=None):
     cyan = 32639
     helpMenu = discord.Embed(title=client.description, description="Type `p!help <category name>` for more info on each category.", color=cyan)

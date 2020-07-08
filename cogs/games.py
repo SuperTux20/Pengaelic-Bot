@@ -8,6 +8,7 @@ class Games(commands.Cog):
     description = "All sorts of fun stuff!"
     def __init__(self, client):
         self.client = client
+        self.syllables = ["A", "Ag", "Ah", "Al", "Am", "An", "Art", "As", "Au", "Ayn", "Az", "Be", "Bi", "Bo", "Bor", "By", "Ca", "Car", "Cat", "Cer", "Co", "Cu", "Dam", "Der", "Di", "Dil", "Do", "Dy", "Dyl", "E", "El", "Em", "En", "Ex", "Fi", "Fin", "Finn", "Fly", "Grif", "He", "Hy", "I", "In", "Is", "Iss", "Ja", "Ji", "Jo", "Ka", "Kev", "Ko", "Lan", "Lar", "Ler", "Li", "Lo", "Lu", "Ly", "Ma", "Mar", "Mel", "Mi", "Mo", "Nar", "Ne", "No", "Nos", "O", "Ol", "Om", "On", "Or", "Os", "Pe", "Pen", "Per", "Ri", "Rin", "Rob", "Sac", "Sam", "Ser", "Sha", "Sky", "Ta", "Tay", "Ter", "Tha", "Than", "Tif", "Tur", "U", "Wa", "Wyn", "Yu", "Za", "Zo"]
 
     @commands.command(name="8ball", help="Ask the ball and receive wisdom... :eyes:", aliases=["magic8ball"], usage="[question]")
     async def _8ball(self, ctx, *, question=None):
@@ -64,16 +65,9 @@ class Games(commands.Cog):
             else:
                 for _ in range(int(str(coins))):
                     result = randint(0,2)
-                    if result == 2:
-                        result = randint(0,2)
+                    for _ in range(5):
                         if result == 2:
                             result = randint(0,2)
-                            if result == 2:
-                                result = randint(0,2)
-                                if result == 2:
-                                    result = randint(0,2)
-                                    if result == 2:
-                                        result = randint(0,2)
                     results.append(result)
                 if results.count(2) > 0:
                     if results.count(2) == 1:
@@ -183,6 +177,16 @@ class Games(commands.Cog):
                         row = row + "||pop||"
                 sheet = sheet + row + "\n"
             await ctx.send(sheet)
+
+    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["genname", "generatename"], usage="[number of names to generate (1)]")
+    async def namegen(self, ctx, amount: int=1):
+        for _ in range(amount):
+            name = choice(self.syllables)
+            for _ in range(randint(1, 4)):
+                syl = choice(self.syllables)
+                name = name + syl.lower()
+                self.syllables.remove(syl)
+            await ctx.send(name)
 
     @_8ball.error
     @rollem.error
