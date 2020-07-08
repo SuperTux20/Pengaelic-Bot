@@ -75,10 +75,10 @@ class Converters(commands.Cog):
     @greekify.error
     @shuffle.error
     async def overcharlimit(self, ctx, error):
-        if error == discord.errors.HTTPException:
+        if str(error) == "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body\nKn content: Must be 2000 or fewer in length.":
             await ctx.send("Sending all that would put me over the 2000-character limit!")
         else:
-            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
 
 def setup(client):
     client.add_cog(Converters(client))
