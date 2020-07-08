@@ -20,7 +20,7 @@ class Games(commands.Cog):
         else:
             await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
-    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)] [number of sides (6)]")
+    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)]\n[number of sides (6)]")
     async def rollem(self, ctx, dice: int=1, sides: int=6):
         if dice == 0:
             await ctx.send(":game_die:You didn't roll any dice.")
@@ -64,16 +64,9 @@ class Games(commands.Cog):
             else:
                 for _ in range(int(str(coins))):
                     result = randint(0,2)
-                    if result == 2:
-                        result = randint(0,2)
+                    for _ in range(5):
                         if result == 2:
                             result = randint(0,2)
-                            if result == 2:
-                                result = randint(0,2)
-                                if result == 2:
-                                    result = randint(0,2)
-                                    if result == 2:
-                                        result = randint(0,2)
                     results.append(result)
                 if results.count(2) > 0:
                     if results.count(2) == 1:
@@ -83,28 +76,33 @@ class Games(commands.Cog):
                 else:
                     await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails.")
 
-    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)] [replace cards in deck (no)]")
-    async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
+    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (no)]\n[use emojis instead of text (no)]")
+    async def drawem(self, ctx, cards: int=1, replaceCards: str="no", emoji: str="no"):
         suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        values = {1: 'Ace', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 'Jack', 12: 'Queen', 13: 'King'}
+        suits_emoji = [":diamonds:", ":spades:", ":hearts:", ":clubs:"]
+        values_emoji = {1: ':regional_indicator_a:', 2: ':two:', 3: ':three:', 4: ':four:', 5: ':five:', 6: ':six:', 7: ':seven:', 8: ':eight:', 9: ':nine:', 10: ':keycap_ten:', 11: ':regional_indicator_j:', 12: ':regional_indicator_q:', 13: ':regional_indicator_k:'}
         allCards = []
         faces = []
         nums = []
         drawn = []
         if replaceCards == "no":
             for suit in range(int(len(suits)/1)):
-                for value in range(len(values)):
-                    if values[value] == 10:
-                        length = 2
-                    elif values[value] == 1:
-                        length = 3
-                    elif values[value] == 11 or values[value] == 13:
-                        length = 4
-                    elif values[value] == 12:
-                        length = 5
+                for value in values:
+                    if emoji == "no":
+                        if value == 10:
+                            length = 2
+                        elif value == 1:
+                            length = 3
+                        elif value == 11 or value == 13:
+                            length = 4
+                        elif value == 12:
+                            length = 5
+                        else:
+                            length = 1
+                        allCards.append(str(values[value]) + (" " * (6 - length) + "of ") + suits[suit])
                     else:
-                        length = 1
-                    allCards.append(str(values[value]) + (" " * (6 - length) + "of ") + suits[suit])
+                        allCards.append(values_emoji[value] + suits_emoji[suit])
             if cards > 52:
                 await ctx.send(":black_joker:You can't draw more than the entire deck!")
                 return
@@ -114,35 +112,47 @@ class Games(commands.Cog):
             else:
                 for _ in range(cards):
                     card = choice(allCards)
+                    if emoji == "no":
+                        if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
+                            faces.append(card)
+                        else:
+                            nums.append(card)
+                    else:
+                        emojiname = card[1:-1].split("::")[0]
+                        if emojiname == "regional_indicator_j" or emojiname == "regional_indicator_q" or emojiname == "regional_indicator_k":
+                            faces.append(card)
+                        else:
+                            nums.append(card)
+                    allCards.remove(card)
+                drawn = faces + nums
+        else:
+            for _ in range(cards):
+                if emoji == "no":
+                    chosenValue = str(choice(list(values.values())))
+                    card = str(chosenValue + (" " * (6 - len(chosenValue)) + "of ") + choice(suits))
                     if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
                         faces.append(card)
                     else:
                         nums.append(card)
-                    allCards.remove(card)
-                faces = sorted(faces, reverse=True)
-                nums = sorted(nums, reverse=True)
-                drawn = faces + nums
-        else:
-            for _ in range(cards):
-                chosenValue = str(choice(values))
-                card = str(chosenValue + (" " * (len(chosenValue) - 6) + "of ") + choice(suits))
-                if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
-                    faces.append(card)
                 else:
-                    nums.append(card)
-            faces = sorted(faces, reverse=True)
-            nums = sorted(nums, reverse=True)
+                    card = choice(list(values_emoji.values())) + choice(suits_emoji)
+                    emojiname = card[1:-1].split("::")[0]
+                    if emojiname == "regional_indicator_j" or emojiname == "regional_indicator_q" or emojiname == "regional_indicator_k":
+                        faces.append(card)
+                    else:
+                        nums.append(card)
             drawn = faces + nums
-        for card in range(len(drawn)):
-            drawn[card] = drawn[card].replace("11","Jack").replace("12","Queen").replace("13","King").replace("1 ", "Ace ")
         if cards == 1:
             while "  " in drawn[0]:
                 drawn[0] = drawn[0].replace("  "," ")
             await ctx.send(":black_joker:You drew " + drawn[0])
         else:
-            await ctx.send(":black_joker:You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
+            if emoji == "no":
+                await ctx.send(":black_joker:You drew...```" + str(drawn)[1:-1].replace("'","").replace(", ","\n") + "```")
+            else:
+                await ctx.send(":black_joker:You drew...\n" + str(drawn)[1:-1].replace("'","").replace(", ","\n"))
 
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubble", "wrap", "bubbles"], usage="[width of sheet (5)] [height of sheet (5)]")
+    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubbles"], usage="[width of sheet (5)]\n[height of sheet (5)]")
     async def summonsheet(self, ctx, width: int=5, height: int=5):
         if width == 1 and height == 1:
             await ctx.send(r"""```
@@ -166,6 +176,33 @@ class Games(commands.Cog):
                         row = row + "||pop||"
                 sheet = sheet + row + "\n"
             await ctx.send(sheet)
+
+    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["generatename", "namegen"], usage="[number of names to generate (1)] [limit to how many syllables can be used (3)]")
+    async def namegen(self, ctx, amount: int=1, syllableLimit: int=3):
+        names = []
+        for _ in range(amount):
+            syllables = ["A", "Ag", "Ah", "Al", "Am", "An", "Art", "As", "Au", "Ayn", "Az", "Be", "Bi", "Bo", "Bor", "Burn", "By", "Ca", "Car", "Cat", "Cer", "Co", "Cu", "Dam", "Der", "Di", "Dil", "Do", "Dy", "Dyl", "E", "El", "Em", "En", "Ex", "Fi", "Fin", "Finn", "Fly", "Grif", "He", "Hy", "I", "Ig", "In", "Is", "Iss", "Ja", "Ji", "Jo", "Ka", "Kev", "Ko", "Lan", "Lar", "Ler", "Li", "Lo", "Lu", "Ly", "Ma", "Mar", "Mel", "Mi", "Mo", "Na", "Nar", "Ne", "No", "Nos", "O", "Ol", "Om", "On", "Or", "Os", "Pe", "Pen", "Per", "Ra", "Ri", "Rin", "Rob", "Sac", "Sam", "Ser", "Sha", "Son", "Sky", "Ta", "Tay", "Ter", "Tha", "Than", "Tif", "Tur", "U", "Wa", "Wyn", "Yu", "Za", "Zo"]
+            name = choice(syllables)
+            for _ in range(randint(1, 3)):
+                syl = choice(syllables)
+                name = name + syl.lower()
+                syllables.remove(syl)
+            names.append(name)
+        await ctx.send(str(names)[1:-1].replace("'",""))
+
+    @_8ball.error
+    @rollem.error
+    @flipem.error
+    @drawem.error
+    @summonsheet.error
+    @namegen.error
+    async def error(self, ctx, error):
+        if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be 2000 or fewer in length.""":
+            await ctx.send("Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!")
+        else:
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+
 
 def setup(client):
     client.add_cog(Games(client))

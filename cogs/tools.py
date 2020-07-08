@@ -1,6 +1,7 @@
 import discord
 import platform
 from discord.ext import commands
+from discord.utils import get
 from asyncio import sleep
 
 class Tools(commands.Cog):
@@ -24,27 +25,58 @@ class Tools(commands.Cog):
         embed.set_image(url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif")
         await ctx.send(embed=embed)
 
-    @commands.command(name="clear", help="Clear some messages away.", aliases=["delmsgs"], usage="[number of messages (5)] [#channel-to-delete-from (current channel)]")
+    @commands.command(name="avatar", help="Get someone's avatar.", usage="[username or nickname or @mention]", aliases=["pfp", "profilepic"])
+    async def avatar(self, ctx, *,  member: discord.Member=None):
+        if member:
+            if member.id == 721092139953684580:
+                avatar = member.avatar_url
+                embed = discord.Embed(title=f"Here's my avatar!", color=32639)
+            else:
+                avatar = member.avatar_url
+                embed = discord.Embed(title=f"Here's {member.display_name}'s avatar!", color=32639)
+        else:
+            avatar = ctx.author.avatar_url
+            embed = discord.Embed(title="Here's your avatar!", color=32639)
+        embed.set_image(url=avatar)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="icon", help="Get the icon for the server.", aliases=["servericon","servicon"])
+    async def servericon(self, ctx):
+        try:
+            embed = discord.Embed(title="Here's the server icon!", color=32639)
+            embed.set_image(url=ctx.guild.icon_url)
+            await ctx.send(embed=embed)
+        except:
+            await ctx.send("This server doesn't have an icon for some reason... :neutral_face:")
+
+    @commands.command(name="emoji", help="Get the specified (server-specific) emoji.", usage="[:emoji:]")
+    async def getemoji(self, ctx, emoji: str=None):
+        emojis = [f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis]
+        emojiurls = [f"https://cdn.discordapp.com/emojis/{em.id}.png" for em in ctx.guild.emojis]
+        embed = discord.Embed(title="Here's your emoji!", color=32639)
+        embed.set_image(url=emojiurls[emojis.index(emoji)])
+        if emoji == None:
+            await ctx.send("Here's all the emojis on this server.")
+            await ctx.send(str(emojis)[1:-1].replace("'","").replace(", ",""))
+        else:
+            if emoji in emojis:
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("Invalid emoji specified!")
+
+    @commands.command(name="clear", help="Clear some messages away.", aliases=["delmsgs"], usage="[number of messages to delete (5)]")
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def clear(self, ctx, msgcount: int=5, channel: discord.TextChannel=None):
-        channel = channel or ctx.channel
-        allmsgcount = 0
-        async for _ in channel.history(limit=None):
-            allmsgcount += 1
-        await channel.purge(limit=msgcount + 1)
-        if allmsgcount > msgcount:
-            report = await ctx.send(str(msgcount) + " messages deleted.")
-        else:
-            report = await ctx.send(str(allmsgcount - 1) + " messages deleted.")
+    async def clear(self, ctx, msgcount: int=5):
+        await ctx.channel.purge(limit=msgcount + 1)
+        report = await ctx.send(str(msgcount) + " (probably) messages deleted.")
         await sleep(3)
         await report.delete()
 
     @clear.error
     async def clearError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-        errorAlreadyHandled = True
+        if str(error) == "You are missing Manage Messages permission(s) to run this command.":
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
 
     @commands.command(name="purge", help="Purge a channel of everything.\n:warning:WARNING:warning: This command clears an ENTIRE channel!", aliases=["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels=True)
@@ -60,9 +92,14 @@ class Tools(commands.Cog):
 
     @purge.error
     async def purgeError(self, ctx, error):
-        global errorAlreadyHandled
-        await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)")
-        errorAlreadyHandled = True
+        if str(error) == "You are missing Manage Channels permission(s) to run this command.":
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)")
+        else:
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+
+    @avatar.error
+    async def avatarError(self, ctx, error):
+        await ctx.send("Invalid user specified!")
 
 def setup(client):
     client.add_cog(Tools(client))

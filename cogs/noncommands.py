@@ -1,4 +1,5 @@
 import discord
+from discord.utils import get
 from discord.ext import commands
 from json import load
 from random import choice
@@ -10,33 +11,51 @@ class Noncommands(commands.Cog):
         self.client = client
 
     @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        with open(rf"../pengaelicbot.data/configs/{member.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+        if allOptions["toggles"]["welcome"] == True:
+            possiblechannels = ["welcome", "arrivals", "entrance", "entry", "general", "bot-commands", "commands"]
+            for channel in possiblechannels:
+                try:
+                    await get(member.guild.text_channels, name=channel).send(f"Welcome to {member.guild.name}, {member.mention}!")
+                    break
+                except:
+                    continue
+            print(f"{member} has joined {member.guild.name}.")
+
+    @commands.Cog.listener()
     async def on_message(self, message):
         try:
             with open(rf"../pengaelicbot.data/configs/{message.guild.id}.json", "r") as optionsfile:
                 allOptions = load(optionsfile)
         except:
             pass
-        if message.author.mention == "<@721092139953684580>" or message.author.mention == "<@503720029456695306>": # that's the ID for Dad Bot, this is to prevent conflict.
+
+        if message.author.id == 721092139953684580 or message.author.id == 503720029456695306: # that's the ID for Dad Bot, this is to prevent conflict.
             return
 
         # this section is for Dad Bot-like responses
-        if allOptions["toggles"]["dad"] == True:
-            dadprefixes = ["I'm ", "Im ", "I am "]
-            for dad in range(len(dadprefixes)):
-                dadprefixes.append(dadprefixes[dad].lower())
-            for dad in range(len(dadprefixes)):
-                if dadprefixes[dad] == message.content[0:len(dadprefixes[dad])]:
-                    dadjoke = dadprefixes[dad]
-                    if dadprefixes[dad].lower() in message.content:
-                        dadjoke = dadjoke.lower()
-                    if dadjoke[0] == message.content[0] and dadjoke[1] == message.content[1]:
+        if allOptions["toggles"]["jokes"]["dad"] == True:
+            dadprefs = ["I'm ", "Im ", "I am "]
+            dadprefixes = dadprefs.copy()
+            for dad in dadprefixes:
+                dadprefs.append(dad.lower())
+            for dad in dadprefs:
+                if dad == message.content[0:len(dad)]:
+                    if dad[0] == message.content[0] and dad[1] == message.content[1]:
                         if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
-                            await message.channel.send("You're not the Pengaelic Bot, I am!")
-                        else:
-                            if dadprefixes[dad] + "a " == message.content[0:len(dadprefixes[dad])+2]:
-                                await message.channel.send(f"Hi {message.content[len(dadjoke)+2:]}, I'm the Pengaelic Bot!")
+                            if "not" in message.content:
+                                await message.channel.send("Darn right, you're not!")
                             else:
-                                await message.channel.send(f"Hi {message.content[len(dadjoke):]}, I'm the Pengaelic Bot!")
+                                await message.channel.send("You're not the Pengaelic Bot, I am!")
+                        elif ("chicken" in message.content and "meister" in message.content) or "Tux" in message.content or "tux" in message.content:
+                            await message.channel.send("You dare to impersonate my creator?! ***You shall be punished.***")
+                        else:
+                            if dad + "a " == message.content[0:len(dad)+2]:
+                                await message.channel.send(f"Hi {message.content[len(dad)+2:]}, I'm the Pengaelic Bot!")
+                            else:
+                                await message.channel.send(f"Hi {message.content[len(dad):]}, I'm the Pengaelic Bot!")
 
         # this section is to auto-delete messages containing a keyword contained in the text file
         if allOptions["toggles"]["censor"] == True:
@@ -74,7 +93,7 @@ class Noncommands(commands.Cog):
                                 await message.channel.send(f"{choice(defenseP1)}, {choice(defenseP2)}, it's only doing {choice(defenseP3)}!")
 
         # this section randomizes yo mama jokes, does not work if rudeness is below 2
-        if allOptions["toggles"]["yoMama"] == True:
+        if allOptions["toggles"]["jokes"]["yoMama"] == True:
             with open(r"Yo Mama Jokes.json", "r") as AllTheJokes:
                 jokes = load(AllTheJokes)
                 mamatypes = list(jokes.keys())
@@ -101,6 +120,9 @@ class Noncommands(commands.Cog):
                 mamatype = choice(mamatypes)
                 await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
                 await message.channel.send(f"Yo mama so {mamatype}")
+
+        if (any(["ded" == word for word in message.content.split()]) or any(["dead" == word for word in message.content.split()])) and (any(["chat" == word for word in message.content.split()]) or any(["server" == word for word in message.content.split()])):
+            await message.channel.send(f"{choice(['N','n'])}o {choice(['U','u'])}")
 
 def setup(client):
     client.add_cog(Noncommands(client))

@@ -1,20 +1,12 @@
 import discord
 from discord.ext import commands
-from random import choice
+from random import choice, shuffle
 
 class Converters(commands.Cog):
     name = "converters"
     description = "Run some text through a converter to make it look funny!"
     def __init__(self, client):
         self.client = client
-
-    @commands.command(name="novowels", help="Remove all vowels from whatever text you put in.", aliases=["vowelremover", "removevowels"])
-    async def vowelRemover(self, ctx, *, arg):
-        vowels = "aeiouAEIOU"
-        outputString = arg
-        for vowel in range(len(vowels)):
-                outputString = outputString.replace(vowels[vowel],"")
-        await ctx.send(outputString.replace("  ", " ")) # remove doubled spaces
 
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
     async def owoConverter(self, ctx, *, arg):
@@ -23,7 +15,7 @@ class Converters(commands.Cog):
 
     @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg"])
     async def embiggener(self, ctx, *, arg):
-        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!"
+        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!123456789"
         textlist = []
         finaltext = ""
         for char in range(len(arg)):
@@ -35,6 +27,26 @@ class Converters(commands.Cog):
                         textlist.append(":exclamation: ")
                     elif arg[char] == "?":
                         textlist.append(":question: ")
+                    elif arg[char] == "1":
+                        textlist.append(":one: ")
+                    elif arg[char] == "2":
+                        textlist.append(":two: ")
+                    elif arg[char] == "3":
+                        textlist.append(":three: ")
+                    elif arg[char] == "4":
+                        textlist.append(":four: ")
+                    elif arg[char] == "5":
+                        textlist.append(":five: ")
+                    elif arg[char] == "6":
+                        textlist.append(":six: ")
+                    elif arg[char] == "7":
+                        textlist.append(":seven: ")
+                    elif arg[char] == "8":
+                        textlist.append(":eight: ")
+                    elif arg[char] == "9":
+                        textlist.append(":nine: ")
+                    elif arg[char] == "0":
+                        textlist.append(":zero: ")
                     else:
                         textlist.append(f":regional_indicator_{arg[char].lower()}: ")
         for beeg in range(len(textlist)):
@@ -51,6 +63,23 @@ class Converters(commands.Cog):
         for letter in range(len(alphabet)):
             toconvert = toconvert.replace(alphabet[letter], greekphabet[letter])
         await ctx.send(toconvert)
+    
+    @commands.command(name="stroke", help="Just freakin' shuffle it dude", aliases=["shuffle","mixup"])
+    async def shuffle(self, ctx, *, arg):
+        toshuf = list(arg)
+        shuffle(toshuf)
+        await ctx.send("".join(toshuf))
+
+    @owoConverter.error
+    @embiggener.error
+    @greekify.error
+    @shuffle.error
+    async def overcharlimit(self, ctx, error):
+        if error == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be 2000 or fewer in length.""":
+            await ctx.send("Sending all that would put me over the 2000-character limit!")
+        else:
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 def setup(client):
     client.add_cog(Converters(client))
