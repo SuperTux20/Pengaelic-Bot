@@ -8,7 +8,6 @@ class Games(commands.Cog):
     description = "All sorts of fun stuff!"
     def __init__(self, client):
         self.client = client
-        self.syllables = ["A", "Ag", "Ah", "Al", "Am", "An", "Art", "As", "Au", "Ayn", "Az", "Be", "Bi", "Bo", "Bor", "By", "Ca", "Car", "Cat", "Cer", "Co", "Cu", "Dam", "Der", "Di", "Dil", "Do", "Dy", "Dyl", "E", "El", "Em", "En", "Ex", "Fi", "Fin", "Finn", "Fly", "Grif", "He", "Hy", "I", "In", "Is", "Iss", "Ja", "Ji", "Jo", "Ka", "Kev", "Ko", "Lan", "Lar", "Ler", "Li", "Lo", "Lu", "Ly", "Ma", "Mar", "Mel", "Mi", "Mo", "Nar", "Ne", "No", "Nos", "O", "Ol", "Om", "On", "Or", "Os", "Pe", "Pen", "Per", "Ri", "Rin", "Rob", "Sac", "Sam", "Ser", "Sha", "Sky", "Ta", "Tay", "Ter", "Tha", "Than", "Tif", "Tur", "U", "Wa", "Wyn", "Yu", "Za", "Zo"]
 
     @commands.command(name="8ball", help="Ask the ball and receive wisdom... :eyes:", aliases=["magic8ball"], usage="[question]")
     async def _8ball(self, ctx, *, question=None):
@@ -178,26 +177,30 @@ class Games(commands.Cog):
                 sheet = sheet + row + "\n"
             await ctx.send(sheet)
 
-    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["genname", "generatename"], usage="[number of names to generate (1)]")
-    async def namegen(self, ctx, amount: int=1):
+    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["generatename", "namegen"], usage="[number of names to generate (1)] [limit to how many syllables can be used (3)]")
+    async def namegen(self, ctx, amount: int=1, syllableLimit: int=3):
+        names = []
         for _ in range(amount):
-            name = choice(self.syllables)
-            for _ in range(randint(1, 4)):
-                syl = choice(self.syllables)
+            syllables = ["A", "Ag", "Ah", "Al", "Am", "An", "Art", "As", "Au", "Ayn", "Az", "Be", "Bi", "Bo", "Bor", "Burn", "By", "Ca", "Car", "Cat", "Cer", "Co", "Cu", "Dam", "Der", "Di", "Dil", "Do", "Dy", "Dyl", "E", "El", "Em", "En", "Ex", "Fi", "Fin", "Finn", "Fly", "Grif", "He", "Hy", "I", "Ig", "In", "Is", "Iss", "Ja", "Ji", "Jo", "Ka", "Kev", "Ko", "Lan", "Lar", "Ler", "Li", "Lo", "Lu", "Ly", "Ma", "Mar", "Mel", "Mi", "Mo", "Na", "Nar", "Ne", "No", "Nos", "O", "Ol", "Om", "On", "Or", "Os", "Pe", "Pen", "Per", "Ra", "Ri", "Rin", "Rob", "Sac", "Sam", "Ser", "Sha", "Son", "Sky", "Ta", "Tay", "Ter", "Tha", "Than", "Tif", "Tur", "U", "Wa", "Wyn", "Yu", "Za", "Zo"]
+            name = choice(syllables)
+            for _ in range(randint(1, 3)):
+                syl = choice(syllables)
                 name = name + syl.lower()
-                self.syllables.remove(syl)
-            await ctx.send(name)
+                syllables.remove(syl)
+            names.append(name)
+        await ctx.send(str(names)[1:-1].replace("'",""))
 
     @_8ball.error
     @rollem.error
     @flipem.error
     @drawem.error
     @summonsheet.error
+    @namegen.error
     async def error(self, ctx, error):
-        if error == discord.errors.HTTPException:
+        if str(error) == "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body\nKn content: Must be 2000 or fewer in length.":
             await ctx.send("Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!")
         else:
-            await ctx.send(f"Unhandled error occurred: {error}. If my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
+            await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling!")
 
 
 def setup(client):
