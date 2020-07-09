@@ -86,8 +86,9 @@ async def on_command_error(ctx, error):
         await ctx.send(errormsgs[allOptions["numbers"]["rudeness"]] + " Type `p!help` for a list of commands and their usages.")
     else:
         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
-    print(error)
-    print(f'Invalid command p!{ctx.command} sent in {ctx.guild} in #{ctx.channel} by {ctx.message.author.name}#{ctx.message.author.discriminator}, AKA "{ctx.message.author.nick}"')
+    if "Command" not in str(error) and "is not found" not in str(error):
+        print(error)
+    print("Invalid command p!{} sent in {} in #{} by {}#{}, AKA {}".format(str(error).split('"')[1], ctx.guild, ctx.channel, ctx.message.author.name, ctx.message.author.discriminator, ctx.message.author.nick))
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redoWelcome(ctx):
