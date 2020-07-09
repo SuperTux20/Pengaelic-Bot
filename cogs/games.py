@@ -181,11 +181,11 @@ class Games(commands.Cog):
     async def namegen(self, ctx, amount: int=1, syllableLimit: int=3):
         names = []
         for _ in range(amount):
-            syllables = ["A", "Ag", "Ah", "Al", "Am", "An", "Art", "As", "Au", "Ayn", "Az", "Be", "Bi", "Bo", "Bor", "Burn", "By", "Ca", "Car", "Cat", "Cer", "Co", "Cu", "Dam", "Der", "Di", "Dil", "Do", "Dy", "Dyl", "E", "El", "Em", "En", "Ex", "Fi", "Fin", "Finn", "Fly", "Grif", "He", "Hy", "I", "Ig", "In", "Is", "Iss", "Ja", "Ji", "Jo", "Ka", "Kev", "Ko", "Lan", "Lar", "Ler", "Li", "Lo", "Lu", "Ly", "Ma", "Mar", "Mel", "Mi", "Mo", "Na", "Nar", "Ne", "No", "Nos", "O", "Ol", "Om", "On", "Or", "Os", "Pe", "Pen", "Per", "Ra", "Ri", "Rin", "Rob", "Sac", "Sam", "Ser", "Sha", "Son", "Sky", "Ta", "Tay", "Ter", "Tha", "Than", "Tif", "Tur", "U", "Wa", "Wyn", "Yu", "Za", "Zo"]
-            name = choice(syllables)
+            syllables = ["a", "ag", "ah", "al", "am", "an", "ar", "art", "as", "au", "ayn", "az", "be", "bi", "bo", "bor", "bu", "bun", "burn", "by", "ca", "car", "cat", "cer", "cha", "co", "cu", "da", "dam", "dan", "der", "di", "dil", "do", "dy", "dyl", "e", "el", "em", "en", "ex", "fi", "fin", "finn", "fly", "grif", "he", "hy", "i", "ig", "in", "is", "iss", "ja", "ji", "jo", "jor", "ka", "ke", "kev", "ko", "kor", "ku", "kun", "lan", "lar", "ler", "li", "lo", "lu", "ly", "ma", "mar", "me", "mel", "mi", "mo", "mu", "na", "nar", "ne", "no", "nos", "o", "ol", "om", "on", "or", "os", "pe", "pen", "per", "ra", "ri", "rin", "rob", "sac", "sam", "ser", "sha", "sky", "son", "ta", "tay", "ter", "tha", "than", "tif", "tu", "tur", "u", "um", "un", "ur", "wa", "wyn", "yu", "za", "zo"]
+            name = choice(syllables).capitalize()
             for _ in range(randint(1, 3)):
                 syl = choice(syllables)
-                name = name + syl.lower()
+                name = name + syl
                 syllables.remove(syl)
             names.append(name)
         await ctx.send(str(names)[1:-1].replace("'",""))
