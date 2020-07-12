@@ -72,7 +72,7 @@ class Converters(commands.Cog):
 
     @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
     async def spacer(self, ctx, *, arg):
-        await ctx.send(arg.split(""))
+        await ctx.send(" ".join(arg[i:i + 1] for i in range(0, len(arg), 1)))
 
     @owoConverter.error
     @embiggener.error
