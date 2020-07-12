@@ -183,12 +183,21 @@ class Games(commands.Cog):
         for _ in range(amount):
             syllables = ["a", "ag", "ah", "al", "am", "an", "art", "as", "au", "ayn", "az", "be", "bi", "bo", "bor", "burn", "by", "ca", "car", "cat", "cer", "cha", "co", "cu", "da", "dam", "dan", "der", "di", "dil", "do", "dy", "dyl", "e", "el", "em", "en", "ex", "fi", "fin", "finn", "fly", "grif", "he", "hy", "i", "ig", "in", "is", "iss", "ja", "ji", "jo", "jor", "ka", "kev", "ko", "lan", "lar", "ler", "li", "lo", "lu", "ly", "ma", "mar", "me", "mel", "mi", "mo", "mu", "na", "nar", "ne", "no", "nos", "o", "ol", "om", "on", "or", "os", "pe", "pen", "per", "ra", "ri", "rin", "rob", "sac", "sam", "ser", "sha", "sky", "son", "ta", "tay", "ter", "tha", "than", "tif", "tur", "u", "um", "un", "ur", "wa", "wyn", "yu", "za", "zo"]
             name = choice(syllables).capitalize()
-            for _ in range(randint(1, syllableLimit)):
-                syl = choice(syllables)
-                name = name + syl
-                syllables.remove(syl)
+            for _ in range(randint(1, syllableLimit)-1):
+                name = name + choice(syllables)
             names.append(name)
         await ctx.send(str(names)[1:-1].replace("'",""))
+
+    @commands.command(name="russianroulette", help="Will you survive? Who knows...", aliases=["roulette", "rr"])
+    async def rr(self, ctx):
+        possible = [":boom:"]
+        for _ in range(5):
+            possible.append(":white_square_button:")
+        result = choice(possible)
+        if result == ":boom:":
+            await ctx.send(result + " **Y O U   D I E D** " + result)
+        else:
+            await ctx.send(result + " Well done. You live to see another day. " + result)
 
     @_8ball.error
     @rollem.error
