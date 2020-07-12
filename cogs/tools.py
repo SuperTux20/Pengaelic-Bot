@@ -93,11 +93,6 @@ class Tools(commands.Cog):
         else:
             await ctx.send("Select a server: `creativity`, `sandbox`")
 
-    @commands.command(name="delet", help="delet this.", aliases=["deletthis"])
-    async def deletthis(self, ctx):
-        await ctx.message.delete()
-        await ctx.send(embed=discord.Embed(title="DELET THIS.", color=32639).set_image(url="https://supertux20.github.io/images/gifs/no_one_is_safe.gif"))
-
     @clear.error
     async def clearError(self, ctx, error):
         if str(error) == "You are missing Manage Messages permission(s) to run this command.":

@@ -32,5 +32,10 @@ class Messages(commands.Cog):
         responses.append(choice(death_threats))
         await ctx.send(choice(responses))
 
+    @commands.command(name="delet", help="delet this.", aliases=["deletthis"])
+    async def deletthis(self, ctx):
+        await ctx.message.delete()
+        await ctx.send("https://supertux20.github.io/Pengaelic-Bot/images/gifs/no_one_is_safe.gif")
+
 def setup(client):
     client.add_cog(Messages(client))
