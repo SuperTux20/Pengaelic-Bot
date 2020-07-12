@@ -2,52 +2,76 @@ import discord
 from json import load, dump
 from discord.utils import get
 from discord.ext import commands
-from random import choice
+from random import choice, randint
 from os import getenv, listdir
 from dotenv import load_dotenv
+from asyncio import sleep
 
 print("Starting")
 
 load_dotenv("../pengaelicbot.data/.env")
 TOKEN = getenv("DISCORD_TOKEN")
 connected = False
+fail = None
 client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot",help_command=None)
 
-@client.event
-async def on_ready():
-    global connected
+async def status_switcher():
+    global client
+    global fail
     artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
     game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
     youtuber = choice(["Ethoslab", "MumboJumbo", "Blue Television Games", "The King of Random", "Phoenix SC"])
     movie = choice(["Avengers: Endgame", "Avengers: Infinity War", "Star Wars Episode IV: A New Hope", "Spiderman: Into the Spiderverse", "Back to the Future"])
-    activity = choice([discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=choice([youtuber, movie]))])
-    await client.change_presence(activity=activity)
-    print("Status updated")
+    activities = [discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=choice([youtuber, movie]))]
+    await client.wait_until_ready()
+    while client.is_ready:
+        if fail == False:
+            await client.change_presence(activity=choice(activities))
+            print("Status updated")
+            await sleep(randint(1,10)*60) # task runs every few minutes (random 1-10)
+        else:
+            break
+
+@client.event
+async def on_ready():
+    global connected
+    global fail
     for guild in range(len(client.guilds)):
-        # try to read the options file
-        try:
-            with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "r") as optionsfile:
-                allOptions = load(optionsfile)
-                if connected == False:
-                    print("Options file loaded for " + str(client.guilds[guild].name))
-        # if something goes wrong...
-        except:
-            # ...try creating it
-                try:
-                    open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "x").close()
-                except FileExistsError:
-                    pass
-                with open(r"default_options.json", "r") as defaultsfile:
-                    allOptions = load(defaultsfile)
-                with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "w") as optionsfile:
-                    dump(allOptions, optionsfile, sort_keys=True, indent=4)
-                print("Options file created for " + str(client.guilds[guild].name))
-    if connected == False:
-        connectstatus = "C"
+        if client.guilds[guild].name == None:
+            fail = True
+            break
+        else:
+            fail = False
+            # try to read the options file
+            try:
+                with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "r") as optionsfile:
+                    allOptions = load(optionsfile)
+                    if connected == False:
+                        print("Options file loaded for " + str(client.guilds[guild].name))
+            # if something goes wrong...
+            except:
+                # ...try creating it
+                    try:
+                        open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "x").close()
+                    except FileExistsError:
+                        pass
+                    with open(r"default_options.json", "r") as defaultsfile:
+                        allOptions = load(defaultsfile)
+                    with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "w") as optionsfile:
+                        dump(allOptions, optionsfile, sort_keys=True, indent=4)
+                    print("Options file created for " + str(client.guilds[guild].name))
+    if fail == True:
+        print("Failed to connect to Discord")
+        exit()
     else:
-        connectstatus = "Rec"
-    print(connectstatus + "onnected to Discord")
-    connected = True
+        if connected == False:
+            connectstatus = ""
+        else:
+            connectstatus = "re"
+        for _ in range(100):
+            print()
+        print(f"{client.user.name} {connectstatus}connected to Discord")
+        connected = True
 
 @client.event
 async def on_guild_join(guild, ctx=None):
@@ -86,9 +110,12 @@ async def on_command_error(ctx, error):
         await ctx.send(errormsgs[allOptions["numbers"]["rudeness"]] + " Type `p!help` for a list of commands and their usages.")
     else:
         await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
-    if "Command" not in str(error) and "is not found" not in str(error):
+    if "is not found" not in str(error):
         print(error)
-    print("Invalid command p!{} sent in {} in #{} by {}#{}, AKA {}".format(str(error).split('"')[1], ctx.guild, ctx.channel, ctx.message.author.name, ctx.message.author.discriminator, ctx.message.author.nick))
+    try:
+        print("Invalid command p!{} sent in {} in #{} by {}#{}, AKA {}".format(str(error).split('"')[1], ctx.guild, ctx.channel, ctx.message.author.name, ctx.message.author.discriminator, ctx.message.author.nick))
+    except:
+        print(error)
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redoWelcome(ctx):
@@ -107,7 +134,7 @@ async def help(ctx, category=None, subcategory=None):
         enabled = list(allOptions["toggles"]["cogs"].values())
         for cog in range(len(allCogs)):
             if enabled[cog] == False:
-                cogs.remove(allCogs[cog])
+                allCogs.remove(allCogs[cog])
         for cog in cogs:
             if cog == None:
                 pass
@@ -203,6 +230,8 @@ for cog in listdir("./cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
+
+client.loop.create_task(status_switcher()) # as defined above
 
 # this loop auto-reloads if internet connection is lost
 while True:
