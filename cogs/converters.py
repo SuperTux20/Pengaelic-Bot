@@ -64,20 +64,27 @@ class Converters(commands.Cog):
             toconvert = toconvert.replace(alphabet[letter], greekphabet[letter])
         await ctx.send(toconvert)
     
-    @commands.command(name="stroke", help="Just freakin' shuffle it dude", aliases=["shuffle","mixup"])
+    @commands.command(name="stroke", help="Just freakin' shuffle it dude", aliases=["shuffle", "mixup"])
     async def shuffle(self, ctx, *, arg):
         toshuf = list(arg)
         shuffle(toshuf)
         await ctx.send("".join(toshuf))
 
+    @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
+    async def spacer(self, ctx, *, arg):
+        await ctx.send(arg.split(""))
+
     @owoConverter.error
     @embiggener.error
     @greekify.error
     @shuffle.error
+    @spacer.error
     async def overcharlimit(self, ctx, error):
-        if error == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+        if str(error)== """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":
             await ctx.send("Sending all that would put me over the 2000-character limit!")
+        elif str(error)== "arg is a required argument that is missing.":
+            await ctx.send("You didn't specify any text to convert!")
         else:
             await ctx.send(f"Unhandled error occurred:\n{error}\nIf my developer (chickenmeister#7140) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 

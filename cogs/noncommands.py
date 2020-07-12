@@ -15,7 +15,7 @@ class Noncommands(commands.Cog):
         with open(rf"../pengaelicbot.data/configs/{member.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
         if allOptions["toggles"]["welcome"] == True:
-            possiblechannels = ["welcome", "arrivals", "entrance", "entry", "general", "bot-commands", "commands"]
+            possiblechannels = ["welcome", "arrivals", "entrance", "entry", "log", "member-log", "members-log", "general", "bot-commands", "bot", "commands"]
             for channel in possiblechannels:
                 try:
                     await get(member.guild.text_channels, name=channel).send(f"Welcome to {member.guild.name}, {member.mention}!")
@@ -117,9 +117,8 @@ class Noncommands(commands.Cog):
                         await message.channel.send("Yo Mama jokes are disabled: rudeness level below 2.")
                     break
             if failedtypes == mamatypes:
-                mamatype = choice(mamatypes)
-                await message.channel.send(f"Invalid Yo Mama type detected... Sending a {mamatype} joke.")
-                await message.channel.send(f"Yo mama so {mamatype}")
+                await message.channel.send(f"Invalid Yo Mama type detected...")
+                await message.channel.send(f"Type `yo mama list` for a list of valid types!")
 
         if (any(["ded" == word for word in message.content.split()]) or any(["dead" == word for word in message.content.split()])) and (any(["chat" == word for word in message.content.split()]) or any(["server" == word for word in message.content.split()])):
             await message.channel.send(f"{choice(['N','n'])}o {choice(['U','u'])}")
