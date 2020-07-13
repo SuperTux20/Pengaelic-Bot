@@ -181,9 +181,9 @@ class Games(commands.Cog):
     async def namegen(self, ctx, amount: int=1, syllableLimit: int=3):
         names = []
         for _ in range(amount):
-            syllables = ["a","ag","ah","al","am","an","art","as","au","ayn","az","be","bi","bo","bor","burn","by","ca","car","cat","cer","cha","co","cu","da","dam","dan","der","di","dil","do","don","dy","dyl","e","el","em","en","ex","fi","fin","finn","fly","fu","ga","go","gor","grif","gy","he","hy","i","ig","il","in","is","iss","ja","ji","jo","jor","ka","kev","ko","lan","lar","ler","li","lo","lu","ly","ma","mar","me","mel","mi","mo","mu","mus","na","nar","ne","no","nor","nos","o","ol","om","on","or","os","pe","pen","per","pu","ra","ral","ran","ras","re","res","ri","rin","rob","ry","sa","sac","sam","ser","sha","sky","son","st","str","stra","ta","tay","ter","tha","than","tif","ti","tin","to","tur","u","um","un","ur","va","wa","wyn","yu","za","ze","zi","zo","zu"]
+            syllables = ["a","ag","ah","al","am","an","art","as","au","ayn","az","be","bi","bo","bor","burn","by","ca","car","cat","cer","cha","co","cu","da","dam","dan","der","di","dil","do","don","dy","dyl","e","el","em","en","ex","fi","fin","finn","fly","fu","ga","go","gor","grif","gy","he","hy","i","ig","il","in","is","iss","ja","ji","jo","jor","ka","kev","ko","lan","lar","ler","li","lo","lu","ly","ma","mar","me","mel","mi","mo","mu","mus","na","nar","ne","no","nor","nos","o","ol","om","on","or","os","pe","pen","per","pu","ra","ral","ran","ras","re","res","ri","rin","rob","ry","sa","sac","sam","san","sans","ser","sha","sky","son","st","str","stra","ta","tay","ter","tha","than","tif","ti","tin","to","tur","u","um","un","ur","va","wa","wyn","yu","za","ze","zi","zo","zu"]
             name = choice(syllables).capitalize()
-            for _ in range(randint(1, syllableLimit)-1):
+            for _ in range(randint(0, syllableLimit)):
                 name = name + choice(syllables)
             names.append(name)
         await ctx.send(str(names)[1:-1].replace("'",""))
