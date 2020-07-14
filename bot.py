@@ -130,11 +130,10 @@ async def help(ctx, category=None, subcategory=None):
     cogs = [client.get_cog(cog.capitalize()) for cog in cogfiles]
     with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
-        allCogs = list(allOptions["toggles"]["cogs"].keys())
-        enabled = list(allOptions["toggles"]["cogs"].values())
-        for cog in range(len(allCogs)):
-            if enabled[cog] == False:
-                allCogs.remove(allCogs[cog])
+        allCogs = allOptions["toggles"]["cogs"]
+        for cog in allCogs:
+            if allCogs[cog] == False:
+                allCogs.remove(cog)
         for cog in cogs:
             if cog == None:
                 pass
@@ -146,21 +145,18 @@ async def help(ctx, category=None, subcategory=None):
         helpMenu.add_field(name="Non-commands", value=client.get_cog("Noncommands").description)
     if category == "Actions" or category == "actions":
         helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
-        cog = client.get_cog("Actions")
-        for command in cog.get_commands():
+        for command in client.get_cog("Actions").get_commands():
             helpMenu.add_field(name=f"{command} <username or nickname or @mention>", value=command.help)
     elif category == "Converters" or category == "converters":
         helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
-        cog = client.get_cog("Converters")
-        for command in cog.get_commands():
+        for command in client.get_cog("Converters").get_commands():
             command.activations = [command.name]
             for alias in command.aliases:
                 command.activations.append(alias)
             helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n<text to convert>", value=command.help)
     elif category == "Games" or category == "games":
         helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
-        cog = client.get_cog("Games")
-        for command in cog.get_commands():
+        for command in client.get_cog("Games").get_commands():
             command.activations = [command.name]
             for alias in command.aliases:
                 command.activations.append(alias)
@@ -170,8 +166,7 @@ async def help(ctx, category=None, subcategory=None):
                 helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
     elif category == "Messages" or category == "messages":
         helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
-        cog = client.get_cog("Messages")
-        for command in cog.get_commands():
+        for command in client.get_cog("Messages").get_commands():
             command.activations = [command.name]
             for alias in command.aliases:
                 command.activations.append(alias)
@@ -208,8 +203,7 @@ async def help(ctx, category=None, subcategory=None):
                     helpMenu.add_field(name="(rudeness/rudenesslevel) <level>", value="Change how rude the bot can be.")
     elif category == "Tools" or category == "tools":
         helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
-        cog = client.get_cog("Tools")
-        for command in cog.get_commands():
+        for command in client.get_cog("Tools").get_commands():
             command.activations = [command.name]
             for alias in command.aliases:
                 command.activations.append(alias)
@@ -235,4 +229,8 @@ client.loop.create_task(status_switcher()) # as defined above
 
 # this loop auto-reloads if internet connection is lost
 while True:
-    client.run(TOKEN)
+    try:
+        client.run(TOKEN)
+    except:
+        print("Unable to connect to Discord")
+        break
