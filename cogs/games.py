@@ -28,21 +28,28 @@ class Games(commands.Cog):
             await ctx.send(":game_die:You rolled thin air.")
         elif dice < 0:
             await ctx.send(":game_die:You rolled NaN dice and got [REDACTED]")
+        elif dice > 1000000:
+            await ctx.send(f":game_die:{dice} dice? That's just silly.")
         elif sides < 0:
             if dice == 1:
                 await ctx.send(":game_die:You rolled a [ERROR]-sided die and got `DivideByZeroError`")
             if dice > 1:
                 await ctx.sendf(f":game_die:You rolled {dice} `err`-sided dice and got [NULL]")
+        elif sides > 1000000:
+            await ctx.send(f":game_die:{sides}-sided dice? That's just silly.")
         else:
             sideList = []
             rollResults = []
-            for side in range(sides):
-                sideList.append(side + 1)
+            for side in range(1, sides):
+                sideList.append(side)
             for _ in range(dice):
                 rollResults.append(sideList[randint(0, sideList[-1])-1])
             total = sum(rollResults)
             if dice > 1:
-                response = f":game_die:You rolled {str(rollResults[:-1])[1:-1]}, and {rollResults[-1]}, totalling {total}"
+                if len(str(rollResults[:-1])[1:-1]) < 2000:
+                    response = f":game_die:You rolled {str(rollResults[:-1])[1:-1]}, and {rollResults[-1]}, totalling {total}"
+                else:
+                    response = f":game_die:You rolled a total of {total}"
             else:
                 response = f":game_die:You rolled {total}"
             await ctx.send(response)
@@ -181,7 +188,7 @@ class Games(commands.Cog):
     async def namegen(self, ctx, amount: int=1, syllableLimit: int=3):
         names = []
         for _ in range(amount):
-            syllables = ["a","ag","ah","al","am","an","art","as","au","ayn","az","be","bi","bo","bor","burn","by","ca","car","cat","cer","cha","co","cu","da","dam","dan","der","di","dil","do","don","dy","dyl","e","el","em","en","ex","fi","fin","finn","fly","fu","ga","go","gor","grif","gy","he","hy","i","ig","il","in","is","iss","ja","ji","jo","jor","ka","kev","ko","lan","lar","ler","li","lo","lu","ly","ma","mar","me","mel","mi","mo","mu","mus","na","nar","ne","no","nor","nos","o","ol","om","on","or","os","pe","pen","per","pu","ra","ral","ran","ras","re","res","ri","rin","rob","ry","sa","sac","sam","san","sans","ser","sha","sky","son","st","str","stra","ta","tay","ter","tha","than","tif","ti","tin","to","tur","u","um","un","ur","va","wa","wyn","yu","za","ze","zi","zo","zu"]
+            syllables = ["a","ag","ah","al","am","an","art","as","au","ayn","az","be","bi","bo","bor","burn","by","ca","car","cat","cer","cha","co","cu","da","dam","dan","del","der","di","dil","do","don","dy","dyl","e","el","em","en","ex","fi","fin","finn","fly","fu","ga","go","gor","grif","gy","he","hy","i","ig","il","in","is","iss","ja","ji","jo","jor","ka","kev","ko","lan","lar","ler","li","lo","lu","ly","ma","mar","me","mel","mi","mo","mol","mu","mus","na","nar","ne","no","nor","nos","o","ob","ok","ol","om","on","or","os","pe","pen","per","pu","ra","ral","ran","ras","re","res","rez","ri","rin","rob","ry","sa","sac","sam","san","sans","ser","sha","sky","son","st","str","stra","ta","tam","tay","ter","tha","than","tif","ti","tin","to","tur","u","um","un","ur","va","wa","wyn","yu","za","zal","ze","zi","zil","zo","zu"]
             name = choice(syllables).capitalize()
             for _ in range(randint(0, syllableLimit)):
                 name = name + choice(syllables)
