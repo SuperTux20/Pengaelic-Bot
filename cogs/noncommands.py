@@ -15,7 +15,7 @@ class Noncommands(commands.Cog):
         with open(rf"../pengaelicbot.data/configs/{member.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
         if allOptions["toggles"]["welcome"] == True:
-            possiblechannels = ["welcome", "arrivals", "entrance", "entry", "log", "member-log", "members-log", "general", "bot-commands", "bot", "commands"]
+            possiblechannels = ["member-log", "members-log", "welcome", "arrivals", "entrance", "entry", "log", "general", "bot-commands", "bot", "commands"]
             for channel in possiblechannels:
                 try:
                     await get(member.guild.text_channels, name=channel).send(f"Welcome to {member.guild.name}, {member.mention}!")
