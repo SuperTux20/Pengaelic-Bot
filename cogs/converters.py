@@ -8,13 +8,21 @@ class Converters(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    async def ifnocontent(self, ctx, arg):
+        try:
+            return list(await ctx.channel.history(limit=2).flatten())[1].content
+        except:
+            return arg
+
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
-    async def owoConverter(self, ctx, *, arg):
+    async def owoConverter(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
         await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
         await ctx.message.delete()
 
     @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg"])
-    async def embiggener(self, ctx, *, arg):
+    async def embiggener(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
         alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!123456789"
         textlist = []
         finaltext = ""
@@ -54,7 +62,8 @@ class Converters(commands.Cog):
         await ctx.send(finaltext)
 
     @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.")
-    async def greekify(self, ctx, *, arg):
+    async def greekify(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
         alphabet = ["CH","PS","AV","AF","EV","EF","OO","EH","TH","YE","YI","YU","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W", "X","Y","Z"]
         greekphabet = ["Χ","Ψ","ΑΥ","ΑΥ","ΕΥ","ΕΥ","ΟΥ","ΑΙ","Θ","Γ", "Γ", "Γ", "Α","Β","K","Δ","Ε","Φ","Γ","", "Ι","Γ","Κ","Λ","Μ","Ν","Ο","Π","Κ","Ρ","Σ","Τ","Ω","Φ","ΟΥ","Ξ","Υ","Ζ"]
         alphabet = alphabet + [letter.lower() for letter in alphabet]
@@ -65,13 +74,18 @@ class Converters(commands.Cog):
         await ctx.send(toconvert)
     
     @commands.command(name="stroke", help="Just freakin' shuffle it dude", aliases=["shuffle", "mixup"])
-    async def shuffle(self, ctx, *, arg):
-        toshuf = list(arg)
-        shuffle(toshuf)
-        await ctx.send("".join(toshuf))
+    async def shuffle(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
+        if arg == "Pengaelic Bot":
+            await ctx.send("OwO you pet me??? *purrs softly*")
+        else:
+            toshuf = list(arg)
+            shuffle(toshuf)
+            await ctx.send("".join(toshuf))
 
     @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
-    async def spacer(self, ctx, *, arg):
+    async def spacer(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
         await ctx.send(" ".join(arg[i:i + 1] for i in range(0, len(arg), 1)))
 
     @owoConverter.error
