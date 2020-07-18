@@ -56,7 +56,7 @@ class Converters(commands.Cog):
                     elif arg[char] == "0":
                         textlist.append(":zero: ")
                     else:
-                        textlist.append(f":regional_indicator_{arg[char]}: ")
+                        textlist.append(f":regional_indicator_{arg[char].lower()}: ")
         for beeg in range(len(textlist)):
             finaltext = finaltext + textlist[beeg]
         await ctx.send(finaltext)
