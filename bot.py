@@ -68,8 +68,7 @@ async def on_ready():
             connectstatus = ""
         else:
             connectstatus = "re"
-        for _ in range(100):
-            print()
+        print()
         print(f"{client.user.name} {connectstatus}connected to Discord")
         connected = True
 
@@ -131,9 +130,10 @@ async def help(ctx, category=None, subcategory=None):
     with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
         allOptions = load(optionsfile)
         allCogs = allOptions["toggles"]["cogs"]
+        enabledCogs = {}
         for cog in allCogs:
-            if allCogs[cog] == False:
-                allCogs.remove(cog)
+            if allCogs[cog] == True:
+                enabledCogs[cog] = cog
         for cog in cogs:
             if cog == None:
                 pass
@@ -231,6 +231,11 @@ client.loop.create_task(status_switcher()) # as defined above
 while True:
     try:
         client.run(TOKEN)
+    except KeyboardInterrupt:
+        print("Disconnected")
+        break
     except:
         print("Unable to connect to Discord")
         break
+print("Quit")
+exit()
