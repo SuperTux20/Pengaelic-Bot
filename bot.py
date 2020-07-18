@@ -12,7 +12,7 @@ print("Starting")
 load_dotenv("../pengaelicbot.data/.env")
 TOKEN = getenv("DISCORD_TOKEN")
 connected = False
-fail = None
+fail = False
 client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot",help_command=None)
 
 async def status_switcher():
@@ -65,11 +65,11 @@ async def on_ready():
         exit()
     else:
         if connected == False:
-            connectstatus = ""
+            connectstatus = f"{client.user.name}#{client.user.discriminator} connected to Discord"
         else:
-            connectstatus = "re"
+            connectstatus = "Reconnected"
         print()
-        print(f"{client.user.name} {connectstatus}connected to Discord")
+        print(connectstatus)
         connected = True
 
 @client.event
