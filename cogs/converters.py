@@ -20,7 +20,7 @@ class Converters(commands.Cog):
         await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
         await ctx.message.delete()
 
-    @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg"])
+    @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg", "blockify"])
     async def embiggener(self, ctx, *, arg=None):
         arg = await self.ifnocontent(ctx, arg)
         alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!123456789"
@@ -83,6 +83,16 @@ class Converters(commands.Cog):
             shuffle(toshuf)
             await ctx.send("".join(toshuf))
 
+    @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.")
+    async def shufflebyword(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
+        wordstoshuf = arg.split()
+        for toshuf in range(len(wordstoshuf)):
+            wordstoshuf[toshuf] = list(wordstoshuf[toshuf])
+            shuffle(wordstoshuf[toshuf])
+            wordstoshuf[toshuf] = "".join(wordstoshuf[toshuf])
+        await ctx.send(" ".join(wordstoshuf))
+
     @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
     async def spacer(self, ctx, *, arg=None):
         arg = await self.ifnocontent(ctx, arg)
@@ -92,6 +102,7 @@ class Converters(commands.Cog):
     @embiggener.error
     @greekify.error
     @shuffle.error
+    @shufflebyword.error
     @spacer.error
     async def overcharlimit(self, ctx, error):
         if str(error)== """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
