@@ -9,9 +9,9 @@ class Converters(commands.Cog):
         self.client = client
 
     async def ifnocontent(self, ctx, arg):
-        try:
+        if not arg:
             return list(await ctx.channel.history(limit=2).flatten())[1].content
-        except:
+        else:
             return arg
 
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
