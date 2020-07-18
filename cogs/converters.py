@@ -23,12 +23,12 @@ class Converters(commands.Cog):
     @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg", "blockify"])
     async def embiggener(self, ctx, *, arg=None):
         arg = await self.ifnocontent(ctx, arg)
-        alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM ?!123456789"
+        alphabet = "qwertyuiopasdfghjklzxcvbnm ?!1234567890"
         textlist = []
         finaltext = ""
         for char in range(len(arg)):
             for letter in range(len(alphabet)):
-                if alphabet[letter] == arg[char] or alphabet[letter].lower() == arg[char]:
+                if alphabet[letter] == arg[char] or alphabet[letter].upper() == arg[char]:
                     if arg[char] == " ":
                         textlist.append("\n")
                     elif arg[char] == "!":
@@ -56,7 +56,7 @@ class Converters(commands.Cog):
                     elif arg[char] == "0":
                         textlist.append(":zero: ")
                     else:
-                        textlist.append(f":regional_indicator_{arg[char].lower()}: ")
+                        textlist.append(f":regional_indicator_{arg[char]}: ")
         for beeg in range(len(textlist)):
             finaltext = finaltext + textlist[beeg]
         await ctx.send(finaltext)
