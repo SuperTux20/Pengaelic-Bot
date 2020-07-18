@@ -15,7 +15,7 @@ class Noncommands(commands.Cog):
         with open(rf"../pengaelicbot.data/configs/{member.guild.id}.json", "r") as optionsfile:
             allOptions = load(optionsfile)
         if allOptions["toggles"]["welcome"] == True:
-            possiblechannels = ["member-log", "members-log", "welcome", "arrivals", "entrance", "entry", "log", "general", "bot-commands", "bot", "commands"]
+            possiblechannels = ["member-log", "members-log", "welcome", "arrivals", "entrance", "entry", "log", "general"]
             for channel in possiblechannels:
                 try:
                     await get(member.guild.text_channels, name=channel).send(f"Welcome to {member.guild.name}, {member.mention}!")
@@ -120,7 +120,7 @@ class Noncommands(commands.Cog):
                 await message.channel.send(f"Invalid Yo Mama type detected...")
                 await message.channel.send(f"Type `yo mama list` for a list of valid types!")
 
-        if (any(["ded" == word for word in message.content.split()]) or any(["dead" == word for word in message.content.split()])) and (any(["chat" == word for word in message.content.split()]) or any(["server" == word for word in message.content.split()])):
+        if ("dead" in message.content) and ("chat" in message.content or "server"  in message.content) or "<:deadchat:720311826608291852>" == message.content:
             await message.channel.send(f"{choice(['N','n'])}o {choice(['U','u'])}")
 
 def setup(client):
