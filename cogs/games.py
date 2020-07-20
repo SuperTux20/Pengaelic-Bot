@@ -195,17 +195,6 @@ class Games(commands.Cog):
             names.append(name)
         await ctx.send(str(names)[1:-1].replace("'",""))
 
-    @commands.command(name="russianroulette", help="Will you survive? Who knows...", aliases=["roulette", "rr"])
-    async def rr(self, ctx):
-        possible = [":boom:"]
-        for _ in range(5):
-            possible.append(":white_square_button:")
-        result = choice(possible)
-        if result == ":boom:":
-            await ctx.send(result + " **Y O U   D I E D** " + result)
-        else:
-            await ctx.send(result + " Well done. You live to see another day. " + result)
-
     @_8ball.error
     @rollem.error
     @flipem.error
