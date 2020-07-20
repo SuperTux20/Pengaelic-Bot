@@ -98,12 +98,24 @@ class Converters(commands.Cog):
         arg = await self.ifnocontent(ctx, arg)
         await ctx.send(" ".join(arg[i:i + 1] for i in range(0, len(arg), 1)))
 
+    @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"])
+    async def dings(self, ctx, *, arg=None):
+        arg = await self.ifnocontent(ctx, arg)
+        arg = arg.upper()
+        alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"," "]
+        dingphabet = [":v:",":ok_hand:",":thumbsup:",":thumbsdown:",":point_left:",":point_right:",":point_up_2:",":point_down:",":raised_hand:",":slight_smile:",":neutral_face:",":frowning:",":bomb:",":skull_crossbones:",":flag_white:",":triangular_flag_on_post:",":airplane:",":sunny:",":droplet:",":snowflake:",":cross:",":orthodox_cross:",":atom:",":diamond_shape_with_a_dot_inside:",":star_of_david:",":star_and_crescent:","<:empty:725132670056661023>"]
+        toconvert = arg
+        for letter in range(len(alphabet)):
+            toconvert = toconvert.replace(alphabet[letter], dingphabet[letter])
+        await ctx.send(toconvert)
+
     @owoConverter.error
     @embiggener.error
     @greekify.error
     @shuffle.error
     @shufflebyword.error
     @spacer.error
+    @dings.error
     async def overcharlimit(self, ctx, error):
         if str(error)== """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":
