@@ -42,7 +42,7 @@ class Messages(commands.Cog):
         embed = discord.Embed(color=32639, title="Credits", description="All the people who helped me make this bot.")
         embed.add_field(name="Main Developer and Creator", value="Tux Penguin (chickenmeister)")
         embed.add_field(name="Biggest Helper", value="Legenden")
-        embed.add_field(name="Helpful Friends", value="Hyperfresh\nleasip")
+        embed.add_field(name="Super Helpful Friends", value="Hyperfresh\nleasip")
         embed.add_field(name="Other Helpful Fellas", value="Satan\nfire\nMoonbase Alpha")
         await ctx.send(embed=embed)
 
