@@ -112,7 +112,7 @@ async def on_command_error(ctx, error):
     if "is not found" not in str(error):
         print(error)
     try:
-        print("Invalid command p!{} sent in {} in #{} by {}#{}, AKA {}".format(str(error).split('"')[1], ctx.guild, ctx.channel, ctx.message.author.name, ctx.message.author.discriminator, ctx.message.author.nick))
+        print("Invalid command p!{} sent in {} in #{} by {}#{}".format(str(error).split('"')[1], ctx.guild, ctx.channel, ctx.message.author.name, ctx.message.author.discriminator))
     except:
         print(error)
 
