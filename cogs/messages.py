@@ -27,7 +27,7 @@ class Messages(commands.Cog):
     async def andsodoi(self, ctx):
         responses = []
         death_threats = ["It's time to die <:handgun:706698375592149013>", "And so do I :pensive:\nSay goodbye <:handgun:706698375592149013>"]
-        for _ in range(3):
+        for _ in range(5):
             responses.append("And so do I :pensive:")
         responses.append(choice(death_threats))
         await ctx.send(choice(responses))
@@ -36,6 +36,15 @@ class Messages(commands.Cog):
     async def deletthis(self, ctx):
         await ctx.message.delete()
         await ctx.send("https://supertux20.github.io/Pengaelic-Bot/images/gifs/no_one_is_safe.gif")
+
+    @commands.command(name="credits", help="See who helped me make this bot!")
+    async def credits(self, ctx):
+        embed = discord.Embed(color=32639, title="Credits", description="All the people who helped me make this bot.")
+        embed.add_field(name="Main Developer and Creator", value="Tux Penguin (chickenmeister)")
+        embed.add_field(name="Biggest Helper", value="Legenden")
+        embed.add_field(name="Helpful Friends", value="Hyperfresh\nleasip")
+        embed.add_field(name="Other Helpful Fellas", value="Satan\nfire\nMoonbase Alpha")
+        await ctx.send(embed=embed)
 
 def setup(client):
     client.add_cog(Messages(client))
