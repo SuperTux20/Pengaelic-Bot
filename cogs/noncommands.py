@@ -49,8 +49,11 @@ class Noncommands(commands.Cog):
                                 await message.channel.send("Darn right, you're not!")
                             else:
                                 await message.channel.send("You're not the Pengaelic Bot, I am!")
-                        elif ("chicken" in message.content and "meister" in message.content) or "Tux" in message.content or "tux" in message.content:
-                            await message.channel.send("You dare to impersonate my creator?! ***You shall be punished.***")
+                        elif ("chicken" in message.content and "meister" in message.content) or dad + "Tux" == message.content or dad + "tux" == message.content:
+                            if message.author.name == "chickenmeister" and message.author.discriminator == 7140:
+                                await message.channel.send("Yes you are! Hiya!")
+                            else:
+                                await message.channel.send("You dare to impersonate my creator?! ***You shall be punished.***")
                         else:
                             if dad + "a " == message.content[0:len(dad)+2]:
                                 await message.channel.send(f"Hi {message.content[len(dad)+2:]}, I'm the Pengaelic Bot!")

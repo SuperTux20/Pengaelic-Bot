@@ -22,12 +22,21 @@ async def status_switcher():
     game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
     youtuber = choice(["Ethoslab", "MumboJumbo", "Blue Television Games", "The King of Random", "Phoenix SC"])
     movie = choice(["Avengers: Endgame", "Avengers: Infinity War", "Star Wars Episode IV: A New Hope", "Spiderman: Into the Spiderverse", "Back to the Future"])
-    activities = [discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=choice([youtuber, movie]))]
+    activities = {"l": discord.Activity(type=discord.ActivityType.listening, name=artist), "p": discord.Game(name=game), "wm": discord.Activity(type=discord.ActivityType.watching, name=movie), "wyt": discord.Activity(type=discord.ActivityType.watching, name=youtuber)}
     await client.wait_until_ready()
     while client.is_ready:
         if fail == False:
-            await client.change_presence(activity=choice(activities))
-            print("Status updated")
+            activityr = choice(list(activities.keys()))
+            activity = activities[activityr]
+            await client.change_presence(activity=activity)
+            if activityr == "l":
+                print(f'Status updated to "Listening to {artist}"')
+            if activityr == "p":
+                print(f'Status updated to "Playing {game}"')
+            if activityr == "wm":
+                print(f'Status updated to "Watching {movie}"')
+            if activityr == "wyt":
+                print(f'Status updated to "Watching {youtuber}"')
             await sleep(randint(1,10)*60) # task runs every few minutes (random 1-10)
         else:
             break
