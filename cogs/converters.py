@@ -17,7 +17,7 @@ class Converters(commands.Cog):
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
     async def owoConverter(self, ctx, *, arg=None):
         arg = await self.ifnocontent(ctx, arg)
-        await ctx.send(arg.replace("l","w").replace("r","w") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
+        await ctx.send(arg.replace("l","w").replace("r","w").replace("t","tw").replace("twh","thw") + " " + choice(["OwO","UwU","owo","uwu","ewe","O3O","U3U","o3o","u3u","^w^","nya~","rawr"]))
         await ctx.message.delete()
 
     @commands.command(name="beegtext", help="Convert text into regional indicator letters, the big blue ones.", aliases=["bigtext", "big", "beeg", "blockify"])
