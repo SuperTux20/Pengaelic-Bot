@@ -10,7 +10,7 @@ from asyncio import sleep
 print("Starting")
 
 load_dotenv("../pengaelicbotnightly.data/.env")
-TOKEN = getenv("DISCORD_TOKEN_NIGHTLY")
+TOKEN = getenv("DISCORD_TOKEN")
 connected = False
 fail = False
 client = commands.Bot(command_prefix="pn!",case_insensitive=True,description="Pengaelic Bot Nightly",help_command=None)
