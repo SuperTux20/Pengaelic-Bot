@@ -15,6 +15,7 @@
             "dad": false,
             "yoMama": false
         },
+        "polls": false,
         "welcome": true
     }
 }

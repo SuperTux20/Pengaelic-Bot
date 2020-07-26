@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.utils import get
 from json import load, dump, dumps
 
 class Options(commands.Cog):
@@ -36,7 +37,7 @@ class Options(commands.Cog):
         if allOptions["toggles"]["censor"] == True:
             allOptions["toggles"]["censor"] = False
             await ctx.send("Censorship turned off.")
-        elif allOptions["toggles"]["censor"] == False:
+        else:
             allOptions["toggles"]["censor"] = True
             await ctx.send("Censorship turned on.")
         await self.updateoptions(ctx.guild, allOptions)
@@ -49,7 +50,7 @@ class Options(commands.Cog):
         if allOptions["toggles"]["jokes"]["dad"] == True:
             allOptions["toggles"]["jokes"]["dad"] = False
             await ctx.send("Bye toggledad, I'm the Pengaelic Bot!")
-        elif allOptions["toggles"]["jokes"]["dad"] == False:
+        else:
             allOptions["toggles"]["jokes"]["dad"] = True
             await ctx.send("Hi toggledad, I'm the Pengaelic Bot!")
         await self.updateoptions(ctx.guild, allOptions)
@@ -62,7 +63,7 @@ class Options(commands.Cog):
         if allOptions["toggles"]["jokes"]["yoMama"] == True:
             allOptions["toggles"]["jokes"]["yoMama"] = False
             await ctx.send("Yo Mama jokes turned off.")
-        elif allOptions["toggles"]["jokes"]["yoMama"] == False:
+        else:
             allOptions["toggles"]["jokes"]["yoMama"] = True
             await ctx.send("Yo Mama jokes turned on.")
         await self.updateoptions(ctx.guild, allOptions)
@@ -75,9 +76,32 @@ class Options(commands.Cog):
         if allOptions["toggles"]["welcome"] == True:
             allOptions["toggles"]["welcome"] = False
             await ctx.send("Welcome message turned off.")
-        elif allOptions["toggles"]["welcome"] == False:
+        else:
             allOptions["toggles"]["welcome"] = True
             await ctx.send("Welcome message turned on.")
+        await self.updateoptions(ctx.guild, allOptions)
+
+    @commands.command(name="togglepolls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
+    @commands.has_permissions(manage_messages=True)
+    async def togglepolls(self, ctx):
+        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
+            allOptions = load(optionsfile)
+        if allOptions["toggles"]["polls"] == True:
+            allOptions["toggles"]["polls"] = False
+            await ctx.send("Polls turned off.")
+        else:
+            allOptions["toggles"]["polls"] = True
+            await ctx.send("Polls turned on.")
+            fails = 0
+            pollchannels = ["polls", "petition", "suggestions"]
+            for channel in pollchannels:
+                try:
+                    get(ctx.guild.text_channels, name=channel)
+                    break
+                except:
+                    fails+=1
+            if fails == len(pollchannels):
+                await ctx.send("Warning: There are no channels for the polls to work in. Please create a channel #polls, #petition, or #suggestions.")
         await self.updateoptions(ctx.guild, allOptions)
 
     @commands.command(name="rudenesslevel", help="Change how rude the bot can be.", aliases=["rudeness"], usage="<level>")
@@ -235,6 +259,7 @@ class Options(commands.Cog):
     @toggledad.error
     @togglemama.error
     @togglewelcome.error
+    @togglepolls.error
     @loadcog.error
     @unloadcog.error
     @showfilter.error

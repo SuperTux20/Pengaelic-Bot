@@ -126,6 +126,18 @@ class Noncommands(commands.Cog):
         if ("dead" in message.content) and ("chat" in message.content or "server"  in message.content) or "<:deadchat:720311826608291852>" == message.content:
             await message.channel.send(f"{choice(['N','n'])}o {choice(['U','u'])}")
 
+        if allOptions["toggles"]["polls"] == True:
+            possiblechannels = ["polls", "petition", "suggestions"]
+            for channel in possiblechannels:
+                try:
+                    if message.channel == get(message.guild.text_channels, name=channel):
+                        await message.add_reaction("✅")
+                        await message.add_reaction("❌")
+                        print("Sent auto-poll in #" + channel + " in " + message.guild.name)
+                        break
+                except:
+                    continue
+
         if message.content == "You know the rules" or message.content == "you know the rules":
             responses = []
             death_threats = ["It's time to die <:handgun:706698375592149013>", "And so do I :pensive:\nSay goodbye <:handgun:706698375592149013>"]
