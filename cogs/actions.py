@@ -104,7 +104,7 @@ class Actions(commands.Cog):
             if str(pat.id) == "721092139953684580":
                 await ctx.send(choice(botresponses))
 
-    @commands.command(name="nom", help="Possibly eat someone >:3\nThey can get away if they're fast enough :eyes:")
+    @commands.command(name="nom", help="Possibly eat someone >:3\nThey can get away if they're fast enough :eyes:", aliases=["eat","omnomnom"])
     async def nom(self, ctx, *, nom: discord.Member=None):
         nommer = ctx.author.display_name
         
