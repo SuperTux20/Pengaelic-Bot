@@ -3,6 +3,7 @@ import platform
 from discord.ext import commands
 from discord.utils import get
 from asyncio import sleep
+from random import randint
 
 class Tools(commands.Cog):
     purgeconfirm = False
@@ -30,15 +31,15 @@ class Tools(commands.Cog):
     @commands.command(name="avatar", help="Get someone's avatar.", usage="[username or nickname or @mention]", aliases=["pfp", "profilepic"])
     async def avatar(self, ctx, *,  member: discord.Member=None):
         if member:
-            avatar = member.avatar_url
+            avatar2get = member
             if member.id == 721092139953684580:
                 embed = discord.Embed(title=f"Here's my avatar!", color=32639)
             else:
                 embed = discord.Embed(title=f"Here's {member.display_name}'s avatar!", color=32639)
         else:
-            avatar = ctx.author.avatar_url
+            avatar2get = ctx.author
             embed = discord.Embed(title="Here's your avatar!", color=32639)
-        embed.set_image(url=avatar)
+        embed.set_image(url=avatar2get.avatar_url)
         await ctx.send(embed=embed)
 
     @commands.command(name="icon", help="Get the icon for the server.", aliases=["servericon","servicon"])
@@ -60,6 +61,14 @@ class Tools(commands.Cog):
             else:
                 await ctx.send("Invalid emoji specified!")
 
+    @commands.command(name="suggest", help="Send a suggestion poll!", aliases=["poll"])
+    async def poll(self, ctx, *, arg):
+        embed = discord.Embed(color=randint(0,16777215), title="Suggestion", description=arg).set_author(name=ctx.author.name,icon_url=ctx.author.avatar_url)
+        thepoll = await ctx.send(embed=embed)
+        await ctx.message.delete()
+        await thepoll.add_reaction("✅")
+        await thepoll.add_reaction("❌")
+
     @commands.command(name="clear", help="Clear some messages away.", aliases=["delmsgs"], usage="[number of messages to delete (5)]")
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, msgcount: int=5):
@@ -70,7 +79,7 @@ class Tools(commands.Cog):
 
     @commands.command(name="purge", help="Purge a channel of everything.\n:warning:WARNING:warning: This command clears an ENTIRE channel!", aliases=["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels=True)
-    async def purge(self, ctx, msgcount: int=5):
+    async def purge(self, ctx):
         if self.purgeconfirm == False:
             await ctx.send("Are you **really** sure you want to wipe this channel? Type `p!purge` again to confirm.")
             self.purgeconfirm = True
