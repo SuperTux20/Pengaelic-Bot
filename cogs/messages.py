@@ -23,15 +23,6 @@ class Messages(commands.Cog):
         await ctx.send(arg)
         await ctx.message.delete()
 
-    @commands.command(name="youknowtherules", help="...and so do I.", pass_context=True)
-    async def andsodoi(self, ctx):
-        responses = []
-        death_threats = ["It's time to die <:handgun:706698375592149013>", "And so do I :pensive:\nSay goodbye <:handgun:706698375592149013>"]
-        for _ in range(5):
-            responses.append("And so do I :pensive:")
-        responses.append(choice(death_threats))
-        await ctx.send(choice(responses))
-
     @commands.command(name="delet", help="delet this.", aliases=["deletthis"])
     async def deletthis(self, ctx):
         await ctx.message.delete()
