@@ -1,19 +1,30 @@
 import discord
+import sys
 from json import load, dump
+from fnmatch import filter as glob
 from discord.utils import get
 from discord.ext import commands
 from random import choice, randint
-from os import getenv, listdir
+from os import getenv, listdir, mkdir, execl
 from dotenv import load_dotenv
 from asyncio import sleep
+from time import sleep as realsleep
 
-print("Starting")
+print(
+    "Starting"
+)
 
-load_dotenv("../pengaelicbot.data/.env")
-TOKEN = getenv("DISCORD_TOKEN")
+load_dotenv(
+    "data/.env"
+)
 connected = False
 fail = False
-client = commands.Bot(command_prefix="p!",case_insensitive=True,description="Pengaelic Bot",help_command=None)
+client = commands.Bot(
+    command_prefix="pn!",
+    case_insensitive=True,
+    description="Pengaelic Bot Nightly",
+    help_command=None
+)
 
 async def status_switcher():
     global client
@@ -21,16 +32,86 @@ async def status_switcher():
     await client.wait_until_ready()
     while client.is_ready:
         if fail == False:
-            artist = choice(["Tux Penguin", "Qumu", "Robotic Wisp", "xGravity", "Nick Nitro", "ynk", "KEDD", "Jesse Cook", "musical rock", "SharaX"])
-            game = choice(["Minecraft", "OpenRA", "3D Pinball: Space Cadet", "SuperTux", "Project Muse", "Shattered Pixel Dungeon", "Super Hexagon", "osu!", "AstroMenace", "Space Pirates and Zombies"])
-            youtuber = choice(["Ethoslab", "MumboJumbo", "Blue Television Games", "The King of Random", "Phoenix SC"])
-            movie = choice(["Avengers: Endgame", "Avengers: Infinity War", "Star Wars Episode IV: A New Hope", "Spiderman: Into the Spiderverse", "Back to the Future"])
-            activities = [discord.Activity(type=discord.ActivityType.listening, name=artist), discord.Game(name=game), discord.Activity(type=discord.ActivityType.watching, name=movie), discord.Activity(type=discord.ActivityType.watching, name=youtuber)]
-            activity = choice(activities)
-            await client.change_presence(activity=activity)
-            await sleep(randint(2,10)*60) # task runs every few minutes (random 1-10)
+            artist = choice(
+                [
+                    "Tux Penguin",
+                    "Qumu",
+                    "Robotic Wisp",
+                    "xGravity",
+                    "Nick Nitro",
+                    "ynk",
+                    "KEDD",
+                    "Jesse Cook",
+                    "musical rock",
+                    "SharaX"
+                ]
+            )
+            game = choice(
+                [
+                    "Minecraft",
+                    "OpenRA",
+                    "3D Pinball: Space Cadet",
+                    "SuperTux",
+                    "Project Muse",
+                    "Shattered Pixel Dungeon",
+                    "Super Hexagon",
+                    "osu!",
+                    "AstroMenace",
+                    "Space Pirates and Zombies"
+                ]
+            )
+            youtuber = choice(
+                [
+                    "Ethoslab",
+                    "MumboJumbo",
+                    "Blue Television Games",
+                    "The King of Random",
+                    "Phoenix SC"
+                ]
+            )
+            movie = choice(
+                [
+                    "Avengers: Endgame",
+                    "Avengers: Infinity War",
+                    "Star Wars Episode IV: A New Hope",
+                    "Spiderman: Into the Spiderverse",
+                    "Back to the Future"
+                ]
+            )
+            activities = [
+                discord.Activity(
+                    type=discord.ActivityType.listening,
+                    name=artist
+                ),
+                discord.Game(
+                    name=game
+                ),
+                discord.Activity(
+                    type=discord.ActivityType.watching,
+                    name=movie
+                ),
+                discord.Activity(
+                    type=discord.ActivityType.watching,
+                    name=youtuber
+                )
+            ]
+            activity = choice(
+                activities
+            )
+            await client.change_presence(
+                activity=activity
+            )
+            await sleep(
+                randint(
+                    2,
+                    10
+                ) * 60
+            ) # task runs every few minutes (random 1-10)
         else:
             break
+
+def remove_duplicates(inlist: list):
+    return list(dict.fromkeys(inlist))
 
 @client.event
 async def on_ready():
@@ -44,57 +125,145 @@ async def on_ready():
             fail = False
             # try to read the options file
             try:
-                with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "r") as optionsfile:
-                    allOptions = load(optionsfile)
+                with open(rf"data/servers/{client.guilds[guild].id}/config.json", "r") as optionsfile:
+                    allOptions = load(
+                        optionsfile
+                    )
                     if connected == False:
-                        print("Options file loaded for " + str(client.guilds[guild].name))
+                        print(
+                            f"""Data loaded for {client.guilds[guild].name}"""
+                        )
             # if something goes wrong...
             except:
-                # ...try creating it
-                    try:
-                        open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "x").close()
-                    except FileExistsError:
-                        pass
-                    with open(r"default_options.json", "r") as defaultsfile:
-                        allOptions = load(defaultsfile)
-                    with open(rf"../pengaelicbot.data/configs/{client.guilds[guild].id}.json", "w") as optionsfile:
-                        dump(allOptions, optionsfile, sort_keys=True, indent=4)
-                    print("Options file created for " + str(client.guilds[guild].name))
+                # ...try to make the guild ID folder...
+                try:
+                    mkdir(
+                        rf"""data/servers/{
+                            client.guilds[guild].id
+                        }"""
+                    )
+                except FileExistsError:
+                    pass
+                # ...make a blank file...
+                try:
+                    open(
+                        rf"""data/servers/{client.guilds[guild].id}/config.json""",
+                        "x"
+                    ).close()
+                except FileExistsError:
+                    pass
+                # ...and restore the default options file
+                with open(r"data/default_options.json", "r") as defaultsfile:
+                    allOptions = load(
+                        defaultsfile
+                    )
+                with open(rf"data/servers/{client.guilds[guild].id}/config.json", "w") as optionsfile:
+                    dump(
+                        allOptions,
+                        optionsfile,
+                        sort_keys=True,
+                        indent=4
+                    )
+                print(
+                    f"""Options file created for {client.guilds[guild].name}"""
+                )
     if fail == True:
-        print("Failed to connect to Discord")
+        print(
+            "Failed to connect to Discord"
+        )
         exit()
     else:
         if connected == False:
-            connectstatus = f"{client.user.name}#{client.user.discriminator} connected to Discord"
+            connectstatus = f"""{
+                client.user
+            } connected to Discord"""
         else:
             connectstatus = "Reconnected"
         print()
-        print(connectstatus)
+        print(
+            connectstatus
+        )
         connected = True
 
 @client.event
 async def on_guild_join(guild, ctx=None):
-    print("Joined " + str(guild.name))
-    welcomeEmbed = discord.Embed(title="Howdy fellas! I'm the Pengaelic Bot!", description="Type `p!help` for a list of commands.", color=32639)
-    welcomeEmbed.set_thumbnail(url=client.user.avatar_url)
-    allchannels = list(guild.text_channels)
-    for channel in range(len(allchannels)):
-        allchannels[channel] = str(allchannels[channel])
-    if get(guild.text_channels, name="general"):
-        await get(guild.text_channels, name="general").send(embed=welcomeEmbed)
-    elif channel:
-        await ctx.channel.send(embed=welcomeEmbed)
+    print(
+        f"""Joined {
+            guild.name
+        }"""
+    )
+    welcomeEmbed = discord.Embed(
+        title="Howdy fellas! I'm (the in-dev version of) the Pengaelic Bot!",
+        description=f"Type `{client.command_prefix}help` for a list of commands.",
+        color=32639
+    ).set_thumbnail(
+        url=client.user.avatar_url
+    ).set_footer(
+        text="Warning: I may be prone to breaking while my dev(s) work on me"
+    )
+    channelkeys = [
+        "welcome",
+        "arrivals",
+        "entrance",
+        "entry",
+        "log",
+        "general"
+    ]
+    possiblechannels = [glob([channel.name for channel in guild.text_channels], f"*{channel}*") for channel in channelkeys]
+    for channelset in possiblechannels:
+        for channel in channelset:
+            try:
+                await get(
+                    guild.text_channels,
+                    name=channel
+                ).send(
+                    embed=welcomeEmbed
+                )
+                return
+            except:
+                continue
 
     # create fresh options file for new server
     try:
-        open(rf"../pengaelicbot.data/configs/{guild.id}.json", "x").close()
-        with open(r"default_options.json", "r") as defaultsfile:
-            allOptions = load(defaultsfile)
-        with open(rf"../pengaelicbot.data/configs/{guild.id}.json", "w") as optionsfile:
-            dump(allOptions, optionsfile, sort_keys=True, indent=4)
-        print("Options file created for " + str(guild.name))
+        mkdir(
+            rf"""data/servers/{
+                guild.id
+            }"""
+        )
+        open(
+            rf"""data/servers/{
+                guild.id
+            }/config.json""",
+            "x"
+        ).close()
+        with open(r"data/default_options.json", "r") as defaultsfile:
+            allOptions = load(
+                defaultsfile
+            )
+        with open(rf"data/servers/{guild.id}/config.json", "w") as optionsfile:
+            dump(
+                allOptions,
+                optionsfile,
+                sort_keys=True,
+                indent=4
+            )
+        print(
+            f"""Options file created for {
+                guild.name
+            }"""
+        )
+    except FileExistsError:
+        print(
+            f"""Found existing options file for {
+                guild.name
+            }"""
+        )
     except:
-        pass
+        print(
+            f"""Failed to create options file for {
+                guild.name
+            }"""
+        )
 
 @client.event
 async def on_command_error(ctx, error):
@@ -102,140 +271,643 @@ async def on_command_error(ctx, error):
     if hasattr(ctx.command, 'on_error'):
         return
     # ...send the global error, which differs depending on rudeness level
-    errormsgs = ["Sorry, this command is invalid.", "Invalid command/usage.", "You typed the command wrong!"]
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
+    errormsgs = [
+        "Sorry, this command is invalid.",
+        "Invalid command/usage.",
+        "You didn't type the command right."
+    ]
+    with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
+        allOptions = load(
+            optionsfile
+        )
     if allOptions["numbers"]["rudeness"] < 3:
-        await ctx.send(errormsgs[allOptions["numbers"]["rudeness"]] + " Type `p!help` for a list of commands and their usages.")
+        await ctx.send(
+            errormsgs[allOptions["numbers"]["rudeness"]] + f""" Type `{
+                client.command_prefix
+            }help` for a list of commands and their usages."""
+        )
     else:
-        await ctx.send(file=discord.File("images/thatsnothowitworksyoulittleshit.jpg"))
-    if "is not found" not in str(error):
-        print(error)
-    try:
-        print("Invalid command p!{} sent in {} in #{} by {}#{}".format(str(error).split('"')[1], ctx.guild, ctx.channel, ctx.message.author.name, ctx.message.author.discriminator))
-    except:
-        print(error)
+        await ctx.send(
+            file=discord.File(
+                "images/thatsnothowitworksyoulittleshit.jpg"
+            )
+        )
+    if "is not found" in str(error):
+        print(
+            "Invalid command {}{} sent in {} in #{} by {}#{}".format(
+                client.command_prefix,
+                str(
+                    error
+                ).split(
+                    '"'
+                )[1],
+                ctx.guild,
+                ctx.channel, ctx.message.author.name,
+                ctx.message.author.discriminator
+            )
+        )
+    else:
+        print(
+            error
+        )
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redoWelcome(ctx):
-    await on_guild_join(ctx.guild, ctx)
+    await on_guild_join(
+        ctx.guild, ctx.channel
+    )
     await ctx.message.delete()
 
-@client.command(name="help", help="Show this message", aliases=["info", "commands", "h"])
-async def help(ctx, category=None, subcategory=None):
-    cyan = 32639
-    helpMenu = discord.Embed(title=client.description, description="Type `p!help <category name>` for more info on each category.", color=cyan)
-    cogfiles = [cog[:-3] for cog in listdir("./cogs") if cog.endswith(".py")]
-    cogs = [client.get_cog(cog.capitalize()) for cog in cogfiles]
-    with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-        allOptions = load(optionsfile)
-        allCogs = allOptions["toggles"]["cogs"]
-        enabledCogs = {}
-        for cog in allCogs:
-            if allCogs[cog] == True:
-                enabledCogs[cog] = cog
+@client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
+async def help(ctx):
+    if ctx.invoked_subcommand is None:
+        helpMenu = discord.Embed(
+            title=client.description,
+            description=f"""Type `{
+                client.command_prefix
+            }help <category name without spaces/dashes>` for more info on each category.""",
+            color=32639
+        ).set_footer(
+            text=f"""    Command prefix is {
+                client.command_prefix
+            }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+        )
+        cogs = [
+            client.get_cog(cog)
+            for cog in [
+                cog[:-3]
+                for cog in listdir("./cogs")
+                if cog.endswith(".py")
+            ]
+        ]
         for cog in cogs:
-            if cog == None:
+            if cog == None or cog.name == "options":
                 pass
-            elif cog.name == "options" or cog.name == "noncommands":
-                pass
-            elif allOptions["toggles"]["cogs"][cog.name] == True:
-                helpMenu.add_field(name=cog.name.capitalize(), value=cog.description)
-        helpMenu.add_field(name="Options", value=client.get_cog("Options").description)
-        helpMenu.add_field(name="Non-commands", value=client.get_cog("Noncommands").description)
-    if category == "Actions" or category == "actions":
-        helpMenu = discord.Embed(title="Actions", description="Interact with other server members!", color=cyan)
-        for command in client.get_cog("Actions").get_commands():
-            helpMenu.add_field(name=f"{command} <username or nickname or @mention>", value=command.help)
-    elif category == "Converters" or category == "converters":
-        helpMenu = discord.Embed(title="Converters", description="Run some text through a converter to make it look funny!", color=cyan)
-        for command in client.get_cog("Converters").get_commands():
-            command.activations = [command.name]
-            for alias in command.aliases:
-                command.activations.append(alias)
-            helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n<text to convert>", value=command.help)
-    elif category == "Games" or category == "games":
-        helpMenu = discord.Embed(title="Games", description="All sorts of fun stuff!", color=cyan)
-        for command in client.get_cog("Games").get_commands():
-            command.activations = [command.name]
-            for alias in command.aliases:
-                command.activations.append(alias)
+            elif load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"][cog.name_typable] == True:
+                helpMenu.add_field(
+                    name=cog.name.capitalize(),
+                    value=cog.description
+                )
+        helpMenu.add_field(
+            name="Options",
+            value=client.get_cog(
+                "options"
+            ).description
+        )
+        await ctx.send(embed=helpMenu)
+
+@help.command(name="actions")
+async def hactions(ctx):
+    cog = client.get_cog("actions")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        helpMenu.add_field(
+            name="(" + str(
+                [command.name] + command.aliases
+            )[1:-1].replace(
+                "'",
+                ""
+            ).replace(
+                ", ",
+                "/"
+            ) + ")",
+            value=command.name.capitalize()
+        )
+    await ctx.send(embed=helpMenu)
+
+@help.command(name="actsofviolence")
+async def hactsofviolence(ctx):
+    cog = client.get_cog("actsofviolence")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        helpMenu.add_field(
+            name="(" + str(
+                [command.name] + command.aliases
+            )[1:-1].replace(
+                "'",
+                ""
+            ).replace(
+                ", ",
+                "/"
+            ) + ")\n<username or nickname or @mention>",
+            value=command.help
+        )
+    await ctx.send(embed=helpMenu)
+
+@help.command(name="converters")
+async def hconverters(ctx):
+    cog = client.get_cog("converters")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        helpMenu.add_field(
+            name="(" + str(
+                [command.name] + command.aliases
+            )[1:-1].replace(
+                "'",
+                ""
+            ).replace(
+                ", ",
+                "/"
+            ) + ")\n<text to convert>",
+            value=command.help
+        )
+    await ctx.send(embed=helpMenu)
+
+@help.command(name="games")
+async def hgames(ctx):
+    cog = client.get_cog("games")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        if command.usage:
+            helpMenu.add_field(
+                name="({})\n{}".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    ),
+                    command.usage
+                ),
+                value=command.help
+            )
+        else:
+            helpMenu.add_field(
+                name="({})".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    )
+                ),
+                value=command.help
+            )
+    await ctx.send(embed=helpMenu)
+
+@help.command(name="interactions")
+async def hinteractions(ctx):
+    cog = client.get_cog("interactions")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        helpMenu.add_field(
+            name="(" + str(
+                [command.name] + command.aliases
+            )[1:-1].replace(
+                "'",
+                ""
+            ).replace(
+                ", ",
+                "/"
+            ) + ")\n<username or nickname or @mention>",
+            value=command.help
+        )
+    await ctx.send(embed=helpMenu)
+
+@help.command(name="messages")
+async def hmessages(ctx):
+    cog = client.get_cog("messages")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        if command.usage:
+            helpMenu.add_field(
+                name="({})\n{}".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    ),
+                    command.usage
+                ),
+                value=command.help
+            )
+        else:
+            helpMenu.add_field(
+                name="({})".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    )
+                ),
+                value=command.help
+            )
+    await ctx.send(embed=helpMenu)
+
+@help.command(name="noncommands")
+async def hnoncommands(ctx):
+    cog = client.get_cog("noncommands")
+    await ctx.send(
+        embed=discord.Embed(
+            title=cog.name.capitalize(),
+            description=cog.description_long,
+            color=32639
+        ).add_field(
+            name="I'm <message>",
+            value="It's like Dad Bot. 'Nuff said."
+        ).add_field(
+            name="Yo mama so <mama type>",
+            value="Automatic Yo Mama jokes!"
+        ).add_field(
+            name="Yo mama list",
+            value="Show the list of mama types to use in the auto-joker."
+        ).add_field(
+            name="You know the rules",
+            value="A rickroll-themed Russian Roulette."
+        ).set_footer(
+            text=f"""    Command prefix is {
+                client.command_prefix
+            }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+        )
+    )
+
+@help.command(name="tools")
+async def htools(ctx):
+    cog = client.get_cog("tools")
+    helpMenu = discord.Embed(
+        title=cog.name.capitalize(),
+        description=cog.description_long,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in cog.get_commands():
+        if command.usage:
+            helpMenu.add_field(
+                name="({})\n{}".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    ),
+                    command.usage
+                ),
+                value=command.help
+            )
+        else:
+            helpMenu.add_field(
+                name="({})".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    )
+                ),
+                value=command.help
+            )
+    await ctx.send(embed=helpMenu)
+
+@help.group(name="options")
+async def hoptions(ctx):
+    if ctx.invoked_subcommand is None:
+        cog = client.get_cog("options")
+        helpMenu = discord.Embed(
+            title=cog.name.capitalize(),
+            description=cog.description_long,
+            color=32639
+        ).set_footer(
+            text=f"""    Command prefix is {
+                client.command_prefix
+            }
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+        )
+        for command in cog.get_commands():
             if command.usage:
-                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
+                helpMenu.add_field(
+                    name="({})\n{}".format(
+                        str(
+                            [command.name] + command.aliases
+                        )[1:-1].replace(
+                            "'",
+                            ""
+                        ).replace(
+                            ", ",
+                            "/"
+                        ),
+                        command.usage
+                    ),
+                    value=command.help
+                )
             else:
-                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
-    elif category == "Messages" or category == "messages":
-        helpMenu = discord.Embed(title="Messages", description="M a k e   m e   s a y   t h i n g s", color=cyan)
-        for command in client.get_cog("Messages").get_commands():
-            command.activations = [command.name]
-            for alias in command.aliases:
-                command.activations.append(alias)
-            if command.usage:
-                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
-            else:
-                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
-    elif category == "Options" or category == "options":
-        with open(rf"../pengaelicbot.data/configs/{ctx.guild.id}.json", "r") as optionsfile:
-            allOptions = load(optionsfile)
-            if subcategory == None:
-                helpMenu = discord.Embed(title="Options", description="Settings for the bot. Different settings need different permissions.\nType `p!help options [option]` for more info on each subcategory.", color=cyan)
-                helpMenu.add_field(name="Censor", value="Automatic deletion of messages based on keywords in a text file.")
-                helpMenu.add_field(name="Cogs", value="I'm modular! You can enable or disable whatever cog you want.")
-                helpMenu.add_field(name="Other", value="Settings that don't fit into any other categories.")
-            else:
-                if subcategory == "Censor" or subcategory == "censor":
-                    helpMenu = discord.Embed(title="Censorship", desctiption="Automatic deletion of messages based on keywords in a text file.", color=cyan)
-                    helpMenu.add_field(name="(togglecensor/togglefilter)", value="Toggle the entire censorship function.")
-                    helpMenu.add_field(name="(censorlist/filterlist)", value="Show the list of censored words.")
-                    helpMenu.add_field(name="(wipecensor/wipefilter)", value="Clear the list.")
-                    helpMenu.add_field(name="(addcensor/addfilter)\n<word>", value="Add a word to the list.")
-                    helpMenu.add_field(name="(delcensor/delfilter)\n<word>", value="Delete a word from the list.")
-                if subcategory == "Cogs" or subcategory == "cogs":
-                    helpMenu = discord.Embed(title="Cogs", description="I'm modular! You can enable or disable whatever cog you want.", color=cyan)
-                    helpMenu.add_field(name="cogs", value="See a list of all cogs and their statuses.")
-                    helpMenu.add_field(name="load\n[cog]", value="Load a cog.")
-                    helpMenu.add_field(name="unload\n[cog]", value="Unload a cog.")
-                if subcategory == "Other" or subcategory == "other":
-                    helpMenu = discord.Embed(title="Other", description="Settings that don't fit into any other categories.", color=cyan)
-                    helpMenu.add_field(name="(reset/defaults)", value="Reset all options to their default values.")
-                    helpMenu.add_field(name="togglemama", value="Toggle the Yo Mama jokes.")
-                    helpMenu.add_field(name="toggledad", value="Toggle the dad jokes.")
-                    helpMenu.add_field(name="(rudeness/rudenesslevel) <level>", value="Change how rude the bot can be.")
-    elif category == "Tools" or category == "tools":
-        helpMenu = discord.Embed(title="Tools", description="Various tools and info.", color=cyan)
-        for command in client.get_cog("Tools").get_commands():
-            command.activations = [command.name]
-            for alias in command.aliases:
-                command.activations.append(alias)
-            if command.usage:
-                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")\n" + str(command.usage), value=command.help)
-            else:
-                helpMenu.add_field(name="(" + str(command.activations)[1:-1].replace("'","").replace(", ","/") + ")", value=command.help)
-    elif category == "Non-commands" or category == "Non-Commands" or category == "non-commands" or category == "noncommands" or category == "Noncommands" or category == "NonCommands":
-        helpMenu = discord.Embed(title="Non-commands", description="Automatic message responses that aren't commands.", color=cyan)
-        helpMenu.add_field(name="I'm <message>", value="It's like Dad Bot. 'Nuff said.")
-        helpMenu.add_field(name="Yo mama so <mama type>", value="Automatic Yo Mama jokes!")
-        helpMenu.add_field(name="Yo mama list", value="Show the list of mama types to use in the auto-joker.")
-    helpMenu.set_footer(text="Command prefix is `p!`\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with")
+                helpMenu.add_field(
+                    name="({})".format(
+                        str(
+                            [command.name] + command.aliases
+                        )[1:-1].replace(
+                            "'",
+                            ""
+                        ).replace(
+                            ", ",
+                            "/"
+                        )
+                    ),
+                    value=command.help
+                )
+        await ctx.send(embed=helpMenu)
+
+@hoptions.command(name="toggle")
+async def htoggle(ctx):
+    global remove_duplicates
+    group = client.get_command("toggle")
+    helpMenu = discord.Embed(
+        title=group.name.capitalize(),
+        description=group.help,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }toggle
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in remove_duplicates(group.walk_commands()):
+        if command.usage:
+            helpMenu.add_field(
+                name="({})\n{}".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    ),
+                    command.usage
+                ),
+                value=command.help,
+            )
+        else:
+            helpMenu.add_field(
+                name="({})".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    )
+                ),
+                value=command.help
+            )
+    await ctx.send(embed=helpMenu)
+
+@hoptions.command(name="censor", aliases=["filter"])
+async def hcensor(ctx):
+    group = client.get_command("censor")
+    helpMenu = discord.Embed(
+        title=group.name.capitalize(),
+        description=group.help,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }censor or {
+            client.command_prefix
+        }filter
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in remove_duplicates(group.walk_commands()):
+        if command.usage:
+            helpMenu.add_field(
+                name="({})\n{}".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    ),
+                    command.usage
+                ),
+                value=command.help,
+            )
+        else:
+            helpMenu.add_field(
+                name="({})".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    )
+                ),
+                value=command.help
+            )
+    await ctx.send(embed=helpMenu)
+
+@hoptions.command(name="cog", aliases=["module"])
+async def hcog(ctx):
+    group = client.get_command("cog")
+    helpMenu = discord.Embed(
+        title=group.name.capitalize(),
+        description=group.help,
+        color=32639
+    ).set_footer(
+        text=f"""    Command prefix is {
+            client.command_prefix
+        }cog or {
+            client.command_prefix
+        }filter
+    <arg> = required parameter
+    [arg] = optional parameter
+    [arg (value)] = default value for optional parameter
+    (command/command/command) = all aliases you can run the command with"""
+    )
+    for command in remove_duplicates(group.walk_commands()):
+        if command.usage:
+            helpMenu.add_field(
+                name="({})\n{}".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    ),
+                    command.usage
+                ),
+                value=command.help,
+            )
+        else:
+            helpMenu.add_field(
+                name="({})".format(
+                    str(
+                        [command.name] + command.aliases
+                    )[1:-1].replace(
+                        "'",
+                        ""
+                    ).replace(
+                        ", ",
+                        "/"
+                    )
+                ),
+                value=command.help
+            )
     await ctx.send(embed=helpMenu)
 
 # load all the cogs
 for cog in listdir("./cogs"):
     if cog.endswith(".py"):
-        client.load_extension(f"cogs.{cog[:-3]}")
-        print(f"Loaded cog {cog[:-3]}")
+        client.load_extension(
+            f"""cogs.{
+                cog[:-3]
+            }"""
+        )
+        print(
+            f"""Loaded cog {
+                cog[:-3]
+            }"""
+        )
 
-client.loop.create_task(status_switcher()) # as defined above
+client.loop.create_task(
+    status_switcher()
+) # as defined above
 
-# this loop auto-reloads if internet connection is lost
-while True:
-    try:
-        client.run(TOKEN)
-    except KeyboardInterrupt:
-        print("Disconnected")
-        break
-    except:
-        print("Unable to connect to Discord")
-        break
-print("Quit")
-exit()
+def crashcrash():
+    exit(
+        0
+    )
+    crashcrash()
+
+try:
+    client.run(
+        getenv(
+            "DISCORD_TOKEN"
+        )
+    )
+except KeyboardInterrupt:
+    print(
+        "Disconnected"
+    )
+    crashcrash()
+except:
+    print(
+        "Unable to connect to Discord"
+    )
+    crashcrash()
