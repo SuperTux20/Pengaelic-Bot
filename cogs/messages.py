@@ -56,7 +56,7 @@ class messages(commands.Cog):
             "Main Developer and Creator": "chickenmeister",
             "Biggest Helper": "legenden",
             "Super Helpful Friends": "Hyperfresh\nleasip",
-            "Other Helpful Fellas": "Satan\nfire\nMoonbase Alpha"
+            "Dudes From Coding Support": "Satan\nfire\nMoonbase Alpha\nYousef"
         }
         embed = discord.Embed(
             color=32639,
