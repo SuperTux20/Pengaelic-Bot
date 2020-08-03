@@ -124,5 +124,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Configs and guild data
+# Configs and data
 data/
+
+# Batch scripts
+*.bat

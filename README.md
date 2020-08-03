@@ -1,6 +1,16 @@
 # Pengaelic Bot
 ## A simple multi-purpose Discord bot.
 
+## 📄 About
+
+- Language used : `Python`
+- Library used : `discord.py`
+
+## 🤝 Contributing
+
+- Head to <a href="https://github.com/SuperTux20/Pengaelic-Bot-Nightly">Pengaelic Bot Nightly</a>
+- Follow the instructions in `README.md` from there
+
 ### Games and fun stuff
 - Roll dice
 - Draw cards
