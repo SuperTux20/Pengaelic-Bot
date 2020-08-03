@@ -20,9 +20,9 @@ load_dotenv(
 connected = False
 fail = False
 client = commands.Bot(
-    command_prefix="pn!",
+    command_prefix="p!",
     case_insensitive=True,
-    description="Pengaelic Bot Nightly",
+    description="Pengaelic Bot",
     help_command=None
 )
 
@@ -193,13 +193,11 @@ async def on_guild_join(guild, ctx=None):
         }"""
     )
     welcomeEmbed = discord.Embed(
-        title="Howdy fellas! I'm (the in-dev version of) the Pengaelic Bot!",
+        title="Howdy fellas! I'm the Pengaelic Bot!",
         description=f"Type `{client.command_prefix}help` for a list of commands.",
         color=32639
     ).set_thumbnail(
         url=client.user.avatar_url
-    ).set_footer(
-        text="Warning: I may be prone to breaking while my dev(s) work on me"
     )
     channelkeys = [
         "welcome",
