@@ -164,23 +164,26 @@ class tools(commands.Cog):
     async def purge(self, ctx):
         if self.purgeconfirm == False:
             await ctx.send(
-                "Are you **really** sure you want to wipe this channel? Type `p!purge` again to confirm."
+                "Are you **really** sure you want to wipe this channel? Type `p!purge` again to confirm. This will expire in 10 seconds."
             )
             self.purgeconfirm = True
+            await sleep(10)
+            self.purgeconfirm = False
+            await ctx.send("Pending purge expired.")
         elif self.purgeconfirm == True:
             newchannel = await ctx.channel.clone(
-                reason=f"""Purging channel {
+                reason=f"""Purging #{
                     ctx.channel.name
                 }"""
             )
             await newchannel.edit(
                 position=ctx.channel.position,
-                reason=f"""Purging channel {
+                reason=f"""Purging #{
                     ctx.channel.name
                 }"""
             )
             await ctx.channel.delete(
-                reason=f"""Purged channel {
+                reason=f"""Purged #{
                     ctx.channel.name
                 }"""
             )

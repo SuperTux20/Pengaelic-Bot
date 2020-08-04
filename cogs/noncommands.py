@@ -1,6 +1,6 @@
 import discord
 from fnmatch import filter as glob
-from fnmatch import fnmatch as match
+from fnmatch import fnmatch
 from discord.utils import get
 from discord.ext import commands
 from json import load
@@ -141,7 +141,7 @@ class noncommands(commands.Cog):
                 else:
                     for bad in all_bads:
                         for word in message.content.split():
-                            if match(word, bad):
+                            if fnmatch(word, bad):
                                 await message.delete()
 
         # this section randomizes yo mama jokes, does not work if rudeness is below 2
@@ -267,7 +267,7 @@ class noncommands(commands.Cog):
                     [
                         "It's time to die <:handgun:706698375592149013>",
                         """And so do I :pensive:
-                        Say goodbye <:handgun:706698375592149013>"""
+Say goodbye <:handgun:706698375592149013>"""
                     ]
                 )
             )
