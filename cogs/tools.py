@@ -192,8 +192,8 @@ class tools(commands.Cog):
     @commands.command(name="support", help="Get the invite link to the official support server.", aliases=["discord", "invite"])
     async def getserver(self, ctx):
         await ctx.send(
-            """Here is the official support server for Pengaelic Bot!
-            https://discord.gg/DHHpA7k"""
+            """Here is my official support server!
+https://discord.gg/DHHpA7k"""
         )
 
     @commands.command(name="server", help="See a bunch of data about the server at a glance.", aliases=["info"])

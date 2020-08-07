@@ -168,9 +168,6 @@ async def on_ready():
                     f"""Options file created for {client.guilds[guild].name}"""
                 )
     if fail == True:
-        print(
-            "Failed to connect to Discord"
-        )
         exit()
     else:
         if connected == False:
@@ -216,6 +213,10 @@ async def on_guild_join(guild, ctx=None):
                     name=channel
                 ).send(
                     embed=welcomeEmbed
+                )
+                await ctx.send(
+                    """Be sure to join the Support server for news and updates!
+https://discord.gg/DHHpA7k"""
                 )
                 return
             except:
@@ -390,7 +391,8 @@ async def hactions(ctx):
             )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable actions` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load actions` to enable it.")
+
 @help.command(name="actsofviolence")
 async def hactsofviolence(ctx):
     if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["actsofviolence"] == True:
@@ -423,7 +425,7 @@ async def hactsofviolence(ctx):
             )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable actsofviolence` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load actsofviolence` to enable it.")
 
 @help.command(name="converters")
 async def hconverters(ctx):
@@ -457,7 +459,7 @@ async def hconverters(ctx):
             )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable converters` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load converters` to enable it.")
 
 @help.command(name="games")
 async def hgames(ctx):
@@ -510,7 +512,7 @@ async def hgames(ctx):
                 )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable games` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load games` to enable it.")
 
 @help.command(name="interactions")
 async def hinteractions(ctx):
@@ -544,7 +546,7 @@ async def hinteractions(ctx):
             )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable interactions` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load interactions` to enable it.")
 
 @help.command(name="messages")
 async def hmessages(ctx):
@@ -597,7 +599,7 @@ async def hmessages(ctx):
                 )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable messages` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load messages` to enable it.")
 
 @help.command(name="noncommands")
 async def hnoncommands(ctx):
@@ -631,7 +633,7 @@ async def hnoncommands(ctx):
             )
         )
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable noncommands` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load noncommands` to enable it.")
 
 @help.command(name="tools")
 async def htools(ctx):
@@ -684,7 +686,7 @@ async def htools(ctx):
                 )
         await ctx.send(embed=helpMenu)
     else:
-        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog enable tools` to enable it.")
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load tools` to enable it.")
 
 @help.group(name="options")
 async def hoptions(ctx):
