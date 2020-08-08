@@ -115,7 +115,7 @@ class oddcommands(commands.Cog):
                 await NoNomSense.add_reaction(
                     "👄"
                 )
-                for _ in range(5):
+                for _ in range(10):
                     sleep(
                         1
                     )
