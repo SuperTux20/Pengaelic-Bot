@@ -20,7 +20,7 @@ class noncommands(commands.Cog):
             allOptions = load(
                 optionsfile
             )
-        if allOptions["toggles"]["welcome"] == True:
+        if allOptions["welcome"] == True:
             channelkeys = [
                 "welcome",
                 "arrivals",
@@ -68,7 +68,7 @@ class noncommands(commands.Cog):
             return
 
         # this section is for Dad Bot-like responses
-        if allOptions["toggles"]["jokes"]["dad"] == True:
+        if allOptions["jokes"]["dad"] == True:
             dadprefs = [
                 "I'm",
                 "Im",
@@ -117,7 +117,7 @@ class noncommands(commands.Cog):
                             )
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
-        if allOptions["toggles"]["censor"] == True:
+        if allOptions["censor"] == True:
             try:
                 open(
                     rf"""data/servers/{
@@ -144,41 +144,40 @@ class noncommands(commands.Cog):
                             if fnmatch(word, bad):
                                 await message.delete()
 
-        # this section randomizes yo mama jokes, does not work if rudeness is below 2
-        if allOptions["toggles"]["jokes"]["yoMama"] == True:
+        # this section randomizes yo mama jokes
+        if allOptions["jokes"]["yoMama"] == True:
             with open(r"data/Yo Mama Jokes.json", "r") as AllTheJokes:
                 jokes = load(
                     AllTheJokes
                 )
-            if allOptions["numbers"]["rudeness"] > 1:
-                for mom in jokes:
-                    if "Yo mama " == message.content[0:7] or "yo mama " == message.content[0:7]:
-                        if "so " == message.content[8:11]:
-                            if message.content[12:] in list(jokes.keys()):
-                                if message.content[12:] == mom:
-                                    await message.channel.send(
-                                        choice(
-                                            jokes[mom]
-                                        )
+            for mom in jokes:
+                if "Yo mama " == message.content[0:7] or "yo mama " == message.content[0:7]:
+                    if "so " == message.content[8:11]:
+                        if message.content[12:] in list(jokes.keys()):
+                            if message.content[12:] == mom:
+                                await message.channel.send(
+                                    choice(
+                                        jokes[mom]
                                     )
-                            else:
-                                await message.channel.send(
-                                    "Invalid Yo Mama type detected..."
                                 )
-                                await message.channel.send(
-                                    "Type `yo mama list` for a list of valid types!"
-                                )
-                        elif "list" == message.content[8:12]:
+                        else:
                             await message.channel.send(
-                                str(
-                                    list(
-                                        jokes.keys()
-                                    )
-                                )[1:-1].replace(
-                                    "'",
-                                    ""
-                                )
+                                "Invalid Yo Mama type detected..."
                             )
+                            await message.channel.send(
+                                "Type `yo mama list` for a list of valid types!"
+                            )
+                    elif "list" == message.content[8:12]:
+                        await message.channel.send(
+                            str(
+                                list(
+                                    jokes.keys()
+                                )
+                            )[1:-1].replace(
+                                "'",
+                                ""
+                            )
+                        )
 
 
         # bro, did someone seriously say the chat was dead?
@@ -209,7 +208,7 @@ class noncommands(commands.Cog):
             )
 
         # this section makes automatic polls in any validly named channel
-        if allOptions["toggles"]["polls"] == True:
+        if allOptions["polls"] == True:
             channelkeys = [
                 "poll",
                 "petition",

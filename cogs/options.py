@@ -55,54 +55,13 @@ class options(commands.Cog):
                 defaultoptions.read()
             )
 
-    @commands.command(name="rudeness", help="Change how rude the bot can be.", usage="<level>")
-    @commands.has_permissions(manage_messages=True)
-    async def rudeLevel(self, ctx, level: int=-9999):
-        with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
-            allOptions = load(optionsfile)
-        if level == -9999:
-            await ctx.send(
-                f"""Current rudeness level is {
-                    allOptions['numbers']['rudeness']
-                }"""
-            )
-        else:
-            if level < 0:
-                await ctx.send(
-                    "Sorry pal, can't go below 0."
-                )
-            else:
-                if level > 3:
-                    await ctx.send(
-                        "Sorry pal, 3 is the highest it can go (for now)."
-                    )
-                    allOptions["numbers"]["rudeness"] = 3
-                    await ctx.send(
-                        "Rudeness level set to 3"
-                    )
-                    await self.updateOptions(
-                        ctx.guild,
-                        allOptions
-                    )
-                else:
-                    allOptions["numbers"]["rudeness"] = level
-                    await ctx.send(
-                        f"""Rudeness level set to {
-                            level
-                        }"""
-                    )
-                    await self.updateOptions(
-                        ctx.guild,
-                        allOptions
-                    )
-
     @commands.group(name="toggle", help="Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
             with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
                 allToggles = load(
                     optionsfile
-                )["toggles"]
+                )
                 await ctx.send(
                     "Available toggles: `{}`".format(
                         str(
@@ -125,13 +84,13 @@ class options(commands.Cog):
             allOptions = load(
                 optionsfile
             )
-        if allOptions["toggles"]["censor"] == True:
-            allOptions["toggles"]["censor"] = False
+        if allOptions["censor"] == True:
+            allOptions["censor"] = False
             await ctx.send(
                 "Censorship turned off."
             )
         else:
-            allOptions["toggles"]["censor"] = True
+            allOptions["censor"] = True
             await ctx.send(
                 "Censorship turned on."
             )
@@ -145,11 +104,11 @@ class options(commands.Cog):
     async def toggleDad(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["toggles"]["jokes"]["dad"] == True:
-            allOptions["toggles"]["jokes"]["dad"] = False
+        if allOptions["jokes"]["dad"] == True:
+            allOptions["jokes"]["dad"] = False
             await ctx.send("Bye Dad, I'm Pengaelic Bot Nightly!")
         else:
-            allOptions["toggles"]["jokes"]["dad"] = True
+            allOptions["jokes"]["dad"] = True
             await ctx.send("Hi Dad, I'm Pengaelic Bot Nightly!")
         await self.updateOptions(
             ctx.guild,
@@ -161,8 +120,8 @@ class options(commands.Cog):
     async def toggleMama(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["toggles"]["jokes"]["yoMama"] == True:
-            allOptions["toggles"]["jokes"]["yoMama"] = False
+        if allOptions["jokes"]["yoMama"] == True:
+            allOptions["jokes"]["yoMama"] = False
             await ctx.send(
                 "Yo Mama jokes turned off."
             )
@@ -171,32 +130,27 @@ class options(commands.Cog):
                 allOptions
             )
         else:
-            if allOptions["numbers"]["rudeness"] > 1:
-                allOptions["toggles"]["jokes"]["yoMama"] = True
-                await ctx.send(
-                    "Yo Mama jokes turned on."
-                )
-                await self.updateOptions(
+            allOptions["jokes"]["yoMama"] = True
+            await ctx.send(
+                "Yo Mama jokes turned on."
+            )
+            await self.updateOptions(
                 ctx.guild,
                 allOptions
             )
-            else:
-                await ctx.send(
-                    "Unable to turn on Yo Mama jokes: Rudeness level is below 2"
-                )
 
     @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggleWelcome(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["toggles"]["welcome"] == True:
-            allOptions["toggles"]["welcome"] = False
+        if allOptions["welcome"] == True:
+            allOptions["welcome"] = False
             await ctx.send(
                 "Welcome message turned off."
             )
         else:
-            allOptions["toggles"]["welcome"] = True
+            allOptions["welcome"] = True
             await ctx.send(
                 "Welcome message turned on."
             )
@@ -210,13 +164,13 @@ class options(commands.Cog):
     async def togglePolls(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["toggles"]["polls"] == True:
-            allOptions["toggles"]["polls"] = False
+        if allOptions["polls"] == True:
+            allOptions["polls"] = False
             await ctx.send(
                 "Polls turned off."
             )
         else:
-            allOptions["toggles"]["polls"] = True
+            allOptions["polls"] = True
             await ctx.send(
                 "Polls turned on."
             )
@@ -399,7 +353,7 @@ class options(commands.Cog):
                     dumps(
                         load(
                             optionsfile
-                        )["toggles"]["cogs"],
+                        )["cogs"],
                         indent=4
                     )
                 }```"""
@@ -411,7 +365,7 @@ class options(commands.Cog):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             cogs = load(
                 optionsfile
-            )["toggles"]["cogs"]
+            )["cogs"]
             inactivecogs = [
                 cog
                 for cog in cogs
@@ -429,8 +383,8 @@ class options(commands.Cog):
                         allOptions = load(
                             optionsfile
                         )
-                        _ = allOptions["toggles"]["cogs"][cog2load]
-                        allOptions["toggles"]["cogs"][cog2load] = True
+                        _ = allOptions["cogs"][cog2load]
+                        allOptions["cogs"][cog2load] = True
                         await self.updateOptions(
                             ctx.guild,
                             allOptions
@@ -471,7 +425,7 @@ class options(commands.Cog):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             cogs = load(
                 optionsfile
-            )["toggles"]["cogs"]
+            )["cogs"]
             activecogs = [
                 cog
                 for cog in cogs
@@ -487,8 +441,8 @@ class options(commands.Cog):
                 try:
                     with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
                         allOptions = load(optionsfile)
-                        _ = allOptions["toggles"]["cogs"][cog2unload]
-                        allOptions["toggles"]["cogs"][cog2unload] = False
+                        _ = allOptions["cogs"][cog2unload]
+                        allOptions["cogs"][cog2unload] = False
                         await self.updateOptions(
                             ctx.guild,
                             allOptions
@@ -537,7 +491,6 @@ class options(commands.Cog):
     @addFilter.error
     @delFilter.error
     @wipeFilter.error
-    @rudeLevel.error
     @getOptions.error
     async def messageError(self, ctx, error):
         if str(error) == "You are missing Manage Messages permission(s) to run this command.":
