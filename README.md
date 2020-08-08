@@ -23,12 +23,11 @@
 - Laugh
 - Snore
 ### Interactions with other users
-- Boop on the nose
-- Pat on the head (or back)
+- Boop someone's nose
 - Hug
 - Kiss
-- Nom
-- Squish a face >3<
+- Pat someone on the head
+- Squish someone's face
 - Tickle
 ### Tools
 - Clear a number of messages from a channel (requires Manage Messages permission)
@@ -46,12 +45,11 @@
 - Shuffle letters around, either individual words or the entire message
 ### Configurable options
 - Toggle any of the auto-responses mentioned below
-- "Rudeness level", set from 0 to 3 (for now) that slightly alters how the bot responds.
 - Enable or disable ANY of the modules mentioned above!
 - Change what keywords the censor deletes
 - Toggle an automatic welcome message
 ### Auto-responses
-- Dad jokes ("Hi hungry, I'm the Pengaelic Bot!") (Triggered with "I'm (insert text here)")
+- Dad jokes ("Hi hungry, I'm the Pengaelic Bot!") (Triggered with "I'm [insert text here]")
 - Yo Mama jokes (Triggered with "Yo mama so [mama type]")
 - Chat auto-reviver (Triggered with "dead chat" or "dead server")
 - Rickroll-themed Russian Roulette (Triggered with "You know the rules")

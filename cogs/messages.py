@@ -8,7 +8,7 @@ class messages(commands.Cog):
     name = "messages"
     name_typable = name
     description = "Make me say all sorts of things."
-    description_long = description + " And possible make me die inside."
+    description_long = description + " And possibly make me die inside."
 
     @commands.command(name="hi", help="You say hi, I greet you back!", aliases=["hello", "sup", "howdy", "hey", "heya"])
     async def say_hi_back(self, ctx):
