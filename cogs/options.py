@@ -62,12 +62,16 @@ class options(commands.Cog):
                 allToggles = load(
                     optionsfile
                 )
+                allToggles.pop(
+                    "cogs"
+                )
                 await ctx.send(
-                    "Available toggles: `{}`".format(
+                    """Available toggles:
+```json
+{}
+```""".format(
                         str(
-                            allToggles.remove(
-                                "cogs"
-                            )
+                            allToggles
                         )[
                             1:-1
                         ].replace(
@@ -99,29 +103,29 @@ class options(commands.Cog):
             allOptions
         )
 
-    @toggle.command(name="dad", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+    @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(manage_messages=True)
-    async def toggleDad(self, ctx):
+    async def toggleDadJokes(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["jokes"]["dad"] == True:
-            allOptions["jokes"]["dad"] = False
+        if allOptions["dadJokes"] == True:
+            allOptions["dadJokes"] = False
             await ctx.send("Bye Dad, I'm Pengaelic Bot Nightly!")
         else:
-            allOptions["jokes"]["dad"] = True
+            allOptions["dadJokes"] = True
             await ctx.send("Hi Dad, I'm Pengaelic Bot Nightly!")
         await self.updateOptions(
             ctx.guild,
             allOptions
         )
 
-    @toggle.command(name="mama", help="Toggle the automatic Yo Mama jokes.")
+    @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
     @commands.has_permissions(manage_messages=True)
-    async def toggleMama(self, ctx):
+    async def toggleYoMamaJokes(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
-        if allOptions["jokes"]["yoMama"] == True:
-            allOptions["jokes"]["yoMama"] = False
+        if allOptions["yoMamaJokes"] == True:
+            allOptions["yoMamaJokes"] = False
             await ctx.send(
                 "Yo Mama jokes turned off."
             )
@@ -130,7 +134,7 @@ class options(commands.Cog):
                 allOptions
             )
         else:
-            allOptions["jokes"]["yoMama"] = True
+            allOptions["yoMamaJokes"] = True
             await ctx.send(
                 "Yo Mama jokes turned on."
             )
@@ -479,8 +483,8 @@ class options(commands.Cog):
 
     @resetOptions.error
     @toggleCensor.error
-    @toggleDad.error
-    @toggleMama.error
+    @toggleDadJokes.error
+    @toggleYoMamaJokes.error
     @toggleWelcome.error
     @togglePolls.error
     @cogList.error

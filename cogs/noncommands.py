@@ -68,7 +68,7 @@ class noncommands(commands.Cog):
             return
 
         # this section is for Dad Bot-like responses
-        if allOptions["jokes"]["dad"] == True:
+        if allOptions["dadJokes"] == True:
             dadprefs = [
                 "I'm",
                 "Im",
@@ -145,7 +145,7 @@ class noncommands(commands.Cog):
                                 await message.delete()
 
         # this section randomizes yo mama jokes
-        if allOptions["jokes"]["yoMama"] == True:
+        if allOptions["yoMamaJokes"] == True:
             with open(r"data/Yo Mama Jokes.json", "r") as AllTheJokes:
                 jokes = load(
                     AllTheJokes
