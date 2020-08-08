@@ -70,13 +70,9 @@ class options(commands.Cog):
 ```json
 {}
 ```""".format(
-                        str(
-                            allToggles
-                        )[
-                            1:-1
-                        ].replace(
-                            "'",
-                            ""
+                        dumps(
+                            allToggles,
+                            indent=4
                         )
                     )
                 )
