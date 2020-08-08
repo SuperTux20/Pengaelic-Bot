@@ -269,28 +269,12 @@ async def on_command_error(ctx, error):
     # this checks if the individual commands have their own error handling. if not...
     if hasattr(ctx.command, 'on_error'):
         return
-    # ...send the global error, which differs depending on rudeness level
-    errormsgs = [
-        "Sorry, this command is invalid.",
-        "Invalid command/usage.",
-        "You didn't type the command right."
-    ]
-    with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
-        allOptions = load(
-            optionsfile
-        )
-    if allOptions["numbers"]["rudeness"] < 3:
-        await ctx.send(
-            errormsgs[allOptions["numbers"]["rudeness"]] + f""" Type `{
-                client.command_prefix
-            }help` for a list of commands and their usages."""
-        )
-    else:
-        await ctx.send(
-            file=discord.File(
-                "images/thatsnothowitworksyoulittleshit.jpg"
-            )
-        )
+    # ...send the global error
+    await ctx.send(
+        f"""Invalid command/usage. Type `{
+            client.command_prefix
+        }help` for a list of commands and their usages."""
+    )
     if "is not found" in str(error):
         print(
             "Invalid command {}{} sent in {} in #{} by {}#{}".format(
@@ -301,7 +285,8 @@ async def on_command_error(ctx, error):
                     '"'
                 )[1],
                 ctx.guild,
-                ctx.channel, ctx.message.author.name,
+                ctx.channel,
+                ctx.message.author.name,
                 ctx.message.author.discriminator
             )
         )
@@ -346,7 +331,7 @@ async def help(ctx):
         for cog in cogs:
             if cog == None or cog.name == "options":
                 pass
-            elif load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"][cog.name_typable] == True:
+            elif load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"][cog.name_typable] == True:
                 helpMenu.add_field(
                     name=cog.name.capitalize(),
                     value=cog.description
@@ -361,7 +346,7 @@ async def help(ctx):
 
 @help.command(name="actions")
 async def hactions(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["actions"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["actions"] == True:
         cog = client.get_cog("actions")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -395,7 +380,7 @@ async def hactions(ctx):
 
 @help.command(name="actsofviolence")
 async def hactsofviolence(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["actsofviolence"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["actsofviolence"] == True:
         cog = client.get_cog("actsofviolence")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -429,7 +414,7 @@ async def hactsofviolence(ctx):
 
 @help.command(name="converters")
 async def hconverters(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["converters"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["converters"] == True:
         cog = client.get_cog("converters")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -463,7 +448,7 @@ async def hconverters(ctx):
 
 @help.command(name="games")
 async def hgames(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["games"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["games"] == True:
         cog = client.get_cog("games")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -516,7 +501,7 @@ async def hgames(ctx):
 
 @help.command(name="interactions")
 async def hinteractions(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["interactions"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["interactions"] == True:
         cog = client.get_cog("interactions")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -550,7 +535,7 @@ async def hinteractions(ctx):
 
 @help.command(name="messages")
 async def hmessages(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["messages"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["messages"] == True:
         cog = client.get_cog("messages")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -603,7 +588,7 @@ async def hmessages(ctx):
 
 @help.command(name="noncommands")
 async def hnoncommands(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["noncommands"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["noncommands"] == True:
         cog = client.get_cog("noncommands")
         await ctx.send(
             embed=discord.Embed(
@@ -637,7 +622,7 @@ async def hnoncommands(ctx):
 
 @help.command(name="tools")
 async def htools(ctx):
-    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["toggles"]["cogs"]["tools"] == True:
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["tools"] == True:
         cog = client.get_cog("tools")
         helpMenu = discord.Embed(
             title=cog.name.capitalize(),
@@ -687,6 +672,59 @@ async def htools(ctx):
         await ctx.send(embed=helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load tools` to enable it.")
+
+@help.command(name="oddcommands")
+async def hodds(ctx):
+    if load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"]["oddcommands"] == True:
+        cog = client.get_cog("oddcommands")
+        helpMenu = discord.Embed(
+            title=cog.name.capitalize(),
+            description=cog.description_long,
+            color=32639
+        ).set_footer(
+            text=f"""    Command prefix is {
+                client.command_prefix
+            }
+        <arg> = required parameter
+        [arg] = optional parameter
+        [arg (value)] = default value for optional parameter
+        (command/command/command) = all aliases you can run the command with"""
+        )
+        for command in cog.get_commands():
+            if command.usage:
+                helpMenu.add_field(
+                    name="({})\n{}".format(
+                        str(
+                            [command.name] + command.aliases
+                        )[1:-1].replace(
+                            "'",
+                            ""
+                        ).replace(
+                            ", ",
+                            "/"
+                        ),
+                        command.usage
+                    ),
+                    value=command.help
+                )
+            else:
+                helpMenu.add_field(
+                    name="({})".format(
+                        str(
+                            [command.name] + command.aliases
+                        )[1:-1].replace(
+                            "'",
+                            ""
+                        ).replace(
+                            ", ",
+                            "/"
+                        )
+                    ),
+                    value=command.help
+                )
+        await ctx.send(embed=helpMenu)
+    else:
+        await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load oddcommands` to enable it.")
 
 @help.group(name="options")
 async def hoptions(ctx):
@@ -854,7 +892,7 @@ async def hcog(ctx):
             client.command_prefix
         }cog or {
             client.command_prefix
-        }filter
+        }module
     <arg> = required parameter
     [arg] = optional parameter
     [arg (value)] = default value for optional parameter
