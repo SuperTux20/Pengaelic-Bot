@@ -282,7 +282,7 @@ Say goodbye <:handgun:706698375592149013>"""
                         message.author
                     } got rickrolled in {
                         message.channel.name
-                    } in {
+                    } in #{
                         message.guild.name
                     }!""".upper()
                 )

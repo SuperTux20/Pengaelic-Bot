@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from os import listdir
-from time import sleep
 
 class interactions(commands.Cog):
     def __init__(self, client):

@@ -157,9 +157,12 @@ class tools(commands.Cog):
         await sleep(
             3
         )
-        await report.delete()
+        try:
+            await report.delete()
+        except:
+            pass
 
-    @commands.command(name="purge", help="Purge a channel of everything.\n:warning:WARNING:warning: This command clears an ENTIRE channel!", aliases=["wipe", "wipechannel"])
+    @commands.command(name="purge", help="Purge a channel of EVERYTHING.", aliases=["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels=True)
     async def purge(self, ctx):
         if self.purgeconfirm == False:
