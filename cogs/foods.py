@@ -143,7 +143,7 @@ class interactions(commands.Cog):
                     )
                 else:
                     tests[typeOfood] = False
-            if True not in list(tests.keys()):
+            if True not in list(tests.values()):
                 await ctx.send(
                     "That item isn't in the list!"
                 )
