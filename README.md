@@ -29,6 +29,7 @@
 - Pat someone on the head
 - Squish someone's face
 - Tickle
+- Give people food!
 ### Tools
 - Clear a number of messages from a channel (requires Manage Messages permission)
 - Purge an entire channel (requires Manage Channels permission)
