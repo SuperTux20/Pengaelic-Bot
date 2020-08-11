@@ -1,7 +1,7 @@
 import discord
 import sys
 from json import load, dump
-from fnmatch import filter as glob
+from fnmatch import filter
 from discord.utils import get
 from discord.ext import commands
 from random import choice, randint
@@ -131,15 +131,32 @@ async def on_ready():
                     )
                     if connected == False:
                         print(
-                            f"""Data loaded for {client.guilds[guild].name}"""
+                            f"""Data loaded for {
+                                client.guilds[guild].name
+                            }"""
                         )
             # if something goes wrong...
             except:
+                # ...try to make the servers folder (just in case)...
+                try:
+                    mkdir(
+                        r"data/servers"
+                    )
+                    print(
+                        'Created "servers" folder'
+                    )
+                except FileExistsError:
+                    pass
                 # ...try to make the guild ID folder...
                 try:
                     mkdir(
                         rf"""data/servers/{
                             client.guilds[guild].id
+                        }"""
+                    )
+                    print(
+                        f"""Created server folder for {
+                            client.guilds[guild].name
                         }"""
                     )
                 except FileExistsError:
@@ -204,7 +221,7 @@ async def on_guild_join(guild, ctx=None):
         "log",
         "general"
     ]
-    possiblechannels = [glob([channel.name for channel in guild.text_channels], f"*{channel}*") for channel in channelkeys]
+    possiblechannels = [filter([channel.name for channel in guild.text_channels], f"*{channel}*") for channel in channelkeys]
     for channelset in possiblechannels:
         for channel in channelset:
             try:
