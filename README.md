@@ -1,6 +1,6 @@
 # Pengaelic Bot
 ## A simple multi-purpose Discord bot.
-
+[![Run on Repl.it](https://repl.it/badge/github/SuperTux20/Pengaelic-Bot)](https://repl.it/github/SuperTux20/Pengaelic-Bot)
 ## 📄 About
 
 - Language used: `Python`
