@@ -35,7 +35,7 @@ class noncommands(commands.Cog):
                     try:
                         await get(
                             member.guild.text_channels,
-                            name=channel
+                            name = channel
                         ).send(
                             f"""Welcome to {
                                 member.guild.name
@@ -69,7 +69,7 @@ class noncommands(commands.Cog):
 
         # this section is for Dad Bot-like responses
         if allOptions["dadJokes"] == True:
-            dadprefs = [
+            dadPrefixes = [
                 "I'm",
                 "Im",
                 "I am",
@@ -77,7 +77,7 @@ class noncommands(commands.Cog):
                 "im",
                 "i am"
             ]
-            for dad in dadprefs:
+            for dad in dadPrefixes:
                 if dad + " " == message.content[0:len(dad)+1]:
                     if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
                         if "not" in message.content:
@@ -88,7 +88,7 @@ class noncommands(commands.Cog):
                             await message.channel.send(
                                 "You're not the Pengaelic Bot, I am!"
                             )
-                    elif ("chicken" in message.content and "meister" in message.content) or "Tux" == message.content or "tux" in message.content:
+                    elif "chickenmeister" in message.content or "Tux" == message.content:
                         if message.author.id == 686984544930365440:
                             await message.channel.send(
                                 "Yes you are! Hiya!"
@@ -181,7 +181,7 @@ class noncommands(commands.Cog):
 
 
         # bro, did someone seriously say the chat was dead?
-        if "dead" in message.content and ("chat" in message.content or "server" in message.content) or "<:deadchat:720311826608291852>" == message.content:
+        if "dead" in message.content and ("chat" in message.content or "server" in message.content) or " < :deadchat:720311826608291852 > " == message.content:
             await message.channel.send(
                 f"""{
                     choice(
@@ -221,18 +221,18 @@ class noncommands(commands.Cog):
                         try:
                             thepoll = await get(
                                 message.guild.text_channels,
-                                name=channel
+                                name = channel
                             ).send(
-                                embed=discord.Embed(
-                                    color=randint(
+                                embed = discord.Embed(
+                                    color = randint(
                                         0,
                                         16777215
                                     ),
-                                    title="Suggestion",
-                                    description=message.content
+                                    title = "Suggestion",
+                                    description = message.content
                                 ).set_author(
-                                    name=message.author.name,
-                                    icon_url=message.author.avatar_url
+                                    name = message.author.name,
+                                    icon_url = message.author.avatar_url
                                 )
                             )
                             await message.delete()
@@ -264,9 +264,9 @@ class noncommands(commands.Cog):
             responses.append(
                 choice(
                     [
-                        "It's time to die <:handgun:706698375592149013>",
+                        "It's time to die < :handgun:706698375592149013 > ",
                         """And so do I :pensive:
-Say goodbye <:handgun:706698375592149013>"""
+Say goodbye < :handgun:706698375592149013 > """
                     ]
                 )
             )

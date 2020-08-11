@@ -13,7 +13,7 @@ class interactions(commands.Cog):
     description = "Interact with other server members!"
     description_long = description
 
-    async def act(self, ctx, selfresponses, botresponses, act, pastact, acting, actee: discord.Member=None):
+    async def act(self, ctx, selfresponses, botresponses, act, pastact, acting, actee: discord.Member = None):
         actor = ctx.author.display_name.replace(
             "_",
             r"\_"
@@ -64,13 +64,13 @@ class interactions(commands.Cog):
             )
         else:
             await ctx.send(
-                embed=discord.Embed(
-                    title=choice(
+                embed = discord.Embed(
+                    title = choice(
                         responses
                     ),
-                    color=self.cyan
+                    color = self.cyan
                 ).set_image(
-                    url=f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{
+                    url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{
                         act
                     }/{
                         randint(
@@ -93,8 +93,8 @@ class interactions(commands.Cog):
                     )
                 )
 
-    @commands.command(name="hug", help="Give somebody a hug!")
-    async def hug(self, ctx, *, hug: discord.Member=None):
+    @commands.command(name = "hug", help = "Give somebody a hug!")
+    async def hug(self, ctx, *, hug: discord.Member = None):
         await self.act(
             ctx,
             [
@@ -103,7 +103,7 @@ class interactions(commands.Cog):
                 "You hug yourself, somehow."
             ], [
                 "aww!",
-                "thanks <:happy:708534449310138379>",
+                "thanks < :happy:708534449310138379 > ",
                 "*gasp*"
             ],
             "hug", "hugged",
@@ -111,8 +111,8 @@ class interactions(commands.Cog):
             hug
         )
 
-    @commands.command(name="boop", help="Boop someone's nose :3")
-    async def boop(self, ctx, *, boop: discord.Member=None):
+    @commands.command(name = "boop", help = "Boop someone's nose :3")
+    async def boop(self, ctx, *, boop: discord.Member = None):
         await self.act(
             ctx,
             [
@@ -128,7 +128,7 @@ class interactions(commands.Cog):
                 }!""",
                 "Somehow, your hand clips through your nose and appears on the other side of your head. "
             ], [
-                "<:happy:708534449310138379>", "<:uwu:708534448949559328>", "thaaanks :3"
+                " < :happy:708534449310138379 > ", " < :uwu:708534448949559328 > ", "thaaanks :3"
             ],
             "boop",
             "booped",
@@ -136,15 +136,15 @@ class interactions(commands.Cog):
             boop
         )
 
-    @commands.command(name="pat", help="Pat someone on the head!")
-    async def pat(self, ctx, *, pat: discord.Member=None):
+    @commands.command(name = "pat", help = "Pat someone on the head!")
+    async def pat(self, ctx, *, pat: discord.Member = None):
         await self.act(
             ctx,
             [
                 "You pat yourself on the head.",
                 "You reach into the mirror and pat your reflection on the head."
             ], [
-                "<:happy:708534449310138379>",
+                " < :happy:708534449310138379 > ",
                 "hehe",
                 "aw, you're cute :3"
             ],
@@ -154,8 +154,8 @@ class interactions(commands.Cog):
             pat
         )
 
-    @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
-    async def tickle(self, ctx, *, tickle: discord.Member=None):
+    @commands.command(name = "tickle", help = "Tickle tickle tickle... >:D")
+    async def tickle(self, ctx, *, tickle: discord.Member = None):
         await self.act(
             ctx,
             [
@@ -173,8 +173,8 @@ class interactions(commands.Cog):
             tickle
         )
 
-    @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
-    async def kiss(self, ctx, *, kiss: discord.Member=None):
+    @commands.command(name = "kiss", help = "Give somebody a kiss~ :kissing_heart:")
+    async def kiss(self, ctx, *, kiss: discord.Member = None):
         await self.act(
             ctx,
             [
@@ -183,7 +183,7 @@ class interactions(commands.Cog):
                 "You kiss the back of your own hand."
             ], [
                 ":flushed:",
-                "<:happy:708534449310138379>",
+                " < :happy:708534449310138379 > ",
                 "*gasp*"
             ],
             "kiss"
@@ -192,8 +192,8 @@ class interactions(commands.Cog):
             kiss
         )
 
-    @commands.command(name="squish", help="Sqweesh someone's face >3<")
-    async def squish(self, ctx, *, squish: discord.Member=None):
+    @commands.command(name = "squish", help = "Sqweesh someone's face >3< ")
+    async def squish(self, ctx, *, squish: discord.Member = None):
         await self.act(
             ctx,
             [
@@ -203,7 +203,7 @@ class interactions(commands.Cog):
             ], [
                 "hehehe",
                 "squish...",
-                "<:hmmph:708534447217180702>"
+                " < :hmmph:708534447217180702 > "
             ],
             "squish",
             "squished",

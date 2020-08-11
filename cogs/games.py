@@ -11,8 +11,8 @@ class games(commands.Cog):
     description = "All sorts of fun stuff!"
     description_long = description
 
-    @commands.command(name="8ball", help="Ask the ball and receive wisdom... :eyes:", aliases=["magic8ball"], usage="[question]")
-    async def _8ball(self, ctx, *, question=None):
+    @commands.command(name = "8ball", help = "Ask the ball and receive wisdom... :eyes:", aliases = ["magic8ball"], usage = "[question]")
+    async def _8ball(self, ctx, *, question = None):
         if question:
             await ctx.send(
                 ":8ball:" + choice(
@@ -112,8 +112,8 @@ class games(commands.Cog):
                 ":8ball:You didn't ask the 8-ball anything."
             )
 
-    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)]\n[number of sides (6)]")
-    async def rollem(self, ctx, dice: int=1, sides: int=6):
+    @commands.command(name = "roll", help = "Roll some dice!", aliases = ["dice"], usage = "[number of dice (1)]\n[number of sides (6)]")
+    async def rollDice(self, ctx, dice: int = 1, sides: int = 6):
         if dice == 0:
             response = "You didn't roll any dice."
         elif sides == 0:
@@ -175,8 +175,8 @@ class games(commands.Cog):
             ":game_die:" + response
         )
 
-    @commands.command(name="flip", help="Flip some coins!", aliases=["coin"], usage="[number of coins (1)]")
-    async def flipem(self, ctx, coins: int=1):
+    @commands.command(name = "flip", help = "Flip some coins!", aliases = ["coin"], usage = "[number of coins (1)]")
+    async def flipCoins(self, ctx, coins: int = 1):
         if coins == 1:
             response = f"""You flipped a {
                 choice(
@@ -253,8 +253,8 @@ class games(commands.Cog):
             ":moneybag:" + response
         )
 
-    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (no)]")
-    async def drawem(self, ctx, cards: int=1, replaceCards: str="no"):
+    @commands.command(name = "draw", help = "Draw some cards!", aliases = ["card"], usage = "[number of cards (1)]\n[replace cards in deck (no)]")
+    async def drawCards(self, ctx, cards: int = 1, replaceCards: str = "no"):
         suits = [
             "Diamonds",
             "Spades",
@@ -278,7 +278,7 @@ class games(commands.Cog):
         }
         allCards = []
         faces = []
-        nums = []
+        numbers = []
         drawn = []
         if replaceCards == "no":
             for suit in range(int(len(suits)/1)):
@@ -322,13 +322,13 @@ class games(commands.Cog):
                             card
                         )
                     else:
-                        nums.append(
+                        numbers.append(
                             card
                         )
                     allCards.remove(
                         card
                     )
-                drawn = faces + nums
+                drawn = faces + numbers
         else:
             for _ in range(cards):
                 chosenValue = str(
@@ -354,13 +354,13 @@ class games(commands.Cog):
                         card
                     )
                 else:
-                    nums.append(
+                    numbers.append(
                         card
                     )
-            drawn = faces + nums
+            drawn = faces + numbers
         if cards == 1:
             while "  " in drawn[0]:
-                drawn[0] = drawn[0].replace("  "," ")
+                drawn[0] = drawn[0].replace("  ", " ")
             await ctx.send(
                 f""":black_joker:You drew {
                     drawn[0]
@@ -381,8 +381,8 @@ class games(commands.Cog):
                 )
             )
 
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubbles"], usage="[size of sheet (5x5 or 5)")
-    async def summonsheet(self, ctx, size: str="5"):
+    @commands.command(name = "pop", help = "Get a sheet of bubble wrap! Click to pop.", aliases = ["bubblewrap", "bubbles"], usage = "[size of sheet (5x5 or 5)")
+    async def summonsheet(self, ctx, size: str = "5"):
         try:
             if len(size) == 5:
                 width = int(
@@ -451,8 +451,8 @@ class games(commands.Cog):
             sheet
         )
 
-    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["generatename", "namegen"], usage="[number of names to generate (1)] [limit to how many syllables can be used (3)]")
-    async def namegen(self, ctx, amount: int=1, syllableLimit: int=3):
+    @commands.command(name = "name", help = "Generate a random name! They tend to be mystic-sounding :eyes:", aliases = ["generatename", "namegen"], usage = "[number of names to generate (1)] [limit to how many syllables can be used (3)]")
+    async def namegen(self, ctx, amount: int = 1, syllableLimit: int = 3):
         await ctx.send(
             str(
                 [
@@ -510,7 +510,6 @@ class games(commands.Cog):
                                     "ga",
                                     "go",
                                     "gor",
-                                    "grif",
                                     "gy",
                                     "he",
                                     "hy",
@@ -586,7 +585,6 @@ class games(commands.Cog):
                                     "son",
                                     "st",
                                     "str",
-                                    "stra",
                                     "ta",
                                     "tam",
                                     "tay",
@@ -628,9 +626,9 @@ class games(commands.Cog):
         )
 
     @_8ball.error
-    @rollem.error
-    @flipem.error
-    @drawem.error
+    @rollDice.error
+    @flipCoins.error
+    @drawCards.error
     @summonsheet.error
     @namegen.error
     async def error(self, ctx, error):

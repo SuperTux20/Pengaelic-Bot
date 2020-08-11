@@ -24,8 +24,8 @@ class oddcommands(commands.Cog):
                     self.isNomming = False
                     self.nomSuccess = False
 
-    @commands.command(name="nom", help="Eat someone >:3", aliases=["eat","vore"], usage="<username or nickname or @mention>")
-    async def nom(self, ctx, *, nom: discord.Member=None):
+    @commands.command(name = "nom", help = "Eat someone > :3", usage = " < username or nickname or @mention > ")
+    async def nom(self, ctx, *, nom: discord.Member = None):
         nommer = ctx.author.display_name
         for char in self.formatChars:
             nommer = nommer.replace(
@@ -59,12 +59,12 @@ class oddcommands(commands.Cog):
             "hmmmnnnnn!!"
         ]
         embed = discord.Embed(
-            title=choice(
+            title = choice(
                 responses
             ),
-            color=self.cyan
+            color = self.cyan
         ).set_image(
-            url=f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{
+            url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{
                 randint(
                     1,
                     len(
@@ -84,7 +84,7 @@ class oddcommands(commands.Cog):
         else:
             if str(nom.id) == "721092139953684580":
                 await ctx.send(
-                    embed=embed
+                    embed = embed
                 )
                 await ctx.send(
                     choice(
@@ -95,13 +95,13 @@ class oddcommands(commands.Cog):
                 self.isNomming = True
                 self.nomSuccess = False
                 stupidchannel = await ctx.guild.create_text_channel(
-                    name="nom-command-stupidity",
-                    overwrites={
+                    name = "nom-command-stupidity",
+                    overwrites = {
                         ctx.guild.default_role: discord.PermissionOverwrite(
-                            read_messages=False
+                            read_messages = False
                         ),
                         ctx.guild.me: discord.PermissionOverwrite(
-                            read_messages=True
+                            read_messages = True
                         )
                     }
                 )
@@ -130,7 +130,7 @@ class oddcommands(commands.Cog):
                 await NoNomSense.delete()
                 if self.nomSuccess == True:
                     await ctx.send(
-                        embed=embed
+                        embed = embed
                     )
                 else:
                     await ctx.send(

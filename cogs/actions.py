@@ -25,11 +25,11 @@ class actions(commands.Cog):
                 "\\" + char
             )
         await ctx.send(
-            embed=discord.Embed(
-                title=f"{actor} is {acting}",
-                color=self.cyan
+            embed = discord.Embed(
+                title = f"{actor} is {acting}",
+                color = self.cyan
             )#.set_image(
-            #     url=f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{
+            #     url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{
             #         act
             #     }/{
             #         randint(
@@ -46,7 +46,7 @@ class actions(commands.Cog):
             # )
         )
 
-    @commands.command(name="cry")
+    @commands.command(name = "cry")
     async def cry(self, ctx):
         await self.act(
             ctx,
@@ -54,7 +54,7 @@ class actions(commands.Cog):
             "crying..."
         )
 
-    @commands.command(name="laugh")
+    @commands.command(name = "laugh")
     async def laugh(self, ctx):
         await self.act(
             ctx,
@@ -62,7 +62,7 @@ class actions(commands.Cog):
             "laughing!"
         )
 
-    @commands.command(name="snore")
+    @commands.command(name = "snore")
     async def snore(self, ctx):
         await self.act(
             ctx,

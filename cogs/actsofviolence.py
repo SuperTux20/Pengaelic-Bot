@@ -11,7 +11,7 @@ class actsofviolence(commands.Cog):
     description = "Interact with other server members, but with **anger**"
     description_long = description
 
-    async def act(self, ctx, act, pastact, acting, actee: discord.Member=None, image: str=None):
+    async def act(self, ctx, act, pastact, acting, actee: discord.Member = None, image: str = None):
         actor = ctx.author.display_name
         factor = actor.replace(
             "_",
@@ -73,19 +73,19 @@ class actsofviolence(commands.Cog):
             )
         else:
             embed = discord.Embed(
-                title=choice(responses),
-                color=32639
+                title = choice(responses),
+                color = 32639
             )
             if image:
                 embed.set_image(
-                    url=image
+                    url = image
                 )
             await ctx.send(
-                embed=embed
+                embed = embed
             )
 
-    @commands.command(name="slap", help="Slap someone!")
-    async def slap(self, ctx, *, slap: discord.Member=None):
+    @commands.command(name = "slap", help = "Slap someone!")
+    async def slap(self, ctx, *, slap: discord.Member = None):
         await self.act(
             ctx,
             "slap",
@@ -94,8 +94,8 @@ class actsofviolence(commands.Cog):
             slap
         )
 
-    @commands.command(name="stab", help="Stab someone!")
-    async def stab(self, ctx, *, stab: discord.Member=None):
+    @commands.command(name = "stab", help = "Stab someone!")
+    async def stab(self, ctx, *, stab: discord.Member = None):
         await self.act(
             ctx,
             "stab",
@@ -104,8 +104,8 @@ class actsofviolence(commands.Cog):
             stab
         )
 
-    @commands.command(name="shoot", help="Shoot someone!")
-    async def shoot(self, ctx, *, shoot: discord.Member=None):
+    @commands.command(name = "shoot", help = "Shoot someone!")
+    async def shoot(self, ctx, *, shoot: discord.Member = None):
         await self.act(
             ctx,
             "shoot",
@@ -114,8 +114,8 @@ class actsofviolence(commands.Cog):
             shoot
         )
 
-    @commands.command(name="bonk", help="Bonk someone on the head!")
-    async def bonk(self, ctx, *, bonk: discord.Member=None):
+    @commands.command(name = "bonk", help = "Bonk someone on the head!")
+    async def bonk(self, ctx, *, bonk: discord.Member = None):
         await self.act(
             ctx,
             "bonk",

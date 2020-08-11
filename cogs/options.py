@@ -6,7 +6,7 @@ from json import load, dump, dumps
 class options(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.wipecensorcinfirm = False
+        self.wipeCensorConfirm = False
     name = "options"
     name_typable = name
     description = "My settings."
@@ -17,8 +17,8 @@ class options(commands.Cog):
             dump(
                 options2dump,
                 optionsfile,
-                sort_keys=True,
-                indent=4
+                sort_keys = True,
+                indent = 4
             )
             print(
                 f"""Options file updated for {
@@ -26,8 +26,8 @@ class options(commands.Cog):
                 }"""
             )
 
-    @commands.command(name="options", help="Show the current values of all options")
-    @commands.has_permissions(manage_messages=True)
+    @commands.command(name = "options", help = "Show the current values of all options")
+    @commands.has_permissions(manage_messages = True)
     async def getOptions(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             await ctx.send(
@@ -38,8 +38,8 @@ class options(commands.Cog):
 ```"""
             )
 
-    @commands.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
-    @commands.has_permissions(manage_messages=True)
+    @commands.command(name = "reset", help = "Reset to the default options.", aliases = ["defaults"])
+    @commands.has_permissions(manage_messages = True)
     async def resetOptions(self, ctx):
         with open(r"data/default_options.json", "r") as defaultoptions:
             await self.updateOptions(
@@ -55,7 +55,7 @@ class options(commands.Cog):
                 defaultoptions.read()
             )
 
-    @commands.group(name="toggle", help="Toggle an option.")
+    @commands.group(name = "toggle", help = "Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
             with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
@@ -72,13 +72,13 @@ class options(commands.Cog):
 ```""".format(
                         dumps(
                             allToggles,
-                            indent=4
+                            indent = 4
                         )
                     )
                 )
 
-    @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
-    @commands.has_permissions(manage_messages=True)
+    @toggle.command(name = "censor", help = "Toggle the automatic deletion of messages containing specific keywords.", aliases = ["filter"])
+    @commands.has_permissions(manage_messages = True)
     async def toggleCensor(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(
@@ -99,8 +99,8 @@ class options(commands.Cog):
             allOptions
         )
 
-    @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-    @commands.has_permissions(manage_messages=True)
+    @toggle.command(name = "dadJokes", help = "Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+    @commands.has_permissions(manage_messages = True)
     async def toggleDadJokes(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -115,8 +115,8 @@ class options(commands.Cog):
             allOptions
         )
 
-    @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
-    @commands.has_permissions(manage_messages=True)
+    @toggle.command(name = "yoMamaJokes", help = "Toggle the automatic Yo Mama jokes.")
+    @commands.has_permissions(manage_messages = True)
     async def toggleYoMamaJokes(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -139,8 +139,8 @@ class options(commands.Cog):
                 allOptions
             )
 
-    @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
-    @commands.has_permissions(manage_messages=True)
+    @toggle.command(name = "welcome", help = "Toggle the automatic welcome messages.")
+    @commands.has_permissions(manage_messages = True)
     async def toggleWelcome(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -159,8 +159,8 @@ class options(commands.Cog):
             allOptions
         )
 
-    @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
-    @commands.has_permissions(manage_messages=True)
+    @toggle.command(name = "polls", help = "Turn automatic poll-making on or off. This does not effect the p!suggest command.")
+    @commands.has_permissions(manage_messages = True)
     async def togglePolls(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             allOptions = load(optionsfile)
@@ -184,11 +184,11 @@ class options(commands.Cog):
                 try:
                     get(
                         ctx.guild.text_channels,
-                        name=channel
+                        name = channel
                     )
                     break
                 except:
-                    fails+=1
+                    fails += 1
             if fails == len(pollchannels):
                 await ctx.send(
                     "Warning: There are no channels for the polls to work in. Please create a channel #polls, #petition, or #suggestions."
@@ -198,15 +198,15 @@ class options(commands.Cog):
             allOptions
         )
 
-    @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
+    @commands.group(name = "censor", help = "Edit the censor.", aliases = ["filter"])
     async def filter(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
                 "Available options: `(show/list/get), add, delete, (wipe/clear)`"
             )
 
-    @filter.command(name="show", help="Display the contents of the censorship filter.", aliases=["list", "get"])
-    @commands.has_permissions(manage_messages=True)
+    @filter.command(name = "show", help = "Display the contents of the censorship filter.", aliases = ["list", "get"])
+    @commands.has_permissions(manage_messages = True)
     async def showFilter(self, ctx):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
@@ -222,8 +222,8 @@ class options(commands.Cog):
                     }```"""
                 )
 
-    @filter.command(name="add", help="Add a word to the censorship filter.", usage="<one phrase ONLY>")
-    @commands.has_permissions(manage_messages=True)
+    @filter.command(name = "add", help = "Add a word to the censorship filter.", usage = " < one phrase ONLY > ")
+    @commands.has_permissions(manage_messages = True)
     async def addFilter(self, ctx, word2add):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
@@ -267,8 +267,8 @@ class options(commands.Cog):
                         }"""
                     )
 
-    @filter.command(name="delete", help="Remove a word from the censorship filter.", usage="<one phrase ONLY>")
-    @commands.has_permissions(manage_messages=True)
+    @filter.command(name = "delete", help = "Remove a word from the censorship filter.", usage = " < one phrase ONLY > ")
+    @commands.has_permissions(manage_messages = True)
     async def delFilter(self, ctx, word2del):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
@@ -312,14 +312,14 @@ class options(commands.Cog):
                         }"""
                     )
 
-    @filter.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
-    @commands.has_permissions(manage_messages=True)
+    @filter.command(name = "wipe", help = "Clear the censor file.", aliases = ["clear"])
+    @commands.has_permissions(manage_messages = True)
     async def wipeFilter(self, ctx):
-        if self.wipecensorcinfirm == False:
+        if self.wipeCensorConfirm == False:
             await ctx.send(
                 "Are you **really** sure you want to clear the censor filter? Type p!wipecensor again to confirm."
             )
-            self.wipecensorcinfirm = True
+            self.wipeCensorConfirm = True
         else:
             open(
                 rf"""data/servers/{
@@ -335,18 +335,18 @@ class options(commands.Cog):
                     ctx.guild.name
                 }"""
             )
-            self.wipecensorcinfirm = False
+            self.wipeCensorConfirm = False
 
-    @commands.group(name="cog", help="Edit the modules.", aliases=["module"])
+    @commands.group(name = "cog", help = "Edit the modules.", aliases = ["module"])
     async def modules(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
                 "Available options: `list`, `(load/enable)`, `(unload/disable)`"
             )
 
-    @modules.command(name="list", help="See a list of all cogs and their statuses.")
-    @commands.has_permissions(manage_messages=True)
-    async def cogList(self, ctx, cog2load=None):
+    @modules.command(name = "list", help = "See a list of all cogs and their statuses.")
+    @commands.has_permissions(manage_messages = True)
+    async def cogList(self, ctx, cog2load = None):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             await ctx.send(
                 f"""```json{
@@ -354,14 +354,14 @@ class options(commands.Cog):
                         load(
                             optionsfile
                         )["cogs"],
-                        indent=4
+                        indent = 4
                     )
                 }```"""
             )
 
-    @modules.command(name="load", help="Load a cog.", usage="[cog to load]", aliases=["enable"])
-    @commands.has_permissions(manage_messages=True)
-    async def loadCog(self, ctx, cog2load=None):
+    @modules.command(name = "load", help = "Load a cog.", usage = "[cog to load]", aliases = ["enable"])
+    @commands.has_permissions(manage_messages = True)
+    async def loadCog(self, ctx, cog2load = None):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             cogs = load(
                 optionsfile
@@ -419,9 +419,9 @@ class options(commands.Cog):
                     )
                 )
 
-    @modules.command(name="unload", help="Unload a cog.", usage="[cog to unload]", aliases=["disable"])
-    @commands.has_permissions(manage_messages=True)
-    async def unloadCog(self, ctx, cog2unload=None):
+    @modules.command(name = "unload", help = "Unload a cog.", usage = "[cog to unload]", aliases = ["disable"])
+    @commands.has_permissions(manage_messages = True)
+    async def unloadCog(self, ctx, cog2unload = None):
         with open(rf"data/servers/{ctx.guild.id}/config.json", "r") as optionsfile:
             cogs = load(
                 optionsfile

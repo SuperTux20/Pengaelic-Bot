@@ -49,15 +49,15 @@ class interactions(commands.Cog):
             )
         else:
             await ctx.send(
-                embed=discord.Embed(
-                    title=f"""{
+                embed = discord.Embed(
+                    title = f"""{
                             persongiving
                         } gave a {
                             item
                         } to {
                             persongetting
                         }""",
-                    color=self.cyan
+                    color = self.cyan
                 )
             )
             if person2give2 == self.client.user:
@@ -67,8 +67,8 @@ class interactions(commands.Cog):
                     )
                 )
 
-    @commands.command(name="give", help="Give someone something to eat!", usage="<username, nickname, or @mention> <item>")
-    async def give(self, ctx, member: discord.Member=None, *, item=None):
+    @commands.command(name = "give", help = "Give someone something to eat!", usage = " < username, nickname, or @mention > < item > ")
+    async def give(self, ctx, member: discord.Member = None, *, item = None):
         items = {
             "candies": [
                 "3 musketeers",
@@ -117,18 +117,18 @@ class interactions(commands.Cog):
 {
     dumps(
         items,
-        indent=4
+        indent = 4
     )
 }
 ```"""
             )
         else:
             tests = {
-                typeOfood: True
-                for typeOfood in items
+                typeOfFood: True
+                for typeOfFood in items
             }
-            for typeOfood in list(items.keys()):
-                if item in items[typeOfood]:
+            for typeOfFood in list(items.keys()):
+                if item in items[typeOfFood]:
                     await self.giveitem(
                         ctx,
                         [
@@ -139,7 +139,7 @@ class interactions(commands.Cog):
                         member
                     )
                 else:
-                    tests[typeOfood] = False
+                    tests[typeOfFood] = False
             if True not in list(tests.values()):
                 await ctx.send(
                     "That item isn't in the list!"

@@ -10,19 +10,19 @@ class converters(commands.Cog):
     description = "Run some text through a converter to make it look funny!"
     description_long = description
 
-    async def ifnocontent(self, ctx, arg):
+    async def testIfNoContent(self, ctx, arg):
         if not arg:
             return list(
                 await ctx.channel.history(
-                    limit=2
+                    limit = 2
                 ).flatten()
             )[1].content
         else:
             return arg
 
-    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
-    async def owoConverter(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+    @commands.command(name = "owo", help = "Convert whatever text into owo-speak... oh god why did i make this", aliases = ["uwu", "furry"])
+    async def owoConverter(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
@@ -56,9 +56,9 @@ class converters(commands.Cog):
             )
         )
 
-    @commands.command(name="blockify", help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: letters.", aliases=["bigtext", "big"])
-    async def embiggener(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+    @commands.command(name = "blockify", help = "Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: letters.", aliases = ["bigtext", "big"])
+    async def bigText(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
@@ -125,15 +125,15 @@ class converters(commands.Cog):
                                 char.lower()
                             }: """
                         )
-        for beeg in textlist:
-            finaltext = finaltext + beeg
+        for big in textlist:
+            finaltext = finaltext + big
         await ctx.send(
             finaltext
         )
 
-    @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.")
-    async def greekify(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+    @commands.command(name = "greekify", help = "Make words *look* Greek, but the pronunciation is still almost the same as in English.")
+    async def greekify(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
@@ -177,7 +177,7 @@ class converters(commands.Cog):
             "Y",
             "Z"
         ]
-        greekphabet = [
+        greekAlphabet = [
             "Χ",
             "Ψ",
             "ΑΥ",
@@ -221,23 +221,23 @@ class converters(commands.Cog):
             letter.lower()
             for letter in alphabet
         ]
-        greekphabet = greekphabet + [
+        greekAlphabet = greekAlphabet + [
             letter.lower()
-            for letter in greekphabet
+            for letter in greekAlphabet
         ]
-        toconvert = arg
+        toConvert = arg
         for letter in range(len(alphabet)):
-            toconvert = toconvert.replace(
+            toConvert = toConvert.replace(
                 alphabet[letter],
-                greekphabet[letter]
+                greekAlphabet[letter]
             )
         await ctx.send(
-            toconvert
+            toConvert
         )
-    
-    @commands.command(name="stroke", help="Just freakin' shuffle it dude", aliases=["shuffle", "mixup"])
-    async def shuffle(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+
+    @commands.command(name = "stroke", help = "Shuffle a message", aliases = ["shuffle", "mixup"])
+    async def shuffle(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
@@ -246,44 +246,44 @@ class converters(commands.Cog):
                 "OwO you pet me??? *purrs softly*"
             )
         else:
-            toshuf = list(
+            toShuffle = list(
                 arg
             )
             shuffle(
-                toshuf
+                toShuffle
             )
             await ctx.send(
                 "".join(
-                    toshuf
+                    toShuffle
                 )
             )
 
-    @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.")
-    async def shufflebyword(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+    @commands.command(name = "strokebyword", help = "Shuffle the individual words instead of the entire message.")
+    async def shufflebyword(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
-        wordstoshuf = arg.split()
-        for toshuf in range(len(wordstoshuf)):
-            wordstoshuf[toshuf] = list(
-                wordstoshuf[toshuf]
+        wordsToShuffle = arg.split()
+        for toShuffle in range(len(wordsToShuffle)):
+            wordsToShuffle[toShuffle] = list(
+                wordsToShuffle[toShuffle]
             )
             shuffle(
-                wordstoshuf[toshuf]
+                wordsToShuffle[toShuffle]
             )
-            wordstoshuf[toshuf] = "".join(
-                wordstoshuf[toshuf]
+            wordsToShuffle[toShuffle] = "".join(
+                wordsToShuffle[toShuffle]
             )
         await ctx.send(
             " ".join(
-                wordstoshuf
+                wordsToShuffle
             )
         )
 
-    @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
-    async def spacer(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+    @commands.command(name = "spacer", help = "Insert spaces between every character", aliases = ["space", "gaps"])
+    async def spacer(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
@@ -294,9 +294,9 @@ class converters(commands.Cog):
             )
         )
 
-    @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"])
-    async def dings(self, ctx, *, arg=None):
-        arg = await self.ifnocontent(
+    @commands.command(name = "wingdings", help = "You heard what the River Person said.", aliases = ["dings", "gaster", "wd"])
+    async def dings(self, ctx, *, arg = None):
+        arg = await self.testIfNoContent(
             ctx,
             arg
         )
@@ -329,41 +329,41 @@ class converters(commands.Cog):
             "Z",
             " "
         ]
-        dingphabet = [
+        dingAlphabet = [
             ":v:",
             ":ok_hand:",
             ":thumbsup:",
             ":thumbsdown:",
             ":point_left:",
-            ":point_right:",":point_up_2:",
+            ":point_right:", ":point_up_2:",
             ":point_down:",
             ":raised_hand:",
             ":slight_smile:",
-            ":neutral_face:",":frowning:",":bomb:",":skull_crossbones:",":flag_white:",
+            ":neutral_face:", ":frowning:", ":bomb:", ":skull_crossbones:", ":flag_white:",
             ":triangular_flag_on_post:",
             ":airplane:",
             ":sunny:",
             ":droplet:",
             ":snowflake:",
-            ":cross:",":orthodox_cross:",
+            ":cross:", ":orthodox_cross:",
             ":atom:",
             ":diamond_shape_with_a_dot_inside:",
             ":star_of_david:",
             ":star_and_crescent:",
-            "<:empty:725132670056661023>"
+            " < :empty:725132670056661023 > "
         ]
-        toconvert = arg.upper()
+        toConvert = arg.upper()
         for letter in range(len(alphabet)):
-            toconvert = toconvert.replace(
+            toConvert = toConvert.replace(
                 alphabet[letter],
-                dingphabet[letter]
+                dingAlphabet[letter]
             )
         await ctx.send(
-            toconvert
+            toConvert
         )
 
     @owoConverter.error
-    @embiggener.error
+    @bigText.error
     @greekify.error
     @shuffle.error
     @shufflebyword.error
