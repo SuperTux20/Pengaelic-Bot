@@ -76,11 +76,8 @@ class interactions(commands.Cog):
                 "chocolate bar",
                 "cookie",
                 "kitkat",
-                "m&ms",
-                "skittles",
                 "snickers",
-                "truffle",
-                "whoppers"
+                "truffle"
             ],
             "dinners": [
                 "burger",
@@ -107,8 +104,8 @@ class interactions(commands.Cog):
             ],
             "sandwiches": [
                 "blt",
-                "club",
-                "cuban"
+                "club sandwich",
+                "cuban sandwich",
                 "grilled cheese",
                 "pb&j",
                 "reuben"
