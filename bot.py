@@ -324,13 +324,13 @@ async def help(ctx):
             title = client.description,
             description = f"""Type `{
                 client.command_prefix
-            }help < category name without spaces/dashes > ` for more info on each category.""",
+            }help <lowercase category name without spaces/dashes> ` for more info on each category.""",
             color = 32639
         ).set_footer(
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-    < arg > = required parameter
+    <arg> = required parameter
     [arg] = optional parameter
     [arg (value)] = default value for optional parameter
     (command/command/command) = all aliases you can run the command with"""
@@ -371,7 +371,7 @@ async def hActions(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -405,7 +405,7 @@ async def hActsOfViolence(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -420,7 +420,7 @@ async def hActsOfViolence(ctx):
                 ).replace(
                     ", ",
                     "/"
-                ) + ")\n < username or nickname or @mention > ",
+                ) + ")\n <username or nickname or @mention> ",
                 value = command.help
             )
         await ctx.send(embed = helpMenu)
@@ -439,7 +439,7 @@ async def hConverters(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -454,7 +454,7 @@ async def hConverters(ctx):
                 ).replace(
                     ", ",
                     "/"
-                ) + ")\n < text to convert > ",
+                ) + ")\n <text to convert> ",
                 value = command.help
             )
         await ctx.send(embed = helpMenu)
@@ -473,7 +473,7 @@ async def hGames(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -526,7 +526,7 @@ async def hinteractions(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -541,7 +541,7 @@ async def hinteractions(ctx):
                 ).replace(
                     ", ",
                     "/"
-                ) + ")\n < username or nickname or @mention > ",
+                ) + ")\n <username or nickname or @mention> ",
                 value = command.help
             )
         await ctx.send(embed = helpMenu)
@@ -560,7 +560,7 @@ async def hMessages(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -611,10 +611,10 @@ async def hNonCommands(ctx):
                 description = cog.description_long,
                 color = 32639
             ).add_field(
-                name = "I'm < message > ",
+                name = "I'm <message> ",
                 value = "It's like Dad Bot. 'Nuff said."
             ).add_field(
-                name = "Yo mama so < mama type > ",
+                name = "Yo mama so <mama type> ",
                 value = "Automatic Yo Mama jokes!"
             ).add_field(
                 name = "Yo mama list",
@@ -626,7 +626,7 @@ async def hNonCommands(ctx):
                 text = f"""    Command prefix is {
                     client.command_prefix
                 }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -647,7 +647,7 @@ async def hTools(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -700,7 +700,7 @@ async def hOdds(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-        < arg > = required parameter
+        <arg> = required parameter
         [arg] = optional parameter
         [arg (value)] = default value for optional parameter
         (command/command/command) = all aliases you can run the command with"""
@@ -753,7 +753,7 @@ async def hOptions(ctx):
             text = f"""    Command prefix is {
                 client.command_prefix
             }
-    < arg > = required parameter
+    <arg> = required parameter
     [arg] = optional parameter
     [arg (value)] = default value for optional parameter
     (command/command/command) = all aliases you can run the command with"""
@@ -804,7 +804,7 @@ async def hToggle(ctx):
         text = f"""    Command prefix is {
             client.command_prefix
         }toggle
-    < arg > = required parameter
+    <arg> = required parameter
     [arg] = optional parameter
     [arg (value)] = default value for optional parameter
     (command/command/command) = all aliases you can run the command with"""
@@ -856,7 +856,7 @@ async def hCensor(ctx):
         }censor or {
             client.command_prefix
         }filter
-    < arg > = required parameter
+    <arg> = required parameter
     [arg] = optional parameter
     [arg (value)] = default value for optional parameter
     (command/command/command) = all aliases you can run the command with"""
@@ -908,7 +908,7 @@ async def hCog(ctx):
         }cog or {
             client.command_prefix
         }module
-    < arg > = required parameter
+    <arg> = required parameter
     [arg] = optional parameter
     [arg (value)] = default value for optional parameter
     (command/command/command) = all aliases you can run the command with"""

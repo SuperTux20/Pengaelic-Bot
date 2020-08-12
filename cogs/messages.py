@@ -17,8 +17,8 @@ class messages(commands.Cog):
         )
         await ctx.message.delete()
 
-    @commands.command(name = "delet", help = "delet this.", aliases = ["deletthis"])
-    async def deletthis(self, ctx):
+    @commands.command(name = "delet", help = "delet this.")
+    async def deletThis(self, ctx):
         await ctx.message.delete()
         await ctx.send(
             "https://supertux20.github.io/Pengaelic-Bot/images/gifs/no_one_is_safe.gif"

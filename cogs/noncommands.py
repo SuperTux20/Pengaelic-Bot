@@ -1,5 +1,5 @@
 import discord
-from fnmatch import filter as glob
+from fnmatch import filter
 from fnmatch import fnmatch
 from discord.utils import get
 from discord.ext import commands
@@ -29,7 +29,7 @@ class noncommands(commands.Cog):
                 "log",
                 "general"
             ]
-            possiblechannels = [glob([channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = [filter([channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
             for channelset in possiblechannels:
                 for channel in channelset:
                     try:
@@ -214,7 +214,7 @@ class noncommands(commands.Cog):
                 "petition",
                 "suggestion"
             ]
-            possiblechannels = [glob([channel.name for channel in message.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = [filter([channel.name for channel in message.guild.text_channels], f"*{channel}*") for channel in channelkeys]
             for channelset in possiblechannels:
                 for channel in channelset:
                     if message.channel.name == channel:

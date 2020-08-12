@@ -40,7 +40,7 @@ class tools(commands.Cog):
         await ctx.send("Yep, I'm alive :sunglasses:")
 
     @commands.command(name = "avatar", help = "Get someone's avatar.", usage = "[username or nickname or @mention]", aliases = ["pfp", "profilepic"])
-    async def avatar(self, ctx, *,  member: discord.Member = None):
+    async def avatar(self, ctx, *, member: discord.Member = None):
         avatar2get = ctx.author
         embed = discord.Embed(
             title = "Here's your avatar!",
@@ -82,11 +82,11 @@ class tools(commands.Cog):
     @commands.command(name = "emoji", help = "Get the specified (server-specific) emoji.", usage = "[:emoji:]", aliases = ["emote"])
     async def getemoji(self, ctx, emoji = None):
         emojis = [
-            f""" < :{
+            f"""<:{
                 em.name
             }:{
                 em.id
-            } > """
+            }>"""
             for em in ctx.guild.emojis
         ]
         emojiurls = [
@@ -125,23 +125,26 @@ class tools(commands.Cog):
                 await ctx.send("Invalid emoji specified!")
 
     @commands.command(name = "suggest", help = "Send a suggestion poll!", aliases = ["poll", "suggestion"])
-    async def poll(self, ctx, *, arg):
-        thepoll = await ctx.send(
-            embed = discord.Embed(
-                color = randint(
-                    0,
-                    16777215
-                ),
-                title = "Suggestion",
-                description = arg
-            ).set_author(
-                name = ctx.author.name,
-                icon_url = ctx.author.avatar_url
+    async def poll(self, ctx, *, arg=None):
+        if arg == None:
+            await ctx.send("You didn't specify anything to make a poll for!")
+        else:
+            thePoll = await ctx.send(
+                embed = discord.Embed(
+                    color = randint(
+                        0,
+                        16777215
+                    ),
+                    title = "Suggestion",
+                    description = arg
+                ).set_author(
+                    name = ctx.author.name,
+                    icon_url = ctx.author.avatar_url
+                )
             )
-        )
-        await ctx.message.delete()
-        await thepoll.add_reaction("✅")
-        await thepoll.add_reaction("❌")
+            await ctx.message.delete()
+            await thePoll.add_reaction("✅")
+            await thePoll.add_reaction("❌")\
 
     @commands.command(name = "clear", help = "Clear some messages away.", aliases = ["delmsgs"], usage = "[number of messages to delete (5)]")
     @commands.has_permissions(manage_messages = True)
