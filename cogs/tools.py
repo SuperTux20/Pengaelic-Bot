@@ -269,12 +269,6 @@ dumps(
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
 
-    @avatar.error
-    async def avatarError(self, ctx, error):
-        await ctx.send(
-            "Invalid user specified!"
-            )
-
 def setup(client):
     client.add_cog(
         tools(
