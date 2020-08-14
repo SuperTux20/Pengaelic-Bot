@@ -67,7 +67,7 @@ class interactions(commands.Cog):
                     )
                 )
 
-    @commands.command(name = "give", help = "Give someone something to eat!", usage = " < username, nickname, or @mention > < item > ")
+    @commands.command(name = "give", help = "Give someone something to eat!", usage = " <username, nickname, or @mention> <item>")
     async def give(self, ctx, member: discord.Member = None, *, item = None):
         items = {
             "candies": [

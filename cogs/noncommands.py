@@ -181,7 +181,7 @@ class noncommands(commands.Cog):
 
 
         # bro, did someone seriously say the chat was dead?
-        if "dead" in message.content and ("chat" in message.content or "server" in message.content) or " < :deadchat:720311826608291852 > " == message.content:
+        if "dead" in message.content and ("chat" in message.content or "server" in message.content) or "<:deadchat:720311826608291852>" == message.content:
             await message.channel.send(
                 f"""{
                     choice(
@@ -264,9 +264,9 @@ class noncommands(commands.Cog):
             responses.append(
                 choice(
                     [
-                        "It's time to die < :handgun:706698375592149013 > ",
+                        "It's time to die <:handgun:706698375592149013> ",
                         """And so do I :pensive:
-Say goodbye < :handgun:706698375592149013 > """
+Say goodbye <:handgun:706698375592149013> """
                     ]
                 )
             )

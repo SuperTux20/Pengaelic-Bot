@@ -350,7 +350,7 @@ class converters(commands.Cog):
             ":diamond_shape_with_a_dot_inside:",
             ":star_of_david:",
             ":star_and_crescent:",
-            " < :empty:725132670056661023 > "
+            " <:empty:725132670056661023> "
         ]
         toConvert = arg.upper()
         for letter in range(len(alphabet)):

@@ -24,7 +24,7 @@ class oddcommands(commands.Cog):
                     self.isNomming = False
                     self.nomSuccess = False
 
-    @commands.command(name = "nom", help = "Eat someone > :3", usage = " < username or nickname or @mention > ")
+    @commands.command(name = "nom", help = "Eat someone >:3", usage = "<username or nickname or @mention>")
     async def nom(self, ctx, *, nom: discord.Member = None):
         nommer = ctx.author.display_name
         for char in self.formatChars:

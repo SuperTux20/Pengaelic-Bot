@@ -222,7 +222,7 @@ class options(commands.Cog):
                     }```"""
                 )
 
-    @filter.command(name = "add", help = "Add a word to the censorship filter.", usage = " < one phrase ONLY > ")
+    @filter.command(name = "add", help = "Add a word to the censorship filter.", usage = " <one phrase ONLY> ")
     @commands.has_permissions(manage_messages = True)
     async def addFilter(self, ctx, word2add):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
@@ -267,7 +267,7 @@ class options(commands.Cog):
                         }"""
                     )
 
-    @filter.command(name = "delete", help = "Remove a word from the censorship filter.", usage = " < one phrase ONLY > ")
+    @filter.command(name = "delete", help = "Remove a word from the censorship filter.", usage = " <one phrase ONLY> ")
     @commands.has_permissions(manage_messages = True)
     async def delFilter(self, ctx, word2del):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:

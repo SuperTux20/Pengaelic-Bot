@@ -103,7 +103,7 @@ class interactions(commands.Cog):
                 "You hug yourself, somehow."
             ], [
                 "aww!",
-                "thanks < :happy:708534449310138379 > ",
+                "thanks<:happy:708534449310138379>",
                 "*gasp*"
             ],
             "hug", "hugged",
@@ -128,7 +128,7 @@ class interactions(commands.Cog):
                 }!""",
                 "Somehow, your hand clips through your nose and appears on the other side of your head. "
             ], [
-                " < :happy:708534449310138379 > ", " < :uwu:708534448949559328 > ", "thaaanks :3"
+                "<:happy:708534449310138379>", "<:uwu:708534448949559328>", "thaaanks :3"
             ],
             "boop",
             "booped",
@@ -144,7 +144,7 @@ class interactions(commands.Cog):
                 "You pat yourself on the head.",
                 "You reach into the mirror and pat your reflection on the head."
             ], [
-                " < :happy:708534449310138379 > ",
+                "<:happy:708534449310138379>",
                 "hehe",
                 "aw, you're cute :3"
             ],
@@ -183,7 +183,7 @@ class interactions(commands.Cog):
                 "You kiss the back of your own hand."
             ], [
                 ":flushed:",
-                " < :happy:708534449310138379 > ",
+                "<:happy:708534449310138379>",
                 "*gasp*"
             ],
             "kiss"
@@ -192,7 +192,7 @@ class interactions(commands.Cog):
             kiss
         )
 
-    @commands.command(name = "squish", help = "Sqweesh someone's face >3< ")
+    @commands.command(name = "squish", help = "Sqweesh someone's face >3<")
     async def squish(self, ctx, *, squish: discord.Member = None):
         await self.act(
             ctx,
@@ -203,7 +203,7 @@ class interactions(commands.Cog):
             ], [
                 "hehehe",
                 "squish...",
-                " < :hmmph:708534447217180702 > "
+                "<:hmmph:708534447217180702>"
             ],
             "squish",
             "squished",

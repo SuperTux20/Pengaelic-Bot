@@ -10,7 +10,7 @@ class messages(commands.Cog):
     description = "Make me say all sorts of things."
     description_long = description + " And possibly make me die inside."
 
-    @commands.command(name = "say", help = "I'll repeat whatever you tell me.", pass_context = True, aliases = ["repeat", "parrot"], usage = " < message > ")
+    @commands.command(name = "say", help = "I'll repeat whatever you tell me.", pass_context = True, aliases = ["repeat", "parrot"], usage = "<message>")
     async def say_back(self, ctx, *, arg):
         await ctx.send(
             arg
