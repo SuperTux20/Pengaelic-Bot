@@ -324,7 +324,7 @@ async def help(ctx):
             title = client.description,
             description = f"""Type `{
                 client.command_prefix
-            }help <lowercase category name without spaces/dashes> ` for more info on each category.""",
+            }help <lowercase category name without spaces/dashes>` for more info on each category.""",
             color = 32639
         ).set_footer(
             text = f"""    Command prefix is {
