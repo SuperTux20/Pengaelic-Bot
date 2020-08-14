@@ -26,14 +26,13 @@ client = commands.Bot(
     help_command = None
 )
 
-print("defining readLog")
 def readLog(logfile):
     logmessage = """"""
     log = open(logfile,'r')
     for line in log:
         logmessage = logmessage + line + """\n"""
     log.close()
-    return(logmessage)
+    return logmessage
 
 async def statusSwitcher():
     global client
