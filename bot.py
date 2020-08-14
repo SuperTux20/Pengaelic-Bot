@@ -1,12 +1,14 @@
 import discord
+import sys
+import os
 from json import load, dump
 from fnmatch import filter
 from discord.utils import get
 from discord.ext import commands
 from random import choice, randint
-from os import getenv, listdir, mkdir
 from dotenv import load_dotenv
 from asyncio import sleep
+from time import sleep as realsleep
 
 print(
     "Starting"
@@ -24,7 +26,16 @@ client = commands.Bot(
     help_command = None
 )
 
-async def status_switcher():
+print("defining readLog")
+def readLog(logfile):
+    logmessage = """"""
+    log = open(logfile,'r')
+    for line in log:
+        logmessage = logmessage + line + """\n"""
+    log.close()
+    return(logmessage)
+
+async def statusSwitcher():
     global client
     global fail
     await client.wait_until_ready()
@@ -137,7 +148,7 @@ async def on_ready():
             except:
                 # ...try to make the servers folder (just in case)...
                 try:
-                    mkdir(
+                    os.mkdir(
                         r"data/servers"
                     )
                     print(
@@ -147,7 +158,7 @@ async def on_ready():
                     pass
                 # ...try to make the guild ID folder...
                 try:
-                    mkdir(
+                    os.mkdir(
                         rf"""data/servers/{
                             client.guilds[guild].id
                         }"""
@@ -239,7 +250,7 @@ https://discord.gg/DHHpA7k"""
 
     # create fresh options file for new server
     try:
-        mkdir(
+        os.mkdir(
             rf"""data/servers/{
                 guild.id
             }"""
@@ -339,7 +350,7 @@ async def help(ctx):
             client.get_cog(cog)
             for cog in [
                 cog[:-3]
-                for cog in listdir("./cogs")
+                for cog in os.listdir("./cogs")
                 if cog.endswith(".py")
             ]
         ]
@@ -947,8 +958,79 @@ async def hCog(ctx):
             )
     await ctx.send(embed = helpMenu)
 
+@client.command(name = "update", aliases = ["ud"])
+async def update(ctx):
+    if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+        status = await ctx.send(
+            "Updating..."
+        )
+        await client.change_presence(
+            activity = discord.Game(
+                "Updating..."
+            ),
+            status = discord.Status.idle
+        )
+        await status.edit(
+            "Pulling the latest commits from GitHub..."
+        )
+        os.system(
+            "bash update.bash > update.log"
+        ) # fetch and pull boys. fetch and pull.
+        await status.update(
+            f"""```{
+                readLog(
+                    "update.log"
+                )
+            }```
+Commits pulled.
+Restarting..."""
+        )
+        await client.change_presence(
+            activity = discord.Game(
+                "Restarting..."
+            ),
+            status = discord.Status.dnd
+        )
+        realsleep(
+            3
+        )
+        os.execl(
+            sys.executable,
+            sys.executable,
+            * sys.argv
+        )
+    else:
+        await ctx.send(
+            "Hey, only my developers can do this!"
+        )
+
+@client.command(name = "restart", aliases = ["reload", "reboot", "rs", "rl", "rb"])
+async def restart(ctx):
+    if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+        await ctx.send(
+            "Restarting..."
+        )
+        print(
+            "Restarting..."
+        )
+        await client.change_presence(
+            activity = discord.Game(
+                "Restarting..."
+            ),
+            status = discord.Status.dnd
+        )
+        os.execl(
+            sys.executable,
+            sys.executable,
+            * sys.argv
+        )
+    else:
+        await ctx.send(
+            "Hey, only my developers can do this!"
+        )
+
 # load all the cogs
-for cog in listdir("./cogs"):
+for cog in os.listdir("./cogs"):
     if cog.endswith(".py"):
         client.load_extension(
             f"""cogs.{
@@ -962,7 +1044,7 @@ for cog in listdir("./cogs"):
         )
 
 client.loop.create_task(
-    status_switcher()
+    statusSwitcher()
 ) # as defined above
 
 def crashcrash(code: int):
@@ -974,7 +1056,7 @@ def crashcrash(code: int):
 while True:
     try:
         client.run(
-            getenv(
+            os.getenv(
                 "DISCORD_TOKEN"
             )
         )
