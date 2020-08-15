@@ -969,7 +969,7 @@ async def update(ctx):
         ) # fetch and pull boys. fetch and pull.
         await status.edit(
             content = f"""```{
-                return "".join([line for line in open("update.log", "r")])
+                "".join([line for line in open("update.log", "r")])
             }```
 Commits pulled.
 Restarting..."""
