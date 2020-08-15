@@ -614,7 +614,7 @@ async def hNonCommands(ctx):
                 color = 32639
             ).add_field(
                 name = "I'm <message> ",
-                value = "It's like Dad Bot. 'Nuff said."
+                value = "Like Dad Bot!"
             ).add_field(
                 name = "Yo mama so <mama type> ",
                 value = "Automatic Yo Mama jokes!"
@@ -624,14 +624,6 @@ async def hNonCommands(ctx):
             ).add_field(
                 name = "You know the rules",
                 value = "A rickroll-themed Russian Roulette."
-            ).set_footer(
-                text = f"""    Command prefix is {
-                    client.command_prefix
-                }
-        <arg> = required parameter
-        [arg] = optional parameter
-        [arg (value)] = default value for optional parameter
-        (command/command/command) = all aliases you can run the command with"""
             )
         )
     else:
@@ -969,7 +961,7 @@ async def update(ctx):
         ) # fetch and pull boys. fetch and pull.
         await status.edit(
             content = f"""```{
-                "".join([line for line in open("update.log", "r")])
+                "".join([line for line in open("update.log", "r")][1:])
             }```
 Commits pulled.
 Restarting..."""
@@ -1033,12 +1025,6 @@ client.loop.create_task(
     statusSwitcher()
 ) # as defined above
 
-def crashcrash(code: int):
-    exit(
-        code
-    )
-    crashcrash(code)
-
 while True:
     try:
         client.run(
@@ -1050,9 +1036,11 @@ while True:
         print(
             "Disconnected"
         )
-        crashcrash(0)
+        while True:
+            exit(0)
     except:
         print(
             "Unable to connect to Discord"
         )
-        crashcrash(1)
+        while True:
+            exit(1)
