@@ -967,13 +967,13 @@ async def update(ctx):
             status = discord.Status.idle
         )
         await status.edit(
-            "Pulling the latest commits from GitHub..."
+            content = "Pulling the latest commits from GitHub..."
         )
         os.system(
             "bash update.bash > update.log"
         ) # fetch and pull boys. fetch and pull.
         await status.update(
-            f"""```{
+            content = f"""```{
                 readLog(
                     "update.log"
                 )
@@ -986,9 +986,6 @@ Restarting..."""
                 "Restarting..."
             ),
             status = discord.Status.dnd
-        )
-        realsleep(
-            3
         )
         os.execl(
             sys.executable,
