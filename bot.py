@@ -26,11 +26,6 @@ client = commands.Bot(
     help_command = None
 )
 
-def readLog(logfile):
-    with open(logfile, "r") as log:
-        logmessage = [line for line in log]
-    return "".join(logmessage)
-
 async def statusSwitcher():
     global client
     global fail
@@ -974,9 +969,7 @@ async def update(ctx):
         ) # fetch and pull boys. fetch and pull.
         await status.edit(
             content = f"""```{
-                readLog(
-                    "update.log"
-                )
+                return "".join([line for line in open("update.log", "r")])
             }```
 Commits pulled.
 Restarting..."""
