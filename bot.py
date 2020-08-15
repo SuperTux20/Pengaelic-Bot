@@ -972,7 +972,7 @@ async def update(ctx):
         os.system(
             "bash update.bash > update.log"
         ) # fetch and pull boys. fetch and pull.
-        await status.update(
+        await status.edit(
             content = f"""```{
                 readLog(
                     "update.log"
