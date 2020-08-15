@@ -1,22 +1,58 @@
-import discord
-import sys
-import os
-from json import load, dump
-from fnmatch import filter
-from discord.utils import get
-from discord.ext import commands
-from random import choice, randint
-from dotenv import load_dotenv
-from asyncio import sleep
-from time import sleep as realsleep
-
 print(
-    "Starting"
+    "Loading"
+)
+import discord
+print(
+    "Imported discord"
+)
+import sys
+print(
+    "Imported sys"
+)
+import os
+print(
+    "Imported os"
+)
+from json import load, dump
+print(
+    "Imported load and dump from json"
+)
+from fnmatch import filter
+print(
+    "Imported filter from fnmatch"
+)
+from discord.utils import get
+print(
+    "Imported get from discord.utils"
+)
+from discord.ext import commands
+print(
+    "Imported commands from discord.ext"
+)
+from random import choice, randint
+print(
+    "Imported choice and randint from random"
+)
+from dotenv import load_dotenv as dotenv
+print(
+    "Imported dotenv"
+)
+from asyncio import sleep
+print(
+    "Imported sleep from asyncio"
+)
+from time import sleep as realsleep
+print(
+    "Imported sleep from time"
 )
 
-load_dotenv(
+dotenv(
     "data/.env"
 )
+print(
+    "Loaded bot token"
+)
+
 connected = False
 fail = False
 client = commands.Bot(
@@ -24,6 +60,9 @@ client = commands.Bot(
     case_insensitive = True,
     description = "Pengaelic Bot",
     help_command = None
+)
+print(
+    "Defined client"
 )
 
 async def statusSwitcher():
@@ -109,7 +148,9 @@ async def statusSwitcher():
             ) # task runs every few minutes (random 1-10)
         else:
             break
-
+print(
+    "Defined status switcher"
+)
 def remove_duplicates(inList: list):
     return list(dict.fromkeys(inList))
 
@@ -198,6 +239,9 @@ async def on_ready():
             connectstatus
         )
         connected = True
+print(
+    "Defined on_ready"
+)
 
 @client.event
 async def on_guild_join(guild, ctx = None):
@@ -280,6 +324,9 @@ https://discord.gg/DHHpA7k"""
                 guild.name
             }"""
         )
+print(
+    "Defined on_guild_join"
+)
 
 @client.event
 async def on_command_error(ctx, error):
@@ -311,6 +358,9 @@ async def on_command_error(ctx, error):
         print(
             error
         )
+print(
+    "Defined on_command_error"
+)
 
 @client.command(name = "join", help = "Show the join message if it doesn't show up automatically")
 async def redoWelcome(ctx):
@@ -360,6 +410,9 @@ async def help(ctx):
             ).description
         )
         await ctx.send(embed = helpMenu)
+print(
+    "Defined root help menu"
+)
 
 @help.command(name = "actions")
 async def hActions(ctx):
@@ -394,6 +447,9 @@ async def hActions(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load actions` to enable it.")
+print(
+    "Defined actions help menu"
+)
 
 @help.command(name = "actsofviolence")
 async def hActsOfViolence(ctx):
@@ -428,6 +484,9 @@ async def hActsOfViolence(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load actsofviolence` to enable it.")
+print(
+    "Defined actsofviolence help menu"
+)
 
 @help.command(name = "converters")
 async def hConverters(ctx):
@@ -462,6 +521,9 @@ async def hConverters(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load converters` to enable it.")
+print(
+    "Defined converters help menu"
+)
 
 @help.command(name = "games")
 async def hGames(ctx):
@@ -515,6 +577,9 @@ async def hGames(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load games` to enable it.")
+print(
+    "Defined games help menu"
+)
 
 @help.command(name = "interactions")
 async def hinteractions(ctx):
@@ -549,6 +614,9 @@ async def hinteractions(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load interactions` to enable it.")
+print(
+    "Defined interactions help menu"
+)
 
 @help.command(name = "messages")
 async def hMessages(ctx):
@@ -602,6 +670,9 @@ async def hMessages(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load messages` to enable it.")
+print(
+    "Defined messages help menu"
+)
 
 @help.command(name = "noncommands")
 async def hNonCommands(ctx):
@@ -628,6 +699,9 @@ async def hNonCommands(ctx):
         )
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load noncommands` to enable it.")
+print(
+    "Defined noncommands help menu"
+)
 
 @help.command(name = "tools")
 async def hTools(ctx):
@@ -681,6 +755,9 @@ async def hTools(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load tools` to enable it.")
+print(
+    "Defined tools help menu"
+)
 
 @help.command(name = "oddcommands")
 async def hOdds(ctx):
@@ -734,6 +811,9 @@ async def hOdds(ctx):
         await ctx.send(embed = helpMenu)
     else:
         await ctx.send(f"This module is disabled. Type `{client.command_prefix}cog load oddcommands` to enable it.")
+print(
+    "Defined oddcommands help menu"
+)
 
 @help.group(name = "options")
 async def hOptions(ctx):
@@ -785,6 +865,9 @@ async def hOptions(ctx):
                     value = command.help
                 )
         await ctx.send(embed = helpMenu)
+print(
+    "Defined root options menu"
+)
 
 @hOptions.command(name = "toggle")
 async def hToggle(ctx):
@@ -836,6 +919,9 @@ async def hToggle(ctx):
                 value = command.help
             )
     await ctx.send(embed = helpMenu)
+print(
+    "Defined toggle options menu"
+)
 
 @hOptions.command(name = "censor", aliases = ["filter"])
 async def hCensor(ctx):
@@ -888,6 +974,9 @@ async def hCensor(ctx):
                 value = command.help
             )
     await ctx.send(embed = helpMenu)
+print(
+    "Defined censor options menu"
+)
 
 @hOptions.command(name = "cog", aliases = ["module"])
 async def hCog(ctx):
@@ -940,6 +1029,9 @@ async def hCog(ctx):
                 value = command.help
             )
     await ctx.send(embed = helpMenu)
+print(
+    "Defined cog options menu"
+)
 
 @client.command(name = "update", aliases = ["ud"])
 async def update(ctx):
@@ -981,6 +1073,9 @@ Restarting..."""
         await ctx.send(
             "Hey, only my developers can do this!"
         )
+print(
+    "Defined update function"
+)
 
 @client.command(name = "restart", aliases = ["reload", "reboot", "rs", "rl", "rb"])
 async def restart(ctx):
@@ -1006,6 +1101,9 @@ async def restart(ctx):
         await ctx.send(
             "Hey, only my developers can do this!"
         )
+print(
+    "Defined reload function"
+)
 
 # load all the cogs
 for cog in os.listdir("./cogs"):
@@ -1020,10 +1118,16 @@ for cog in os.listdir("./cogs"):
                 cog[:-3]
             }"""
         )
+print(
+    "Loaded all cogs"
+)
 
 client.loop.create_task(
     statusSwitcher()
 ) # as defined above
+print(
+    "Started status switcher"
+)
 
 while True:
     try:
