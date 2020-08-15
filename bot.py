@@ -28,7 +28,7 @@ client = commands.Bot(
 
 def readLog(logfile):
     with open(logfile, "r") as log:
-        logmessage = [line + r"\n" for line in log]
+        logmessage = [line for line in log]
     return "".join(logmessage)
 
 async def statusSwitcher():
