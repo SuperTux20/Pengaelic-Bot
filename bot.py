@@ -1052,7 +1052,7 @@ async def update(ctx):
             "bash update.bash > update.log"
         ) # fetch and pull, boys. fetch and pull.
         updateLog = [line for line in open("update.log", "r")]
-        await ctx.send(updateLog)
+        await ctx.send(str(updateLog))
 #         if updateLog[1] == "Already up to date.":
 #             await status.edit(
 #                 updateLog[1]
