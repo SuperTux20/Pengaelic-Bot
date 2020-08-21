@@ -1052,42 +1052,43 @@ async def update(ctx):
             "bash update.bash > update.log"
         ) # fetch and pull, boys. fetch and pull.
         updateLog = [line for line in open("update.log", "r")]
-        if updateLog[1] == "Already up to date.":
-            await status.edit(
-                updateLog[1]
-            )
-            await client.change_presence(
-                activity = None,
-                status = discord.Status.online
-            )
-        else:
-            await status.edit(
-                content = f"""
-```ini
-[{
-    "".join(updateLog[4])
-}]
-```
-```bash
-"{
-    "".join(updateLog[5])
-}"
-```
-Commits pulled.
-Restarting...
-"""
-            )
-            await client.change_presence(
-                activity = discord.Game(
-                    "Restarting..."
-                ),
-                status = discord.Status.dnd
-            )
-            os.execl(
-                sys.executable,
-                sys.executable,
-                * sys.argv
-            )
+        await ctx.send(updateLog)
+#         if updateLog[1] == "Already up to date.":
+#             await status.edit(
+#                 updateLog[1]
+#             )
+#             await client.change_presence(
+#                 activity = None,
+#                 status = discord.Status.online
+#             )
+#         else:
+#             await status.edit(
+#                 content = f"""
+# ```ini
+# [{
+#     "".join(updateLog[4])
+# }]
+# ```
+# ```bash
+# "{
+#     "".join(updateLog[5])
+# }"
+# ```
+# Commits pulled.
+# Restarting...
+# """
+#             )
+#             await client.change_presence(
+#                 activity = discord.Game(
+#                     "Restarting..."
+#                 ),
+#                 status = discord.Status.dnd
+#             )
+#             os.execl(
+#                 sys.executable,
+#                 sys.executable,
+#                 * sys.argv
+#             )
     else:
         await ctx.send(
             "Hey, only my developers can do this!"
