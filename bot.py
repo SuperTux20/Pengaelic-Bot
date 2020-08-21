@@ -1040,7 +1040,7 @@ async def update(ctx):
             "Updating..."
         )
         await client.change_presence(
-            activity = discord.Game(
+            activity = discord.CustomActivity(
                 "Updating..."
             ),
             status = discord.Status.idle
@@ -1059,7 +1059,7 @@ Commits pulled.
 Restarting..."""
         )
         await client.change_presence(
-            activity = discord.Game(
+            activity = discord.CustomActivity(
                 "Restarting..."
             ),
             status = discord.Status.dnd
@@ -1087,7 +1087,7 @@ async def restart(ctx):
             "Restarting..."
         )
         await client.change_presence(
-            activity = discord.Game(
+            activity = discord.CustomActivity(
                 "Restarting..."
             ),
             status = discord.Status.dnd
