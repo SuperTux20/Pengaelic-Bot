@@ -334,12 +334,18 @@ async def on_command_error(ctx, error):
     if hasattr(ctx.command, 'on_error'):
         return
     # ...send the global error
+    # ...send the global error
     await ctx.send(
-        f"""Invalid command/usage. Type `{
-            client.command_prefix
-        }help` for a list of commands and their usages."""
+        f"""Oops! An error occurred! `{
+            error
+        }`"""
     )
     if "is not found" in str(error):
+        await ctx.send(
+            f"""Invalid command/usage. Type `{
+                client.command_prefix
+            }help` for a list of commands and their usages."""
+        )
         print(
             "Invalid command {}{} sent in {} in #{} by {}#{}".format(
                 client.command_prefix,
@@ -1052,43 +1058,42 @@ async def update(ctx):
             "bash update.bash > update.log"
         ) # fetch and pull, boys. fetch and pull.
         updateLog = [line for line in open("update.log", "r")]
-        await ctx.send(str(updateLog))
-#         if updateLog[1] == "Already up to date.":
-#             await status.edit(
-#                 updateLog[1]
-#             )
-#             await client.change_presence(
-#                 activity = None,
-#                 status = discord.Status.online
-#             )
-#         else:
-#             await status.edit(
-#                 content = f"""
-# ```ini
-# [{
-#     "".join(updateLog[4])
-# }]
-# ```
-# ```bash
-# "{
-#     "".join(updateLog[5])
-# }"
-# ```
-# Commits pulled.
-# Restarting...
-# """
-#             )
-#             await client.change_presence(
-#                 activity = discord.Game(
-#                     "Restarting..."
-#                 ),
-#                 status = discord.Status.dnd
-#             )
-#             os.execl(
-#                 sys.executable,
-#                 sys.executable,
-#                 * sys.argv
-#             )
+        if updateLog[1] == r"Already up to date.\n":
+            await status.edit(
+                updateLog[1]
+            )
+            await client.change_presence(
+                activity = None,
+                status = discord.Status.online
+            )
+        else:
+            await status.edit(
+                content = f"""
+```ini
+[{
+    "".join(updateLog[4])
+}]
+```
+```bash
+"{
+    "".join(updateLog[5])
+}"
+```
+Commits pulled.
+Restarting...
+"""
+            )
+            await client.change_presence(
+                activity = discord.Game(
+                    "Restarting..."
+                ),
+                status = discord.Status.dnd
+            )
+            os.execl(
+                sys.executable,
+                sys.executable,
+                * sys.argv
+            )
     else:
         await ctx.send(
             "Hey, only my developers can do this!"
