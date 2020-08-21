@@ -1050,7 +1050,15 @@ async def update(ctx):
         )
         os.system(
             "bash update.bash > update.log"
-        ) # fetch and pull boys. fetch and pull.
+        ) # fetch and pull, boys. fetch and pull.
+        isUpToDate = [line for line in open("update.log", "r")][1]
+        if isUpToDate == "Already up to date.":
+            await ctx.send(isUpToDate)
+            await client.change_presence(
+                activity = None,
+                status = discord.Status.online
+            )
+            return
         await status.edit(
             content = f"""```{
                 "".join([line for line in open("update.log", "r")][1:])
