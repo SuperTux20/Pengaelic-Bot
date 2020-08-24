@@ -212,7 +212,9 @@ class noncommands(commands.Cog):
             channelkeys = [
                 "poll",
                 "petition",
-                "suggestion"
+                "suggestion",
+                "vote",
+                "voting"
             ]
             possiblechannels = [filter([channel.name for channel in message.guild.text_channels], f"*{channel}*") for channel in channelkeys]
             for channelset in possiblechannels:
