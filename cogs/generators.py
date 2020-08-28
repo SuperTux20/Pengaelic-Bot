@@ -208,7 +208,7 @@ class generators(commands.Cog):
         selectedObject = choice(objects)
         headline.append(choice(actions))
         headline.append(selectedObject)
-        print(" ".join(headline))
+        await ctx.send(" ".join(headline))
 
     @nameGen.error
     @floridaMan.error
