@@ -1060,7 +1060,7 @@ async def update(ctx):
         updateLog = [line for line in open("update.log", "r")]
         if "Already up to date.\n" in updateLog:
             await status.edit(
-                "Already up to date, no restart required."
+                content = "Already up to date, no restart required."
             )
             await client.change_presence(
                 activity = None,
