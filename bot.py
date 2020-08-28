@@ -1058,10 +1058,9 @@ async def update(ctx):
             "bash update.bash > update.log"
         ) # fetch and pull, boys. fetch and pull.
         updateLog = [line for line in open("update.log", "r")]
-        await ctx.send(updateLog)
-        if updateLog[1] == r"Already up to date.\n":
+        if "Already up to date" in updateLog:
             await status.edit(
-                updateLog[1]
+                "Already up to date, no restart required."
             )
             await client.change_presence(
                 activity = None,
