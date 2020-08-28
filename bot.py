@@ -1073,10 +1073,10 @@ async def update(ctx):
             await status.edit(
                 content = f"""
 ```bash
-"{"".join(updateLog[:-1])} "
+"{"".join(updateLog[:-1])[:-2]} "
 ```
 ```ini
-[{updateLog[-1]} ]
+[{updateLog[-1][:-2]} ]
 ```
 Commits pulled.
 Restarting...
