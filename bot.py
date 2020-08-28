@@ -1058,7 +1058,7 @@ async def update(ctx):
             "bash update.bash > update.log"
         ) # fetch and pull, boys. fetch and pull.
         updateLog = [line for line in open("update.log", "r")]
-        if "Already up to date" in updateLog:
+        if "Already up to date.\n" in updateLog:
             await status.edit(
                 "Already up to date, no restart required."
             )
