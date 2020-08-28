@@ -1073,7 +1073,9 @@ async def update(ctx):
             await status.edit(
                 content = f"""
 ```bash
-"{"".join(updateLog[:-1])[:-2]} "
+"
+{"".join(updateLog[:-1])[1:-2]}
+"
 ```
 ```ini
 [{updateLog[-1][:-2]} ]
