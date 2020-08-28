@@ -1057,22 +1057,30 @@ async def update(ctx):
         os.system(
             "bash update.bash > update.log"
         ) # fetch and pull, boys. fetch and pull.
-        updateLog = [line for line in open("update.log", "r")]
-        if "Already up to date.\n" in updateLog:
+        updateLog = [line for line in open("update.log", "r")][1:]
+        if updateLog == ["Already up to date.\n"]:
             await status.edit(
                 content = "Already up to date, no restart required."
             )
             await client.change_presence(
-                activity = None,
+                activity = discord.Game(
+                    "Factory Idle" # unique for when there's no update :o
+                ),
                 status = discord.Status.online
             )
         else:
+            updateLog = updateLog[2:]
             await status.edit(
                 content = f"""
+```bash
+"{
+    "".join(updateLog[:-1])
+}"
 ```
-{
-    "".join(updateLog)
-}
+```ini
+[{
+    updateLog[-1]
+}]
 ```
 Commits pulled.
 Restarting...
