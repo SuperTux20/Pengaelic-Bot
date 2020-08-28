@@ -1074,11 +1074,11 @@ async def update(ctx):
                 content = f"""
 ```bash
 "
-{"".join(updateLog[:-1])[1:-2]}
+{"".join(updateLog[:-1])[1:-1]}
 "
 ```
 ```ini
-[{updateLog[-1][:-2]} ]
+[{updateLog[-1][:-1]} ]
 ```
 Commits pulled.
 Restarting...
