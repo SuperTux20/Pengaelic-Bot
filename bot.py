@@ -402,7 +402,7 @@ async def help(ctx):
             ]
         ]
         for cog in cogs:
-            if cog == None or cog.name == "options":
+            if cog == None or cog.name == "options" or cog.name == "generators":
                 pass
             elif load(open(rf"data/servers/{ctx.guild.id}/config.json", "r"))["cogs"][cog.name_typable] == True:
                 helpMenu.add_field(
