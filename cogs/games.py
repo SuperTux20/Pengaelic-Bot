@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from random import choice, randint
-from json import load
 
 class games(commands.Cog):
     def __init__(self, client):
@@ -59,7 +58,7 @@ class games(commands.Cog):
                                 "Very doubtful",
                                 "Uh, no",
                                 ":thumbsdown:",
-                                ":x:",
+                                ":x:"
                             ], [
                                 "Absolutely",
                                 "Always",
@@ -80,7 +79,7 @@ class games(commands.Cog):
                                 "mhm",
                                 "Most likely",
                                 "Obviously",
-                                "Oh yeah",
+                                "Oh yeah"
                             ], [
                                 "Outlook good",
                                 "Pfft, yeah!",
@@ -91,7 +90,7 @@ class games(commands.Cog):
                                 "Sure",
                                 "Sure, why not?",
                                 "Totally",
-                                "Uh... yeah!"
+                                "Uh... yeah!",
                                 "Without a doubt",
                                 "ye",
                                 "Yeah",
@@ -382,7 +381,7 @@ class games(commands.Cog):
             )
 
     @commands.command(name = "pop", help = "Get a sheet of bubble wrap! Click to pop.", aliases = ["bubblewrap", "bubbles"], usage = "[size of sheet (5x5 or 5)")
-    async def summonsheet(self, ctx, size: str = "5"):
+    async def summonSheet(self, ctx, size: str = "5"):
         try:
             if len(size) == 5:
                 width = int(
@@ -451,186 +450,11 @@ class games(commands.Cog):
             sheet
         )
 
-    @commands.command(name = "name", help = "Generate a random name! They tend to be mystic-sounding :eyes:", aliases = ["generatename", "namegen"], usage = "[number of names to generate (1)] [limit to how many syllables can be used (3)]")
-    async def namegen(self, ctx, amount: int = 1, syllableLimit: int = 3):
-        await ctx.send(
-            str(
-                [
-                    "".join(
-                        [
-                            choice(
-                                [
-                                    "a",
-                                    "ae",
-                                    "ag",
-                                    "ah",
-                                    "al",
-                                    "am",
-                                    "an",
-                                    "art",
-                                    "as",
-                                    "au",
-                                    "ayn",
-                                    "az",
-                                    "be",
-                                    "bi",
-                                    "bo",
-                                    "bor",
-                                    "burn",
-                                    "by",
-                                    "ca",
-                                    "car",
-                                    "cat",
-                                    "cer",
-                                    "cha",
-                                    "co",
-                                    "cu",
-                                    "da",
-                                    "dam",
-                                    "dan",
-                                    "del",
-                                    "der",
-                                    "des",
-                                    "di",
-                                    "dil",
-                                    "do",
-                                    "don",
-                                    "dy",
-                                    "dyl",
-                                    "e",
-                                    "el",
-                                    "em",
-                                    "en",
-                                    "ex",
-                                    "fi",
-                                    "fin",
-                                    "finn",
-                                    "fly",
-                                    "fu",
-                                    "ga",
-                                    "go",
-                                    "gor",
-                                    "gy",
-                                    "he",
-                                    "hy",
-                                    "i",
-                                    "ig",
-                                    "il",
-                                    "in",
-                                    "is",
-                                    "iss",
-                                    "ja",
-                                    "ji",
-                                    "jo",
-                                    "jor",
-                                    "ka",
-                                    "kes",
-                                    "kev",
-                                    "kla",
-                                    "ko",
-                                    "lan",
-                                    "lar",
-                                    "ler",
-                                    "li",
-                                    "lo",
-                                    "lu",
-                                    "ly",
-                                    "ma",
-                                    "mar",
-                                    "me",
-                                    "mel",
-                                    "mi",
-                                    "mo",
-                                    "mol",
-                                    "mu",
-                                    "mus",
-                                    "na",
-                                    "nar",
-                                    "ne",
-                                    "no",
-                                    "nor",
-                                    "nos",
-                                    "o",
-                                    "ob",
-                                    "ok",
-                                    "ol",
-                                    "om",
-                                    "on",
-                                    "or",
-                                    "os",
-                                    "pe",
-                                    "pen",
-                                    "per",
-                                    "pu",
-                                    "ra",
-                                    "ral",
-                                    "ran",
-                                    "ras",
-                                    "re",
-                                    "res",
-                                    "rez",
-                                    "ri",
-                                    "rin",
-                                    "rob",
-                                    "ry",
-                                    "sa",
-                                    "sac",
-                                    "sam",
-                                    "san",
-                                    "sans",
-                                    "ser",
-                                    "sey",
-                                    "sha",
-                                    "sky",
-                                    "son",
-                                    "st",
-                                    "str",
-                                    "ta",
-                                    "tam",
-                                    "tay",
-                                    "ter",
-                                    "tha",
-                                    "than",
-                                    "tif",
-                                    "ti",
-                                    "tin",
-                                    "to",
-                                    "tor",
-                                    "tur",
-                                    "u",
-                                    "um",
-                                    "un",
-                                    "ur",
-                                    "va",
-                                    "wa",
-                                    "wyn",
-                                    "yu",
-                                    "za",
-                                    "zal",
-                                    "ze",
-                                    "zi",
-                                    "zil",
-                                    "zo",
-                                    "zu"
-                                ]
-                            )
-                            for _ in range(randint(2, syllableLimit))
-                        ]
-                    ).capitalize()
-                    for _ in range(amount)
-                ]
-            )[1:-1].replace(
-                "'",
-                ""
-            )
-        )
-
     @_8ball.error
     @rollDice.error
     @flipCoins.error
     @drawCards.error
-    @summonsheet.error
-    @namegen.error
+    @summonSheet.error
     async def error(self, ctx, error):
         if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":
@@ -645,7 +469,6 @@ In content: Must be 2000 or fewer in length.""":
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
-
 
 def setup(client):
     client.add_cog(
