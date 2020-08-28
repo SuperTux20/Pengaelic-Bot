@@ -106,10 +106,10 @@ class options(commands.Cog):
             allOptions = load(optionsfile)
         if allOptions["dadJokes"] == True:
             allOptions["dadJokes"] = False
-            await ctx.send("Bye Dad, I'm Pengaelic Bot Nightly!")
+            await ctx.send("Bye Dad, I'm the Pengaelic Bot!")
         else:
             allOptions["dadJokes"] = True
-            await ctx.send("Hi Dad, I'm Pengaelic Bot Nightly!")
+            await ctx.send("Hi Dad, I'm the Pengaelic Bot!")
         await self.updateOptions(
             ctx.guild,
             allOptions
