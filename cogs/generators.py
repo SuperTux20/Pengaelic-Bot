@@ -185,7 +185,7 @@ class generators(commands.Cog):
         )
 
     @commands.command(name = "floridaman", help = "Generate random Florida Man headlines!", aliases = ["florida"], usage = "[other state]")
-    async def floridaMan(self, ctx, state = "florida"):
+    async def floridaMan(self, ctx, *, state = "florida"):
         headline = [state.capitalize()]
         objects = ["van", "dog", "cat", "car", "alligator", "chicken nugget", "penguin", "burger", "car salesman"]
         selectedObject = choice(objects)
