@@ -279,7 +279,7 @@ async def on_guild_join(guild, ctx = None):
                     """Be sure to join the Support server for news and updates!
 https://discord.gg/DHHpA7k"""
                 )
-                return
+                break
             except:
                 continue
 

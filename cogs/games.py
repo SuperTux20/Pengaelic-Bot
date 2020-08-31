@@ -206,7 +206,7 @@ class games(commands.Cog):
                     )
                     for _ in range(coins)
                 ]
-                for _ in range(coins):
+                for result in results:
                     if result == 2:
                         for _ in range(5):
                             result = randint(
