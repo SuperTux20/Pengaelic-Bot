@@ -144,9 +144,56 @@ class tools(commands.Cog):
             )
             await ctx.message.delete()
             await thePoll.add_reaction("✅")
-            await thePoll.add_reaction("❌")\
+            await thePoll.add_reaction("❌")
 
-    @commands.command(name = "clear", help = "Clear some messages away.", aliases = ["delmsgs"], usage = "[number of messages to delete (5)]")
+    @commands.group(name = "mod", help = "Moderation tools. Type `p!help tools mod` for more info.")
+    async def mod_tools(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send(
+                """```fix
+Available commands are as follows...
+```"""
+"""```ini
+[ ban, kick, clear, purge ]
+```"""
+"""```fix
+Type p!help tools mod for more info.
+```"""
+            )
+
+    @mod_tools.command(name = "ban", help = "Swing the ban hammer, and get a home run.")
+    @mod_tools.has_permissions(ban_members = True)
+    async def ban(self, ctx, member: discord.Member, *, reason=None):
+        await ctx.guild.ban(
+            member,
+            reason = reason
+        )
+        await ctx.send(f"""{
+                member
+            } was banned by {
+                ctx.message.author.mention
+            }. Reason: `{
+                reason
+            }`"""
+        )
+
+    @commands.command(name = "kick", help = "Kick someone out the proverbial door.")
+    @commands.has_permissions(kick_members = True)
+    async def kick(self, ctx, member: discord.Member, *, reason=None):
+        await ctx.guild.kick(
+            member,
+            reason = reason
+        )
+        await ctx.send(f"""{
+                member
+            } was kicked by {
+                ctx.message.author.mention
+            }. Reason: `{
+                reason
+            }`"""
+        )
+
+    @mod_tools.command(name = "clear", help = "Clear some messages away.", aliases = ["delmsgs"], usage = "[number of messages to delete (5)]")
     @commands.has_permissions(manage_messages = True)
     async def clear(self, ctx, msgcount: int = 5):
         await ctx.channel.purge(
@@ -165,7 +212,7 @@ class tools(commands.Cog):
         except:
             pass
 
-    @commands.command(name = "purge", help = "Purge a channel of EVERYTHING.", aliases = ["wipe", "wipechannel"])
+    @mod_tools.command(name = "purge", help = "Purge a channel of EVERYTHING.", aliases = ["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels = True)
     async def purge(self, ctx):
         if self.purgeconfirm == False:

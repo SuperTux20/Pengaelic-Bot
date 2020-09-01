@@ -147,7 +147,7 @@ class Options(commands.Cog):
             ctx
         )
 
-    @commands.group(name = "toggle", help = "Toggle an option.")
+    @commands.group(name = "toggle", help = "Toggle an option. Type `p!help options toggle` for more info.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
@@ -330,7 +330,7 @@ Type {self.client.command_prefix}options to see their values.
                     }```"""
                 )
 
-    @censor.command(name = "add", help = "Add a word to the censorship filter.", usage = " <one phrase ONLY> ")
+    @censor.command(name = "add", help = "Add a word to the censorship filter.", usage = "<one phrase ONLY>")
     @commands.has_permissions(manage_messages = True)
     async def add_censor(self, ctx, word2add):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
@@ -375,7 +375,7 @@ Type {self.client.command_prefix}options to see their values.
                         }"""
                     )
 
-    @censor.command(name = "delete", help = "Remove a word from the censorship filter.", usage = " <one phrase ONLY> ")
+    @censor.command(name = "delete", help = "Remove a word from the censorship filter.", usage = "<one phrase ONLY>")
     @commands.has_permissions(manage_messages = True)
     async def del_censor(self, ctx, word2del):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
@@ -425,7 +425,7 @@ Type {self.client.command_prefix}options to see their values.
     async def wipe_censor(self, ctx):
         if self.wipeCensorConfirm == False:
             await ctx.send(
-                "Are you **really** sure you want to clear the censor filter? Type p!wipecensor again to confirm."
+                "Are you **really** sure you want to clear the censor filter? Type the command again to confirm."
             )
             self.wipeCensorConfirm = True
         else:
@@ -445,7 +445,7 @@ Type {self.client.command_prefix}options to see their values.
             )
             self.wipeCensorConfirm = False
 
-    @commands.group(name = "cog", help = "Edit the modules.", aliases = ["module"])
+    @commands.group(name = "cog", help = "Edit the modules.  Type `p!help options cog` for more info.", aliases = ["module"])
     async def modules(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
