@@ -345,39 +345,37 @@ async def on_guild_join(guild, ctx = None):
 @client.event
 async def on_command_error(ctx, error):
     # this checks if the individual commands have their own error handling. if not...
-    if hasattr(ctx.command, 'on_error'):
-        return
-    # ...send the global error
-    # ...send the global error
-    await ctx.send(
-        f"""Oops! An error occurred! `{
-            error
-        }`"""
-    )
-    if "is not found" in str(error):
-        await ctx.send(
-            f"""Invalid command/usage. Type `{
-                client.command_prefix
-            }help` for a list of commands and their usages."""
-        )
-        print(
-            "Invalid command {}{} sent in {} in #{} by {}#{}".format(
-                client.command_prefix,
-                str(
-                    error
-                ).split(
-                    '"'
-                )[1],
-                ctx.guild,
-                ctx.channel,
-                ctx.message.author.name,
-                ctx.message.author.discriminator
+    if not hasattr(ctx.command, 'on_error'):
+        # ...send the global error
+        if "is not found" in str(error):
+            await ctx.send(
+                f"""Invalid command/usage. Type `{
+                    client.command_prefix
+                }help` for a list of commands and their usages."""
             )
-        )
-    else:
-        print(
-            error
-        )
+            print(
+                "Invalid command {}{} sent in {} in #{} by {}#{}".format(
+                    client.command_prefix,
+                    str(
+                        error
+                    ).split(
+                        '"'
+                    )[1],
+                    ctx.guild,
+                    ctx.channel,
+                    ctx.message.author.name,
+                    ctx.message.author.discriminator
+                )
+            )
+        else:
+            await ctx.send(
+                f"""Oops! An error occurred! `{
+                    error
+                }`"""
+            )
+            print(
+                error
+            )
 
 @client.command(name = "join", help = "Show the join message if it doesn't show up automatically")
 async def redo_welcome(ctx):
