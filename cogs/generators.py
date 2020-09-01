@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 
-class generators(commands.Cog):
+class Generators(commands.Cog):
     def __init__(self, client):
         self.client = client
     name = "generators"
@@ -11,7 +11,7 @@ class generators(commands.Cog):
     description_long = description + " So do I!"
 
     @commands.command(name = "name", help = "Generate a random name! They tend to be mystic-sounding :eyes:", aliases = ["generatename", "namegen"], usage = "[number of names to generate (1)] [limit to how many syllables can be used (3)]")
-    async def nameGen(self, ctx, amount: int = 1, syllableLimit: int = 3):
+    async def name_generator(self, ctx, amount: int = 1, syllable_limit: int = 3):
         await ctx.send(
             str(
                 [
@@ -173,7 +173,7 @@ class generators(commands.Cog):
                                     "zu"
                                 ]
                             )
-                            for _ in range(randint(2, syllableLimit))
+                            for _ in range(randint(2, syllable_limit))
                         ]
                     ).capitalize()
                     for _ in range(amount)
@@ -185,10 +185,10 @@ class generators(commands.Cog):
         )
 
     @commands.command(name = "floridaman", help = "Generate random Florida Man headlines!", aliases = ["florida"], usage = "[other state]")
-    async def floridaMan(self, ctx, *, state = "florida"):
+    async def florida_man(self, ctx, *, state = "florida"):
         headline = [" ".join([name.capitalize() for name in state.split()])]
         objects = ["van", "dog", "cat", "car", "alligator", "chicken nugget", "penguin", "burger", "car salesman"]
-        selectedObject = choice(objects)
+        selected_object = choice(objects)
         people = ["man", "woman"]
         events = ["pushed", "thrown", "dropped", "burned", "stabbed", "run over", "slapped"]
         poss2 = ["", "by"]
@@ -199,19 +199,19 @@ class generators(commands.Cog):
         headline.append(choice(events))
         if part2 != "":
             headline.append(part2)
-            headline.append(selectedObject)
-            objects.remove(selectedObject)
-            selectedObject = choice(objects)
+            headline.append(selected_object)
+            objects.remove(selected_object)
+            selected_object = choice(objects)
         headline.append(choice(timing))
-        headline.append(selectedObject)
-        objects.remove(selectedObject)
-        selectedObject = choice(objects)
+        headline.append(selected_object)
+        objects.remove(selected_object)
+        selected_object = choice(objects)
         headline.append(choice(actions))
-        headline.append(selectedObject)
+        headline.append(selected_object)
         await ctx.send(" ".join(headline))
 
-    @nameGen.error
-    @floridaMan.error
+    @name_generator.error
+    @florida_man.error
     async def error(self, ctx, error):
         if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":
@@ -229,7 +229,7 @@ If my developer (<@!686984544930365440>) is not here, please tell him what the e
 
 def setup(client):
     client.add_cog(
-        generators(
+        Generators(
             client
         )
     )

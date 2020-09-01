@@ -40,7 +40,7 @@ class tools(commands.Cog):
         await ctx.send("Yep, I'm alive :sunglasses:")
 
     @commands.command(name = "avatar", help = "Get someone's avatar.", usage = "[username or nickname or @mention]", aliases = ["pfp", "profilepic"])
-    async def avatar(self, ctx, *, member: discord.Member = None):
+    async def get_avatar(self, ctx, *, member: discord.Member = None):
         avatar2get = ctx.author
         embed = discord.Embed(
             title = "Here's your avatar!",
@@ -64,7 +64,7 @@ class tools(commands.Cog):
         await ctx.send(embed = embed)
 
     @commands.command(name = "icon", help = "Get the icon for the server.", aliases = ["servericon"])
-    async def servericon(self, ctx):
+    async def get_icon(self, ctx):
         try:
             await ctx.send(
                 embed = discord.Embed(
@@ -80,7 +80,7 @@ class tools(commands.Cog):
             )
 
     @commands.command(name = "emoji", help = "Get the specified (server-specific) emoji.", usage = "[:emoji:]", aliases = ["emote"])
-    async def getemoji(self, ctx, emoji = None):
+    async def get_emoji(self, ctx, emoji = None):
         emojis = [
             f"""<:{
                 em.name
@@ -199,16 +199,23 @@ class tools(commands.Cog):
             )
             self.purgeconfirm = False
 
-    @commands.command(name = "support", help = "Get the invite link to the official support server.", aliases = ["discord", "invite"])
-    async def getserver(self, ctx):
+    @commands.command(name = "support", help = "Get the invite link to the official support server.", aliases = ["discord"])
+    async def support(self, ctx):
         await ctx.send(
             """Here is my official support server!
 https://discord.gg/DHHpA7k"""
         )
 
+    @commands.command(name = "invite", help = "Invite me to your server!", aliases = ["inviteme"])
+    async def invite(self, ctx):
+        await ctx.send(
+            """Can I come on to your server?
+https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot"""
+        )
+
     @commands.command(name = "server", help = "See a bunch of data about the server at a glance.", aliases = ["info"])
     @commands.has_permissions(manage_messages = True)
-    async def getops(self, ctx):
+    async def get_server_info(self, ctx):
         await ctx.send(
             f"""```json
 {
@@ -269,11 +276,11 @@ dumps(
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
 
-    @avatar.error
+    @get_avatar.error
     async def avatarError(self, ctx, error):
         await ctx.send(
             "Invalid user specified!"
-            )
+        )
 
 def setup(client):
     client.add_cog(

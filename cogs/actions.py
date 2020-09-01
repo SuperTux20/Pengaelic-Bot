@@ -5,7 +5,7 @@ from os import listdir
 from json import load
 from time import sleep
 
-class actions(commands.Cog):
+class Actions(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.formatChars = "*`~|"
@@ -72,7 +72,7 @@ class actions(commands.Cog):
 
 def setup(client):
     client.add_cog(
-        actions(
+        Actions(
             client
         )
     )

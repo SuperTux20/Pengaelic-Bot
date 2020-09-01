@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice
 
-class actsofviolence(commands.Cog):
+class ActsOfViolence(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.formatChars = "*`~|"
@@ -141,7 +141,7 @@ If my developer (<@!686984544930365440>) is not here, please tell him what the e
 
 def setup(client):
     client.add_cog(
-        actsofviolence(
+        ActsOfViolence(
             client
         )
     )

@@ -4,7 +4,7 @@ from random import choice, randint
 from os import listdir
 from json import dumps
 
-class interactions(commands.Cog):
+class Foods(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.formatChars = "*`~|"
@@ -124,11 +124,11 @@ class interactions(commands.Cog):
             )
         else:
             tests = {
-                typeOfFood: True
-                for typeOfFood in items
+                food_type: True
+                for food_type in items
             }
-            for typeOfFood in list(items.keys()):
-                if item in items[typeOfFood]:
+            for food_type in list(items.keys()):
+                if item in items[food_type]:
                     await self.giveitem(
                         ctx,
                         [
@@ -139,7 +139,7 @@ class interactions(commands.Cog):
                         member
                     )
                 else:
-                    tests[typeOfFood] = False
+                    tests[food_type] = False
             if True not in list(tests.values()):
                 await ctx.send(
                     "That item isn't in the list!"
@@ -162,7 +162,7 @@ If my developer (<@!686984544930365440>) is not here, please tell him what the e
 
 def setup(client):
     client.add_cog(
-        interactions(
+        Foods(
             client
         )
     )

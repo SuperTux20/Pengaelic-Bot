@@ -4,7 +4,7 @@ from random import choice, randint
 from os import listdir
 from time import sleep
 
-class oddcommands(commands.Cog):
+class OddCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.isNomming = True
@@ -18,11 +18,9 @@ class oddcommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-        if reaction.emoji == "👄":
-            if user.id != 721092139953684580:
-                if self.isNomming == True:
-                    self.isNomming = False
-                    self.nomSuccess = False
+        if reaction.emoji == "👄" and user.id != 721092139953684580 and self.isNomming == True:
+            self.isNomming = False
+            self.nomSuccess = False
 
     @commands.command(name = "nom", help = "Eat someone >:3", usage = "<username or nickname or @mention>")
     async def nom(self, ctx, *, nom: discord.Member = None):
@@ -105,14 +103,14 @@ class oddcommands(commands.Cog):
                         )
                     }
                 )
-                NoNomSense = await ctx.send(
+                no_nomsense = await ctx.send(
                     f"""{
                         nommer
                     } is trying to eat you, {
                         nommed
                     }! Quick, click on the reaction to get away!"""
                 )
-                await NoNomSense.add_reaction(
+                await no_nomsense.add_reaction(
                     "👄"
                 )
                 for _ in range(10):
@@ -127,7 +125,7 @@ class oddcommands(commands.Cog):
                 if self.isNomming == True:
                     self.isNomming = False
                     self.nomSuccess = True
-                await NoNomSense.delete()
+                await no_nomsense.delete()
                 if self.nomSuccess == True:
                     await ctx.send(
                         embed = embed
@@ -153,7 +151,7 @@ If my developer (<@!686984544930365440>) is not here, please tell him what the e
 
 def setup(client):
     client.add_cog(
-        oddcommands(
+        OddCommands(
             client
         )
     )

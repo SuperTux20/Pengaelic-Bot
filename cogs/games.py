@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 
-class games(commands.Cog):
+class Games(commands.Cog):
     def __init__(self, client):
         self.client = client
     name = "games"
@@ -11,7 +11,7 @@ class games(commands.Cog):
     description_long = description
 
     @commands.command(name = "8ball", help = "Ask the ball and receive wisdom... :eyes:", aliases = ["magic8ball"], usage = "[question]")
-    async def _8ball(self, ctx, *, question = None):
+    async def magic_8_ball(self, ctx, *, question = None):
         if question:
             await ctx.send(
                 ":8ball:" + choice(
@@ -112,7 +112,7 @@ class games(commands.Cog):
             )
 
     @commands.command(name = "roll", help = "Roll some dice!", aliases = ["dice"], usage = "[number of dice (1)]\n[number of sides (6)]")
-    async def rollDice(self, ctx, dice: int = 1, sides: int = 6):
+    async def roll_dice(self, ctx, dice: int = 1, sides: int = 6):
         if dice == 0:
             response = "You didn't roll any dice."
         elif sides == 0:
@@ -135,30 +135,30 @@ class games(commands.Cog):
                 sides
             }-sided dice? That's just silly."""
         else:
-            sideList = [
+            side_list = [
                 side
                 for side in range(1, sides)
             ]
-            rollResults = [
-                sideList[
+            roll_results = [
+                side_list[
                     randint(
                         0,
-                        sideList[-1]
+                        side_list[-1]
                     ) - 1
                 ]
                 for _ in range(dice)
             ]
             total = sum(
-                rollResults
+                roll_results
             )
             if dice > 1:
-                if len(str(rollResults[:-1])[1:-1]) < 2000:
+                if len(str(roll_results[:-1])[1:-1]) < 2000:
                     response = f"""You rolled {
                         str(
-                            rollResults[:-1]
+                            roll_results[:-1]
                         )[1:-1]
                     }, and {
-                        rollResults[-1]
+                        roll_results[-1]
                     }, totalling {
                         total
                     }"""
@@ -175,7 +175,7 @@ class games(commands.Cog):
         )
 
     @commands.command(name = "flip", help = "Flip some coins!", aliases = ["coin"], usage = "[number of coins (1)]")
-    async def flipCoins(self, ctx, coins: int = 1):
+    async def flip_coins(self, ctx, coins: int = 1):
         if coins == 1:
             response = f"""You flipped a {
                 choice(
@@ -253,7 +253,7 @@ class games(commands.Cog):
         )
 
     @commands.command(name = "draw", help = "Draw some cards!", aliases = ["card"], usage = "[number of cards (1)]\n[replace cards in deck (no)]")
-    async def drawCards(self, ctx, cards: int = 1, replaceCards: str = "no"):
+    async def draw_cards(self, ctx, cards: int = 1, replace_cards: str = "no"):
         suits = [
             "Diamonds",
             "Spades",
@@ -275,11 +275,11 @@ class games(commands.Cog):
             12: 'Queen',
             13: 'King'
         }
-        allCards = []
+        all_cards = []
         faces = []
         numbers = []
         drawn = []
-        if replaceCards == "no":
+        if replace_cards == "no":
             for suit in range(int(len(suits)/1)):
                 for value in values:
                     if value == 10:
@@ -292,7 +292,7 @@ class games(commands.Cog):
                         length = 5
                     else:
                         length = 1
-                    allCards.append(
+                    all_cards.append(
                         str(
                             values[value]
                         ) + (
@@ -314,7 +314,7 @@ class games(commands.Cog):
             else:
                 for _ in range(cards):
                     card = choice(
-                        allCards
+                        all_cards
                     )
                     if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
                         faces.append(
@@ -324,13 +324,13 @@ class games(commands.Cog):
                         numbers.append(
                             card
                         )
-                    allCards.remove(
+                    all_cards.remove(
                         card
                     )
                 drawn = faces + numbers
         else:
             for _ in range(cards):
-                chosenValue = str(
+                random_value = str(
                     choice(
                         list(
                             values.values()
@@ -338,10 +338,10 @@ class games(commands.Cog):
                     )
                 )
                 card = str(
-                    chosenValue + (
+                    random_value + (
                         " " * (
                             6 - len(
-                                chosenValue
+                                random_value
                             )
                         )
                     ) + "of " + choice(
@@ -381,7 +381,7 @@ class games(commands.Cog):
             )
 
     @commands.command(name = "pop", help = "Get a sheet of bubble wrap! Click to pop.", aliases = ["bubblewrap", "bubbles"], usage = "[size of sheet (5x5 or 5)")
-    async def summonSheet(self, ctx, size: str = "5"):
+    async def bubblewrap(self, ctx, size: str = "5"):
         try:
             if len(size) == 5:
                 width = int(
@@ -450,11 +450,11 @@ class games(commands.Cog):
             sheet
         )
 
-    @_8ball.error
-    @rollDice.error
-    @flipCoins.error
-    @drawCards.error
-    @summonSheet.error
+    @magic_8_ball.error
+    @roll_dice.error
+    @flip_coins.error
+    @draw_cards.error
+    @bubblewrap.error
     async def error(self, ctx, error):
         if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":
@@ -472,7 +472,7 @@ If my developer (<@!686984544930365440>) is not here, please tell him what the e
 
 def setup(client):
     client.add_cog(
-        games(
+        Games(
             client
         )
     )

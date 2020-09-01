@@ -1,4 +1,5 @@
 import discord
+import sqlite3
 from fnmatch import filter
 from fnmatch import fnmatch
 from discord.utils import get
@@ -6,7 +7,7 @@ from discord.ext import commands
 from json import load
 from random import choice, randint
 
-class noncommands(commands.Cog):
+class NonCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
     name = "non-commands"
@@ -14,19 +15,47 @@ class noncommands(commands.Cog):
     description = "Automatic message responses that aren't commands."
     description_long = description
 
+    def get_options(self, guild):
+        conn = sqlite3.connect(
+            "data/config.db"
+        )
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+        rows = cur.execute(
+            f"SELECT * from options"
+        ).fetchall()
+
+        conn.commit()
+        conn.close()
+
+        currentserver = [
+            server
+            for server in [
+                dict(ix)
+                for ix in rows
+            ]
+            if server["id"] == guild
+            ][0]
+
+        currentserver.pop(
+            "id"
+        )
+
+        return currentserver
+
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        with open(rf"data/servers/{member.guild.id}/config.json", "r") as optionsfile:
-            allOptions = load(
-                optionsfile
-            )
-        if allOptions["welcome"] == True:
+        all_options = self.get_options(member.guild.id)
+        if all_options["welcome"] == 1:
             channelkeys = [
                 "welcome",
                 "arrivals",
                 "entrance",
                 "entry",
                 "log",
+                "living-room",
+                "lobby",
                 "general"
             ]
             possiblechannels = [filter([channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
@@ -55,21 +84,52 @@ class noncommands(commands.Cog):
             )
 
     @commands.Cog.listener()
+    async def on_member_leave(self, member: discord.Member):
+        all_options = self.get_options(member.guild.id)
+        if all_options["welcome"] == 1:
+            channelkeys = [
+                "welcome",
+                "arrivals",
+                "entrance",
+                "entry",
+                "log",
+                "living-room",
+                "lobby",
+                "general"
+            ]
+            possiblechannels = [filter([channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            for channelset in possiblechannels:
+                for channel in channelset:
+                    try:
+                        await get(
+                            member.guild.text_channels,
+                            name = channel
+                        ).send(
+                            f"""See you later, {
+                                member.name
+                            }..."""
+                        )
+                        return
+                    except:
+                        continue
+            print(
+                f"""{
+                    member
+                } has left {
+                    member.guild.name
+                }."""
+            )
+
+    @commands.Cog.listener()
     async def on_message(self, message):
-        try:
-            with open(rf"data/servers/{message.guild.id}/config.json", "r") as optionsfile:
-                allOptions = load(
-                    optionsfile
-                )
-        except:
-            pass
+        all_options = self.get_options(message.guild.id)
 
         if message.author.id == self.client.user.id or message.author.id == 503720029456695306: # that's the ID for Dad Bot, this is to prevent conflict.
             return
 
         # this section is for Dad Bot-like responses
-        if allOptions["dadJokes"] == True:
-            dadPrefixes = [
+        if all_options["dadJokes"] == 1:
+            dad_prefixes = [
                 "I'm",
                 "Im",
                 "I am",
@@ -77,7 +137,7 @@ class noncommands(commands.Cog):
                 "im",
                 "i am"
             ]
-            for dad in dadPrefixes:
+            for dad in dad_prefixes:
                 if dad + " " == message.content[0:len(dad)+1]:
                     if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
                         if "not" in message.content:
@@ -105,19 +165,19 @@ class noncommands(commands.Cog):
                     else:
                         if dad + "a " == message.content[0:len(dad)+2]:
                             await message.channel.send(
-                                f"""Hi {
+                                f"""Hi{
                                     message.content[len(dad)+2:]
                                 }, I'm the Pengaelic Bot!"""
                             )
                         else:
                             await message.channel.send(
-                                f"""Hi {
+                                f"""Hi{
                                     message.content[len(dad):]
                                 }, I'm the Pengaelic Bot!"""
                             )
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
-        if allOptions["censor"] == True:
+        if all_options["censor"] == 1:
             try:
                 open(
                     rf"""data/servers/{
@@ -136,16 +196,13 @@ class noncommands(commands.Cog):
                 all_bads = bads_file.read().split(
                     ", "
                 )
-                if all_bads == [""]:
-                    pass
-                else:
-                    for bad in all_bads:
-                        for word in message.content.split():
-                            if fnmatch(word, bad):
-                                await message.delete()
+                for bad in all_bads:
+                    for word in message.content.split():
+                        if fnmatch(word, bad):
+                            await message.delete()
 
         # this section randomizes yo mama jokes
-        if allOptions["yoMamaJokes"] == True:
+        if all_options["yoMamaJokes"] == 1:
             with open(r"data/Yo Mama Jokes.json", "r") as AllTheJokes:
                 jokes = load(
                     AllTheJokes
@@ -208,7 +265,7 @@ class noncommands(commands.Cog):
             )
 
         # this section makes automatic polls in any validly named channel
-        if allOptions["polls"] == True:
+        if all_options["polls"] == 1:
             channelkeys = [
                 "poll",
                 "petition",
@@ -291,7 +348,7 @@ Say goodbye <:handgun:706698375592149013> """
 
 def setup(client):
     client.add_cog(
-        noncommands(
+        NonCommands(
             client
         )
     )

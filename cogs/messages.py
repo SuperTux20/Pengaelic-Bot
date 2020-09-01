@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice
 
-class messages(commands.Cog):
+class Messages(commands.Cog):
     def __init__(self, client):
         self.client = client
     name = "messages"
@@ -18,7 +18,7 @@ class messages(commands.Cog):
         await ctx.message.delete()
 
     @commands.command(name = "delet", help = "delet this.")
-    async def deletThis(self, ctx):
+    async def delet_this(self, ctx):
         await ctx.message.delete()
         await ctx.send(
             "https://supertux20.github.io/Pengaelic-Bot/images/gifs/no_one_is_safe.gif"
@@ -26,7 +26,7 @@ class messages(commands.Cog):
 
     @commands.command(name = "credits", help = "See who helped me come to exist!")
     async def credits(self, ctx):
-        credits = {
+        bot_credits = {
             "Main Developer and Creator": "chickenmeister",
             "Biggest Helper": "legenden",
             "Super Helpful Friends": "Hyperfresh\nleasip",
@@ -37,10 +37,10 @@ class messages(commands.Cog):
             title = "Credits",
             description = "All the people who helped me be what I am."
         )
-        for cred in credits:
+        for cred in bot_credits:
             embed.add_field(
                 name = cred,
-                value = credits[cred]
+                value = bot_credits[cred]
             )
         await ctx.send(
             embed = embed
@@ -48,7 +48,7 @@ class messages(commands.Cog):
 
 def setup(client):
     client.add_cog(
-        messages(
+        Messages(
             client
         )
     )
