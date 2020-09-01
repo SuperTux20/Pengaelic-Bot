@@ -309,6 +309,8 @@ async def on_guild_join(guild, ctx = None):
         "entrance",
         "entry",
         "log",
+        "living-room",
+        "lobby",
         "general"
     ]
     possiblechannels = [filter([channel.name for channel in guild.text_channels], f"*{channel}*") for channel in channelkeys]
@@ -320,10 +322,6 @@ async def on_guild_join(guild, ctx = None):
                     name = channel
                 ).send(
                     embed = welcomeembed
-                )
-                await ctx.send(
-                    """Be sure to join the Support server for news and updates!
-https://discord.gg/DHHpA7k"""
                 )
                 break
             except:
