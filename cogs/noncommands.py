@@ -269,7 +269,7 @@ class NonCommands(commands.Cog):
             channelkeys = [
                 "poll",
                 "petition",
-                "suggestion",
+                "suggest",
                 "vote",
                 "voting"
             ]
