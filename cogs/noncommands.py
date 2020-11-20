@@ -167,13 +167,13 @@ class NonCommands(commands.Cog):
                             await message.channel.send(
                                 f"""Hi{
                                     message.content[len(dad)+2:]
-                                }, I'm the Pengaelic Bot!"""
+                                }, I'm Pengaelic Bot Nightly!"""
                             )
                         else:
                             await message.channel.send(
                                 f"""Hi{
                                     message.content[len(dad):]
-                                }, I'm the Pengaelic Bot!"""
+                                }, I'm Pengaelic Bot Nightly!"""
                             )
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
@@ -198,7 +198,7 @@ class NonCommands(commands.Cog):
                 )
                 for bad in all_bads:
                     for word in message.content.split():
-                        if fnmatch(word, bad):
+                        if fnmatch(bad, word):
                             await message.delete()
 
         # this section randomizes yo mama jokes
@@ -269,7 +269,7 @@ class NonCommands(commands.Cog):
             channelkeys = [
                 "poll",
                 "petition",
-                "suggest",
+                "suggestion",
                 "vote",
                 "voting"
             ]
@@ -315,7 +315,7 @@ class NonCommands(commands.Cog):
                             continue
 
         # a rickroll-themed game of russian roulette
-        if message.content == "You know the rules" or message.content == "you know the rules":
+        if fnmatch("You know the rules", message.content):
             responses = [
                 "And so do I :pensive:"
                 for _ in range(5)
@@ -323,9 +323,11 @@ class NonCommands(commands.Cog):
             responses.append(
                 choice(
                     [
-                        "It's time to die <:handgun:706698375592149013> ",
+                        "It's time to die <:handgun:706698375592149013>",
                         """And so do I :pensive:
-Say goodbye <:handgun:706698375592149013> """
+Say goodbye <:handgun:706698375592149013>""",
+                        """It's time to die <:handgun:706698375592149013>s
+Say goodbye <:handgun:706698375592149013>"""
                     ]
                 )
             )

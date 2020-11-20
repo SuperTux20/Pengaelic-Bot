@@ -26,9 +26,9 @@ print(
 
 connected = False
 client = commands.Bot(
-    command_prefix = "p!",
+    command_prefix = "pn!",
     case_insensitive = True,
-    description = "Pengaelic Bot",
+    description = "Pengaelic Bot Nightly",
     help_command = None
 )
 print(
@@ -53,11 +53,11 @@ def create_database():
     global database
 
     sql_create_options_table = """CREATE TABLE IF NOT EXISTS options (
-                                    id integer PRIMARY KEY
+                                    id INTEGER PRIMARY KEY
                                     );"""
 
     sql_create_cogs_table = """CREATE TABLE IF NOT EXISTS cogs (
-                                id integer PRIMARY KEY
+                                id INTEGER PRIMARY KEY
                                 );"""
 
     # create a database connection
@@ -90,16 +90,17 @@ def create_options(conn, guild_id):
     :param server:
     :return: server id
     """
-    make_columns = [f"""ALTER TABLE options
-                        ADD COLUMN {option} bool NOT NULL DEFAULT {int(all_options[option])},""" for option in all_options]
-    make_columns[-1] = make_columns[-1][-1]
+    make_columns = [
+        f"""ALTER TABLE options
+            ADD COLUMN {option} BIT NOT NULL DEFAULT {int(all_options[option])};"""
+            for option in all_options
+    ]
     values = ["id"] + list(all_options.keys())
-    add_values = f"""INSERT INTO options{str(tuple(values)).replace("'", "")}
+    add_values = f"""INSERT INTO options {str(tuple(values)).replace("'", "")}
                 VALUES{str(marks + ("?", "?")).replace("'", "")}"""
     cur = conn.cursor()
     for make in make_columns:
         try:
-            print(make)
             cur.execute(make)
             conn.commit()
         except sqlite3.OperationalError:
@@ -117,12 +118,19 @@ def create_cogs(conn, guild_id):
     ]
     cog_defaults = [
         True,
-        False
-    ] + [
+        False,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        False,
+        True,
+        True,
         True
-        for _ in range(7)
     ]
-    cogs = guild_id + tuple(all_cogs.values())
+    cogs = guild_id + tuple(cog_defaults)
     all_cogs.remove("options")
     marks = tuple(
         "?"
@@ -136,10 +144,9 @@ def create_cogs(conn, guild_id):
     """
     make_columns = [
         f"""ALTER TABLE cogs
-            ADD COLUMN {cog} bool NOT NULL DEFAULT {int(cog_defaults[cog])},"""
+            ADD COLUMN {all_cogs[cog]} BIT NOT NULL DEFAULT {int(cog_defaults[cog])};"""
             for cog in range(len(all_cogs))
     ]
-    make_columns[-1] = make_columns[-1][-1]
     values = ["id"] + all_cogs
     add_values = f"""INSERT INTO cogs{str(tuple(values)).replace("'", "")}
                 VALUES{str(marks + ("?", "?")).replace("'", "")}"""
@@ -169,11 +176,11 @@ def get_options(database, table, guild):
     currentserver = [
         server
         for server in [
-            dict(ix)
-            for ix in rows
+            dict(index)
+            for index in rows
         ]
         if server["id"] == guild
-        ][0]
+    ][0]
 
     currentserver.pop(
         "id"
@@ -392,7 +399,7 @@ async def help(ctx):
             title = client.description,
             description = f"""Type `{
                 client.command_prefix
-            }help <lowercase category name without spaces/dashes>` for more info on each category.""",
+            }help **<lowercase category name without spaces or dashes>** for more info on each category.""",
             color = 32639
         ).set_footer(
             text = f"""    Command prefix is {

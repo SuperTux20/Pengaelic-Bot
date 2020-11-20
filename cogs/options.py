@@ -3,11 +3,13 @@ import sqlite3
 from discord.ext import commands
 from discord.utils import get
 from json import load, dump, dumps
+from asyncio import sleep
 
 class Options(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.wipeCensorConfirm = False
+        self.wipe_censor_confirm = False
+        self.reset_options_confirm = False
         self.db = "data/config.db"
     name = "options"
     name_typable = name
@@ -88,66 +90,80 @@ class Options(commands.Cog):
     @commands.command(name = "reset", help = "Reset to the default options.", aliases = ["defaults"])
     @commands.has_permissions(manage_messages = True)
     async def reset_options(self, ctx):
-        conn = sqlite3.connect(
-            self.db
-        )
-        with conn:
-            options = f""" UPDATE options
-                    SET censor = ?,
-                        dadJokes = ?,
-                        polls = ?,
-                        welcome = ?,
-                        yoMamaJokes = ?
-                    WHERE id = {ctx.guild.id}"""
-            cogs = f""" UPDATE cogs
-                    SET actions = ?,
-                        actsofviolence = ?,
-                        converters = ?,
-                        foods = ?,
-                        games = ?,
-                        generators = ?,
-                        interactions = ?,
-                        messages = ?,
-                        oddcommands = ?,
-                        noncommands = ?,
-                        tools = ?
-                    WHERE id = {ctx.guild.id}"""
-            cur = conn.cursor()
-            cur.execute(
-                options,
-                (
-                    1,
-                    0,
-                    0,
-                    1,
-                    0
-                )
+        if self.reset_options_confirm == False:
+            await ctx.send(
+                "Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
             )
-            cur.execute(
-                cogs,
-                (
-                    1,
-                    0,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1,
-                    1
-                )
+            self.reset_options_confirm = True
+            await sleep(
+                10
             )
-            conn.commit()
-        await ctx.send(
-            "Options reset to defaults."
-        )
-        await self.read_options(
-            ctx
-        )
+            self.reset_options_confirm = False
+            await ctx.send(
+                "Pending reset expired."
+            )
+        elif self.reset_options_confirm == True:
+            conn = sqlite3.connect(
+                self.db
+            )
+            with conn:
+                options = f""" UPDATE options
+                        SET censor = ?,
+                            dadJokes = ?,
+                            polls = ?,
+                            welcome = ?,
+                            yoMamaJokes = ?
+                        WHERE id = {ctx.guild.id}"""
+                cogs = f""" UPDATE cogs
+                        SET actions = ?,
+                            actsofviolence = ?,
+                            converters = ?,
+                            foods = ?,
+                            games = ?,
+                            generators = ?,
+                            interactions = ?,
+                            messages = ?,
+                            oddcommands = ?,
+                            noncommands = ?,
+                            tools = ?
+                        WHERE id = {ctx.guild.id}"""
+                cur = conn.cursor()
+                cur.execute(
+                    options,
+                    (
+                        1,
+                        0,
+                        0,
+                        1,
+                        0
+                    )
+                )
+                cur.execute(
+                    cogs,
+                    (
+                        1,
+                        0,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1,
+                        1
+                    )
+                )
+                conn.commit()
+            await ctx.send(
+                "Options reset to defaults."
+            )
+            await self.read_options(
+                ctx
+            )
+            self.reset_options_confirm = False
 
-    @commands.group(name = "toggle", help = "Toggle an option. Type `p!help options toggle` for more info.")
+    @commands.group(name = "toggle", help = "Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
@@ -214,7 +230,7 @@ Type {self.client.command_prefix}options to see their values.
                 False
             )
             await ctx.send(
-                "Bye Dad, I'm the Pengaelic Bot!"
+                "Bye Dad, I'm Pengaelic Bot Nightly!"
             )
         else:
             self.updateOption(
@@ -225,7 +241,7 @@ Type {self.client.command_prefix}options to see their values.
                 True
             )
             await ctx.send(
-                "Hi Dad, I'm the Pengaelic Bot!"
+                "Hi Dad, I'm Pengaelic Bot Nightly!"
             )
 
     @toggle.command(name = "yoMamaJokes", help = "Toggle the automatic Yo Mama jokes.")
@@ -375,7 +391,7 @@ Type {self.client.command_prefix}options to see their values.
                         }"""
                     )
 
-    @censor.command(name = "delete", help = "Remove a word from the censorship filter.", usage = "<one phrase ONLY>")
+    @censor.command(name = "delete", help = "Remove a word from the censorship filter.", usage = "<one phrase ONLY>", aliases = ["remove"])
     @commands.has_permissions(manage_messages = True)
     async def del_censor(self, ctx, word2del):
         with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
@@ -423,12 +439,19 @@ Type {self.client.command_prefix}options to see their values.
     @censor.command(name = "wipe", help = "Clear the censor file.", aliases = ["clear"])
     @commands.has_permissions(manage_messages = True)
     async def wipe_censor(self, ctx):
-        if self.wipeCensorConfirm == False:
+        if self.wipe_censor_confirm == False:
             await ctx.send(
-                "Are you **really** sure you want to clear the censor filter? Type the command again to confirm."
+                "Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds."
             )
-            self.wipeCensorConfirm = True
-        else:
+            self.wipe_censor_confirm = True
+            await sleep(
+                10
+            )
+            self.wipe_censor_confirm = False
+            await ctx.send(
+                "Pending wipe expired."
+            )
+        elif self.wipe_censor_confirm == True:
             open(
                 rf"""data/servers/{
                     ctx.guild.id
@@ -443,9 +466,9 @@ Type {self.client.command_prefix}options to see their values.
                     ctx.guild.name
                 }"""
             )
-            self.wipeCensorConfirm = False
+            self.wipe_censor_confirm = False
 
-    @commands.group(name = "cog", help = "Edit the modules.  Type `p!help options cog` for more info.", aliases = ["module"])
+    @commands.group(name = "cog", help = "Edit the modules.", aliases = ["module"])
     async def modules(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(

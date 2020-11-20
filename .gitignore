@@ -124,8 +124,12 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Configs and data
+# Configs and guild data
 data/
 
-# Batch scripts
+# Scripts
 *.bat
+*.sh
+
+# VS Code configs
+.vscode/
