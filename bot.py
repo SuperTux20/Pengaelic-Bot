@@ -26,9 +26,9 @@ print(
 
 connected = False
 client = commands.Bot(
-    command_prefix = "pn!",
+    command_prefix = "p!",
     case_insensitive = True,
-    description = "Pengaelic Bot Nightly",
+    description = "Pengaelic Bot",
     help_command = None
 )
 print(

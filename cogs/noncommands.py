@@ -167,13 +167,13 @@ class NonCommands(commands.Cog):
                             await message.channel.send(
                                 f"""Hi{
                                     message.content[len(dad)+2:]
-                                }, I'm Pengaelic Bot Nightly!"""
+                                }, I'm the Pengaelic Bot!"""
                             )
                         else:
                             await message.channel.send(
                                 f"""Hi{
                                     message.content[len(dad):]
-                                }, I'm Pengaelic Bot Nightly!"""
+                                }, I'm the Pengaelic Bot!"""
                             )
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
