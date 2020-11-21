@@ -179,27 +179,30 @@ class NonCommands(commands.Cog):
         # this section is to auto-delete messages containing a keyphrase in the censor text file
         if all_options["censor"] == 1:
             try:
-                open(
-                    rf"""data/servers/{
-                        message.guild.id
-                    }/censor.txt""",
-                    "x"
-                ).close()
-                print(
-                    f"""Censor file created for {
-                        message.guild.name
-                    }"""
-                )
+                try:
+                    open(
+                        rf"""data/servers/{
+                            message.guild.id
+                        }/censor.txt""",
+                        "x"
+                    ).close()
+                    print(
+                        f"""Censor file created for {
+                            message.guild.name
+                        }"""
+                    )
+                except FileExistsError:
+                    pass
+                with open(rf"data/servers/{message.guild.id}/censor.txt", "r") as bads_file:
+                    all_bads = bads_file.read().split(
+                        ", "
+                    )
+                    for bad in all_bads:
+                        for word in message.content.split():
+                            if fnmatch(bad, word):
+                                await message.delete()
             except:
                 pass
-            with open(rf"data/servers/{message.guild.id}/censor.txt", "r") as bads_file:
-                all_bads = bads_file.read().split(
-                    ", "
-                )
-                for bad in all_bads:
-                    for word in message.content.split():
-                        if fnmatch(bad, word):
-                            await message.delete()
 
         # this section randomizes yo mama jokes
         if all_options["yoMamaJokes"] == 1:
