@@ -79,8 +79,7 @@ def create_options(conn, guild_id):
         "dadJokes": False,
         "polls": False,
         "welcome": True,
-        "yoMamaJokes": False,
-        "dummytestoption": True
+        "yoMamaJokes": False
     }
     options = guild_id + tuple(all_options.values())
     marks = tuple("?" for _ in range(len(all_options) - 1))
@@ -112,10 +111,10 @@ def create_options(conn, guild_id):
     conn.commit()
 
 def create_cogs(conn, guild_id):
-    all_cogs = [
-        cog[:-3]
+    all_cogs = {
+        cog[1:-3]: cog[0]
         for cog in os.listdir("cogs") if cog[-3:] == ".py"
-    ]
+    }
     cog_defaults = [
         True,
         False,
@@ -131,7 +130,7 @@ def create_cogs(conn, guild_id):
         True
     ]
     cogs = guild_id + tuple(cog_defaults)
-    all_cogs.remove("options")
+    all_cogs.pop("options")
     marks = tuple(
         "?"
         for _ in range(len(all_cogs) - 1)
@@ -144,10 +143,10 @@ def create_cogs(conn, guild_id):
     """
     make_columns = [
         f"""ALTER TABLE cogs
-            ADD COLUMN {all_cogs[cog]} BIT NOT NULL DEFAULT {int(cog_defaults[cog])};"""
-            for cog in range(len(all_cogs))
+            ADD COLUMN {cog} BIT NOT NULL DEFAULT {all_cogs[cog]};"""
+            for cog in all_cogs
     ]
-    values = ["id"] + all_cogs
+    values = ["id"] + list(all_cogs.keys())
     add_values = f"""INSERT INTO cogs{str(tuple(values)).replace("'", "")}
                 VALUES{str(marks + ("?", "?")).replace("'", "")}"""
     cur = conn.cursor()
@@ -156,7 +155,10 @@ def create_cogs(conn, guild_id):
             cur.execute(make)
         except sqlite3.OperationalError:
             pass
-    cur.execute(add_values, cogs)
+    try:
+        cur.execute(add_values, cogs)
+    except sqlite3.IntegrityError:
+        pass
     conn.commit()
 
 def get_options(database, table, guild):
@@ -1106,7 +1108,7 @@ for cog in os.listdir("cogs"):
         )
         print(
             f"""Loaded cog {
-                cog[:-3]
+                cog[1:-3]
             }"""
         )
 
