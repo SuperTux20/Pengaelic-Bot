@@ -190,7 +190,7 @@ class NonCommands(commands.Cog):
                         message.guild.name
                     }"""
                 )
-            except FileExistsError:
+            except:
                 pass
             with open(rf"data/servers/{message.guild.id}/censor.txt", "r") as bads_file:
                 all_bads = bads_file.read().split(
