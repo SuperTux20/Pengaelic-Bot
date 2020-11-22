@@ -23,13 +23,20 @@ dotenv(
 print(
     "Loaded bot token"
 )
-
+intents = discord.Intents(
+    messages = True,
+    guilds = True,
+    members = True,
+    emojis = True,
+    reactions = True
+)
 connected = False
 client = commands.Bot(
-    command_prefix = "p!",
+    command_prefix = "pn!",
     case_insensitive = True,
     description = "Pengaelic Bot",
-    help_command = None
+    help_command = None,
+    intents = intents
 )
 print(
     "Defined client"
@@ -336,17 +343,17 @@ async def on_guild_join(guild, ctx = None):
             except:
                 continue
 
-    # create fresh options column for new server
+    # create fresh options row for new server
     conn = create_connection(database)
     with conn:
         # create a server's configs
-        options = (guild.id, True, False, False, True, False)
+        options = (guild.id)
         create_options(conn, options)
         # cogs
-        cogs = (guild.id, True, False, True, True, True, True, True, True, True, True, True)
+        cogs = (guild.id)
         create_cogs(conn, cogs)
     print(
-        f"""Options column created for {
+        f"""Options row created for {
             guild.name
         }"""
     )
@@ -412,24 +419,18 @@ async def help(ctx):
     [arg (value)] = default value for optional parameter
     (command/command/command) = all aliases you can run the command with"""
         )
-        cogs = [
-            client.get_cog(cog)
-            for cog in [
-                cog[:-3]
-                for cog in os.listdir("./cogs")
-                if cog.endswith(".py")
-            ]
-        ]
+        cogs = dict(client.cogs)
+        cogs.pop("Options")
         for cog in cogs:
-            if get_options(database, "cogs", ctx.guild.id)[cog.name_typable] == True:
+            if get_options(database, "cogs", ctx.guild.id)[cogs[cog].name_typable] == True:
                 help_menu.add_field(
-                    name = cog.name.capitalize(),
-                    value = cog.description
+                    name = cogs[cog].name.capitalize(),
+                    value = cogs[cog].description
                 )
         help_menu.add_field(
             name = "Options",
             value = client.get_cog(
-                "options"
+                "Options"
             ).description
         )
         await ctx.send(embed = help_menu)
@@ -437,7 +438,7 @@ async def help(ctx):
 @help.command(name = "actions")
 async def h_actions(ctx):
     if get_options(database, "cogs", ctx.guild.id)["actions"] == True:
-        cog = client.get_cog("actions")
+        cog = client.get_cog("Actions")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -471,7 +472,7 @@ async def h_actions(ctx):
 @help.command(name = "actsofviolence")
 async def h_actsofviolence(ctx):
     if get_options(database, "cogs", ctx.guild.id)["actsofviolence"] == True:
-        cog = client.get_cog("actsofviolence")
+        cog = client.get_cog("ActsOfViolence")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -505,7 +506,7 @@ async def h_actsofviolence(ctx):
 @help.command(name = "converters")
 async def h_converters(ctx):
     if get_options(database, "cogs", ctx.guild.id)["converters"] == True:
-        cog = client.get_cog("converters")
+        cog = client.get_cog("Converters")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -539,7 +540,7 @@ async def h_converters(ctx):
 @help.command(name = "games")
 async def h_games(ctx):
     if get_options(database, "cogs", ctx.guild.id)["games"] == True:
-        cog = client.get_cog("games")
+        cog = client.get_cog("Games")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -592,7 +593,7 @@ async def h_games(ctx):
 @help.command(name = "interactions")
 async def h_interactions(ctx):
     if get_options(database, "cogs", ctx.guild.id)["interactions"] == True:
-        cog = client.get_cog("interactions")
+        cog = client.get_cog("Interactions")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -626,7 +627,7 @@ async def h_interactions(ctx):
 @help.command(name = "messages")
 async def h_messages(ctx):
     if get_options(database, "cogs", ctx.guild.id)["messages"] == True:
-        cog = client.get_cog("messages")
+        cog = client.get_cog("Messages")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -679,7 +680,7 @@ async def h_messages(ctx):
 @help.command(name = "noncommands")
 async def h_noncommands(ctx):
     if get_options(database, "cogs", ctx.guild.id)["noncommands"] == True:
-        cog = client.get_cog("noncommands")
+        cog = client.get_cog("NonCommands")
         await ctx.send(
             embed = discord.Embed(
                 title = cog.name.capitalize(),
@@ -705,7 +706,7 @@ async def h_noncommands(ctx):
 @help.command(name = "tools")
 async def h_tools(ctx):
     if get_options(database, "cogs", ctx.guild.id)["tools"] == True:
-        cog = client.get_cog("tools")
+        cog = client.get_cog("Tools")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -758,7 +759,7 @@ async def h_tools(ctx):
 @help.command(name = "oddcommands")
 async def h_oddcommands(ctx):
     if get_options(database, "cogs", ctx.guild.id)["oddcommands"] == True:
-        cog = client.get_cog("oddcommands")
+        cog = client.get_cog("OddCommands")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
@@ -811,7 +812,7 @@ async def h_oddcommands(ctx):
 @help.group(name = "options")
 async def h_options(ctx):
     if ctx.invoked_subcommand is None:
-        cog = client.get_cog("options")
+        cog = client.get_cog("Options")
         help_menu = discord.Embed(
             title = cog.name.capitalize(),
             description = cog.description_long,
