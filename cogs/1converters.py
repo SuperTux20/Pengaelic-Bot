@@ -41,19 +41,16 @@ class Converters(commands.Cog):
             ).replace(
                 "twh",
                 "thw"
+            ).replace(
+                "n",
+                "ny"
             ) + " " + choice(
                 [
                     "OwO",
                     "UwU",
                     "owo",
                     "uwu",
-                    "O3O",
-                    "U3U",
-                    "o3o",
-                    "u3u",
-                    "^w^",
-                    "nya~",
-                    "rawr"
+                    "^w^"
                 ]
             )
         )
@@ -189,9 +186,9 @@ class Converters(commands.Cog):
             ctx,
             arg
         )
-        if arg == self.client.user.name or arg == self.client.user.discriminator or arg == self.client.user.mention or arg == self.client.user.id or arg == self.client.user:
+        if self.client.user.mention:
             await ctx.send(
-                "OwO you pet me??? *purrs softly*"
+                "OwO you pet me"
             )
         else:
             to_shuffle = list(
@@ -287,7 +284,7 @@ class Converters(commands.Cog):
             to_convert
         )
 
-    @commands.command(name = "sga", help = "YOOOOOO HE BE SPEAKING ENCHANTING TABLE", aliases = ["enchant", "enchantingtable"])
+    @commands.command(name = "sga", help = "YOOOOOO HE SPEAKING ENCHANTING TABLE", aliases = ["enchant", "enchantingtable"])
     async def sga(self, ctx, *, arg = None):
         arg = await self.test_for_content(
             ctx,

@@ -131,9 +131,15 @@ class NonCommands(commands.Cog):
         if all_options["dadJokes"] == 1:
             dad_prefixes = [
                 "I'm",
+                "I`m",
+                "I‘m",
+                "I’m",
                 "Im",
                 "I am",
                 "i'm",
+                "i`m",
+                "i‘m",
+                "i’m",
                 "im",
                 "i am"
             ]
@@ -181,9 +187,9 @@ class NonCommands(commands.Cog):
             try:
                 try:
                     open(
-                        rf"""data/servers/{
+                        rf"""data/{
                             message.guild.id
-                        }/censor.txt""",
+                        }censor.txt""",
                         "x"
                     ).close()
                     print(
@@ -193,7 +199,7 @@ class NonCommands(commands.Cog):
                     )
                 except FileExistsError:
                     pass
-                with open(rf"data/servers/{message.guild.id}/censor.txt", "r") as bads_file:
+                with open(rf"data/{message.guild.id}censor.txt", "r") as bads_file:
                     all_bads = bads_file.read().split(
                         ", "
                     )
