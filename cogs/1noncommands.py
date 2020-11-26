@@ -130,12 +130,6 @@ class NonCommands(commands.Cog):
         # this section is for Dad Bot-like responses
         if all_options["dadJokes"] == 1:
             dad_prefixes = [
-                "I'm",
-                "I`m",
-                "I‘m",
-                "I’m",
-                "Im",
-                "I am",
                 "i'm",
                 "i`m",
                 "i‘m",
@@ -144,8 +138,8 @@ class NonCommands(commands.Cog):
                 "i am"
             ]
             for dad in dad_prefixes:
-                if dad + " " == message.content[0:len(dad)+1]:
-                    if "Pengaelic Bot" in message.content or "Pengaelic bot" in message.content or "pengaelic bot" in message.content:
+                if dad + " " == message.content[0:len(dad)+1].lower():
+                    if "pengaelic bot" in message.content.lower():
                         if "not" in message.content:
                             await message.channel.send(
                                 "Darn right, you're not!"
@@ -205,7 +199,7 @@ class NonCommands(commands.Cog):
                     )
                     for bad in all_bads:
                         for word in message.content.split():
-                            if fnmatch(bad, word):
+                            if fnmatch(bad.lower(), word.lower()):
                                 await message.delete()
             except:
                 pass
@@ -217,7 +211,7 @@ class NonCommands(commands.Cog):
                     AllTheJokes
                 )
             for mom in jokes:
-                if "Yo mama " == message.content[0:7] or "yo mama " == message.content[0:7]:
+                if "yo mama " == message.content[0:7].lower():
                     if "so " == message.content[8:11]:
                         if message.content[12:] in list(jokes.keys()):
                             if message.content[12:] == mom:
@@ -247,7 +241,7 @@ class NonCommands(commands.Cog):
 
 
         # bro, did someone seriously say the chat was dead?
-        if "dead" in message.content and ("chat" in message.content or "server" in message.content) or "<:deadchat:720311826608291852>" == message.content:
+        if "dead" in message.content.lower() and ("chat" in message.content.lower() or "server" in message.content.lower()):
             await message.channel.send(
                 f"""{
                     choice(
@@ -264,13 +258,6 @@ class NonCommands(commands.Cog):
                         ]
                     )
                 }"""
-            )
-            print(
-                f"""{
-                    message.author
-                } thought that {
-                    message.guild
-                } was a dead server!"""
             )
 
         # this section makes automatic polls in any validly named channel
@@ -303,28 +290,22 @@ class NonCommands(commands.Cog):
                                     icon_url = message.author.avatar_url
                                 )
                             )
-                            await message.delete()
                             await thepoll.add_reaction(
                                 "✅"
                             )
                             await thepoll.add_reaction(
                                 "❌"
                             )
-                            print(
-                                f"""Made {
-                                    message.author
-                                }'s auto-poll in #{
-                                    message.channel
-                                } in {
-                                    message.guild.name
-                                }"""
-                            )
+                            try:
+                                await message.delete()
+                            except:
+                                pass
                             return
                         except:
                             continue
 
         # a rickroll-themed game of russian roulette
-        if fnmatch("You know the rules", message.content):
+        if "You know the rules" == message.content.lower():
             responses = [
                 "And so do I :pensive:"
                 for _ in range(5)
@@ -340,22 +321,9 @@ Say goodbye <:handgun:706698375592149013>"""
                     ]
                 )
             )
-            response = choice(
-                responses
-            )
             await message.channel.send(
-                response
+                choice(responses)
             )
-            if response != "And so do I :pensive:":
-                print(
-                    f"""{
-                        message.author
-                    } got rickrolled in {
-                        message.channel.name
-                    } in #{
-                        message.guild.name
-                    }!""".upper()
-                )
 
 def setup(client):
     client.add_cog(

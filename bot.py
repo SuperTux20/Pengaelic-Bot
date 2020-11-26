@@ -1,9 +1,31 @@
-print(
-    "Loading"
-)
+import os
+info = """
+ ____________
+| ___| | | | |
+|| | |\|_| | |
+||_|_|    \| |
+| ________  \|
+| \_______|  |
+|__\______|__|
+
+Pengaelic Bot - the custom-built Discord bot, coded in Python
+Copyright (C) 2020 Tux Penguin | https://github.com/SuperTux20/Pengaelic-Bot/
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+"""
+os.system("toilet -f standard -F border -F gay Pengaelic Bot")
+print(info)
 import discord
 import sys
-import os
 import sqlite3
 from json import load
 from fnmatch import filter
@@ -32,7 +54,7 @@ intents = discord.Intents(
 )
 connected = False
 client = commands.Bot(
-    command_prefix = "pn!",
+    command_prefix = "p!",
     case_insensitive = True,
     description = "Pengaelic Bot",
     help_command = None,
@@ -164,6 +186,85 @@ def create_cogs(conn, guild_id):
             pass
     try:
         cur.execute(add_values, cogs)
+    except sqlite3.IntegrityError:
+        pass
+    conn.commit()
+
+def create_channels(conn, guild_id):
+    channel_possibilities = {
+        "welcome": [
+            "welcome",
+            "arrivals",
+            "entrance",
+            "entry",
+            "join",
+            "log",
+            "lobby",
+            "general"
+        ],
+        "leave": [
+            "leave",
+            "goodbye",
+            "exit",
+            "log",
+            "lobby",
+            "general"
+        ],
+        "suggestions": [
+            "poll",
+            "petition",
+            "suggest",
+            "suggestion",
+            "suggestions",
+            "server-suggestions",
+            "vote",
+            "voting"
+        ],
+        "commands": [
+            "bot-commands",
+            "commands",
+            "bots"
+        ]
+    }
+    # possiblechannels = [
+    #     filter(
+    #         [
+    #             channel.name
+    #             for channel in message.guild.text_channels
+    #         ],
+    #         f"*{channel}*"
+    #     )
+    #     for category in list(channel_possibilities.values())
+    # ]
+    sadf = [
+        channel
+        for channel in possiblechannels
+    ]
+    options = guild_id + tuple(channel_possibilities.values())
+    marks = tuple("?" for _ in range(len(channel_possibilities) - 1))
+    """
+    Create a new server config set into the options table
+    :param conn:
+    :param server:
+    :return: server id
+    """
+    make_columns = [
+        f"""ALTER TABLE channels
+            ADD COLUMN {channel} NVARCHAR NOT NULL DEFAULT {int(channel_possibilities[option])};"""
+            for channel in channel_possibilities
+    ]
+    values = ["id"] + list(channel_possibilities.keys())
+    add_values = f"""INSERT INTO options {str(tuple(values)).replace("'", "")}
+                VALUES{str(marks + ("?", "?")).replace("'", "")}"""
+    cur = conn.cursor()
+    for make in make_columns:
+        try:
+            cur.execute(make)
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass
+    try:
+        cur.execute(add_values, options)
     except sqlite3.IntegrityError:
         pass
     conn.commit()

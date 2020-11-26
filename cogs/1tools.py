@@ -9,7 +9,7 @@ from json import dumps
 class tools(commands.Cog):
     def __init__(self, client):
         self.client = client
-    purgeconfirm = False
+    nukeconfirm = False
     name = "tools"
     name_typable = name
     description = "Various tools and info."
@@ -129,7 +129,7 @@ class tools(commands.Cog):
         if arg == None:
             await ctx.send("You didn't specify anything to make a poll for!")
         else:
-            thePoll = await ctx.send(
+            the_poll = await ctx.send(
                 embed = discord.Embed(
                     color = randint(
                         0,
@@ -142,11 +142,14 @@ class tools(commands.Cog):
                     icon_url = ctx.author.avatar_url
                 )
             )
-            await ctx.message.delete()
-            await thePoll.add_reaction("✅")
-            await thePoll.add_reaction("❌")\
+            await the_poll.add_reaction("✅")
+            await the_poll.add_reaction("❌")
+            try:
+                await message.delete()
+            except:
+                pass
 
-    @commands.command(name = "clear", help = "Clear some messages away.", aliases = ["delmsgs"], usage = "[number of messages to delete (5)]")
+    @commands.command(name = "clear", help = "Clear some messages away.", aliases = ["delmsgs", "purge"], usage = "[number of messages to delete (5)]")
     @commands.has_permissions(manage_messages = True)
     async def clear(self, ctx, msgcount: int = 5):
         await ctx.channel.purge(
@@ -165,39 +168,39 @@ class tools(commands.Cog):
         except:
             pass
 
-    @commands.command(name = "purge", help = "Purge a channel of EVERYTHING.", aliases = ["wipe", "wipechannel"])
+    @commands.command(name = "nuke", help = "Purge a channel of EVERYTHING.", aliases = ["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels = True)
-    async def purge(self, ctx):
-        if self.purgeconfirm == False:
+    async def nuke(self, ctx):
+        if self.nukeconfirm == False:
             await ctx.send(
-                "Are you **really** sure you want to wipe this channel? Type `p!purge` again to confirm. This will expire in 10 seconds."
+                "Are you **really** sure you want to wipe this channel? Type `p!nuke` again to confirm. This will expire in 10 seconds."
             )
-            self.purgeconfirm = True
+            self.nukeconfirm = True
             await sleep(
                 10
             )
-            self.purgeconfirm = False
+            self.nukeconfirm = False
             await ctx.send(
-                "Pending purge expired."
+                "Pending nuke expired."
             )
-        elif self.purgeconfirm == True:
+        elif self.nukeconfirm == True:
             newchannel = await ctx.channel.clone(
-                reason = f"""Purging #{
+                reason = f"""Nuking #{
                     ctx.channel.name
                 }"""
             )
             await newchannel.edit(
                 position = ctx.channel.position,
-                reason = f"""Purging #{
+                reason = f"""Nuking #{
                     ctx.channel.name
                 }"""
             )
             await ctx.channel.delete(
-                reason = f"""Purged #{
+                reason = f"""Nuked #{
                     ctx.channel.name
                 }"""
             )
-            self.purgeconfirm = False
+            self.nukeconfirm = False
 
     @commands.command(name = "support", help = "Get the invite link to the official support server.", aliases = ["discord"])
     async def support(self, ctx):
@@ -259,8 +262,8 @@ dumps(
                 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
 
-    @purge.error
-    async def purgeError(self, ctx, error):
+    @nuke.error
+    async def nukeError(self, ctx, error):
         if str(error) == "You are missing Manage Channels permission(s) to run this command.":
             await ctx.send(
                 f"""{

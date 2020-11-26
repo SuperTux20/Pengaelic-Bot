@@ -28,14 +28,15 @@ class Messages(commands.Cog):
     async def credits(self, ctx):
         bot_credits = {
             "Main Developer and Creator": "chickenmeister",
+            "Current Host": "Hyperfresh",
             "Biggest Helper": "legenden",
-            "Super Helpful Friends": "Hyperfresh\nleasip",
-            "Dudes From Coding Support": "Satan\nfire\nMoonbase Alpha\nYousef"
+            "Super Helpful Friends": "leasip",
+            "Dudes From **Coding Support**": "Satan\nfire\nMoonbase Alpha\nYousef\nReashetyrr"
         }
         embed = discord.Embed(
             color = 32639,
             title = "Credits",
-            description = "All the people who helped me be what I am."
+            description = "All the peeps on Discord who helped me become what I am today."
         )
         for cred in bot_credits:
             embed.add_field(
