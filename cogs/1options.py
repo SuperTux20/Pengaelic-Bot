@@ -332,7 +332,7 @@ Type {self.client.command_prefix}options to see their values.
     @censor.command(name = "show", help = "Display the contents of the censorship filter.", aliases = ["list", "get"])
     @commands.has_permissions(manage_messages = True)
     async def show_censor(self, ctx):
-        with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
+        with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
             if all_bads.split(', ') == ['']:
                 await ctx.send(
@@ -349,7 +349,7 @@ Type {self.client.command_prefix}options to see their values.
     @censor.command(name = "add", help = "Add a word to the censorship filter.", usage = "<one phrase ONLY>")
     @commands.has_permissions(manage_messages = True)
     async def add_censor(self, ctx, word2add):
-        with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
+        with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
             oneword = []
             if ", " in all_bads:
@@ -378,7 +378,7 @@ Type {self.client.command_prefix}options to see their values.
                     "'",
                     ""
                 )
-                with open(rf"data/servers/{ctx.guild.id}/censor.txt", "w") as bads_file_to:
+                with open(rf"data/{ctx.guild.id}censor.txt", "w") as bads_file_to:
                     bads_file_to.write(
                         finalbads
                     )
@@ -394,7 +394,7 @@ Type {self.client.command_prefix}options to see their values.
     @censor.command(name = "delete", help = "Remove a word from the censorship filter.", usage = "<one phrase ONLY>", aliases = ["remove"])
     @commands.has_permissions(manage_messages = True)
     async def del_censor(self, ctx, word2del):
-        with open(rf"data/servers/{ctx.guild.id}/censor.txt", "r") as bads_file:
+        with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
             oneword = []
             if ", " in all_bads:
@@ -423,7 +423,7 @@ Type {self.client.command_prefix}options to see their values.
                     "'",
                     ""
                 )
-                with open(rf"data/servers/{ctx.guild.id}/censor.txt", "w") as bads_file_to:
+                with open(rf"data/{ctx.guild.id}censor.txt", "w") as bads_file_to:
                     bads_file_to.write(
                         finalbads
                     )
@@ -453,9 +453,7 @@ Type {self.client.command_prefix}options to see their values.
             )
         elif self.wipe_censor_confirm == True:
             open(
-                rf"""data/servers/{
-                    ctx.guild.id
-                }/censor.txt""",
+                rf"data/{ctx.guild.id}censor.txt",
                 "w"
             ).close()
             await ctx.send(
