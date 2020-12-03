@@ -46,11 +46,7 @@ print(
     "Loaded bot token"
 )
 intents = discord.Intents(
-    messages = True,
-    guilds = True,
-    members = True,
-    emojis = True,
-    reactions = True
+    all = True
 )
 connected = False
 client = commands.Bot(
@@ -226,16 +222,16 @@ def create_channels(conn, guild_id):
             "bots"
         ]
     }
-    # possiblechannels = [
-    #     filter(
-    #         [
-    #             channel.name
-    #             for channel in message.guild.text_channels
-    #         ],
-    #         f"*{channel}*"
-    #     )
-    #     for category in list(channel_possibilities.values())
-    # ]
+    possiblechannels = [
+        filter(
+            [
+                channel.name
+                for channel in message.guild.text_channels
+            ],
+            f"*{channel}*"
+        )
+        for channel in list(channel_possibilities.values())
+    ]
     sadf = [
         channel
         for channel in possiblechannels
