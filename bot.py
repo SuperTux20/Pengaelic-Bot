@@ -45,16 +45,13 @@ dotenv(
 print(
     "Loaded bot token"
 )
-intents = discord.Intents(
-    all = True
-)
 connected = False
 client = commands.Bot(
     command_prefix = "p!",
     case_insensitive = True,
     description = "Pengaelic Bot",
     help_command = None,
-    intents = intents
+    intents = discord.Intents.all()
 )
 print(
     "Defined client"
