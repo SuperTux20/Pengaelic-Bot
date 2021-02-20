@@ -1,5 +1,13 @@
 import os
-info = """
+from sys import argv
+if len(argv) == 2:
+    unstable = bool(argv[1])
+elif len(argv) == 1:
+    unstable = False
+else:
+    print("err: too many arguments")
+    exit()
+info = r"""
  ____________
 | ___| | | | |
 || | |\|_| | |
@@ -22,19 +30,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 """
-os.system("toilet -f standard -F border -F gay Pengaelic Bot")
+if unstable:
+    os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
+else:
+    os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
 print(info)
 import discord
 import sys
 import sqlite3
-from json import load
 from fnmatch import filter
 from discord.utils import get
 from discord.ext import commands
 from random import choice, randint
 from dotenv import load_dotenv as dotenv
 from asyncio import sleep
-from time import sleep as realsleep
 print(
     "Imported modules"
 )
@@ -45,14 +54,22 @@ dotenv(
 print(
     "Loaded bot token"
 )
-connected = False
-client = commands.Bot(
-    command_prefix = "p!",
-    case_insensitive = True,
-    description = "Pengaelic Bot",
-    help_command = None,
-    intents = discord.Intents.all()
-)
+if unstable:
+    client = commands.Bot(
+        command_prefix = "pd!",
+        case_insensitive = True,
+        description = "Pengaelic Bot (Unstable Dev Version)",
+        help_command = None,
+        intents = discord.Intents.all()
+    )
+else:
+    client = commands.Bot(
+        command_prefix = "p!",
+        case_insensitive = True,
+        description = "Pengaelic Bot",
+        help_command = None,
+        intents = discord.Intents.all()
+    )
 print(
     "Defined client"
 )
@@ -133,26 +150,12 @@ def create_options(conn, guild_id):
     conn.commit()
 
 def create_cogs(conn, guild_id):
-    all_cogs = {
-        cog[1:-3]: cog[0]
+    all_cogs = [
+        cog[:-3]
         for cog in os.listdir("cogs") if cog[-3:] == ".py"
-    }
-    cog_defaults = [
-        True,
-        False,
-        True,
-        True,
-        True,
-        True,
-        True,
-        True,
-        False,
-        True,
-        True,
-        True
     ]
-    cogs = guild_id + tuple(cog_defaults)
-    all_cogs.pop("options")
+    all_cogs.remove("options")
+    cogs = guild_id + tuple(all_cogs)
     marks = tuple(
         "?"
         for _ in range(len(all_cogs) - 1)
@@ -165,10 +168,10 @@ def create_cogs(conn, guild_id):
     """
     make_columns = [
         f"""ALTER TABLE cogs
-            ADD COLUMN {cog} BIT NOT NULL DEFAULT {all_cogs[cog]};"""
+            ADD COLUMN {cog} BIT NOT NULL DEFAULT 1;"""
             for cog in all_cogs
     ]
-    values = ["id"] + list(all_cogs.keys())
+    values = ["id"] + list(all_cogs)
     add_values = f"""INSERT INTO cogs{str(tuple(values)).replace("'", "")}
                 VALUES{str(marks + ("?", "?")).replace("'", "")}"""
     cur = conn.cursor()
@@ -179,85 +182,6 @@ def create_cogs(conn, guild_id):
             pass
     try:
         cur.execute(add_values, cogs)
-    except sqlite3.IntegrityError:
-        pass
-    conn.commit()
-
-def create_channels(conn, guild_id):
-    channel_possibilities = {
-        "welcome": [
-            "welcome",
-            "arrivals",
-            "entrance",
-            "entry",
-            "join",
-            "log",
-            "lobby",
-            "general"
-        ],
-        "leave": [
-            "leave",
-            "goodbye",
-            "exit",
-            "log",
-            "lobby",
-            "general"
-        ],
-        "suggestions": [
-            "poll",
-            "petition",
-            "suggest",
-            "suggestion",
-            "suggestions",
-            "server-suggestions",
-            "vote",
-            "voting"
-        ],
-        "commands": [
-            "bot-commands",
-            "commands",
-            "bots"
-        ]
-    }
-    possiblechannels = [
-        filter(
-            [
-                channel.name
-                for channel in message.guild.text_channels
-            ],
-            f"*{channel}*"
-        )
-        for channel in list(channel_possibilities.values())
-    ]
-    sadf = [
-        channel
-        for channel in possiblechannels
-    ]
-    options = guild_id + tuple(channel_possibilities.values())
-    marks = tuple("?" for _ in range(len(channel_possibilities) - 1))
-    """
-    Create a new server config set into the options table
-    :param conn:
-    :param server:
-    :return: server id
-    """
-    make_columns = [
-        f"""ALTER TABLE channels
-            ADD COLUMN {channel} NVARCHAR NOT NULL DEFAULT {int(channel_possibilities[option])};"""
-            for channel in channel_possibilities
-    ]
-    values = ["id"] + list(channel_possibilities.keys())
-    add_values = f"""INSERT INTO options {str(tuple(values)).replace("'", "")}
-                VALUES{str(marks + ("?", "?")).replace("'", "")}"""
-    cur = conn.cursor()
-    for make in make_columns:
-        try:
-            cur.execute(make)
-            conn.commit()
-        except sqlite3.OperationalError:
-            pass
-    try:
-        cur.execute(add_values, options)
     except sqlite3.IntegrityError:
         pass
     conn.commit()
@@ -303,7 +227,7 @@ async def status_switcher():
                 "xGravity",
                 "Nick Nitro",
                 "ynk",
-                "KEDD",
+                "KidoKat",
                 "Jesse Cook",
                 "musical rock",
                 "SharaX"
@@ -376,56 +300,38 @@ def remove_duplicates(inlist: list):
 
 @client.event
 async def on_ready():
-    global connected
     global database
     create_database() # just to be sure
+    # create a server's configs
     for guild in client.guilds:
-        conn = create_connection(database)
-        with conn:
-            # create a server's configs
+        with create_connection(database) as conn:
             create_options(conn, tuple([guild.id]))
             create_cogs(conn, tuple([guild.id]))
-    print("Loaded all configs")
-    if connected == False:
-        connectstatus = f"""{
-            client.user
-        } connected to Discord"""
-    else:
-        connectstatus = "Reconnected"
-    print()
-    print(
-        connectstatus
-    )
-    connected = True
+    print("Loaded configs")
+    print(f"{client.description} connected to Discord")
 
 @client.event
-async def on_guild_join(guild, ctx = None):
-    global database
-    print(
-        f"""Joined {
-            guild.name
-        }"""
-    )
-    welcomeembed = discord.Embed(
-        title = "Howdy fellas! I'm the Pengaelic Bot!",
-        description = f"Type `{client.command_prefix}help` for a list of commands.",
-        color = 32639
-    ).set_thumbnail(
-        url = client.user.avatar_url
-    )
-    channelkeys = [
-        "welcome",
-        "arrivals",
-        "entrance",
-        "entry",
-        "log",
-        "living-room",
-        "lobby",
-        "general"
-    ]
-    possiblechannels = [filter([channel.name for channel in guild.text_channels], f"*{channel}*") for channel in channelkeys]
-    for channelset in possiblechannels:
-        for channel in channelset:
+async def on_guild_join(guild, auto = True):
+    global unstable
+    if not unstable:
+        global database
+        print(f"Joined {guild.name}")
+        welcomeembed = discord.Embed(
+            title = "Howdy fellas! I'm the Pengaelic Bot!",
+            description = f"Type `{client.command_prefix}help` for a list of commands.",
+            color = 32639
+        ).set_thumbnail(
+            url = client.user.avatar_url
+        )
+        possiblechannels = [
+            "general",
+            "general-1",
+            "general-2"
+        ]
+        for channel in possiblechannels:
+            succ = False
+            if succ:
+                break
             try:
                 await get(
                     guild.text_channels,
@@ -433,24 +339,20 @@ async def on_guild_join(guild, ctx = None):
                 ).send(
                     embed = welcomeembed
                 )
+                succ = True
                 break
             except:
                 continue
-
-    # create fresh options row for new server
-    conn = create_connection(database)
-    with conn:
-        # create a server's configs
-        options = (guild.id)
-        create_options(conn, options)
-        # cogs
-        cogs = (guild.id)
-        create_cogs(conn, cogs)
-    print(
-        f"""Options row created for {
-            guild.name
-        }"""
-    )
+        if auto:
+            # create fresh options row for new server
+            with create_connection(database) as conn:
+                # create a server's configs
+                options = (guild.id)
+                create_options(conn, options)
+                # cogs
+                cogs = (guild.id)
+                create_cogs(conn, cogs)
+            print(f"Options row created for {guild.name}")
 
 @client.event
 async def on_command_error(ctx, error):
@@ -459,18 +361,12 @@ async def on_command_error(ctx, error):
         # ...send the global error
         if "is not found" in str(error):
             await ctx.send(
-                f"""Invalid command/usage. Type `{
-                    client.command_prefix
-                }help` for a list of commands and their usages."""
+                f"""Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages."""
             )
             print(
                 "Invalid command {}{} sent in {} in #{} by {}#{}".format(
                     client.command_prefix,
-                    str(
-                        error
-                    ).split(
-                        '"'
-                    )[1],
+                    str(error).split('"')[1],
                     ctx.guild,
                     ctx.channel,
                     ctx.message.author.name,
@@ -489,9 +385,7 @@ async def on_command_error(ctx, error):
 
 @client.command(name = "join", help = "Show the join message if it doesn't show up automatically")
 async def redo_welcome(ctx):
-    await on_guild_join(
-        ctx.guild, ctx.channel
-    )
+    await on_guild_join(ctx.guild, False)
     await ctx.message.delete()
 
 @client.group(name = "help", help = "Show this message", aliases = ["commands", "h", "?"])
@@ -1196,16 +1090,8 @@ async def restart(ctx):
 # load all the cogs
 for cog in os.listdir("cogs"):
     if cog.endswith(".py"):
-        client.load_extension(
-            f"""cogs.{
-                cog[:-3]
-            }"""
-        )
-        print(
-            f"""Loaded cog {
-                cog[1:-3]
-            }"""
-        )
+        client.load_extension(f"cogs.{cog[:-3]}")
+        print(f"Loaded cog {cog[:-3]}")
 
 client.loop.create_task(
     status_switcher()

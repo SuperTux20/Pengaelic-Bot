@@ -14,17 +14,17 @@ class Interactions(commands.Cog):
     description_long = description
 
     async def act(self, ctx, selfresponses, act, pastact, acting, actee: discord.Member = None):
-        if not actee.bot:
-            actor = ctx.author.display_name.replace(
-                "_",
-                r"\_"
-            )
-            for char in self.formatChars:
-                actor = actor.replace(
-                    char,
-                    "\\" + char
+        if actee:
+            if not actee.bot:
+                actor = ctx.author.display_name.replace(
+                    "_",
+                    r"\_"
                 )
-            try:
+                for char in self.formatChars:
+                    actor = actor.replace(
+                        char,
+                        "\\" + char
+                    )
                 acted = actee.display_name.replace(
                     "_",
                     r"\_"
@@ -34,63 +34,41 @@ class Interactions(commands.Cog):
                         char,
                         "\\" + char
                     )
-            except:
-                await ctx.send(
-                    f"""You can't just {
-                        act
-                    } thin air! (Unless you're {
-                        acting
-                    } a ghost?)"""
-                )
-                return
-            responses = [
-                f"""{
-                    acted
-                } just got {
-                    pastact
-                } by {
-                    actor
-                }""",
-
-                f"""{
-                    actor
-                } {
-                    pastact
-                } {
-                    acted
-                }"""
-            ]
-            if actee == ctx.author:
-                await ctx.send(choice(selfresponses)
-                )
-            else:
-                await ctx.send(
-                    embed = discord.Embed(
-                        title = choice(
-                            responses
-                        ),
-                        color = self.cyan
-                    ).set_image(
-                        url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{
-                            act
-                        }/{
-                            randint(
-                                1,
-                                len(
-                                    listdir(
-                                        f'''../Pengaelic-Bot/images/gifs/{
-                                            act
-                                        }'''
-                                    )
-                                )-1
-                            )
-                        }.gif"""
+                responses = [
+                    f"""{acted} just got {pastact} by {actor}""",
+                    f"""{actor} {pastact} {acted}"""
+                ]
+                if actee == ctx.author:
+                    await ctx.send(choice(selfresponses)
                     )
-                )
+                else:
+                    await ctx.send(
+                        embed = discord.Embed(
+                            title = choice(
+                                responses
+                            ),
+                            color = self.cyan
+                        ).set_image(
+                            url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{        act
+                            }/{        randint(
+                                    1,
+                                    len(
+                                        listdir(
+                                            f'../Pengaelic-Bot/images/gifs/{act}'
+                                        )
+                                    )-1
+                                )
+                            }.gif"""
+                        )
+                    )
+            else:
+                await ctx.send(f"Sorry, you can't {act} bots...")
+                if actee.id == self.client.user.id:
+                    await ctx.send(f"Thanks anyway.")
         else:
-            await ctx.send(f"Sorry, you can't {act} bots...")
-            if actee.id == self.client.user.id:
-                await ctx.send(f"Thanks anyway.")
+            await ctx.send(
+                f"""You can't just {act} thin air! (Unless you're {acting} a ghost?)"""
+            )
 
     @commands.command(name = "hug", help = "Give somebody a hug!")
     async def hug(self, ctx, *, hug: discord.Member = None):
@@ -113,15 +91,13 @@ class Interactions(commands.Cog):
             ctx,
             [
                 "You boop your own nose, I guess...? ",
-                f"""You miss your nose and poke yourself in the eye. {
-                    choice(
+                f"""You miss your nose and poke yourself in the eye. {choice(
                         [
                             'Ouch',
                             'Oops',
                             'Whoops'
                         ]
-                    )
-                }!""",
+                    )}!""",
                 "Somehow, your hand clips through your nose and appears on the other side of your head. "
             ],
             "boop",
@@ -168,7 +144,7 @@ class Interactions(commands.Cog):
                 "You kiss your reflection in the mirror.",
                 "You kiss the back of your own hand."
             ],
-            "kiss"
+            "kiss",
             "kissed",
             "kissing",
             kiss
