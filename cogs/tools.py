@@ -25,15 +25,9 @@ class tools(commands.Cog):
         await ctx.send(
             embed=discord.Embed(
                 title=":ping_pong: Pong!",
-                description=f"""{
-                    round(
-                        self.client.latency * 1000
-                    )
-                } ms""",
+                description=f"{round(self.client.latency * 1000)} ms",
                 color=32639
-            ).set_image(
-                url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif"
-            )
+            ).set_image(url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif")
         )
 
     @commands.command(name="test", help="Am I online? I'm not sure.")
@@ -56,9 +50,7 @@ class tools(commands.Cog):
                 )
             else:
                 embed = discord.Embed(
-                    title=f"""Here's {
-                        member.display_name
-                    }'s avatar!""",
+                    title=f"Here's {member.display_name}'s avatar!",
                     color=32639
                 )
         embed.set_image(url=avatar2get.avatar_url)
@@ -146,7 +138,7 @@ class tools(commands.Cog):
             await the_poll.add_reaction("✅")
             await the_poll.add_reaction("❌")
             try:
-                await message.delete()
+                await ctx.message.delete()
             except:
                 pass
 
