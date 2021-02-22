@@ -112,6 +112,7 @@ def create_options(conn, guild_id):
     all_options = {
         "censor": True,
         "dadJokes": False,
+        "JSONmenus": False,
         "polls": False,
         "welcome": True,
         "yoMamaJokes": False
@@ -141,44 +142,6 @@ def create_options(conn, guild_id):
             pass
     try:
         cur.execute(add_values, options)
-    except sqlite3.IntegrityError:
-        pass
-    conn.commit()
-
-
-def create_cogs(conn, guild_id):
-    all_cogs = [
-        cog[:-3]
-        for cog in os.listdir("cogs") if cog[-3:] == ".py"
-    ]
-    all_cogs.remove("options")
-    cogs = guild_id + tuple(all_cogs)
-    marks = tuple(
-        "?"
-        for _ in range(len(all_cogs) - 1)
-    )
-    """
-    Create a new cogs config set into the cogs table
-    :param conn:
-    :param cogs:
-    :return: server id
-    """
-    make_columns = [
-        f"""ALTER TABLE cogs
-            ADD COLUMN {cog} BIT NOT NULL DEFAULT 1;"""
-        for cog in all_cogs
-    ]
-    values = ["id"] + list(all_cogs)
-    add_values = f"""INSERT INTO cogs{str(tuple(values)).replace("'", "")}
-                VALUES{str(marks + ("?", "?")).replace("'", "")}"""
-    cur = conn.cursor()
-    for make in make_columns:
-        try:
-            cur.execute(make)
-        except sqlite3.OperationalError:
-            pass
-    try:
-        cur.execute(add_values, cogs)
     except sqlite3.IntegrityError:
         pass
     conn.commit()
@@ -285,7 +248,6 @@ async def on_ready():
     for guild in client.guilds:
         with create_connection(database) as conn:
             create_options(conn, tuple([guild.id]))
-            create_cogs(conn, tuple([guild.id]))
     print("Loaded configs")
     print(f"{client.description} connected to Discord")
 
@@ -325,9 +287,6 @@ async def on_guild_join(guild, auto=True):
                 # create a server's configs
                 options = (guild.id)
                 create_options(conn, options)
-                # cogs
-                cogs = (guild.id)
-                create_cogs(conn, cogs)
             print(f"Options row created for {guild.name}")
 
 if unstable == False:

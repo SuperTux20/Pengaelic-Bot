@@ -1,4 +1,5 @@
 import sqlite3
+import discord
 from discord.ext import commands
 from json import dumps
 from asyncio import sleep
@@ -10,6 +11,7 @@ class Options(commands.Cog):
         self.wipe_censor_confirm = False
         self.reset_options_confirm = False
         self.db = "data/config.db"
+        self.cyan = 32639
     name = "options"
     name_typable = name
     description = "My settings."
@@ -31,20 +33,13 @@ class Options(commands.Cog):
             )
             conn.commit()
 
-    def get_options(self, database, table, guild):
-        conn = sqlite3.connect(
-            database
-        )
+    def get_options(self, database, guild):
+        conn = sqlite3.connect(database)
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-
-        rows = cur.execute(
-            f"SELECT * from {table}"
-        ).fetchall()
-
+        rows = cur.execute("SELECT * from options").fetchall()
         conn.commit()
         conn.close()
-
         currentserver = [
             server
             for server in [
@@ -53,79 +48,60 @@ class Options(commands.Cog):
             ]
             if server["id"] == guild
         ][0]
-
-        currentserver.pop(
-            "id"
-        )
-
+        currentserver.pop("id")
         return currentserver
 
     @commands.command(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
-        await ctx.send(
-            f"""```json
-{
-    dumps(
-        [
-            "Options",
-            self.get_options(
-                self.db,
-                "options",
-                ctx.guild.id
-            ),
-            "Cogs",
-            self.get_options(
-                self.db,
-                "cogs",
-                ctx.guild.id
-            )
-        ],
-        indent = 4
-    )
-}
-```"""
+        options = self.get_options(
+            self.db,
+            ctx.guild.id
         )
+        jsoninfo = str(
+            dumps(
+                {"options": options},
+                sort_keys=True,
+                indent=4
+            )[6:-2].replace("\n    ", "\n")
+        )
+        embedinfo = discord.Embed(
+            title="Options",
+            color=self.cyan
+        )
+        for option in options:
+            embedinfo.add_field(
+                name=option,
+                value=str(options[option]).replace(
+                    "0", "disabled").replace("1", "enabled"),
+                inline=False
+            )
+        if self.get_options(self.db, ctx.guild.id)["JSONmenus"]:
+            await ctx.send(f"""```json
+{jsoninfo}
+```""")
+        else:
+            await ctx.send(embed=embedinfo)
 
     @commands.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
     @commands.has_permissions(manage_messages=True)
     async def reset_options(self, ctx):
         if self.reset_options_confirm == False:
-            await ctx.send(
-                "Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
-            )
+            await ctx.send("Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds.")
             self.reset_options_confirm = True
-            await sleep(
-                10
-            )
+            await sleep(10)
             self.reset_options_confirm = False
-            await ctx.send(
-                "Pending reset expired."
-            )
+            await ctx.send("Pending reset expired.")
         elif self.reset_options_confirm == True:
-            conn = sqlite3.connect(
-                self.db
-            )
+            conn = sqlite3.connect(self.db)
             with conn:
                 options = f""" UPDATE options
                         SET censor = ?,
                             dadJokes = ?,
+                            JSONmenus = ?,
                             polls = ?,
                             welcome = ?,
                             yoMamaJokes = ?
-                        WHERE id = {ctx.guild.id}"""
-                cogs = f""" UPDATE cogs
-                        SET actions = ?,
-                            actsofviolence = ?,
-                            converters = ?,
-                            foods = ?,
-                            games = ?,
-                            generators = ?,
-                            interactions = ?,
-                            messages = ?,
-                            oddcommands = ?,
-                            noncommands = ?,
-                            tools = ?
                         WHERE id = {ctx.guild.id}"""
                 cur = conn.cursor()
                 cur.execute(
@@ -134,24 +110,9 @@ class Options(commands.Cog):
                         1,
                         0,
                         0,
-                        1,
-                        0
-                    )
-                )
-                cur.execute(
-                    cogs,
-                    (
-                        1,
                         0,
                         1,
-                        1,
-                        1,
-                        1,
-                        1,
-                        1,
-                        1,
-                        1,
-                        1
+                        0
                     )
                 )
                 conn.commit()
@@ -175,8 +136,7 @@ Available options are as follows...
     str(
         list(
             self.get_options(
-                'data/config.db',
-                'options',
+                self.db,
                 ctx.guild.id
             ).keys()
         )
@@ -195,7 +155,7 @@ Type {self.client.command_prefix}options to see their values.
     @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
-        if self.get_options(self.db, "options", ctx.guild.id)["censor"] == 1:
+        if self.get_options(self.db, ctx.guild.id)["censor"] == 1:
             self.updateOption(
                 self.db,
                 "options",
@@ -221,7 +181,7 @@ Type {self.client.command_prefix}options to see their values.
     @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
-        if self.get_options(self.db, "options", ctx.guild.id)["dadJokes"] == 1:
+        if self.get_options(self.db, ctx.guild.id)["dadJokes"] == 1:
             self.updateOption(
                 self.db,
                 "options",
@@ -247,7 +207,7 @@ Type {self.client.command_prefix}options to see their values.
     @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_yo_mama_jokes(self, ctx):
-        if self.get_options(self.db, "options", ctx.guild.id)["yoMamaJokes"] == 1:
+        if self.get_options(self.db, ctx.guild.id)["yoMamaJokes"] == 1:
             self.updateOption(
                 self.db,
                 "options",
@@ -273,7 +233,7 @@ Type {self.client.command_prefix}options to see their values.
     @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
-        if self.get_options(self.db, "options", ctx.guild.id)["welcome"] == 1:
+        if self.get_options(self.db, ctx.guild.id)["welcome"] == 1:
             self.updateOption(
                 self.db,
                 "options",
@@ -299,7 +259,7 @@ Type {self.client.command_prefix}options to see their values.
     @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_polls(self, ctx):
-        if self.get_options(self.db, "options", ctx.guild.id)["polls"] == 1:
+        if self.get_options(self.db, ctx.guild.id)["polls"] == 1:
             self.updateOption(
                 self.db,
                 "options",
@@ -320,6 +280,32 @@ Type {self.client.command_prefix}options to see their values.
             )
             await ctx.send(
                 "Polls turned on."
+            )
+
+    @toggle.command(name="JSONmenus", help="Change whether menus should be shown in embed or JSON format.")
+    @commands.has_permissions(manage_messages=True)
+    async def toggle_json(self, ctx):
+        if self.get_options(self.db, ctx.guild.id)["JSONmenus"] == 1:
+            self.updateOption(
+                self.db,
+                "options",
+                ctx.guild.id,
+                "JSONmenus",
+                False
+            )
+            await ctx.send(
+                "Menus will be shown in embed format."
+            )
+        else:
+            self.updateOption(
+                self.db,
+                "options",
+                ctx.guild.id,
+                "JSONmenus",
+                True
+            )
+            await ctx.send(
+                "Menus will be shown in JSON format."
             )
 
     @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
@@ -466,175 +452,12 @@ Type {self.client.command_prefix}options to see their values.
             )
             self.wipe_censor_confirm = False
 
-    @commands.group(name="cog", help="Edit the modules.", aliases=["module"])
-    async def modules(self, ctx):
-        if ctx.invoked_subcommand is None:
-            await ctx.send(
-                "Available options: `list`, `(load/enable)`, `(unload/disable)`"
-            )
-
-    @modules.command(name="list", help="See a list of all cogs and their statuses.")
-    @commands.has_permissions(manage_messages=True)
-    async def list_cogs(self, ctx, cog2load=None):
-        await ctx.send(
-            """```fix
-Available cogs are as follows...
-```"""
-            f"""```ini
-[ {
-    str(
-        list(
-            self.get_options(
-                'data/config.db',
-                'cogs',
-                ctx.guild.id
-            ).keys()
-        )
-    ).replace(
-        "'",
-        ""
-    )[1:-1]
-} ]
-```"""
-            f"""```fix
-Type {self.client.command_prefix}cog load <cog> to enable it.
-Type {self.client.command_prefix}cog unload <cog> to disable it.
-```"""
-        )
-
-    @modules.command(name="load", help="Load a cog.", usage="[cog to load]", aliases=["enable"])
-    @commands.has_permissions(manage_messages=True)
-    async def enable_cog(self, ctx, cog2load=None):
-        cogs = self.get_options(
-            self.db,
-            "cogs",
-            ctx.guild.id
-        )
-        inactivecogs = [
-            cog
-            for cog in cogs
-            if cogs[cog] == False
-        ]
-
-        if len(inactivecogs) == 0:
-            await ctx.send(
-                "All cogs are already loaded, you can't load any more."
-            )
-        else:
-            if cog2load:
-                try:
-                    self.updateOption(
-                        self.db,
-                        "cogs",
-                        ctx.guild.id,
-                        cog2load,
-                        True
-                    )
-                    await ctx.send(
-                        f"""Cog `{
-                            cog2load
-                        }` loaded. Type `{self.client.command_prefix}!help {
-                            cog2load
-                        }` to see how it works.""")
-                    print(
-                        f"""Cog '{
-                            cog2load
-                        }' loaded for {
-                            ctx.guild.name
-                        }""")
-                except sqlite3.OperationalError:
-                    await ctx.send(
-                        f"""Invalid cog `{
-                            cog2load
-                        }`"""
-                    )
-            else:
-                await ctx.send(
-                    """Please specify a cog to load. Avaliable options are
-```ini
-[ {} ]
-```""".format(
-                        str(
-                            inactivecogs
-                        )[1:-1].replace(
-                            "'",
-                            ""
-                        )
-                    )
-                )
-
-    @modules.command(name="unload", help="Unload a cog.", usage="[cog to unload]", aliases=["disable"])
-    @commands.has_permissions(manage_messages=True)
-    async def disable_cog(self, ctx, cog2unload=None):
-        cogs = self.get_options(
-            self.db,
-            "cogs",
-            ctx.guild.id
-        )
-        activecogs = [
-            cog
-            for cog in cogs
-            if cogs[cog] == True
-        ]
-
-        if len(activecogs) == 0:
-            await ctx.send(
-                "No cogs are loaded, you can't unload any more."
-            )
-        else:
-            if cog2unload:
-                try:
-                    _ = self.get_options(self.db, "cogs", ctx.guild.id)[
-                        cog2unload]
-                    self.updateOption(
-                        self.db,
-                        "cogs",
-                        ctx.guild.id,
-                        cog2unload,
-                        False
-                    )
-                    await ctx.send(
-                        f"""Cog `{
-                            cog2unload
-                        }` unloaded."""
-                    )
-                    print(
-                        f"""Cog '{
-                            cog2unload
-                        }' unloaded for {
-                            ctx.guild.name
-                        }"""
-                    )
-                except sqlite3.OperationalError:
-                    await ctx.send(
-                        f"""Invalid cog `{
-                            cog2unload
-                        }`"""
-                    )
-            else:
-                await ctx.send(
-                    """Please specify a cog to load. Avaliable options are
-```ini
-[ {} ]
-```""".format(
-                        str(
-                            activecogs
-                        )[1:-1].replace(
-                            "'",
-                            ""
-                        )
-                    )
-                )
-
     @reset_options.error
     @toggle_censor.error
     @toggle_dad_jokes.error
     @toggle_yo_mama_jokes.error
     @toggle_welcome.error
     @toggle_polls.error
-    @list_cogs.error
-    @enable_cog.error
-    @disable_cog.error
     @censor.error
     @show_censor.error
     @add_censor.error

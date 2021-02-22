@@ -1,5 +1,6 @@
 import discord
 import platform
+import sqlite3
 from discord.ext import commands
 from discord.utils import get
 from asyncio import sleep
@@ -16,6 +17,24 @@ class tools(commands.Cog):
     name_typable = name
     description = "Various tools and info."
     description_long = description
+
+    def get_options(self, database, guild):
+        conn = sqlite3.connect(database)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        rows = cur.execute("SELECT * from options").fetchall()
+        conn.commit()
+        conn.close()
+        currentserver = [
+            server
+            for server in [
+                dict(ix)
+                for ix in rows
+            ]
+            if server["id"] == guild
+        ][0]
+        currentserver.pop("id")
+        return currentserver
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
@@ -224,7 +243,7 @@ https://discord.gg/DHHpA7k"""
                         "server name": ctx.guild.name,
                         "server owner": f"{ctx.guild.owner.nick} ({ctx.guild.owner.name}#{ctx.guild.owner.discriminator})",
                         "server id": ctx.guild.id,
-                        "two-factor authentication": bool(ctx.guild.mfa_level),
+                        "two-factor authentication": str(bool(ctx.guild.mfa_level)),
                         "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
                     },
                     "levels": {
@@ -241,43 +260,45 @@ https://discord.gg/DHHpA7k"""
                         "emojis": len(ctx.guild.emojis)
                     }
                 },
-                sort_keys=False,
                 indent=4
-            )[6:-2].replace("\n    ", "\n")
+            ).replace("False", "disabled").replace("True", "enabled")
         )
-        await ctx.send(
-            f"""server information
+        embedinfo = discord.Embed(
+            title="Server Details",
+            color=self.cyan
+        ).add_field(
+            name="Basic Info",
+            value=f"""Server Name: {ctx.guild.name}
+                Server Owner: "{ctx.guild.owner.nick}" (`{ctx.guild.owner.name}#{ctx.guild.owner.discriminator}`)
+                Server Id: `{ctx.guild.id}`
+                Two-factor Authentication: {bool(ctx.guild.mfa_level)}
+                Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""",
+            inline=False
+        ).add_field(
+            name="Levels",
+            value=f"""Verification Level: {ctx.guild.verification_level[0]} (level {ctx.guild.verification_level[1]+1}),
+                Notification Level: {ctx.guild.default_notifications[0].replace('_',' ')} (level {ctx.guild.default_notifications[1]+1}),
+                Content Filter: {ctx.guild.explicit_content_filter[0].replace('_',' ')} (level {ctx.guild.explicit_content_filter[1]+1})""",
+            inline=False
+        ).add_field(
+            name="Counts",
+            value=f"""Members: {ctx.guild.member_count}
+                Boosters: {ctx.guild.premium_subscription_count}
+                Text Channels: {len(ctx.guild.text_channels)}
+                Voice Channels: {len(ctx.guild.voice_channels)}
+                Channel Categories: {len(ctx.guild.categories)}
+                Emojis: {len(ctx.guild.emojis)}""",
+            inline=False
+        )
+        if self.get_options("data/config.db", ctx.guild.id)["JSONmenus"]:
+            await ctx.send(
+                f"""
 ```json
-{jsoninfo}
-```""",
-            # embed=discord.Embed(
-            #     title="Server Details",
-            #     color=self.cyan
-            # ).add_field(
-            #     name="Basic Info",
-            #     value=f"""Server Name: {ctx.guild.name}
-            #     Server Owner: "{ctx.guild.owner.nick}" (`{ctx.guild.owner.name}#{ctx.guild.owner.discriminator}`)
-            #     Server Id: `{ctx.guild.id}`
-            #     Two-factor Authentication: {bool(ctx.guild.mfa_level)}
-            #     Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""",
-            #     inline=False
-            # ).add_field(
-            #     name="Levels",
-            #     value=f"""Verification Level: {ctx.guild.verification_level[0]} (level {ctx.guild.verification_level[1]+1}),
-            #     Notification Level: {ctx.guild.default_notifications[0].replace('_',' ')} (level {ctx.guild.default_notifications[1]+1}),
-            #     Content Filter: {ctx.guild.explicit_content_filter[0].replace('_',' ')} (level {ctx.guild.explicit_content_filter[1]+1})""",
-            #     inline=False
-            # ).add_field(
-            #     name="Counts",
-            #     value=f"""Members: {ctx.guild.member_count}
-            #     Boosters: {ctx.guild.premium_subscription_count}
-            #     Text Channels: {len(ctx.guild.text_channels)}
-            #     Voice Channels: {len(ctx.guild.voice_channels)}
-            #     Channel Categories: {len(ctx.guild.categories)}
-            #     Emojis: {len(ctx.guild.emojis)}""",
-            #     inline=False
-            # )
-        )
+"server information": {jsoninfo}
+```"""
+            )
+        else:
+            await ctx.send(embed=embedinfo)
 
     @clear.error
     async def clearError(self, ctx, error):
