@@ -376,10 +376,15 @@ async def help(ctx):
         cogs.pop("Options")
         for cog in cogs:
             if get_options(database, "cogs", ctx.guild.id)[cogs[cog].name_typable] == True:
-                help_menu.add_field(name=cogs[cog].name.capitalize(),
-                                    value=cogs[cog].description)
-        help_menu.add_field(name="Options",
-                            value=client.get_cog("Options").description)
+                help_menu.add_field(
+                    name=cogs[cog].name.capitalize(),
+                    value=cogs[cog].description
+                )
+        help_menu.add_field(
+            name="Options",
+            value=client.get_cog("Options").description,
+            inline=False
+        )
         await ctx.send(embed=help_menu)
 
 

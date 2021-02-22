@@ -10,6 +10,7 @@ from json import dumps
 class tools(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.cyan = 32639
     nukeconfirm = False
     name = "tools"
     name_typable = name
@@ -166,7 +167,7 @@ class tools(commands.Cog):
     async def nuke(self, ctx):
         if self.nukeconfirm == False:
             await ctx.send(
-                "Are you **really** sure you want to wipe this channel? Type `p!nuke` again to confirm. This will expire in 10 seconds."
+                f"Are you **really** sure you want to wipe this channel? Type `{self.client.command_prefix}nuke` again to confirm. This will expire in 10 seconds."
             )
             self.nukeconfirm = True
             await sleep(
@@ -205,37 +206,77 @@ https://discord.gg/DHHpA7k"""
     @commands.command(name="invite", help="Invite me to your server!", aliases=["inviteme"])
     async def invite(self, ctx):
         await ctx.send(
-            """Can I come on to your server?
-https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot"""
+            embed=discord.Embed(
+                color=self.cyan,
+                title="Can I come on to your server?",
+                description="[Click here to invite me!](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot)"
+            )
         )
 
     @commands.command(name="server", help="See a bunch of data about the server at a glance.", aliases=["info"])
     @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
+        creation = ctx.guild.created_at
+        jsoninfo = str(
+            dumps(
+                {
+                    "basic info": {
+                        "server name": ctx.guild.name,
+                        "server owner": f"{ctx.guild.owner.nick} ({ctx.guild.owner.name}#{ctx.guild.owner.discriminator})",
+                        "server id": ctx.guild.id,
+                        "two-factor authentication": bool(ctx.guild.mfa_level),
+                        "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
+                    },
+                    "levels": {
+                        "verification level": f"{ctx.guild.verification_level[0]} (level {ctx.guild.verification_level[1]+1})",
+                        "notification level": f"{ctx.guild.default_notifications[0].replace('_',' ')} (level {ctx.guild.default_notifications[1]+1})",
+                        "content filter": f"{ctx.guild.explicit_content_filter[0].replace('_',' ')} (level {ctx.guild.explicit_content_filter[1]+1})"
+                    },
+                    "counts": {
+                        "members": ctx.guild.member_count,
+                        "boosters": ctx.guild.premium_subscription_count,
+                        "text channels": len(ctx.guild.text_channels),
+                        "voice channels": len(ctx.guild.voice_channels),
+                        "channel categories": len(ctx.guild.categories),
+                        "emojis": len(ctx.guild.emojis)
+                    }
+                },
+                sort_keys=False,
+                indent=4
+            )[6:-2].replace("\n    ", "\n")
+        )
         await ctx.send(
-            f"""```json
-{
-dumps(
-    {
-        "server name": ctx.guild.name,
-        "server owner": ctx.guild.owner.name + "#" + ctx.guild.owner.discriminator,
-        "amounts": {
-            "members": ctx.guild.member_count,
-            "boosters": len(
-                ctx.guild.premium_subscribers
-            ), "text channels": len(
-                ctx.guild.text_channels
-            ),
-            "emojis": len(
-                ctx.guild.emojis
-            )
-        }
-    },
-    sort_keys = False,
-    indent = 4
-)
-}
-```"""
+            f"""server information
+```json
+{jsoninfo}
+```""",
+            # embed=discord.Embed(
+            #     title="Server Details",
+            #     color=self.cyan
+            # ).add_field(
+            #     name="Basic Info",
+            #     value=f"""Server Name: {ctx.guild.name}
+            #     Server Owner: "{ctx.guild.owner.nick}" (`{ctx.guild.owner.name}#{ctx.guild.owner.discriminator}`)
+            #     Server Id: `{ctx.guild.id}`
+            #     Two-factor Authentication: {bool(ctx.guild.mfa_level)}
+            #     Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""",
+            #     inline=False
+            # ).add_field(
+            #     name="Levels",
+            #     value=f"""Verification Level: {ctx.guild.verification_level[0]} (level {ctx.guild.verification_level[1]+1}),
+            #     Notification Level: {ctx.guild.default_notifications[0].replace('_',' ')} (level {ctx.guild.default_notifications[1]+1}),
+            #     Content Filter: {ctx.guild.explicit_content_filter[0].replace('_',' ')} (level {ctx.guild.explicit_content_filter[1]+1})""",
+            #     inline=False
+            # ).add_field(
+            #     name="Counts",
+            #     value=f"""Members: {ctx.guild.member_count}
+            #     Boosters: {ctx.guild.premium_subscription_count}
+            #     Text Channels: {len(ctx.guild.text_channels)}
+            #     Voice Channels: {len(ctx.guild.voice_channels)}
+            #     Channel Categories: {len(ctx.guild.categories)}
+            #     Emojis: {len(ctx.guild.emojis)}""",
+            #     inline=False
+            # )
         )
 
     @clear.error
