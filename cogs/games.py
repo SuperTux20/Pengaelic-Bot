@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 
+
 class Games(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -10,8 +11,8 @@ class Games(commands.Cog):
     description = "All sorts of fun stuff!"
     description_long = description
 
-    @commands.command(name = "8ball", help = "Ask the ball and receive wisdom... :eyes:", aliases = ["magic8ball"], usage = "[question]")
-    async def magic_8_ball(self, ctx, *, question = None):
+    @commands.command(name="8ball", help="Ask the ball and receive wisdom... :eyes:", aliases=["magic8ball"], usage="[question]")
+    async def magic_8_ball(self, ctx, *, question=None):
         if question:
             await ctx.send(
                 ":8ball:" + choice(
@@ -111,7 +112,7 @@ class Games(commands.Cog):
                 ":8ball:You didn't ask the 8-ball anything."
             )
 
-    @commands.command(name = "roll", help = "Roll some dice!", aliases = ["dice"], usage = "[number of dice (1)]\n[number of sides (6)]")
+    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)]\n[number of sides (6)]")
     async def roll_dice(self, ctx, dice: int = 1, sides: int = 6):
         if dice == 0:
             response = "You didn't roll any dice."
@@ -174,7 +175,7 @@ class Games(commands.Cog):
             ":game_die:" + response
         )
 
-    @commands.command(name = "flip", help = "Flip some coins!", aliases = ["coin"], usage = "[number of coins (1)]")
+    @commands.command(name="flip", help="Flip some coins!", aliases=["coin"], usage="[number of coins (1)]")
     async def flip_coins(self, ctx, coins: int = 1):
         if coins == 1:
             response = f"""You flipped a {
@@ -252,7 +253,7 @@ class Games(commands.Cog):
             ":moneybag:" + response
         )
 
-    @commands.command(name = "draw", help = "Draw some cards!", aliases = ["card"], usage = "[number of cards (1)]\n[replace cards in deck (no)]")
+    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (no)]")
     async def draw_cards(self, ctx, cards: int = 1, replace_cards: str = "no"):
         suits = [
             "Diamonds",
@@ -380,7 +381,7 @@ class Games(commands.Cog):
                 )
             )
 
-    @commands.command(name = "pop", help = "Get a sheet of bubble wrap! Click to pop.", aliases = ["bubblewrap", "bubbles"], usage = "[size of sheet (5x5 or 5)")
+    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubbles"], usage="[size of sheet (5x5 or 5)")
     async def bubblewrap(self, ctx, size: str = "5"):
         try:
             if len(size) == 5:
@@ -469,6 +470,7 @@ In content: Must be 2000 or fewer in length.""":
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
+
 
 def setup(client):
     client.add_cog(

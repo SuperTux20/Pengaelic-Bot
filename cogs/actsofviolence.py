@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice
 
+
 class ActsOfViolence(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -58,7 +59,7 @@ class ActsOfViolence(commands.Cog):
             } {
                 facted
             }"""
-            ]
+        ]
         if actee == ctx.author:
             await ctx.send(
                 f"""Hey, you can't {
@@ -73,18 +74,18 @@ class ActsOfViolence(commands.Cog):
             )
         else:
             embed = discord.Embed(
-                title = choice(responses),
-                color = 32639
+                title=choice(responses),
+                color=32639
             )
             if image:
                 embed.set_image(
-                    url = image
+                    url=image
                 )
             await ctx.send(
-                embed = embed
+                embed=embed
             )
 
-    @commands.command(name = "slap", help = "Slap someone!")
+    @commands.command(name="slap", help="Slap someone!")
     async def slap(self, ctx, *, slap: discord.Member = None):
         await self.act(
             ctx,
@@ -94,7 +95,7 @@ class ActsOfViolence(commands.Cog):
             slap
         )
 
-    @commands.command(name = "stab", help = "Stab someone!")
+    @commands.command(name="stab", help="Stab someone!")
     async def stab(self, ctx, *, stab: discord.Member = None):
         await self.act(
             ctx,
@@ -104,7 +105,7 @@ class ActsOfViolence(commands.Cog):
             stab
         )
 
-    @commands.command(name = "shoot", help = "Shoot someone!")
+    @commands.command(name="shoot", help="Shoot someone!")
     async def shoot(self, ctx, *, shoot: discord.Member = None):
         await self.act(
             ctx,
@@ -114,7 +115,7 @@ class ActsOfViolence(commands.Cog):
             shoot
         )
 
-    @commands.command(name = "bonk", help = "Bonk someone on the head!")
+    @commands.command(name="bonk", help="Bonk someone on the head!")
     async def bonk(self, ctx, *, bonk: discord.Member = None):
         await self.act(
             ctx,
@@ -138,6 +139,7 @@ class ActsOfViolence(commands.Cog):
             error
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!""")
+
 
 def setup(client):
     client.add_cog(

@@ -4,6 +4,7 @@ from fnmatch import fnmatch
 from discord.ext import commands
 from random import choice, shuffle
 
+
 class Converters(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -16,14 +17,14 @@ class Converters(commands.Cog):
         if not arg:
             return list(
                 await ctx.channel.history(
-                    limit = 2
+                    limit=2
                 ).flatten()
             )[1].content
         else:
             return arg
 
-    @commands.command(name = "owo", help = "Convert whatever text into owo-speak... oh god why did i make this", aliases = ["uwu", "furry"])
-    async def owoConverter(self, ctx, *, arg = None):
+    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
+    async def owoConverter(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -55,8 +56,8 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name = "blockify", help = "Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.", aliases = ["bigtext", "big"])
-    async def big_text(self, ctx, *, arg = None):
+    @commands.command(name="blockify", help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.", aliases=["bigtext", "big"])
+    async def big_text(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -119,8 +120,8 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name = "greekify", help = "Make words *look* Greek, but the pronunciation is still almost the same as in English.")
-    async def greekify(self, ctx, *, arg = None):
+    @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.")
+    async def greekify(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -180,8 +181,8 @@ class Converters(commands.Cog):
             to_convert
         )
 
-    @commands.command(name = "stroke", help = "Shuffle a message", aliases = ["shuffle", "mixup"])
-    async def shuffle(self, ctx, *, arg = None):
+    @commands.command(name="stroke", help="Shuffle a message", aliases=["shuffle", "mixup"])
+    async def shuffle(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -203,8 +204,8 @@ class Converters(commands.Cog):
                 )
             )
 
-    @commands.command(name = "strokebyword", help = "Shuffle the individual words instead of the entire message.")
-    async def shufflebyword(self, ctx, *, arg = None):
+    @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.")
+    async def shufflebyword(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -226,8 +227,8 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name = "spacer", help = "Insert spaces between every character", aliases = ["space", "gaps"])
-    async def spacer(self, ctx, *, arg = None):
+    @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
+    async def spacer(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -239,8 +240,8 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name = "wingdings", help = "You heard what the River Person said.", aliases = ["dings", "gaster", "wd"])
-    async def dings(self, ctx, *, arg = None):
+    @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"])
+    async def dings(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -284,8 +285,8 @@ class Converters(commands.Cog):
             to_convert
         )
 
-    @commands.command(name = "sga", help = "YOOOOOO HE SPEAKING ENCHANTING TABLE", aliases = ["enchant", "enchantingtable"])
-    async def sga(self, ctx, *, arg = None):
+    @commands.command(name="sga", help="YOOOOOO HE SPEAKING ENCHANTING TABLE", aliases=["enchant", "enchantingtable"])
+    async def sga(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
@@ -352,7 +353,8 @@ In content: Must be 2000 or fewer in length.""":
             error
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
-                )
+            )
+
 
 def setup(client):
     client.add_cog(

@@ -3,6 +3,7 @@ from discord.ext import commands
 from random import choice, randint
 from os import listdir
 
+
 class Interactions(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -39,28 +40,13 @@ class Interactions(commands.Cog):
                     f"""{actor} {pastact} {acted}"""
                 ]
                 if actee == ctx.author:
-                    await ctx.send(choice(selfresponses)
-                    )
+                    await ctx.send(choice(selfresponses))
                 else:
                     await ctx.send(
-                        embed = discord.Embed(
-                            title = choice(
-                                responses
-                            ),
-                            color = self.cyan
-                        ).set_image(
-                            url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{        act
-                            }/{        randint(
-                                    1,
-                                    len(
-                                        listdir(
-                                            f'../Pengaelic-Bot/images/gifs/{act}'
-                                        )
-                                    )-1
-                                )
-                            }.gif"""
-                        )
-                    )
+                        embed=discord.Embed(
+                            title=choice(responses),
+                            color=self.cyan
+                        ).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/gifs/{act}'))-1)}.gif"))
             else:
                 await ctx.send(f"Sorry, you can't {act} bots...")
                 if actee.id == self.client.user.id:
@@ -70,7 +56,7 @@ class Interactions(commands.Cog):
                 f"""You can't just {act} thin air! (Unless you're {acting} a ghost?)"""
             )
 
-    @commands.command(name = "hug", help = "Give somebody a hug!")
+    @commands.command(name="hug", help="Give somebody a hug!")
     async def hug(self, ctx, *, hug: discord.Member = None):
         await self.act(
             ctx,
@@ -85,7 +71,7 @@ class Interactions(commands.Cog):
             hug
         )
 
-    @commands.command(name = "boop", help = "Boop someone's nose :3")
+    @commands.command(name="boop", help="Boop someone's nose :3")
     async def boop(self, ctx, *, boop: discord.Member = None):
         await self.act(
             ctx,
@@ -106,7 +92,7 @@ class Interactions(commands.Cog):
             boop
         )
 
-    @commands.command(name = "pat", help = "Pat someone on the head!")
+    @commands.command(name="pat", help="Pat someone on the head!")
     async def pat(self, ctx, *, pat: discord.Member = None):
         await self.act(
             ctx,
@@ -120,7 +106,7 @@ class Interactions(commands.Cog):
             pat
         )
 
-    @commands.command(name = "tickle", help = "Tickle tickle tickle... >:D")
+    @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
     async def tickle(self, ctx, *, tickle: discord.Member = None):
         await self.act(
             ctx,
@@ -135,7 +121,7 @@ class Interactions(commands.Cog):
             tickle
         )
 
-    @commands.command(name = "kiss", help = "Give somebody a kiss~ :kissing_heart:")
+    @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
     async def kiss(self, ctx, *, kiss: discord.Member = None):
         await self.act(
             ctx,
@@ -150,7 +136,7 @@ class Interactions(commands.Cog):
             kiss
         )
 
-    @commands.command(name = "squish", help = "Sqweesh someone's face >3<")
+    @commands.command(name="squish", help="Sqweesh someone's face >3<")
     async def squish(self, ctx, *, squish: discord.Member = None):
         await self.act(
             ctx,
@@ -180,6 +166,7 @@ class Interactions(commands.Cog):
             error
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!""")
+
 
 def setup(client):
     client.add_cog(

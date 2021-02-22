@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-from random import choice, randint
-from os import listdir
+from random import choice
 from json import dumps
+
 
 class Foods(commands.Cog):
     def __init__(self, client):
@@ -49,15 +49,15 @@ class Foods(commands.Cog):
             )
         else:
             await ctx.send(
-                embed = discord.Embed(
-                    title = f"""{
+                embed=discord.Embed(
+                    title=f"""{
                             persongiving
                         } gave a {
                             item
                         } to {
                             persongetting
                         }""",
-                    color = self.cyan
+                    color=self.cyan
                 )
             )
             if person2give2 == self.client.user:
@@ -67,8 +67,8 @@ class Foods(commands.Cog):
                     )
                 )
 
-    @commands.command(name = "give", help = "Give someone something to eat!", usage = " <username, nickname, or @mention> <item>")
-    async def give(self, ctx, member: discord.Member = None, *, item = None):
+    @commands.command(name="give", help="Give someone something to eat!", usage=" <username, nickname, or @mention> <item>")
+    async def give(self, ctx, member: discord.Member = None, *, item=None):
         items = {
             "candies": [
                 "3 musketeers",
@@ -121,7 +121,7 @@ class Foods(commands.Cog):
     )
 }
 ```"""
-            )
+                           )
         else:
             tests = {
                 food_type: True
@@ -159,6 +159,7 @@ class Foods(commands.Cog):
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
+
 
 def setup(client):
     client.add_cog(

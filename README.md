@@ -9,8 +9,8 @@
 
 ## 🤝 Contributing
 
-- Head t [Pengaelic Bot Nightly](https://github.com/SuperTux20/Pengaelic-Bot-Nightly)
-- Follow the instructions in `README.md` from there
+- Fork this repo
+- Make a pull request with your modified code
 
 ### Games and fun stuff
 
@@ -30,12 +30,12 @@
 ### Interactions with other users
 
 - Boop someone's nose
-- Hug
-- Kiss
+- Hug someone
+- Kiss someone
 - Pat someone on the head
 - Squish someone's face
-- Tickle
-- Give people food!
+- Tickle someone
+- Give someone food!
 
 ### Tools
 
@@ -50,9 +50,9 @@
 ### Text converters
 
 - Convewt any text into fuwwy speak uwu
-- Convert text to 🇷🇪🇬🇮🇴🇳🇦🇱 🇮🇳🇩🇮🇨🇦🇹🇴🇷 characters (the big blue ones)
+- Convert text to 🇷 🇪 🇬 🇮 🇴 🇳 🇦 🇱    🇮 🇳 🇩 🇮 🇨 🇦 🇹 🇴 🇷 🇸
 - Phonetically convert text into Γρεεκ λεττερσ
-- Convert text into wiiingdiiings
+- Convert text into ⚛️✋️☠️👆️👎️✋️☠️👆️💧️
 - Shuffle letters around, either individual words or the entire message
 
 ### Configurable options

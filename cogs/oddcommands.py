@@ -4,6 +4,7 @@ from random import choice, randint
 from os import listdir
 from time import sleep
 
+
 class OddCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -14,7 +15,8 @@ class OddCommands(commands.Cog):
     name = "odd commands"
     name_typable = "oddcommands"
     description = "Commands that didn't quite fit anywhere else."
-    description_long = description[:-1] + ", or that I didn't *want* to fit anywhere else."
+    description_long = description[:-1] + \
+        ", or that I didn't *want* to fit anywhere else."
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
@@ -22,7 +24,7 @@ class OddCommands(commands.Cog):
             self.isNomming = False
             self.nomSuccess = False
 
-    @commands.command(name = "nom", help = "Eat someone >:3", usage = "<username or nickname or @mention>")
+    @commands.command(name="nom", help="Eat someone >:3", usage="<username or nickname or @mention>")
     async def nom(self, ctx, *, nom: discord.Member = None):
         nommer = ctx.author.display_name
         for char in self.formatChars:
@@ -57,12 +59,12 @@ class OddCommands(commands.Cog):
             "hmmmnnnnn!!"
         ]
         embed = discord.Embed(
-            title = choice(
+            title=choice(
                 responses
             ),
-            color = self.cyan
+            color=self.cyan
         ).set_image(
-            url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{
+            url=f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/nom/{
                 randint(
                     1,
                     len(
@@ -82,7 +84,7 @@ class OddCommands(commands.Cog):
         else:
             if str(nom.id) == "721092139953684580":
                 await ctx.send(
-                    embed = embed
+                    embed=embed
                 )
                 await ctx.send(
                     choice(
@@ -93,13 +95,13 @@ class OddCommands(commands.Cog):
                 self.isNomming = True
                 self.nomSuccess = False
                 stupidchannel = await ctx.guild.create_text_channel(
-                    name = "nom-command-stupidity",
-                    overwrites = {
+                    name="nom-command-stupidity",
+                    overwrites={
                         ctx.guild.default_role: discord.PermissionOverwrite(
-                            read_messages = False
+                            read_messages=False
                         ),
                         ctx.guild.me: discord.PermissionOverwrite(
-                            read_messages = True
+                            read_messages=True
                         )
                     }
                 )
@@ -128,7 +130,7 @@ class OddCommands(commands.Cog):
                 await no_nomsense.delete()
                 if self.nomSuccess == True:
                     await ctx.send(
-                        embed = embed
+                        embed=embed
                     )
                 else:
                     await ctx.send(
@@ -148,6 +150,7 @@ class OddCommands(commands.Cog):
             error
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!""")
+
 
 def setup(client):
     client.add_cog(

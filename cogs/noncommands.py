@@ -7,6 +7,7 @@ from discord.ext import commands
 from json import load
 from random import choice, randint
 
+
 class NonCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -36,7 +37,7 @@ class NonCommands(commands.Cog):
                 for ix in rows
             ]
             if server["id"] == guild
-            ][0]
+        ][0]
 
         currentserver.pop(
             "id"
@@ -58,13 +59,14 @@ class NonCommands(commands.Cog):
                 "lobby",
                 "general"
             ]
-            possiblechannels = [filter([channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = [filter(
+                [channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
             for channelset in possiblechannels:
                 for channel in channelset:
                     try:
                         await get(
                             member.guild.text_channels,
-                            name = channel
+                            name=channel
                         ).send(
                             f"""Welcome to {
                                 member.guild.name
@@ -97,13 +99,14 @@ class NonCommands(commands.Cog):
                 "lobby",
                 "general"
             ]
-            possiblechannels = [filter([channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = [filter(
+                [channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
             for channelset in possiblechannels:
                 for channel in channelset:
                     try:
                         await get(
                             member.guild.text_channels,
-                            name = channel
+                            name=channel
                         ).send(
                             f"""See you later, {
                                 member.name
@@ -124,7 +127,8 @@ class NonCommands(commands.Cog):
     async def on_message(self, message):
         all_options = self.get_options(message.guild.id)
 
-        if message.author.id == self.client.user.id or message.author.id == 503720029456695306: # that's the ID for Dad Bot, this is to prevent conflict.
+        # that's the ID for Dad Bot, this is to prevent conflict.
+        if message.author.id == self.client.user.id or message.author.id == 503720029456695306:
             return
 
         # this section is for Dad Bot-like responses
@@ -239,7 +243,6 @@ class NonCommands(commands.Cog):
                             )
                         )
 
-
         # bro, did someone seriously say the chat was dead?
         if "dead" in message.content.lower() and ("chat" in message.content.lower() or "server" in message.content.lower()):
             await message.channel.send(
@@ -269,25 +272,26 @@ class NonCommands(commands.Cog):
                 "vote",
                 "voting"
             ]
-            possiblechannels = [filter([channel.name for channel in message.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = [filter(
+                [channel.name for channel in message.guild.text_channels], f"*{channel}*") for channel in channelkeys]
             for channelset in possiblechannels:
                 for channel in channelset:
                     if message.channel.name == channel:
                         try:
                             thepoll = await get(
                                 message.guild.text_channels,
-                                name = channel
+                                name=channel
                             ).send(
-                                embed = discord.Embed(
-                                    color = randint(
+                                embed=discord.Embed(
+                                    color=randint(
                                         0,
                                         16777215
                                     ),
-                                    title = "Suggestion",
-                                    description = message.content
+                                    title="Suggestion",
+                                    description=message.content
                                 ).set_author(
-                                    name = message.author.name,
-                                    icon_url = message.author.avatar_url
+                                    name=message.author.name,
+                                    icon_url=message.author.avatar_url
                                 )
                             )
                             await thepoll.add_reaction(
@@ -324,6 +328,7 @@ Say goodbye <:handgun:706698375592149013>"""
             await message.channel.send(
                 choice(responses)
             )
+
 
 def setup(client):
     client.add_cog(

@@ -1,9 +1,8 @@
-import discord
 import sqlite3
 from discord.ext import commands
-from discord.utils import get
-from json import load, dump, dumps
+from json import dumps
 from asyncio import sleep
+
 
 class Options(commands.Cog):
     def __init__(self, client):
@@ -14,7 +13,8 @@ class Options(commands.Cog):
     name = "options"
     name_typable = name
     description = "My settings."
-    description_long = description + ' You need the "Manage Messages" permission to use these settings.\nType `pn!help options [option]` for more info on each subcategory.'
+    description_long = description + \
+        ' You need the "Manage Messages" permission to use these settings.\nType `pn!help options [option]` for more info on each subcategory.'
 
     def updateOption(self, database, table, guild: int, option: str, value: bool):
         conn = sqlite3.connect(
@@ -52,7 +52,7 @@ class Options(commands.Cog):
                 for ix in rows
             ]
             if server["id"] == guild
-            ][0]
+        ][0]
 
         currentserver.pop(
             "id"
@@ -60,8 +60,8 @@ class Options(commands.Cog):
 
         return currentserver
 
-    @commands.command(name = "options", help = "Show the current values of all options")
-    @commands.has_permissions(manage_messages = True)
+    @commands.command(name="options", help="Show the current values of all options")
+    @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
         await ctx.send(
             f"""```json
@@ -87,8 +87,8 @@ class Options(commands.Cog):
 ```"""
         )
 
-    @commands.command(name = "reset", help = "Reset to the default options.", aliases = ["defaults"])
-    @commands.has_permissions(manage_messages = True)
+    @commands.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
+    @commands.has_permissions(manage_messages=True)
     async def reset_options(self, ctx):
         if self.reset_options_confirm == False:
             await ctx.send(
@@ -163,14 +163,14 @@ class Options(commands.Cog):
             )
             self.reset_options_confirm = False
 
-    @commands.group(name = "toggle", help = "Toggle an option.")
+    @commands.group(name="toggle", help="Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
                 """```fix
 Available options are as follows...
 ```"""
-f"""```ini
+                f"""```ini
 [ {
     str(
         list(
@@ -186,14 +186,14 @@ f"""```ini
     )[1:-1]
 } ]
 ```"""
-f"""```fix
+                f"""```fix
 Type {self.client.command_prefix}toggle <option> to turn it on or off.
 Type {self.client.command_prefix}options to see their values.
 ```"""
             )
 
-    @toggle.command(name = "censor", help = "Toggle the automatic deletion of messages containing specific keywords.", aliases = ["filter"])
-    @commands.has_permissions(manage_messages = True)
+    @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
+    @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
         if self.get_options(self.db, "options", ctx.guild.id)["censor"] == 1:
             self.updateOption(
@@ -218,8 +218,8 @@ Type {self.client.command_prefix}options to see their values.
                 "Censorship turned on."
             )
 
-    @toggle.command(name = "dadJokes", help = "Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
-    @commands.has_permissions(manage_messages = True)
+    @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+    @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
         if self.get_options(self.db, "options", ctx.guild.id)["dadJokes"] == 1:
             self.updateOption(
@@ -244,8 +244,8 @@ Type {self.client.command_prefix}options to see their values.
                 "Hi Dad, I'm Pengaelic Bot Nightly!"
             )
 
-    @toggle.command(name = "yoMamaJokes", help = "Toggle the automatic Yo Mama jokes.")
-    @commands.has_permissions(manage_messages = True)
+    @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
+    @commands.has_permissions(manage_messages=True)
     async def toggle_yo_mama_jokes(self, ctx):
         if self.get_options(self.db, "options", ctx.guild.id)["yoMamaJokes"] == 1:
             self.updateOption(
@@ -270,8 +270,8 @@ Type {self.client.command_prefix}options to see their values.
                 "Yo Mama jokes turned on."
             )
 
-    @toggle.command(name = "welcome", help = "Toggle the automatic welcome messages.")
-    @commands.has_permissions(manage_messages = True)
+    @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
+    @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
         if self.get_options(self.db, "options", ctx.guild.id)["welcome"] == 1:
             self.updateOption(
@@ -296,8 +296,8 @@ Type {self.client.command_prefix}options to see their values.
                 "Welcome messages turned on."
             )
 
-    @toggle.command(name = "polls", help = "Turn automatic poll-making on or off. This does not effect the p!suggest command.")
-    @commands.has_permissions(manage_messages = True)
+    @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
+    @commands.has_permissions(manage_messages=True)
     async def toggle_polls(self, ctx):
         if self.get_options(self.db, "options", ctx.guild.id)["polls"] == 1:
             self.updateOption(
@@ -322,15 +322,15 @@ Type {self.client.command_prefix}options to see their values.
                 "Polls turned on."
             )
 
-    @commands.group(name = "censor", help = "Edit the censor.", aliases = ["filter"])
+    @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
                 "Available options: `(show/list/get), add, delete, (wipe/clear)`"
             )
 
-    @censor.command(name = "show", help = "Display the contents of the censorship filter.", aliases = ["list", "get"])
-    @commands.has_permissions(manage_messages = True)
+    @censor.command(name="show", help="Display the contents of the censorship filter.", aliases=["list", "get"])
+    @commands.has_permissions(manage_messages=True)
     async def show_censor(self, ctx):
         with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
@@ -346,8 +346,8 @@ Type {self.client.command_prefix}options to see their values.
                     }```"""
                 )
 
-    @censor.command(name = "add", help = "Add a word to the censorship filter.", usage = "<one phrase ONLY>")
-    @commands.has_permissions(manage_messages = True)
+    @censor.command(name="add", help="Add a word to the censorship filter.", usage="<one phrase ONLY>")
+    @commands.has_permissions(manage_messages=True)
     async def add_censor(self, ctx, word2add):
         with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
@@ -391,8 +391,8 @@ Type {self.client.command_prefix}options to see their values.
                         }"""
                     )
 
-    @censor.command(name = "delete", help = "Remove a word from the censorship filter.", usage = "<one phrase ONLY>", aliases = ["remove"])
-    @commands.has_permissions(manage_messages = True)
+    @censor.command(name="delete", help="Remove a word from the censorship filter.", usage="<one phrase ONLY>", aliases=["remove"])
+    @commands.has_permissions(manage_messages=True)
     async def del_censor(self, ctx, word2del):
         with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
             all_bads = bads_file.read()
@@ -436,8 +436,8 @@ Type {self.client.command_prefix}options to see their values.
                         }"""
                     )
 
-    @censor.command(name = "wipe", help = "Clear the censor file.", aliases = ["clear"])
-    @commands.has_permissions(manage_messages = True)
+    @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
+    @commands.has_permissions(manage_messages=True)
     async def wipe_censor(self, ctx):
         if self.wipe_censor_confirm == False:
             await ctx.send(
@@ -466,21 +466,21 @@ Type {self.client.command_prefix}options to see their values.
             )
             self.wipe_censor_confirm = False
 
-    @commands.group(name = "cog", help = "Edit the modules.", aliases = ["module"])
+    @commands.group(name="cog", help="Edit the modules.", aliases=["module"])
     async def modules(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
                 "Available options: `list`, `(load/enable)`, `(unload/disable)`"
             )
 
-    @modules.command(name = "list", help = "See a list of all cogs and their statuses.")
-    @commands.has_permissions(manage_messages = True)
-    async def list_cogs(self, ctx, cog2load = None):
+    @modules.command(name="list", help="See a list of all cogs and their statuses.")
+    @commands.has_permissions(manage_messages=True)
+    async def list_cogs(self, ctx, cog2load=None):
         await ctx.send(
             """```fix
 Available cogs are as follows...
 ```"""
-f"""```ini
+            f"""```ini
 [ {
     str(
         list(
@@ -496,15 +496,15 @@ f"""```ini
     )[1:-1]
 } ]
 ```"""
-f"""```fix
+            f"""```fix
 Type {self.client.command_prefix}cog load <cog> to enable it.
 Type {self.client.command_prefix}cog unload <cog> to disable it.
 ```"""
         )
 
-    @modules.command(name = "load", help = "Load a cog.", usage = "[cog to load]", aliases = ["enable"])
-    @commands.has_permissions(manage_messages = True)
-    async def enable_cog(self, ctx, cog2load = None):
+    @modules.command(name="load", help="Load a cog.", usage="[cog to load]", aliases=["enable"])
+    @commands.has_permissions(manage_messages=True)
+    async def enable_cog(self, ctx, cog2load=None):
         cogs = self.get_options(
             self.db,
             "cogs",
@@ -557,15 +557,15 @@ Type {self.client.command_prefix}cog unload <cog> to disable it.
                         str(
                             inactivecogs
                         )[1:-1].replace(
-                        "'",
-                        ""
+                            "'",
+                            ""
                         )
                     )
                 )
 
-    @modules.command(name = "unload", help = "Unload a cog.", usage = "[cog to unload]", aliases = ["disable"])
-    @commands.has_permissions(manage_messages = True)
-    async def disable_cog(self, ctx, cog2unload = None):
+    @modules.command(name="unload", help="Unload a cog.", usage="[cog to unload]", aliases=["disable"])
+    @commands.has_permissions(manage_messages=True)
+    async def disable_cog(self, ctx, cog2unload=None):
         cogs = self.get_options(
             self.db,
             "cogs",
@@ -584,7 +584,8 @@ Type {self.client.command_prefix}cog unload <cog> to disable it.
         else:
             if cog2unload:
                 try:
-                    _ = self.get_options(self.db, "cogs", ctx.guild.id)[cog2unload]
+                    _ = self.get_options(self.db, "cogs", ctx.guild.id)[
+                        cog2unload]
                     self.updateOption(
                         self.db,
                         "cogs",
@@ -619,8 +620,8 @@ Type {self.client.command_prefix}cog unload <cog> to disable it.
                         str(
                             activecogs
                         )[1:-1].replace(
-                        "'",
-                        ""
+                            "'",
+                            ""
                         )
                     )
                 )
@@ -655,6 +656,7 @@ Type {self.client.command_prefix}cog unload <cog> to disable it.
         }
 If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
             )
+
 
 def setup(client):
     client.add_cog(
