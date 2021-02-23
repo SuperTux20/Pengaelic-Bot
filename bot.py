@@ -50,7 +50,7 @@ dotenv("data/.env")
 print("Loaded bot token")
 if unstable:
     client = commands.Bot(
-        command_prefix="pd!",
+        command_prefix="p@",
         case_insensitive=True,
         description="Pengaelic Bot (Unstable Dev Version)",
         help_command=None,

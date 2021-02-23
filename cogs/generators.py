@@ -1,6 +1,7 @@
-import discord
 from discord.ext import commands
 from random import choice, randint
+from libs.monkeys import generate as monkeys
+from math import floor
 
 
 class Generators(commands.Cog):
@@ -263,8 +264,30 @@ class Generators(commands.Cog):
         headline.append(selected_object)
         await ctx.send(" ".join(headline))
 
+    @commands.command(name="img", help="Infinite Monkey Generator", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
+    async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
+        if word == None:
+            await ctx.send("You didn't specify a keyword to search for!")
+        else:
+            invalid = False
+            for character in word:
+                if character not in alphabet:
+                    invalid = True
+            if invalid:
+                await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({alphabet})")
+            else:
+                word = word.lower()
+                alphabet = list(alphabet.lower())
+                if len(word) < len(alphabet)/6:
+                    async with ctx.typing():
+                        await ctx.send("Generating...")
+                    await ctx.send(monkeys(word, alphabet))
+                else:
+                    await ctx.send(f"Your keyword was too long! It needs to be fewer than {floor(len(alphabet)/6)+1} characters.")
+
     @name_generator.error
     @florida_man.error
+    @img.error
     async def error(self, ctx, error):
         if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":

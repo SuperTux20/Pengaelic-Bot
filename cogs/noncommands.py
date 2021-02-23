@@ -1,5 +1,5 @@
 import discord
-import sqlite3
+import libs.pengaelicutils as pengaelicutils
 from fnmatch import filter
 from fnmatch import fnmatch
 from discord.utils import get
@@ -16,38 +16,9 @@ class NonCommands(commands.Cog):
     description = "Automatic message responses that aren't commands."
     description_long = description
 
-    def get_options(self, guild):
-        conn = sqlite3.connect(
-            "data/config.db"
-        )
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-
-        rows = cur.execute(
-            f"SELECT * from options"
-        ).fetchall()
-
-        conn.commit()
-        conn.close()
-
-        currentserver = [
-            server
-            for server in [
-                dict(ix)
-                for ix in rows
-            ]
-            if server["id"] == guild
-        ][0]
-
-        currentserver.pop(
-            "id"
-        )
-
-        return currentserver
-
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        all_options = self.get_options(member.guild.id)
+        all_options = pengaelicutils.get_options(member.guild.id)
         if all_options["welcome"] == 1:
             channelkeys = [
                 "welcome",
@@ -87,7 +58,7 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_leave(self, member: discord.Member):
-        all_options = self.get_options(member.guild.id)
+        all_options = pengaelicutils.get_options(member.guild.id)
         if all_options["welcome"] == 1:
             channelkeys = [
                 "welcome",
@@ -125,7 +96,7 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        all_options = self.get_options(message.guild.id)
+        all_options = pengaelicutils.get_options(message.guild.id)
 
         # that's the ID for Dad Bot, this is to prevent conflict.
         if message.author.id == self.client.user.id or message.author.id == 503720029456695306:
