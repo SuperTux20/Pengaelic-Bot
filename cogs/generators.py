@@ -11,7 +11,7 @@ class Generators(commands.Cog):
     description = "Ya like randomization?"
     description_long = description + " So do I!"
 
-    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["generatename", "namegen"], usage="[number of names to generate (1)] [limit to how many syllables can be used (3)]")
+    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["generatename", "namegen"], usage="[names to generate (1)] [max syllables (3)]")
     async def name_generator(self, ctx, amount: int = 1, syllable_limit: int = 3):
         await ctx.send(
             str(
@@ -190,25 +190,63 @@ class Generators(commands.Cog):
                     ).capitalize()
                     for _ in range(amount)
                 ]
-            )[1:-1].replace(
-                "'",
-                ""
-            )
+            )[1:-1].replace("'", "")
         )
 
-    @commands.command(name="floridaman", help="Generate random Florida Man headlines!", aliases=["florida"], usage="[other state]")
+    @commands.command(name="floridaman", help="Generate random Florida Man headlines!", aliases=["florida"], usage="[other state/country]")
     async def florida_man(self, ctx, *, state="florida"):
-        headline = [" ".join([name.capitalize() for name in state.split()])]
-        objects = ["van", "dog", "cat", "car", "alligator",
-                   "chicken nugget", "penguin", "burger", "car salesman"]
+        headline = [
+            " ".join(
+                [
+                    name.capitalize()
+                    for name in state.split()
+                ]
+            )
+        ]
+        objects = [
+            "van",
+            "dog",
+            "cat",
+            "car",
+            "alligator",
+            "chicken nugget",
+            "penguin",
+            "burger",
+            "car salesman"
+        ]
+        people = [
+            "man",
+            "woman",
+            "boy",
+            "girl"
+        ]
+        events = [
+            "pushed",
+            "thrown",
+            "dropped",
+            "burned",
+            "stabbed",
+            "run over",
+            "slapped"
+        ]
+        poss2 = [
+            "",
+            "by"
+        ]
+        timing = [
+            "after",
+            "when"
+        ]
+        actions = [
+            "pushes",
+            "throws",
+            "drops",
+            "burns",
+            "stabs",
+            "runs over",
+            "slaps"
+        ]
         selected_object = choice(objects)
-        people = ["man", "woman"]
-        events = ["pushed", "thrown", "dropped",
-                  "burned", "stabbed", "run over", "slapped"]
-        poss2 = ["", "by"]
-        timing = ["after", "when"]
-        actions = ["pushes", "throws", "drops",
-                   "burns", "stabs", "runs over", "slaps"]
         part2 = choice(poss2)
         headline.append(choice(people))
         headline.append(choice(events))

@@ -289,10 +289,7 @@ async def on_guild_join(guild, auto=True):
                 continue
         if auto:
             # create fresh options row for new server
-            with create_connection(database) as conn:
-                # create a server's configs
-                options = (guild.id)
-                create_options(conn, options)
+            create_options(create_connection(database), (guild.id))
             print(f"Options row created for {guild.name}")
 
 if unstable == False:
@@ -332,15 +329,10 @@ async def help(ctx):
             title=client.description,
             description=f"""Type `{client.command_prefix}help **<lowercase category name without spaces or dashes>** for more info on each category.""",
             color=32639
-        ).set_footer(text=f"""    Command prefix is {client.command_prefix}
-    <arg> = required parameter
-    [arg] = optional parameter
-    [arg (value)] = default value for optional parameter
-    (command/command/command) = all aliases you can run the command with""")
+        )
         cogs = dict(client.cogs)
         cogs.pop("Options")
         for cog in cogs:
-
             help_menu.add_field(
                 name=cogs[cog].name.capitalize(),
                 value=cogs[cog].description
@@ -348,6 +340,12 @@ async def help(ctx):
         help_menu.add_field(
             name="Options",
             value=client.get_cog("Options").description,
+            inline=False
+        ).add_field(
+            name="Links",
+            value=f"""My official [support server](https://discord.gg/DHHpA7k)
+            [Invite me](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot) to your own server
+            My [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)""",
             inline=False
         )
         await ctx.send(embed=help_menu)
@@ -373,6 +371,11 @@ async def h_games(ctx):
     await ctx.send(embed=help_menu(client.get_cog("Games"), client, ctx))
 
 
+@help.command(name="generators")
+async def h_games(ctx):
+    await ctx.send(embed=help_menu(client.get_cog("Generators"), client, ctx))
+
+
 @help.command(name="interactions")
 async def h_interactions(ctx):
     await ctx.send(embed=help_menu(client.get_cog("Interactions"), client, ctx))
@@ -381,6 +384,22 @@ async def h_interactions(ctx):
 @help.command(name="messages")
 async def h_messages(ctx):
     await ctx.send(embed=help_menu(client.get_cog("Messages"), client, ctx))
+
+
+@help.command(name="tools")
+async def h_tools(ctx):
+    await ctx.send(embed=help_menu(client.get_cog("Tools"), client, ctx))
+
+
+@help.command(name="oddcommands")
+async def h_oddcommands(ctx):
+    await ctx.send(embed=help_menu(client.get_cog("OddCommands"), client, ctx))
+
+
+@help.group(name="options")
+async def h_options(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send(embed=help_menu(client.get_cog("Options"), client, ctx))
 
 
 @help.command(name="noncommands")
@@ -405,22 +424,6 @@ async def h_noncommands(ctx):
             value="A rickroll-themed Russian Roulette."
         )
     )
-
-
-@help.command(name="tools")
-async def h_tools(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Tools"), client, ctx))
-
-
-@help.command(name="oddcommands")
-async def h_oddcommands(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("OddCommands"), client, ctx))
-
-
-@help.group(name="options")
-async def h_options(ctx):
-    if ctx.invoked_subcommand is None:
-        await ctx.send(embed=help_menu(client.get_cog("Options"), client, ctx))
 
 
 @h_options.command(name="toggle")

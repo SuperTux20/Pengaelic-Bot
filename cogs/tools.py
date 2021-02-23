@@ -1,14 +1,13 @@
 import discord
 import platform
-import sqlite3
+import libs.pengaelicutils as pengaelicutils
 from discord.ext import commands
-from discord.utils import get
 from asyncio import sleep
 from random import randint
 from json import dumps
 
 
-class tools(commands.Cog):
+class Tools(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.cyan = 32639
@@ -17,24 +16,6 @@ class tools(commands.Cog):
     name_typable = name
     description = "Various tools and info."
     description_long = description
-
-    def get_options(self, database, guild):
-        conn = sqlite3.connect(database)
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        rows = cur.execute("SELECT * from options").fetchall()
-        conn.commit()
-        conn.close()
-        currentserver = [
-            server
-            for server in [
-                dict(ix)
-                for ix in rows
-            ]
-            if server["id"] == guild
-        ][0]
-        currentserver.pop("id")
-        return currentserver
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
@@ -215,23 +196,6 @@ class tools(commands.Cog):
             )
             self.nukeconfirm = False
 
-    @commands.command(name="support", help="Get the invite link to the official support server.", aliases=["discord"])
-    async def support(self, ctx):
-        await ctx.send(
-            """Here is my official support server!
-https://discord.gg/DHHpA7k"""
-        )
-
-    @commands.command(name="invite", help="Invite me to your server!", aliases=["inviteme"])
-    async def invite(self, ctx):
-        await ctx.send(
-            embed=discord.Embed(
-                color=self.cyan,
-                title="Can I come on to your server?",
-                description="[Click here to invite me!](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot)"
-            )
-        )
-
     @commands.command(name="server", help="See a bunch of data about the server at a glance.", aliases=["info"])
     @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
@@ -290,7 +254,7 @@ https://discord.gg/DHHpA7k"""
                 Emojis: {len(ctx.guild.emojis)}""",
             inline=False
         )
-        if self.get_options("data/config.db", ctx.guild.id)["JSONmenus"]:
+        if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
             await ctx.send(
                 f"""
 ```json
@@ -343,7 +307,7 @@ If my developer (<@!686984544930365440>) is not here, please tell him what the e
 
 def setup(client):
     client.add_cog(
-        tools(
+        Tools(
             client
         )
     )

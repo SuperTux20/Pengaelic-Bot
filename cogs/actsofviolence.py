@@ -85,7 +85,7 @@ class ActsOfViolence(commands.Cog):
                 embed=embed
             )
 
-    @commands.command(name="slap", help="Slap someone!")
+    @commands.command(name="slap", help="Slap someone!", usage="<username or nickname or @mention>")
     async def slap(self, ctx, *, slap: discord.Member = None):
         await self.act(
             ctx,
@@ -95,7 +95,7 @@ class ActsOfViolence(commands.Cog):
             slap
         )
 
-    @commands.command(name="stab", help="Stab someone!")
+    @commands.command(name="stab", help="Stab someone!", usage="<username or nickname or @mention>")
     async def stab(self, ctx, *, stab: discord.Member = None):
         await self.act(
             ctx,
@@ -105,7 +105,7 @@ class ActsOfViolence(commands.Cog):
             stab
         )
 
-    @commands.command(name="shoot", help="Shoot someone!")
+    @commands.command(name="shoot", help="Shoot someone!", usage="<username or nickname or @mention>")
     async def shoot(self, ctx, *, shoot: discord.Member = None):
         await self.act(
             ctx,
@@ -115,7 +115,7 @@ class ActsOfViolence(commands.Cog):
             shoot
         )
 
-    @commands.command(name="bonk", help="Bonk someone on the head!")
+    @commands.command(name="bonk", help="Bonk someone on the head!", usage="<username or nickname or @mention>")
     async def bonk(self, ctx, *, bonk: discord.Member = None):
         await self.act(
             ctx,

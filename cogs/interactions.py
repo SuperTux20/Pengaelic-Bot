@@ -56,7 +56,7 @@ class Interactions(commands.Cog):
                 f"""You can't just {act} thin air! (Unless you're {acting} a ghost?)"""
             )
 
-    @commands.command(name="hug", help="Give somebody a hug!")
+    @commands.command(name="hug", help="Give somebody a hug!", usage="<username or nickname or @mention>")
     async def hug(self, ctx, *, hug: discord.Member = None):
         await self.act(
             ctx,
@@ -71,7 +71,7 @@ class Interactions(commands.Cog):
             hug
         )
 
-    @commands.command(name="boop", help="Boop someone's nose :3")
+    @commands.command(name="boop", help="Boop someone's nose :3", usage="<username or nickname or @mention>")
     async def boop(self, ctx, *, boop: discord.Member = None):
         await self.act(
             ctx,
@@ -92,7 +92,7 @@ class Interactions(commands.Cog):
             boop
         )
 
-    @commands.command(name="pat", help="Pat someone on the head!")
+    @commands.command(name="pat", help="Pat someone on the head!", usage="<username or nickname or @mention>")
     async def pat(self, ctx, *, pat: discord.Member = None):
         await self.act(
             ctx,
@@ -106,7 +106,7 @@ class Interactions(commands.Cog):
             pat
         )
 
-    @commands.command(name="tickle", help="Tickle tickle tickle... >:D")
+    @commands.command(name="tickle", help="Tickle tickle tickle... >:D", usage="<username or nickname or @mention>")
     async def tickle(self, ctx, *, tickle: discord.Member = None):
         await self.act(
             ctx,
@@ -121,7 +121,7 @@ class Interactions(commands.Cog):
             tickle
         )
 
-    @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:")
+    @commands.command(name="kiss", help="Give somebody a kiss~ :kissing_heart:", usage="<username or nickname or @mention>")
     async def kiss(self, ctx, *, kiss: discord.Member = None):
         await self.act(
             ctx,
@@ -136,7 +136,7 @@ class Interactions(commands.Cog):
             kiss
         )
 
-    @commands.command(name="squish", help="Sqweesh someone's face >3<")
+    @commands.command(name="squish", help="Sqweesh someone's face >3<", usage="<username or nickname or @mention>")
     async def squish(self, ctx, *, squish: discord.Member = None):
         await self.act(
             ctx,

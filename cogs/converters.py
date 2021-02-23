@@ -23,7 +23,7 @@ class Converters(commands.Cog):
         else:
             return arg
 
-    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"])
+    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"], usage="<text to convert>")
     async def owoConverter(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -56,7 +56,7 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name="blockify", help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.", aliases=["bigtext", "big"])
+    @commands.command(name="blockify", help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.", aliases=["bigtext", "big"], usage="<text to convert>")
     async def big_text(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -120,7 +120,7 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.")
+    @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.", usage="<text to convert>")
     async def greekify(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -181,30 +181,25 @@ class Converters(commands.Cog):
             to_convert
         )
 
-    @commands.command(name="stroke", help="Shuffle a message", aliases=["shuffle", "mixup"])
+    @commands.command(name="stroke", help="Shuffle a message", aliases=["shuffle", "mixup"], usage="<text to convert>")
     async def shuffle(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
             arg
         )
-        if self.client.user.mention:
-            await ctx.send(
-                "OwO you pet me"
-            )
-        else:
-            to_shuffle = list(
-                arg
-            )
-            shuffle(
+        to_shuffle = list(
+            arg
+        )
+        shuffle(
+            to_shuffle
+        )
+        await ctx.send(
+            "".join(
                 to_shuffle
             )
-            await ctx.send(
-                "".join(
-                    to_shuffle
-                )
-            )
+        )
 
-    @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.")
+    @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.", usage="<text to convert>")
     async def shufflebyword(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -227,7 +222,7 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"])
+    @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"], usage="<text to convert>")
     async def spacer(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -240,7 +235,7 @@ class Converters(commands.Cog):
             )
         )
 
-    @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"])
+    @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"], usage="<text to convert>")
     async def dings(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -285,7 +280,7 @@ class Converters(commands.Cog):
             to_convert
         )
 
-    @commands.command(name="sga", help="YOOOOOO HE SPEAKING ENCHANTING TABLE", aliases=["enchant", "enchantingtable"])
+    @commands.command(name="sga", help="YOOOOOO HE SPEAKING ENCHANTING TABLE", aliases=["enchant", "enchantingtable"], usage="<text to convert>")
     async def sga(self, ctx, *, arg=None):
         arg = await self.test_for_content(
             ctx,
@@ -317,7 +312,7 @@ class Converters(commands.Cog):
             "V": "⍊",
             "W": "∴",
             "X": " ̇/",
-            "Y": "||",
+            "Y": "\|\|",
             "Z": "ᓭ",
         }
         to_convert = arg.upper()
