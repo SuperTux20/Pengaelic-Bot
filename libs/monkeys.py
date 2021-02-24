@@ -23,7 +23,7 @@ def stopwatch(value):
     value_s = (value_m - minutes)*60
     seconds = int(value_s)
 
-    return ", in " + str(hours) + ":" + str(minutes) + ":" + str(seconds)
+    return " in " + str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
 
 def generate(word, alphabet: list = "abcdefghijklmnopqrstuvwxyz"):

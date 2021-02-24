@@ -176,15 +176,13 @@ class NonCommands(commands.Cog):
 
         # this section makes automatic polls in any validly named channel
         if all_options["polls"] == 1:
-            channelkeys = [
-                "poll",
-                "petition",
-                "suggestion",
-                "vote",
-                "voting"
-            ]
-            possiblechannels = [filter(
-                [channel.name for channel in message.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = filter(
+                [
+                    channel.name
+                    for channel in message.guild.text_channels
+                ],
+                f"*{'suggest'}*"
+            )
             for channelset in possiblechannels:
                 for channel in channelset:
                     if message.channel.name == channel:

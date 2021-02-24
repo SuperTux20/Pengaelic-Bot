@@ -263,13 +263,13 @@ class Generators(commands.Cog):
         headline.append(choice(objects))
         await ctx.send(" ".join(headline))
 
-    @commands.command(name="img", help="Infinite Monkey Generator", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
+    @commands.command(name="img", help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
     async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
         if word == None:
             await ctx.send("You didn't specify a keyword to search for!")
         else:
             invalid = False
-            for character in word:
+            for character in word.lower():
                 if character not in alphabet:
                     invalid = True
             if invalid:
