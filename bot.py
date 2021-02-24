@@ -581,6 +581,15 @@ async def restart(ctx):
     else:
         await ctx.send("Hey, only my developers can do this!")
 
+
+@client.command(name="exit", aliases=["quit"])
+async def restart(ctx):
+    if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+        await ctx.send("Goodbye...")
+        exit(0)
+    else:
+        await ctx.send("Hey, only my developers can do this!")
+
 # load all the cogs
 for cog in os.listdir("cogs"):
     if cog.endswith(".py"):
