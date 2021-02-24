@@ -182,57 +182,24 @@ class NonCommands(commands.Cog):
         # this section randomizes yo mama jokes
         if all_options["yoMamaJokes"] == 1:
             with open(r"data/Yo Mama Jokes.json", "r") as AllTheJokes:
-                jokes = load(
-                    AllTheJokes
-                )
+                jokes = load(AllTheJokes)
             for mom in jokes:
-                if "yo mama " == message.content[0:7].lower():
-                    if "so " == message.content[8:11]:
-                        if message.content[12:] in list(jokes.keys()):
-                            if message.content[12:] == mom:
-                                await message.channel.send(
-                                    choice(
-                                        jokes[mom]
-                                    )
-                                )
+                if message.content.lower().startswith("yo mama "):
+                    if message.content.lower().startswith("yo mama so "):
+                        if message.content[11:] == mom:
+                            await message.channel.send(choice(jokes[mom]))
+                            break
                         else:
-                            await message.channel.send(
-                                "Invalid Yo Mama type detected..."
-                            )
-                            await message.channel.send(
-                                "Type `yo mama list` for a list of valid types!"
-                            )
-                    elif "list" == message.content[8:12]:
-                        await message.channel.send(
-                            str(
-                                list(
-                                    jokes.keys()
-                                )
-                            )[1:-1].replace(
-                                "'",
-                                ""
-                            )
-                        )
+                            await message.channel.send("Invalid Yo Mama type detected...")
+                            await message.channel.send("Type `yo mama list` for a list of valid types!")
+                            break
+                    elif message.content == "yo mama list":
+                        await message.channel.send(str(list(jokes.keys()))[1:-1].replace("'", ""))
+                        break
 
         # bro, did someone seriously say the chat was dead?
         if "dead" in message.content.lower() and ("chat" in message.content.lower() or "server" in message.content.lower()):
-            await message.channel.send(
-                f"""{
-                    choice(
-                        [
-                            'N',
-                            'n'
-                        ]
-                    )
-                }o {
-                    choice(
-                        [
-                            'U',
-                            'u'
-                        ]
-                    )
-                }"""
-            )
+            await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
         # this section makes automatic polls in any validly named channel
         if all_options["polls"] == 1:
