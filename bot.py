@@ -546,7 +546,7 @@ async def update(ctx):
  {"".join(update_log[:-1])[1:-1]}
 ```
 ```ini
-[{update_log[-1][:-1]} ]
+[ {update_log[-1][:-1]} ]
 ```
 Commits pulled.
 Restarting...

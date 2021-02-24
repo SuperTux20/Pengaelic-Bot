@@ -1,7 +1,7 @@
 from discord.ext import commands
 from random import choice, randint
 from libs.monkeys import generate as monkeys
-from math import floor
+from math import floor, sqrt
 
 
 class Generators(commands.Cog):
@@ -259,9 +259,8 @@ class Generators(commands.Cog):
         headline.append(choice(timing))
         headline.append(selected_object)
         objects.remove(selected_object)
-        selected_object = choice(objects)
         headline.append(choice(actions))
-        headline.append(selected_object)
+        headline.append(choice(objects))
         await ctx.send(" ".join(headline))
 
     @commands.command(name="img", help="Infinite Monkey Generator", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
@@ -278,7 +277,7 @@ class Generators(commands.Cog):
             else:
                 word = word.lower()
                 alphabet = list(alphabet.lower())
-                if len(word) < len(alphabet)/6:
+                if len(word) < floor(sqrt(len(alphabet))):
                     async with ctx.typing():
                         await ctx.send("Generating...")
                     await ctx.send(monkeys(word, alphabet))

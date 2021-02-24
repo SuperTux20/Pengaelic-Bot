@@ -77,13 +77,7 @@ class Interactions(commands.Cog):
             ctx,
             [
                 "You boop your own nose, I guess...? ",
-                f"""You miss your nose and poke yourself in the eye. {choice(
-                        [
-                            'Ouch',
-                            'Oops',
-                            'Whoops'
-                        ]
-                    )}!""",
+                f"""You miss your nose and poke yourself in the eye. {choice(['Ouch', 'Oops', 'Whoops'])}!""",
                 "Somehow, your hand clips through your nose and appears on the other side of your head. "
             ],
             "boop",
