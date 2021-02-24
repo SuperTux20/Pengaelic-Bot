@@ -14,7 +14,7 @@ if len(argv) == 2:
 elif len(argv) == 1:
     unstable = False
 else:
-    print("err: too many arguments")
+    print("bot.py: too many arguments")
     exit()
 info = r"""
  ____________
@@ -254,7 +254,6 @@ async def on_ready():
     for guild in client.guilds:
         with create_connection(database) as conn:
             create_options(conn, tuple([guild.id]))
-    print("Loaded configs")
     print(f"{client.description} connected to Discord")
 
 

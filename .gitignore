@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
+*.pyd
 *$py.class
 
 # C extensions
@@ -126,10 +128,6 @@ dmypy.json
 
 # Configs and guild data
 data/
-
-# Scripts
-*.bat
-*.sh
 
 # VS Code configs
 .vscode/
