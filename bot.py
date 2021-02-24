@@ -489,37 +489,6 @@ async def h_censor(ctx):
     await ctx.send(embed=help_menu)
 
 
-@h_options.command(name="cog", aliases=["module"])
-async def h_cog(ctx):
-    group = client.get_command("cog")
-    help_menu = discord.Embed(
-        title=group.name.capitalize(),
-        description=group.help,
-        color=32639
-    ).set_footer(text=f"""    Command prefix is {client.command_prefix}cog or {client.command_prefix}module
-    <arg> = required parameter
-    [arg] = optional parameter
-    [arg (value)] = default value for optional parameter
-    (command/command/command) = all aliases you can run the command with""")
-    for command in remove_duplicates(group.walk_commands()):
-        if command.usage:
-            help_menu.add_field(
-                name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
-                    command.usage
-                ),
-                value=command.help
-            )
-        else:
-            help_menu.add_field(
-                name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")),
-                value=command.help
-            )
-    await ctx.send(embed=help_menu)
-
-
 @client.command(name="update", aliases=["ud"])
 async def update(ctx):
     if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
