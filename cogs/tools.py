@@ -76,31 +76,13 @@ class Tools(commands.Cog):
     @commands.command(name="emoji", help="Get the specified (server-specific) emoji.", usage="[:emoji:]", aliases=["emote"])
     async def get_emoji(self, ctx, emoji=None):
         emojis = [
-            f"""<:{
-                em.name
-            }:{
-                em.id
-            }>"""
-            for em in ctx.guild.emojis
+            f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis
         ]
         emojiurls = [
-            f"""https://cdn.discordapp.com/emojis/{
-                em.id
-            }.png"""
-            for em in ctx.guild.emojis
+            f"https://cdn.discordapp.com/emojis/{em.id}.png" for em in ctx.guild.emojis
         ]
         if emoji == None:
-            await ctx.send(
-                "Here's all the emojis on this server.\n" + str(
-                    emojis
-                )[1:-1].replace(
-                    "'",
-                    ""
-                ).replace(
-                    ", ",
-                    ""
-                )
-            )
+            await ctx.send("Here's all the emojis on this server.\n" + str(emojis)[1:-1].replace("'", "").replace(", ", ""))
         else:
             if emoji in emojis:
                 await ctx.send(
@@ -108,18 +90,16 @@ class Tools(commands.Cog):
                         title="Here's your emoji!",
                         color=32639
                     ).set_image(
-                        url=emojiurls[
-                            emojis.index(
-                                emoji
-                            )
-                        ]
+                        url=emojiurls[emojis.index(emoji)]
                     )
                 )
             else:
                 await ctx.send("Invalid emoji specified!")
 
-    @commands.command(name="suggest", help="Send a suggestion poll!", aliases=["poll", "suggestion"])
-    async def poll(self, ctx, *, arg=None):
+    @commands.command(name="poll", help="Send a poll!", aliases=["suggest"], usage="<poll name (use double quotes for multi word names)> <poll content>")
+    async def poll(self, ctx, title=None, *, arg=None):
+        if title == None:
+            await ctx.send("You didn't specify a name for the poll!")
         if arg == None:
             await ctx.send("You didn't specify anything to make a poll for!")
         else:
@@ -129,7 +109,7 @@ class Tools(commands.Cog):
                         0,
                         16777215
                     ),
-                    title="Suggestion",
+                    title=title,
                     description=arg
                 ).set_author(
                     name=ctx.author.name,
@@ -146,17 +126,9 @@ class Tools(commands.Cog):
     @commands.command(name="clear", help="Clear some messages away.", aliases=["delmsgs", "purge"], usage="[number of messages to delete (5)]")
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, msgcount: int = 5):
-        await ctx.channel.purge(
-            limit=msgcount + 1
-        )
-        report = await ctx.send(
-            f"""{
-                msgcount
-            } (probably) messages deleted."""
-        )
-        await sleep(
-            3
-        )
+        await ctx.channel.purge(limit=msgcount + 1)
+        report = await ctx.send(f"{msgcount} (probably) messages deleted.")
+        await sleep(3)
         try:
             await report.delete()
         except:

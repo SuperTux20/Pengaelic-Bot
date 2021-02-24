@@ -116,62 +116,35 @@ class NonCommands(commands.Cog):
                 if dad + " " == message.content[0:len(dad)+1].lower():
                     if "pengaelic bot" in message.content.lower():
                         if "not" in message.content:
-                            await message.channel.send(
-                                "Darn right, you're not!"
-                            )
+                            await message.channel.send("Darn right, you're not!")
                         else:
-                            await message.channel.send(
-                                "You're not the Pengaelic Bot, I am!"
-                            )
+                            await message.channel.send("You're not the Pengaelic Bot, I am!")
                     elif "chickenmeister" in message.content or "Tux" == message.content:
                         if message.author.id == 686984544930365440:
-                            await message.channel.send(
-                                "Yes you are! Hiya!"
-                            )
+                            await message.channel.send("Yes you are! Hiya!")
                         else:
                             if "not" in message.content:
-                                await message.channel.send(
-                                    "Darn right, you're not!"
-                                )
+                                await message.channel.send("Darn right, you're not!")
                             else:
-                                await message.channel.send(
-                                    "You dare to impersonate my creator?! **You shall be punished.**"
-                                )
+                                await message.channel.send("You dare to impersonate my creator?! **You shall be punished.**")
                     else:
                         if dad + "a " == message.content[0:len(dad)+2]:
-                            await message.channel.send(
-                                f"""Hi{
-                                    message.content[len(dad)+2:]
-                                }, I'm the Pengaelic Bot!"""
-                            )
+                            await message.channel.send(f"Hi{message.content[len(dad)+2:]}, I'm the Pengaelic Bot!")
+                        elif dad + "an " == message.content[0:len(dad)+3]:
+                            await message.channel.send(f"Hi{message.content[len(dad)+3:]}, I'm the Pengaelic Bot!")
                         else:
-                            await message.channel.send(
-                                f"""Hi{
-                                    message.content[len(dad):]
-                                }, I'm the Pengaelic Bot!"""
-                            )
+                            await message.channel.send(f"Hi{message.content[len(dad):]}, I'm the Pengaelic Bot!")
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
         if all_options["censor"] == 1:
             try:
                 try:
-                    open(
-                        rf"""data/{
-                            message.guild.id
-                        }censor.txt""",
-                        "x"
-                    ).close()
-                    print(
-                        f"""Censor file created for {
-                            message.guild.name
-                        }"""
-                    )
+                    open(rf"data/{message.guild.id}censor.txt", "x").close()
+                    print(f"Censor file created for {message.guild.name}")
                 except FileExistsError:
                     pass
                 with open(rf"data/{message.guild.id}censor.txt", "r") as bads_file:
-                    all_bads = bads_file.read().split(
-                        ", "
-                    )
+                    all_bads = bads_file.read().split(", ")
                     for bad in all_bads:
                         for word in message.content.split():
                             if fnmatch(bad.lower(), word.lower()):
