@@ -530,7 +530,7 @@ async def update(ctx):
         )
         await status.edit(content="Pulling the latest commits from GitHub...")
         # fetch and pull, boys. fetch and pull.
-        os.system("bash update.bash > update.log")
+        os.system("bash update.sh > update.log")
         update_log = [line for line in open("update.log", "r")][1:]
         # special status for when there's no update :o (aka me being lazy lmao)
         if update_log == ["Already up to date.\n"]:
