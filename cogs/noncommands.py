@@ -280,7 +280,7 @@ class NonCommands(commands.Cog):
                             continue
 
         # a rickroll-themed game of russian roulette
-        if "You know the rules" == message.content.lower():
+        if "you know the rules" == message.content.lower():
             responses = [
                 "And so do I :pensive:"
                 for _ in range(5)
