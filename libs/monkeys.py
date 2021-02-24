@@ -7,7 +7,7 @@
 # Enjoy ¯\_(ツ)_/¯
 
 from random import randint
-import time
+from time import time
 
 
 def stopwatch(value):
@@ -23,19 +23,26 @@ def stopwatch(value):
     value_s = (value_m - minutes)*60
     seconds = int(value_s)
 
-    return " in " + str(hours) + ":" + str(minutes) + ":" + str(seconds)
+    return str(hours) + ":" + str(minutes) + ":" + str(seconds)
 
 
-def generate(word, alphabet: list = "abcdefghijklmnopqrstuvwxyz"):
-    starttime = time.time()
+async def generate(word, alphabet: list = "abcdefghijklmnopqrstuvwxyz"):
+    starttime = time()
     text = ""
+    success = True
     while text.find(word) == -1:
         letter = alphabet[randint(0, len(alphabet) - 1)]
         text = text + letter
-    endtime = time.time()
+        if stopwatch(time()-starttime) == "0:1:0":
+            success = False
+            break
+    endtime = time()
     cutoff = ""
     textlen = len(text)
     if len(text) > 1000:
         text = f"...{text[-1000:]}"
         cutoff = " (last 1000 shown)"
-    return f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff}{stopwatch(endtime-starttime)}'
+    if success:
+        return f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(endtime-starttime)}'
+    else:
+        return f'Could not find keyword "{word}" within one minute. :frowning:'

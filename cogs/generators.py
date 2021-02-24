@@ -277,12 +277,10 @@ class Generators(commands.Cog):
             else:
                 word = word.lower()
                 alphabet = list(alphabet.lower())
-                if len(word) < floor(sqrt(len(alphabet))):
-                    async with ctx.typing():
-                        await ctx.send("Generating...")
-                    await ctx.send(monkeys(word, alphabet))
-                else:
-                    await ctx.send(f"Your keyword was too long! It needs to be fewer than {floor(len(alphabet)/6)+1} characters.")
+                async with ctx.typing():
+                    await ctx.send("Generating...")
+                monke = await monkeys(word, alphabet)
+                await ctx.send(monke)
 
     @name_generator.error
     @florida_man.error
