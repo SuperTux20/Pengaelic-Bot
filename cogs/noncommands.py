@@ -289,10 +289,8 @@ class NonCommands(commands.Cog):
                 choice(
                     [
                         "It's time to die <:handgun:706698375592149013>",
-                        """And so do I :pensive:
-Say goodbye <:handgun:706698375592149013>""",
-                        """It's time to die <:handgun:706698375592149013>s
-Say goodbye <:handgun:706698375592149013>"""
+                        "And so do I :pensive:\nSay goodbye <:handgun:706698375592149013>",
+                        "It's time to die <:handgun:706698375592149013>\nSay goodbye <:handgun:706698375592149013>"
                     ]
                 )
             )
