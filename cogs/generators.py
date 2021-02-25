@@ -1,5 +1,5 @@
 from discord.ext import commands
-from libs.pengaelicutils import list2str, stopwatch
+from pengaelicutils import list2str, stopwatch
 from random import choice, randint
 from subprocess import check_output as bash
 from time import time

@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import libs.pengaelicutils as pengaelicutils
+from pengaelicutils import options
 from json import dumps
 
 
@@ -44,7 +44,7 @@ class Messages(commands.Cog):
                 name=cred,
                 value=bot_credits[cred]
             )
-        if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+        if options(ctx.guild.id)["JSONmenus"]:
             bot_credits = {
                 cred.lower(): bot_credits[cred]
                 for cred in bot_credits

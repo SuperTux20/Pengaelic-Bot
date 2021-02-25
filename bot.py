@@ -1,6 +1,6 @@
 import discord
 import os
-import libs.pengaelicutils as pengaelicutils
+from pengaelicutils import options
 import sqlite3
 import sys
 from asyncio import sleep
@@ -535,7 +535,7 @@ if not unstable:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
             else:
-                if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+                if options(ctx.guild.id)["JSONmenus"]:
                     update_summary = update_log[-1][:-1]
                     update_log = dict(
                         str(

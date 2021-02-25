@@ -1,6 +1,6 @@
 import sqlite3
 import discord
-import libs.pengaelicutils as pengaelicutils
+from pengaelicutils import options
 from discord.ext import commands
 from json import dumps
 from asyncio import sleep
@@ -35,7 +35,7 @@ class Options(commands.Cog):
     @commands.command(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
-        options = pengaelicutils.get_options(ctx.guild.id)
+        options = options(ctx.guild.id)
         jsoninfo = str(
             dumps(
                 {"options": options},
@@ -91,7 +91,7 @@ class Options(commands.Cog):
     @commands.group(name="toggle", help="Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
-            if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+            if options(ctx.guild.id)["JSONmenus"]:
                 await ctx.send(f'```json\n"Type {self.client.command_prefix}options to see all options and their current statuses",\n"Type {self.client.command_prefix}toggle <option> to turn <option> on or off"```')
             else:
                 await ctx.send(f"Type `{self.client.command_prefix}options` to see all options and their current statuses\nType `{self.client.command_prefix}toggle <option>` to turn <option> on or off")
@@ -99,7 +99,7 @@ class Options(commands.Cog):
     @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
-        if pengaelicutils.get_options(ctx.guild.id)["censor"] == 1:
+        if options(ctx.guild.id)["censor"] == 1:
             self.updateOption(
                 self.db,
                 ctx.guild.id,
@@ -119,7 +119,7 @@ class Options(commands.Cog):
     @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
-        if pengaelicutils.get_options(ctx.guild.id)["dadJokes"] == 1:
+        if options(ctx.guild.id)["dadJokes"] == 1:
             self.updateOption(
                 self.db,
                 ctx.guild.id,
@@ -139,7 +139,7 @@ class Options(commands.Cog):
     @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_yo_mama_jokes(self, ctx):
-        if pengaelicutils.get_options(ctx.guild.id)["yoMamaJokes"] == 1:
+        if options(ctx.guild.id)["yoMamaJokes"] == 1:
             self.updateOption(
                 self.db,
                 ctx.guild.id,
@@ -159,7 +159,7 @@ class Options(commands.Cog):
     @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
-        if pengaelicutils.get_options(ctx.guild.id)["welcome"] == 1:
+        if options(ctx.guild.id)["welcome"] == 1:
             self.updateOption(
                 self.db,
                 ctx.guild.id,
@@ -179,7 +179,7 @@ class Options(commands.Cog):
     @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_polls(self, ctx):
-        if pengaelicutils.get_options(ctx.guild.id)["polls"] == 1:
+        if options(ctx.guild.id)["polls"] == 1:
             self.updateOption(
                 self.db,
                 ctx.guild.id,
@@ -199,7 +199,7 @@ class Options(commands.Cog):
     @toggle.command(name="JSONmenus", help="Change whether menus should be shown in embed or JSON format.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_json(self, ctx):
-        if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"] == 1:
+        if options(ctx.guild.id)["JSONmenus"] == 1:
             self.updateOption(
                 self.db,
                 ctx.guild.id,

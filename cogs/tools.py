@@ -1,5 +1,5 @@
 import discord
-import libs.pengaelicutils as pengaelicutils
+from pengaelicutils import options
 from subprocess import check_output
 from discord.ext import commands
 from asyncio import sleep
@@ -234,7 +234,7 @@ class Tools(commands.Cog):
                 Emojis: {len(ctx.guild.emojis)}""",
             inline=False
         )
-        if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+        if options(ctx.guild.id)["JSONmenus"]:
             await ctx.send(
                 f"""
 ```json

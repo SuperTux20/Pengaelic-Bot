@@ -19,7 +19,7 @@ def stopwatch(intime):
     return f"{hours}:{minutes}:{seconds}"
 
 
-def get_options(guild):
+def options(guild):
     conn = sqlite3.connect("data/config.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
