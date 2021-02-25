@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from os import listdir
+from json import dumps
 
 
 class Interactions(commands.Cog):
@@ -17,24 +18,12 @@ class Interactions(commands.Cog):
     async def act(self, ctx, selfresponses, act, pastact, acting, actee: discord.Member = None):
         if actee:
             if not actee.bot:
-                actor = ctx.author.display_name.replace(
-                    "_",
-                    r"\_"
-                )
+                actor = ctx.author.display_name.replace("_", r"\_")
                 for char in self.formatChars:
-                    actor = actor.replace(
-                        char,
-                        "\\" + char
-                    )
-                acted = actee.display_name.replace(
-                    "_",
-                    r"\_"
-                )
+                    actor = actor.replace(char, "\\" + char)
+                acted = actee.display_name.replace("_", r"\_")
                 for char in self.formatChars:
-                    acted = acted.replace(
-                        char,
-                        "\\" + char
-                    )
+                    acted = acted.replace(char, "\\" + char)
                 responses = [
                     f"""{acted} just got {pastact} by {actor}""",
                     f"""{actor} {pastact} {acted}"""
@@ -54,6 +43,40 @@ class Interactions(commands.Cog):
         else:
             await ctx.send(
                 f"""You can't just {act} thin air! (Unless you're {acting} a ghost?)"""
+            )
+
+    async def vact(self, ctx, act, pastact, acting, actee: discord.Member = None, image: str = None):
+        actor = ctx.author.display_name
+        factor = actor.replace("_", r"\_")
+        for char in self.formatChars:
+            factor = factor.replace(char, "\\" + char)
+        try:
+            acted = actee.display_name
+            facted = acted.replace("_", r"\_")
+            for char in self.formatChars:
+                facted = facted.replace(char, "\\" + char)
+        except:
+            await ctx.send(f"You can't just {act} thin air! (Unless you're {acting} a ghost?)")
+            return
+        responses = [
+            f"{facted} just got {pastact} by {factor}",
+            f"{factor} {pastact} {facted}"
+        ]
+        if actee == ctx.author:
+            await ctx.send(f"Hey, you can't {act} yourself!")
+        elif actee == self.client.user:
+            await ctx.send(f"Hey, you can't {act} me!")
+        else:
+            embed = discord.Embed(
+                title=choice(responses),
+                color=32639
+            )
+            if image:
+                embed.set_image(
+                    url=image
+                )
+            await ctx.send(
+                embed=embed
             )
 
     @commands.command(name="hug", help="Give somebody a hug!", usage="<username or nickname or @mention>")
@@ -145,12 +168,189 @@ class Interactions(commands.Cog):
             squish
         )
 
+    async def giveitem(self, ctx, botresponses, item, person2give2):
+        persongiving = ctx.author.display_name.replace(
+            "_",
+            r"\_"
+        )
+        for char in self.formatChars:
+            persongiving = persongiving.replace(
+                char,
+                "\\" + char
+            )
+        try:
+            persongetting = person2give2.display_name.replace(
+                "_",
+                r"\_"
+            )
+            for char in self.formatChars:
+                persongetting = persongetting.replace(
+                    char,
+                    "\\" + char
+                )
+        except:
+            await ctx.send(
+                f"""You can't just give a {
+                    item
+                } to thin air! (Unless you're giving it to a ghost?)"""
+            )
+            return
+        if person2give2 == ctx.author:
+            await ctx.send(
+                f"""You didn't give the {
+                    item
+                } to anyone in particular"""
+            )
+        else:
+            await ctx.send(
+                embed=discord.Embed(
+                    title=f"""{
+                            persongiving
+                        } gave a {
+                            item
+                        } to {
+                            persongetting
+                        }""",
+                    color=self.cyan
+                )
+            )
+            if person2give2 == self.client.user:
+                await ctx.send(
+                    choice(
+                        botresponses
+                    )
+                )
+
+    @commands.command(name="give", help="Give someone something to eat!", usage=" <username, nickname, or @mention> <item>")
+    async def give(self, ctx, member: discord.Member = None, *, item=None):
+        items = {
+            "candies": [
+                "3 musketeers",
+                "cake",
+                "chocolate bar",
+                "cookie",
+                "kitkat",
+                "snickers",
+                "truffle"
+            ],
+            "dinners": [
+                "burger",
+                "burrito",
+                "lasagna",
+                "taco"
+            ],
+            "drinks": [
+                "dr. pepper",
+                "coke",
+                "mcdonald's sprite",
+                "pepsi",
+                "root beer",
+                "sprite",
+                "water"
+            ],
+            "fruits": [
+                "apple",
+                "banana",
+                "handful of berries",
+                "orange",
+                "peach",
+                "pear"
+            ],
+            "sandwiches": [
+                "blt",
+                "club sandwich",
+                "cuban sandwich",
+                "grilled cheese",
+                "pb&j",
+                "reuben"
+            ]
+        }
+        if member == None or type(item) is not str:
+            await ctx.send(f"""Available food items:
+```json
+{
+    dumps(
+        items,
+        indent = 4
+    )
+}
+```"""
+                           )
+        else:
+            tests = {
+                food_type: True
+                for food_type in items
+            }
+            for food_type in list(items.keys()):
+                if item in items[food_type]:
+                    await self.giveitem(
+                        ctx,
+                        [
+                            "Hey, thanks!",
+                            "Thanks! :yum:"
+                        ],
+                        item,
+                        member
+                    )
+                else:
+                    tests[food_type] = False
+            if True not in list(tests.values()):
+                await ctx.send(
+                    "That item isn't in the list!"
+                )
+
+    @commands.command(name="slap", help="Slap someone!", usage="<username or nickname or @mention>")
+    async def slap(self, ctx, *, slap: discord.Member = None):
+        await self.vact(
+            ctx,
+            "slap",
+            "slapped",
+            "slapping",
+            slap
+        )
+
+    @commands.command(name="stab", help="Stab someone!", usage="<username or nickname or @mention>")
+    async def stab(self, ctx, *, stab: discord.Member = None):
+        await self.vact(
+            ctx,
+            "stab",
+            "stabbed",
+            "stabbing",
+            stab
+        )
+
+    @commands.command(name="shoot", help="Shoot someone!", usage="<username or nickname or @mention>")
+    async def shoot(self, ctx, *, shoot: discord.Member = None):
+        await self.vact(
+            ctx,
+            "shoot",
+            "shot",
+            "shooting",
+            shoot
+        )
+
+    @commands.command(name="bonk", help="Bonk someone on the head!", usage="<username or nickname or @mention>")
+    async def bonk(self, ctx, *, bonk: discord.Member = None):
+        await self.vact(
+            ctx,
+            "bonk",
+            "bonked",
+            "bonking",
+            bonk,
+            "https://supertux20.github.io/Pengaelic-Bot/images/bonk.jpg"
+        )
+
+    @slap.error
+    @stab.error
+    @shoot.error
+    @bonk.error
     @boop.error
     @hug.error
     @pat.error
     @tickle.error
     @kiss.error
     @squish.error
+    @give.error
     async def error(self, ctx, error):
         if "Member" in str(error) and "not found" in str(error):
             await ctx.send("Invalid user specified!")

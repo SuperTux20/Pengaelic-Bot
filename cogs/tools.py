@@ -1,6 +1,6 @@
 import discord
-import platform
 import libs.pengaelicutils as pengaelicutils
+from subprocess import check_output
 from discord.ext import commands
 from asyncio import sleep
 from random import randint
@@ -19,7 +19,15 @@ class Tools(commands.Cog):
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
-        await ctx.send(f"I'm running on {platform.system()} {platform.release()} ver. {platform.version()}")
+        os = check_output(
+            'neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
+            shell=True
+        ).decode().split(':')[1][1:-2].split("x86")[0][:-1]
+        kernel = check_output(
+            'neofetch | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
+            shell=True
+        ).decode().split(':')[1][1:-2]
+        await ctx.send(f"I'm running on {os}, kernel version {kernel}.")
 
     @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
     async def ping(self, ctx):

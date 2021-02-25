@@ -1,13 +1,14 @@
-from sys import argv
+import discord
 import os
-from asyncio import sleep
-from dotenv import load_dotenv as dotenv
-from random import choice, randint
-from discord.ext import commands
-from discord.utils import get
+import libs.pengaelicutils as pengaelicutils
 import sqlite3
 import sys
-import discord
+from asyncio import sleep
+from discord.ext import commands
+from discord.utils import get
+from dotenv import load_dotenv as dotenv
+from random import choice, randint
+from sys import argv
 print("Imported modules")
 if len(argv) == 2:
     unstable = bool(argv[1])
@@ -174,14 +175,12 @@ async def status_switcher():
             "AstroMenace",
             "Space Pirates and Zombies"
         ])
-        youtuber = choice([
+        moviesyt = choice([
             "Ethoslab",
             "MumboJumbo",
             "Blue Television Games",
             "The King of Random",
-            "Phoenix SC"
-        ])
-        movie = choice([
+            "Phoenix SC",
             "Avengers: Endgame",
             "Avengers: Infinity War",
             "Star Wars Episode IV: A New Hope",
@@ -198,11 +197,7 @@ async def status_switcher():
             ),
             discord.Activity(
                 type=discord.ActivityType.watching,
-                name=movie
-            ),
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=youtuber
+                name=moviesyt
             )
         ]
         activity = choice(activities)
@@ -320,11 +315,10 @@ async def redo_welcome(ctx):
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx):
-    global database
     if ctx.invoked_subcommand is None:
         help_menu = discord.Embed(
             title=client.description,
-            description=f"""Type `{client.command_prefix}help **<lowercase category name without spaces or dashes>** for more info on each category.""",
+            description=f"Type `{client.command_prefix}help **<lowercase category name without spaces or dashes>** for more info on each category.",
             color=32639
         )
         cogs = dict(client.cogs)
@@ -344,6 +338,30 @@ async def help(ctx):
             inline=False
         )
         await ctx.send(embed=help_menu)
+
+
+@help.command(name="all")
+async def h_all(ctx):
+    help_menu = discord.Embed(
+        title=client.description,
+        description="ALL COMMANDS across ALL MODULES for the ENTIRE BOT",
+        color=32639
+    )
+    cogs = dict(client.cogs)
+    cogs.pop("NonCommands")
+    for cog in cogs:
+        help_menu.add_field(
+            name=dict(client.cogs)[cog].name.capitalize(),
+            value=str(
+                [
+                    command.qualified_name
+                    for command in dict(client.cogs)[cog].walk_commands()
+                ]
+            )[1:-1].replace("'", "").replace(", ", "\n")
+        )
+    await ctx.send(
+        embed=help_menu
+    )
 
 
 @help.command(name="actions")
@@ -481,44 +499,11 @@ async def h_censor(ctx):
     await ctx.send(embed=help_menu)
 
 if not unstable:
-    @client.command(name="update", aliases=["ud"])
-    async def update(ctx):
+    @client.command(name="exit", aliases=["quit"])
+    async def restart(ctx):
         if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
-            status = await ctx.send("Updating...")
-            await client.change_presence(
-                activity=discord.Game("Updating..."),
-                status=discord.Status.idle
-            )
-            await status.edit(content="Pulling the latest commits from GitHub...")
-            # fetch and pull, boys. fetch and pull.
-            os.system("bash update.sh > update.log")
-            update_log = [line for line in open("update.log", "r")][1:]
-            # special status for when there's no update :o (aka me being lazy lmao)
-            if update_log == ["Already up to date.\n"]:
-                await status.edit(content="Already up to date, no restart required.")
-                await client.change_presence(
-                    activity=discord.Game("Factory Idle"),
-                    status=discord.Status.online
-                )
-            else:
-                update_summary = update_log[-1][:-1]
-                update_log = dict(str(update_log[2:-1].split("|")
-                                      for _ in update_log[2:-1].split("\n")))
-                await status.edit(content=f"""
-    ```json
-    {update_log}
-    [ {update_summary} ]
-    ```""")  # asdf
-                await ctx.send("Restarting...")
-                await client.change_presence(
-                    activity=discord.Game("Restarting..."),
-                    status=discord.Status.dnd
-                )
-                os.execl(
-                    sys.executable,
-                    sys.executable,
-                    * sys.argv
-                )
+            await ctx.send("Goodbye...")
+            exit(0)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
@@ -539,13 +524,53 @@ if not unstable:
         else:
             await ctx.send("Hey, only my developers can do this!")
 
-    @client.command(name="exit", aliases=["quit"])
-    async def restart(ctx):
+    @client.command(name="update", aliases=["ud"])
+    async def update(ctx):
         if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
-            await ctx.send("Goodbye...")
-            exit(0)
+            status = await ctx.send("Updating...")
+            await client.change_presence(
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
+            )
+            await status.edit(content="Pulling the latest commits from GitHub...")
+            os.system("bash update.sh > update.log")
+            update_log = [line for line in open("update.log", "r")][1:]
+            if update_log == ["Already up to date.\n"]:
+                await status.edit(content="Already up to date, no restart required.")
+                await status_switcher()
+            else:
+                if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+                    update_summary = update_log[-1][:-1]
+                    update_log = dict(
+                        str(
+                            update_log[2:-1].split("|")
+                            for _ in update_log[2:-1].split("\n")
+                        )
+                    )
+                    await status.edit(
+                        content=f"""
+```json
+{update_log},
+"{update_summary}"
+```"""
+                    )
+                else:
+                    update_summary = update_log[-1][:-1]
+                    update_log = update_log[2:-1]
+                    await status.edit(embed=discord.Embed(description=update_log, footer=update_summary))
+                await ctx.send("Restarting...")
+                await client.change_presence(
+                    activity=discord.Game("Restarting..."),
+                    status=discord.Status.dnd
+                )
+                os.execl(
+                    sys.executable,
+                    sys.executable,
+                    * sys.argv
+                )
         else:
             await ctx.send("Hey, only my developers can do this!")
+
 
 client.loop.create_task(status_switcher())  # as defined above
 
