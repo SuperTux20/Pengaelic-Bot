@@ -504,7 +504,7 @@ async def update(ctx):
             update_log = update_log[2:]
             await status.edit(content=f"""
 ```fix
- {"".join(update_log)}
+ {"".join(update_log[:-1])[1:-1]}
 ```
 ```ini
 [ {update_log[-1][:-1]} ]
