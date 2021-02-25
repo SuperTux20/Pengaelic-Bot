@@ -502,8 +502,8 @@ if not unstable:
                 )
             else:
                 update_summary = update_log[-1][:-1]
-                update_log = dict(update_log[2:-1].split("|")
-                                  for _ in update_log[2:-1].split("\n"))
+                update_log = dict(str(update_log[2:-1].split("|")
+                                      for _ in update_log[2:-1].split("\n")))
                 await status.edit(content=f"""
     ```json
     {update_log}
