@@ -501,17 +501,14 @@ async def update(ctx):
                 status=discord.Status.online
             )
         else:
-            update_log = update_log[2:]
+            update_summary = update_log[-1][:-1]
+            update_log = update_log[2:-1]
             await status.edit(content=f"""
-```fix
- {"".join(update_log[:-1])[1:-1]}
-```
-```ini
-[ {update_log[-1][:-1]} ]
-```
-Commits pulled.
-Restarting...
-""")
+```json
+{"".join(update_log)[1:-1]}
+[ {update_summary} ]
+```""")
+            await ctx.send("Restarting...")
             await client.change_presence(
                 activity=discord.Game("Restarting..."),
                 status=discord.Status.dnd
