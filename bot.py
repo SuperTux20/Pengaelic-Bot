@@ -506,7 +506,7 @@ if not unstable:
                                   for _ in update_log[2:-1].split("\n"))
                 await status.edit(content=f"""
     ```json
-    {"".join(update_log)[1:-1]}
+    {update_log}
     [ {update_summary} ]
     ```""")  # asdf
                 await ctx.send("Restarting...")
