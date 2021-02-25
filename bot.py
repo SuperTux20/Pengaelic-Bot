@@ -1,6 +1,5 @@
 import discord
 import os
-from pengaelicutils import options
 import sqlite3
 import sys
 from asyncio import sleep
@@ -8,6 +7,7 @@ from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from random import choice, randint
+from pengaelicutils import options
 from platform import node as hostname
 print("Imported modules")
 if "TrueMintguin" in hostname():

@@ -27,7 +27,7 @@ class Actions(commands.Cog):
                 title=f"{actor} is {acting}",
                 color=self.cyan
             )  # .set_image(
-            #     url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/{
+            #     url = f"""https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{
             #         act
             #     }/{
             #         randint(
@@ -60,12 +60,12 @@ class Actions(commands.Cog):
             "laughing!"
         )
 
-    @commands.command(name="snore")
+    @commands.command(name="sleep")
     async def snore(self, ctx):
         await self.act(
             ctx,
-            "snore",
-            "snoring..."
+            "sleep",
+            "sleeping..."
         )
 
 
