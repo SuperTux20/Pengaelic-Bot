@@ -84,23 +84,15 @@ def create_table(conn, create_table_sql):
 
 def create_database():
     global database
-
-    sql_create_options_table = """CREATE TABLE IF NOT EXISTS options (    id INTEGER PRIMARY KEY
-                                    );"""
-
-    sql_create_cogs_table = """CREATE TABLE IF NOT EXISTS cogs (id INTEGER PRIMARY KEY
-                                );"""
-
     # create a database connection
     conn = create_connection(database)
-
     # create tables
     if conn is not None:
         # create options table
-        create_table(conn, sql_create_options_table)
-
-        # create cogs table
-        create_table(conn, sql_create_cogs_table)
+        create_table(
+            conn,
+            "CREATE TABLE IF NOT EXISTS options (id INTEGER PRIMARY KEY);"
+        )
     else:
         raise sqlite3.DatabaseError("Cannot create the database connection.")
 
