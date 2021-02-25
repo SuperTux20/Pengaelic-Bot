@@ -52,7 +52,7 @@ class Options(commands.Cog):
                 value=str(options[option]).replace(
                     "0", "disabled").replace("1", "enabled"),
                 inline=False)
-        if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+        if options["JSONmenus"]:
             await ctx.send(f"```json\n{jsoninfo}\n```")
         else:
             await ctx.send(embed=embedinfo)

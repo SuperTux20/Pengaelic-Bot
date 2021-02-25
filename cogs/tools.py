@@ -270,13 +270,7 @@ class Tools(commands.Cog):
                 }, you have insufficient permissions (Manage Channels)"""
             )
         else:
-            await ctx.send(
-                f"""Unhandled error occurred:
-        {
-            error
-        }
-If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
-            )
+            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
     @get_avatar.error
     async def avatarError(self, ctx, error):

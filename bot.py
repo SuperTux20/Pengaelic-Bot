@@ -8,15 +8,12 @@ from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from random import choice, randint
-from sys import argv
+from platform import node as hostname
 print("Imported modules")
-if len(argv) == 2:
-    unstable = bool(argv[1])
-elif len(argv) == 1:
-    unstable = False
+if "TrueMintguin" in hostname():
+    unstable = True
 else:
-    print("bot.py: too many arguments")
-    exit()
+    unstable = False
 info = r"""
  ____________
 | ___| | | | |
@@ -303,8 +300,7 @@ if unstable == False:
                     )
                 )
             else:
-                await ctx.send(f"""Oops! An error occurred! `{error}`""")
-                print(error)
+                await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")

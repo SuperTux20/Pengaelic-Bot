@@ -342,13 +342,7 @@ In content: Must be 2000 or fewer in length.""":
                 "You didn't specify any text to convert!"
             )
         else:
-            await ctx.send(
-                f"""Unhandled error occurred:
-        {
-            error
-        }
-If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
-            )
+            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):

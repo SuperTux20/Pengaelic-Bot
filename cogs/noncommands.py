@@ -18,8 +18,8 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        all_options = pengaelicutils.get_options(member.guild.id)
-        if all_options["welcome"] == 1:
+        options = pengaelicutils.get_options(member.guild.id)
+        if options["welcome"] == True:
             channelkeys = [
                 "welcome",
                 "arrivals",
@@ -30,8 +30,15 @@ class NonCommands(commands.Cog):
                 "lobby",
                 "general"
             ]
-            possiblechannels = [filter(
-                [channel.name for channel in member.guild.text_channels], f"*{channel}*") for channel in channelkeys]
+            possiblechannels = [
+                filter(
+                    [
+                        channel.name
+                        for channel in member.guild.text_channels
+                    ],
+                    f"*{channel}*"
+                ) for channel in channelkeys
+            ]
             for channelset in possiblechannels:
                 for channel in channelset:
                     try:
@@ -58,8 +65,8 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_leave(self, member: discord.Member):
-        all_options = pengaelicutils.get_options(member.guild.id)
-        if all_options["welcome"] == 1:
+        options = pengaelicutils.get_options(member.guild.id)
+        if options["welcome"] == True:
             channelkeys = [
                 "welcome",
                 "arrivals",
@@ -96,14 +103,12 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        all_options = pengaelicutils.get_options(message.guild.id)
-
-        # that's the ID for Dad Bot, this is to prevent conflict.
+        options = pengaelicutils.get_options(message.guild.id)
+        # this is the ID for Dad Bot, this is to prevent conflict.
         if message.author.id == self.client.user.id or message.author.id == 503720029456695306:
             return
-
         # this section is for Dad Bot-like responses
-        if all_options["dadJokes"] == 1:
+        if options["dadJokes"] == True:
             dad_prefixes = [
                 "i'm",
                 "i`m",
@@ -136,14 +141,15 @@ class NonCommands(commands.Cog):
                             await message.channel.send(f"Hi{message.content[len(dad):]}, I'm the Pengaelic Bot!")
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
-        if all_options["censor"] == 1:
+        if options["censor"] == True:
             try:
                 try:
-                    open(rf"data/{message.guild.id}censor.txt", "x").close()
+                    open(
+                        rf"data/servers/{message.guild.id}censor.txt", "x").close()
                     print(f"Censor file created for {message.guild.name}")
                 except FileExistsError:
                     pass
-                with open(rf"data/{message.guild.id}censor.txt", "r") as bads_file:
+                with open(rf"data/servers/{message.guild.id}censor.txt", "r") as bads_file:
                     all_bads = bads_file.read().split(", ")
                     for bad in all_bads:
                         for word in message.content.split():
@@ -153,7 +159,7 @@ class NonCommands(commands.Cog):
                 pass
 
         # this section randomizes yo mama jokes
-        if all_options["yoMamaJokes"] == 1:
+        if options["yoMamaJokes"] == True:
             with open(r"data/Yo Mama Jokes.json", "r") as AllTheJokes:
                 jokes = load(AllTheJokes)
             for mom in jokes:
@@ -175,7 +181,7 @@ class NonCommands(commands.Cog):
             await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
         # this section makes automatic polls in any validly named channel
-        if all_options["polls"] == 1:
+        if options["polls"] == True:
             possiblechannels = filter(
                 [
                     channel.name

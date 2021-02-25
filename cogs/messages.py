@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands
+import libs.pengaelicutils as pengaelicutils
+from json import dumps
 
 
 class Messages(commands.Cog):
@@ -30,22 +32,30 @@ class Messages(commands.Cog):
             "Main Developer and Creator": "chickenmeister",
             "Current Host": "Hyperfresh",
             "Biggest Helper": "legenden",
-            "Super Helpful Friends": "leasip",
-            "Dudes From **Coding Support**": "Satan\nfire\nMoonbase Alpha\nYousef\nReashetyrr"
+            "Other Helpers": "leasip"
         }
         embed = discord.Embed(
             color=32639,
             title="Credits",
-            description="All the peeps on Discord who helped me become what I am today."
+            description="All the people on Discord who helped me become what I am today."
         )
         for cred in bot_credits:
             embed.add_field(
                 name=cred,
                 value=bot_credits[cred]
             )
-        await ctx.send(
-            embed=embed
-        )
+        if pengaelicutils.get_options(ctx.guild.id)["JSONmenus"]:
+            bot_credits = {
+                cred.lower(): bot_credits[cred]
+                for cred in bot_credits
+            }
+            await ctx.send(f"""
+```json
+"credits": {str(dumps(bot_credits, indent=4))}
+```
+""")
+        else:
+            await ctx.send(embed=embed)
 
 
 def setup(client):

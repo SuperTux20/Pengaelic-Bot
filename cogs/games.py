@@ -463,13 +463,7 @@ In content: Must be 2000 or fewer in length.""":
                 "Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!"
             )
         else:
-            await ctx.send(
-                f"""Unhandled error occurred:
-        {
-            error
-        }
-If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
-            )
+            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):

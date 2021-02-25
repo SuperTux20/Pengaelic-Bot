@@ -355,11 +355,7 @@ class Interactions(commands.Cog):
         if "Member" in str(error) and "not found" in str(error):
             await ctx.send("Invalid user specified!")
         else:
-            await ctx.send(f"""Unhandled error occurred:
-        {
-            error
-        }
-If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!""")
+            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):

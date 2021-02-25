@@ -1,7 +1,8 @@
 from discord.ext import commands
+from libs.pengaelicutils import list2str, stopwatch
 from random import choice, randint
-from libs.monkeys import generate as monkeys
 from subprocess import check_output as bash
+from time import time
 
 
 class Generators(commands.Cog):
@@ -12,187 +13,27 @@ class Generators(commands.Cog):
     description = "Ya like randomization?"
     description_long = description + " So do I!"
 
-    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["generatename", "namegen"], usage="[names to generate (1)] [max syllables (3)]")
-    async def name_generator(self, ctx, amount: int = 1, syllable_limit: int = 3):
-        await ctx.send(
-            str(
-                [
-                    "".join(
+    @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["namegen"], usage="[names to generate (1)] [max syllables (3)] [min syllables (2)]")
+    async def name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):
+        with open("data/namegen_syllables.txt", "r") as syllables:
+            syllables = list2str(syllables.readlines(), 1).split()
+            if lower_limit < upper_limit:
+                await ctx.send(
+                    list2str(
                         [
-                            choice(
+                            "".join(
                                 [
-                                    "a",
-                                    "ae",
-                                    "ag",
-                                    "ah",
-                                    "al",
-                                    "am",
-                                    "an",
-                                    "art",
-                                    "as",
-                                    "au",
-                                    "av",
-                                    "ayn",
-                                    "az",
-                                    "be",
-                                    "bi",
-                                    "bo",
-                                    "bor",
-                                    "burn",
-                                    "by",
-                                    "ca",
-                                    "cai",
-                                    "car",
-                                    "cat",
-                                    "ce",
-                                    "cei",
-                                    "cer",
-                                    "cha",
-                                    "ci",
-                                    "co",
-                                    "cu",
-                                    "da",
-                                    "dam",
-                                    "dan",
-                                    "del",
-                                    "der",
-                                    "des",
-                                    "di",
-                                    "dil",
-                                    "do",
-                                    "don",
-                                    "dy",
-                                    "dyl",
-                                    "e",
-                                    "el",
-                                    "em",
-                                    "en",
-                                    "ev",
-                                    "ex",
-                                    "fi",
-                                    "fin",
-                                    "finn",
-                                    "fly",
-                                    "fu",
-                                    "ga",
-                                    "go",
-                                    "gor",
-                                    "gy",
-                                    "he",
-                                    "hy",
-                                    "i",
-                                    "ig",
-                                    "il",
-                                    "in",
-                                    "is",
-                                    "iss",
-                                    "ja",
-                                    "ji",
-                                    "jo",
-                                    "jor",
-                                    "ka",
-                                    "kes",
-                                    "kev",
-                                    "kla",
-                                    "ko",
-                                    "lan",
-                                    "lar",
-                                    "ler",
-                                    "li",
-                                    "lo",
-                                    "lu",
-                                    "ly",
-                                    "ma",
-                                    "mar",
-                                    "me",
-                                    "mel",
-                                    "mi",
-                                    "mo",
-                                    "mol",
-                                    "mu",
-                                    "mus",
-                                    "na",
-                                    "nar",
-                                    "ne",
-                                    "nei",
-                                    "no",
-                                    "nor",
-                                    "nos",
-                                    "o",
-                                    "ob",
-                                    "ok",
-                                    "ol",
-                                    "om",
-                                    "on",
-                                    "or",
-                                    "os",
-                                    "pe",
-                                    "pen",
-                                    "per",
-                                    "pu",
-                                    "ra",
-                                    "ral",
-                                    "ran",
-                                    "ras",
-                                    "re",
-                                    "res",
-                                    "rez",
-                                    "ri",
-                                    "rin",
-                                    "rob",
-                                    "ry",
-                                    "sa",
-                                    "sac",
-                                    "sam",
-                                    "san",
-                                    "sans",
-                                    "ser",
-                                    "sey",
-                                    "sha",
-                                    "sky",
-                                    "son",
-                                    "st",
-                                    "str",
-                                    "ta",
-                                    "tam",
-                                    "tay",
-                                    "ter",
-                                    "tha",
-                                    "than",
-                                    "tif",
-                                    "ti",
-                                    "tin",
-                                    "to",
-                                    "tor",
-                                    "tur",
-                                    "u",
-                                    "um",
-                                    "un",
-                                    "ur",
-                                    "va",
-                                    "vac",
-                                    "van",
-                                    "ve",
-                                    "vi",
-                                    "wa",
-                                    "wyn",
-                                    "yu",
-                                    "za",
-                                    "zal",
-                                    "ze",
-                                    "zi",
-                                    "zil",
-                                    "zo",
-                                    "zu"
+                                    choice(syllables)
+                                    for _ in range(randint(lower_limit, upper_limit))
                                 ]
-                            )
-                            for _ in range(randint(2, syllable_limit))
-                        ]
-                    ).capitalize()
-                    for _ in range(amount)
-                ]
-            )[1:-1].replace("'", "")
-        )
+                            ).capitalize()
+                            for _ in range(amount)
+                        ],
+                        2
+                    )
+                )
+            else:
+                await ctx.send("The lower limit cannot be higher than the upper limit.")
 
     @commands.command(name="floridaman", help="Generate random Florida Man headlines!", aliases=["florida"], usage="[other state/country]")
     async def florida_man(self, ctx, *, state="florida"):
@@ -279,12 +120,28 @@ class Generators(commands.Cog):
                 alphabet = list(alphabet.lower())
                 async with ctx.typing():
                     await ctx.send("Generating...")
-                monke = await monkeys(word, alphabet)
-                await ctx.send(monke)
+                    starttime = time()
+                    text = ""
+                    success = True
+                    while text.find(word) == -1:
+                        letter = alphabet[randint(0, len(alphabet) - 1)]
+                        text = text + letter
+                        if stopwatch(starttime) == "0:1:0":
+                            success = False
+                            break
+                    cutoff = ""
+                    textlen = len(text)
+                    if len(text) > 1000:
+                        text = f"...{text[-1000:]}"
+                        cutoff = " (last 1000 shown)"
+                    if success:
+                        await ctx.send(f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(starttime)}')
+                    else:
+                        await ctx.send(f'Could not find keyword "{word}" within one minute. :frowning:')
 
     @commands.command(name="fortune", help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))")
     async def fortune(self, ctx):
-        await ctx.send(bash("fortune", shell=True).decode())
+        await ctx.send(f"```{bash('fortune', shell=True).decode()}```")
 
     @name_generator.error
     @florida_man.error
@@ -297,13 +154,7 @@ In content: Must be 2000 or fewer in length.""":
                 "Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!"
             )
         else:
-            await ctx.send(
-                f"""Unhandled error occurred:
-        {
-            error
-        }
-If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
-            )
+            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):
