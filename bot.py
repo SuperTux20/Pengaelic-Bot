@@ -507,7 +507,7 @@ async def update(ctx):
 ```json
 {"".join(update_log)[1:-1]}
 [ {update_summary} ]
-```""")
+```""")  # asdf
             await ctx.send("Restarting...")
             await client.change_presence(
                 activity=discord.Game("Restarting..."),
