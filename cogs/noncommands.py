@@ -1,5 +1,5 @@
 import discord
-from pengaelicutils import options
+from pengaelicutils import options as getops
 from fnmatch import filter
 from fnmatch import fnmatch
 from discord.utils import get
@@ -18,7 +18,7 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        options = options(member.guild.id)
+        options = getops(member.guild.id)
         if options["welcome"] == True:
             channelkeys = [
                 "welcome",
@@ -65,7 +65,7 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_leave(self, member: discord.Member):
-        options = options(member.guild.id)
+        options = getops(member.guild.id)
         if options["welcome"] == True:
             channelkeys = [
                 "welcome",
@@ -103,7 +103,7 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        options = options(message.guild.id)
+        options = getops(message.guild.id)
         # this is the ID for Dad Bot, this is to prevent conflict.
         if message.author.id == self.client.user.id or message.author.id == 503720029456695306:
             return
