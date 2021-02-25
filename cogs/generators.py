@@ -1,7 +1,7 @@
 from discord.ext import commands
 from random import choice, randint
 from libs.monkeys import generate as monkeys
-from math import floor, sqrt
+from subprocess import check_output as bash
 
 
 class Generators(commands.Cog):
@@ -281,6 +281,10 @@ class Generators(commands.Cog):
                     await ctx.send("Generating...")
                 monke = await monkeys(word, alphabet)
                 await ctx.send(monke)
+
+    @commands.command(name="fortune", help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))")
+    async def fortune(self, ctx):
+        await ctx.send(bash("fortune", shell=True).decode())
 
     @name_generator.error
     @florida_man.error
