@@ -289,6 +289,7 @@ class Generators(commands.Cog):
     @name_generator.error
     @florida_man.error
     @img.error
+    @fortune.error
     async def error(self, ctx, error):
         if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
 In content: Must be 2000 or fewer in length.""":

@@ -220,11 +220,9 @@ def help_menu(cog, client, ctx):
         title=cog.name.capitalize(),
         description=cog.description_long,
         color=32639
-    ).set_footer(text=f"""    Command prefix is {client.command_prefix}
-        <arg> = required parameter
-        [arg] = optional parameter
-        [arg (value)] = default value for optional parameter
-        (command/command/command) = all aliases you can run the command with""")
+    ).set_footer(
+        text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
+    )
     for command in cog.get_commands():
         if command.usage:
             help_menu.add_field(
@@ -342,9 +340,7 @@ async def help(ctx):
             inline=False
         ).add_field(
             name="Links",
-            value=f"""My official [support server](https://discord.gg/DHHpA7k)
-            [Invite me](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot) to your own server
-            My [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)""",
+            value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
             inline=False
         )
         await ctx.send(embed=help_menu)
@@ -433,11 +429,9 @@ async def h_toggle(ctx):
         title=group.name.capitalize(),
         description=group.help,
         color=32639
-    ).set_footer(text=f"""    Command prefix is {client.command_prefix}toggle
-    <arg> = required parameter
-    [arg] = optional parameter
-    [arg (value)] = default value for optional parameter
-    (command/command/command) = all aliases you can run the command with""")
+    ).set_footer(
+        text=f"Command prefix is {client.command_prefix}toggle\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
+    )
     for command in remove_duplicates(group.walk_commands()):
         if command.usage:
             help_menu.add_field(
@@ -464,11 +458,9 @@ async def h_censor(ctx):
         title=group.name.capitalize(),
         description=group.help,
         color=32639
-    ).set_footer(text=f"""    Command prefix is {client.command_prefix}censor or {client.command_prefix}filter
-    <arg> = required parameter
-    [arg] = optional parameter
-    [arg (value)] = default value for optional parameter
-    (command/command/command) = all aliases you can run the command with""")
+    ).set_footer(
+        text=f"Command prefix is {client.command_prefix}censor or {client.command_prefix}filter\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
+    )
     for command in remove_duplicates(group.walk_commands()):
         if command.usage:
             help_menu.add_field(
