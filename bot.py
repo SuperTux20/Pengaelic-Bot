@@ -480,36 +480,53 @@ async def h_censor(ctx):
                 value=command.help)
     await ctx.send(embed=help_menu)
 
-
-@client.command(name="update", aliases=["ud"])
-async def update(ctx):
-    if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
-        status = await ctx.send("Updating...")
-        await client.change_presence(
-            activity=discord.Game("Updating..."),
-            status=discord.Status.idle
-        )
-        await status.edit(content="Pulling the latest commits from GitHub...")
-        # fetch and pull, boys. fetch and pull.
-        os.system("bash update.sh > update.log")
-        update_log = [line for line in open("update.log", "r")][1:]
-        # special status for when there's no update :o (aka me being lazy lmao)
-        if update_log == ["Already up to date.\n"]:
-            await status.edit(content="Already up to date, no restart required.")
+if not unstable:
+    @client.command(name="update", aliases=["ud"])
+    async def update(ctx):
+        if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+            status = await ctx.send("Updating...")
             await client.change_presence(
-                activity=discord.Game("Factory Idle"),
-                status=discord.Status.online
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
             )
+            await status.edit(content="Pulling the latest commits from GitHub...")
+            # fetch and pull, boys. fetch and pull.
+            os.system("bash update.sh > update.log")
+            update_log = [line for line in open("update.log", "r")][1:]
+            # special status for when there's no update :o (aka me being lazy lmao)
+            if update_log == ["Already up to date.\n"]:
+                await status.edit(content="Already up to date, no restart required.")
+                await client.change_presence(
+                    activity=discord.Game("Factory Idle"),
+                    status=discord.Status.online
+                )
+            else:
+                update_summary = update_log[-1][:-1]
+                update_log = dict(update_log[2:-1].split("|")
+                                  for _ in update_log[2:-1].split("\n"))
+                await status.edit(content=f"""
+    ```json
+    {"".join(update_log)[1:-1]}
+    [ {update_summary} ]
+    ```""")  # asdf
+                await ctx.send("Restarting...")
+                await client.change_presence(
+                    activity=discord.Game("Restarting..."),
+                    status=discord.Status.dnd
+                )
+                os.execl(
+                    sys.executable,
+                    sys.executable,
+                    * sys.argv
+                )
         else:
-            update_summary = update_log[-1][:-1]
-            update_log = dict(update_log[2:-1].split("|")
-                              for _ in update_log[2:-1].split("\n"))
-            await status.edit(content=f"""
-```json
-{"".join(update_log)[1:-1]}
-[ {update_summary} ]
-```""")  # asdf
+            await ctx.send("Hey, only my developers can do this!")
+
+    @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
+    async def restart(ctx):
+        if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
             await ctx.send("Restarting...")
+            print("Restarting...")
             await client.change_presence(
                 activity=discord.Game("Restarting..."),
                 status=discord.Status.dnd
@@ -519,43 +536,24 @@ async def update(ctx):
                 sys.executable,
                 * sys.argv
             )
-    else:
-        await ctx.send("Hey, only my developers can do this!")
+        else:
+            await ctx.send("Hey, only my developers can do this!")
 
+    @client.command(name="exit", aliases=["quit"])
+    async def restart(ctx):
+        if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+            await ctx.send("Goodbye...")
+            exit(0)
+        else:
+            await ctx.send("Hey, only my developers can do this!")
 
-@client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
-async def restart(ctx):
-    if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
-        await ctx.send("Restarting...")
-        print("Restarting...")
-        await client.change_presence(
-            activity=discord.Game("Restarting..."),
-            status=discord.Status.dnd
-        )
-        os.execl(
-            sys.executable,
-            sys.executable,
-            * sys.argv
-        )
-    else:
-        await ctx.send("Hey, only my developers can do this!")
-
-
-@client.command(name="exit", aliases=["quit"])
-async def restart(ctx):
-    if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
-        await ctx.send("Goodbye...")
-        exit(0)
-    else:
-        await ctx.send("Hey, only my developers can do this!")
+client.loop.create_task(status_switcher())  # as defined above
 
 # load all the cogs
 for cog in os.listdir("cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
-
-client.loop.create_task(status_switcher())  # as defined above
 
 while True:
     try:
