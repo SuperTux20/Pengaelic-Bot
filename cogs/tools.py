@@ -154,9 +154,12 @@ class Tools(commands.Cog):
                 10
             )
             self.nukeconfirm = False
-            await ctx.send(
-                "Pending nuke expired."
-            )
+            try:
+                await ctx.send(
+                    "Pending nuke expired."
+                )
+            except:
+                pass
         elif self.nukeconfirm == True:
             newchannel = await ctx.channel.clone(
                 reason=f"""Nuking #{

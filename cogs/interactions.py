@@ -35,7 +35,7 @@ class Interactions(commands.Cog):
                         embed=discord.Embed(
                             title=choice(responses),
                             color=self.cyan
-                        ).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/gifs/{act}'))-1)}.gif"))
+                        ).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/interactions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/gifs/{act}'))-1)}.gif"))
             else:
                 await ctx.send(f"Sorry, you can't {act} bots...")
                 if actee.id == self.client.user.id:
