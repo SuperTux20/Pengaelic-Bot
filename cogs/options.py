@@ -4,6 +4,7 @@ from pengaelicutils import options
 from discord.ext import commands
 from json import dumps
 from asyncio import sleep
+from random import choice
 
 
 class Options(commands.Cog):
@@ -19,7 +20,7 @@ class Options(commands.Cog):
     description_long = description + \
         ' You need the "Manage Messages" permission to use these settings.\nType `p!help options [option]` for more info on each subcategory.'
 
-    def updateOption(self, database, guild: int, option: str, value: bool):
+    def update_option(self, database, guild: int, option: str, value: bool):
         conn = sqlite3.connect(database)
         with conn:
             sql = f"""UPDATE options
@@ -32,47 +33,55 @@ class Options(commands.Cog):
             )
             conn.commit()
 
-    @commands.command(name="options", help="Show the current values of all options")
+    @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
-        options = options(ctx.guild.id)
-        jsoninfo = str(
-            dumps(
-                {"options": options},
-                sort_keys=True,
-                indent=4
-            )[6:-2].replace("\n    ", "\n")
-        )
-        embedinfo = discord.Embed(
-            title="Options",
-            color=self.cyan)
-        for option in options:
-            embedinfo.add_field(
-                name=option,
-                value=str(options[option]).replace(
-                    "0", "disabled").replace("1", "enabled"),
-                inline=False)
-        if options["JSONmenus"]:
-            await ctx.send(f"```json\n{jsoninfo}\n```")
-        else:
-            await ctx.send(embed=embedinfo)
+        if ctx.invoked_subcommand == None:
+            jsoninfo = str(
+                dumps(
+                    {"options": options(ctx.guild.id)},
+                    sort_keys=True,
+                    indent=4
+                )[6:-2].replace("\n    ", "\n")
+            )
+            embedinfo = discord.Embed(
+                title="Options",
+                color=self.cyan)
+            for option in options(ctx.guild.id):
+                embedinfo.add_field(
+                    name=option,
+                    value=str(
+                        options(ctx.guild.id)[option]
+                    ).replace(
+                        "False",
+                        "Disabled"
+                    ).replace(
+                        "True",
+                        "Enabled"
+                    )
+                )
+            if options(ctx.guild.id)["jsonMenus"]:
+                await ctx.send(f"```json\n{jsoninfo}\n```")
+            else:
+                await ctx.send(embed=embedinfo)
 
-    @commands.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
+    @read_options.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
     @commands.has_permissions(manage_messages=True)
     async def reset_options(self, ctx):
-        if self.reset_options_confirm == False:
+        if not self.reset_options_confirm:
             await ctx.send("Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds.")
             self.reset_options_confirm = True
             await sleep(10)
-            self.reset_options_confirm = False
-            await ctx.send("Pending reset expired.")
-        elif self.reset_options_confirm == True:
-            conn = sqlite3.connect(self.db)
-            with conn:
+            if self.reset_options_confirm:
+                self.reset_options_confirm = False
+                await ctx.send("Pending reset expired.")
+        elif self.reset_options_confirm:
+            with sqlite3.connect(self.db) as conn:
                 options = f""" UPDATE options
                         SET censor = ?,
                             dadJokes = ?,
-                            JSONmenus = ?,
+                            deadChat = ?,
+                            jsonMenus = ?,
                             polls = ?,
                             welcome = ?,
                             yoMamaJokes = ?
@@ -80,18 +89,17 @@ class Options(commands.Cog):
                 cur = conn.cursor()
                 cur.execute(
                     options,
-                    ([0 for _ in range(6)])
+                    ([0 for _ in range(7)])
                 )
                 conn.commit()
             await ctx.send("Options reset to defaults.")
-            await self.read_options(
-                ctx)
+            await self.read_options(ctx)
             self.reset_options_confirm = False
 
     @commands.group(name="toggle", help="Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
-            if options(ctx.guild.id)["JSONmenus"]:
+            if options(ctx.guild.id)["jsonMenus"]:
                 await ctx.send(f'```json\n"Type {self.client.command_prefix}options to see all options and their current statuses",\n"Type {self.client.command_prefix}toggle <option> to turn <option> on or off"```')
             else:
                 await ctx.send(f"Type `{self.client.command_prefix}options` to see all options and their current statuses\nType `{self.client.command_prefix}toggle <option>` to turn <option> on or off")
@@ -100,7 +108,7 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
         if options(ctx.guild.id)["censor"] == 1:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
                 "censor",
@@ -108,7 +116,7 @@ class Options(commands.Cog):
             )
             await ctx.send("Censorship turned off.")
         else:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
                 "censor",
@@ -120,67 +128,67 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
         if options(ctx.guild.id)["dadJokes"] == 1:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
                 "dadJokes",
                 False
             )
-            await ctx.send("Bye Dad, I'm the Pengaelic Bot!")
+            await ctx.send("Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)")
         else:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
                 "dadJokes",
                 True
             )
-            await ctx.send("Hi Dad, I'm the Pengaelic Bot!")
+            await ctx.send("Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)")
 
-    @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
+    @toggle.command(name="deadChat", help="Toggle the automatic \"no u\" response to someone saying \"dead chat\".")
     @commands.has_permissions(manage_messages=True)
-    async def toggle_yo_mama_jokes(self, ctx):
-        if options(ctx.guild.id)["yoMamaJokes"] == 1:
-            self.updateOption(
+    async def toggle_dead_chat(self, ctx):
+        if options(ctx.guild.id)["dadJokes"] == 1:
+            self.update_option(
                 self.db,
                 ctx.guild.id,
-                "yoMamaJokes",
+                "deadChat",
                 False
             )
-            await ctx.send("Yo Mama jokes turned off.")
+            await ctx.send("The server lives! (dead chat jokes turned off)")
         else:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
-                "yoMamaJokes",
+                "deadChat",
                 True
             )
-            await ctx.send("Yo Mama jokes turned on.")
+            await ctx.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)")
 
-    @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
+    @toggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
     @commands.has_permissions(manage_messages=True)
-    async def toggle_welcome(self, ctx):
-        if options(ctx.guild.id)["welcome"] == 1:
-            self.updateOption(
+    async def toggle_json(self, ctx):
+        if options(ctx.guild.id)["jsonMenus"] == 1:
+            self.update_option(
                 self.db,
                 ctx.guild.id,
-                "welcome",
+                "jsonMenus",
                 False
             )
-            await ctx.send("Welcome messages turned off.")
+            await ctx.send("Menus will be shown in embed format.")
         else:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
-                "welcome",
+                "jsonMenus",
                 True
             )
-            await ctx.send("Welcome messages turned on.")
+            await ctx.send("Menus will be shown in JSON format.")
 
     @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_polls(self, ctx):
         if options(ctx.guild.id)["polls"] == 1:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
                 "polls",
@@ -188,7 +196,7 @@ class Options(commands.Cog):
             )
             await ctx.send("Polls turned off.")
         else:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
                 "polls",
@@ -196,25 +204,45 @@ class Options(commands.Cog):
             )
             await ctx.send("Polls turned on.")
 
-    @toggle.command(name="JSONmenus", help="Change whether menus should be shown in embed or JSON format.")
+    @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
-    async def toggle_json(self, ctx):
-        if options(ctx.guild.id)["JSONmenus"] == 1:
-            self.updateOption(
+    async def toggle_welcome(self, ctx):
+        if options(ctx.guild.id)["welcome"] == 1:
+            self.update_option(
                 self.db,
                 ctx.guild.id,
-                "JSONmenus",
+                "welcome",
                 False
             )
-            await ctx.send("Menus will be shown in embed format.")
+            await ctx.send("Welcome messages turned off.")
         else:
-            self.updateOption(
+            self.update_option(
                 self.db,
                 ctx.guild.id,
-                "JSONmenus",
+                "welcome",
                 True
             )
-            await ctx.send("Menus will be shown in JSON format.")
+            await ctx.send("Welcome messages turned on.")
+
+    @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
+    @commands.has_permissions(manage_messages=True)
+    async def toggle_yo_mama_jokes(self, ctx):
+        if options(ctx.guild.id)["yoMamaJokes"] == 1:
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "yoMamaJokes",
+                False
+            )
+            await ctx.send("Yo Mama jokes turned off.")
+        else:
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "yoMamaJokes",
+                True
+            )
+            await ctx.send("Yo Mama jokes turned on.")
 
     @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):

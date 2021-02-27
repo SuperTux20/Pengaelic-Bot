@@ -26,7 +26,6 @@ class NonCommands(commands.Cog):
                 "entrance",
                 "entry",
                 "log",
-                "living-room",
                 "lobby",
                 "general"
             ]
@@ -55,13 +54,6 @@ class NonCommands(commands.Cog):
                         return
                     except:
                         continue
-            print(
-                f"""{
-                    member
-                } has joined {
-                    member.guild.name
-                }."""
-            )
 
     @commands.Cog.listener()
     async def on_member_leave(self, member: discord.Member):
@@ -73,7 +65,6 @@ class NonCommands(commands.Cog):
                 "entrance",
                 "entry",
                 "log",
-                "living-room",
                 "lobby",
                 "general"
             ]
@@ -93,13 +84,6 @@ class NonCommands(commands.Cog):
                         return
                     except:
                         continue
-            print(
-                f"""{
-                    member
-                } has left {
-                    member.guild.name
-                }."""
-            )
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -177,7 +161,7 @@ class NonCommands(commands.Cog):
                         break
 
         # bro, did someone seriously say the chat was dead?
-        if "dead" in message.content.lower() and ("chat" in message.content.lower() or "server" in message.content.lower()):
+        if ("dead" in message.content.lower() and ("chat" in message.content.lower() or "server" in message.content.lower())) and options["deadChat"]:
             await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
         # this section makes automatic polls in any validly named channel
@@ -209,12 +193,8 @@ class NonCommands(commands.Cog):
                                     icon_url=message.author.avatar_url
                                 )
                             )
-                            await thepoll.add_reaction(
-                                "✅"
-                            )
-                            await thepoll.add_reaction(
-                                "❌"
-                            )
+                            await thepoll.add_reaction("✅")
+                            await thepoll.add_reaction("❌")
                             try:
                                 await message.delete()
                             except:

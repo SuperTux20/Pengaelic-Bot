@@ -37,7 +37,7 @@ def options(guild):
     currentserver.pop("id")
     for value in currentserver:
         currentserver[value] = bool(currentserver[value])
-    return currentserver
+    return dict(sorted(currentserver.items()))
 
 
 def list2str(inlist: list, mode: int = 0):
@@ -49,3 +49,7 @@ def list2str(inlist: list, mode: int = 0):
     elif mode == 2:
         outstr = outstr.replace(", ", "\n")  # replace commas with newlines
     return outstr
+
+
+def remove_duplicates(inlist: list):
+    return list(dict.fromkeys(inlist))

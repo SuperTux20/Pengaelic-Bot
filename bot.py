@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from random import choice, randint
-from pengaelicutils import options
+from pengaelicutils import options, remove_duplicates
 from platform import node as hostname
 print("Imported modules")
 if "TrueMintguin" in hostname():
@@ -66,54 +66,26 @@ print("Defined client")
 database = "data/config.db"
 
 
-def create_connection(database):
-    """ create a database connection to a SQLite database """
-    conn = sqlite3.connect(database)
-    return conn
-
-
-def create_table(conn, create_table_sql):
-    """ create a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement
-    :return:
-    """
-    cur = conn.cursor()
-    cur.execute(create_table_sql)
-
-
 def create_database():
     global database
-    # create a database connection
-    conn = create_connection(database)
-    # create tables
-    if conn is not None:
-        # create options table
-        create_table(
-            conn,
-            "CREATE TABLE IF NOT EXISTS options (id INTEGER PRIMARY KEY);"
-        )
-    else:
-        raise sqlite3.DatabaseError("Cannot create the database connection.")
+    conn = sqlite3.connect(database)
+    conn.cursor().execute(
+        "CREATE TABLE IF NOT EXISTS options (id INTEGER PRIMARY KEY);"
+    )
 
 
 def create_options(conn, guild_id):
     all_options = [
         "censor",
         "dadJokes",
-        "JSONmenus",
+        "deadChat",
+        "jsonMenus",
         "polls",
         "welcome",
         "yoMamaJokes"
     ]
     options = guild_id + tuple([False for _ in all_options])
     marks = tuple("?" for _ in range(len(all_options) - 1))
-    """
-    Create a new server config set into the options table
-    :param conn:
-    :param server:
-    :return: server id
-    """
     make_columns = [
         f"""ALTER TABLE options
             ADD COLUMN {option} BIT NOT NULL DEFAULT 0;"""
@@ -195,10 +167,6 @@ async def status_switcher():
         await sleep(randint(2, 10) * 60)
 
 
-def remove_duplicates(inlist: list):
-    return list(dict.fromkeys(inlist))
-
-
 def help_menu(cog, client, ctx):
     help_menu = discord.Embed(
         title=cog.name.capitalize(),
@@ -234,7 +202,7 @@ async def on_ready():
     create_database()  # just to be sure
     # create a server's configs
     for guild in client.guilds:
-        with create_connection(database) as conn:
+        with sqlite3.connect(database) as conn:
             create_options(conn, tuple([guild.id]))
     print(f"{client.description} connected to Discord")
 
@@ -270,7 +238,7 @@ async def on_guild_join(guild, auto=True):
                 continue
         if auto:
             # create fresh options row for new server
-            create_options(create_connection(database), (guild.id))
+            create_options(sqlite3.connect(database), (guild.id))
             print(f"Options row created for {guild.name}")
 
 if unstable == False:
@@ -429,7 +397,6 @@ async def h_noncommands(ctx):
 
 @h_options.command(name="toggle")
 async def h_toggle(ctx):
-    global remove_duplicates
     group = client.get_command("toggle")
     help_menu = discord.Embed(
         title=group.name.capitalize(),
@@ -527,7 +494,7 @@ if not unstable:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
             else:
-                if options(ctx.guild.id)["JSONmenus"]:
+                if options(ctx.guild.id)["jsonMenus"]:
                     update_summary = update_log[-1][:-1]
                     update_log = dict(
                         str(

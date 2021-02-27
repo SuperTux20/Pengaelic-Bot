@@ -145,38 +145,17 @@ class Tools(commands.Cog):
     @commands.command(name="nuke", help="Purge a channel of EVERYTHING.", aliases=["wipe", "wipechannel"])
     @commands.has_permissions(manage_channels=True)
     async def nuke(self, ctx):
-        if self.nukeconfirm == False:
-            await ctx.send(
-                f"Are you **really** sure you want to wipe this channel? Type `{self.client.command_prefix}nuke` again to confirm. This will expire in 10 seconds."
-            )
+        if not self.nukeconfirm:
+            await ctx.send(f"Are you **really** sure you want to wipe this channel? Type the command again to confirm. This will expire in 10 seconds.")
             self.nukeconfirm = True
-            await sleep(
-                10
-            )
-            self.nukeconfirm = False
-            try:
-                await ctx.send(
-                    "Pending nuke expired."
-                )
-            except:
-                pass
-        elif self.nukeconfirm == True:
-            newchannel = await ctx.channel.clone(
-                reason=f"""Nuking #{
-                    ctx.channel.name
-                }"""
-            )
-            await newchannel.edit(
-                position=ctx.channel.position,
-                reason=f"""Nuking #{
-                    ctx.channel.name
-                }"""
-            )
-            await ctx.channel.delete(
-                reason=f"""Nuked #{
-                    ctx.channel.name
-                }"""
-            )
+            await sleep(10)
+            if self.nukeconfirm:
+                self.nukeconfirm = False
+                await ctx.send("Pending nuke expired.")
+        elif self.nukeconfirm:
+            newchannel = await ctx.channel.clone(reason=f"Nuking #{ctx.channel.name}")
+            await newchannel.edit(position=ctx.channel.position, reason=f"Nuking #{ctx.channel.name}")
+            await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
     @commands.command(name="server", help="See a bunch of data about the server at a glance.", aliases=["info"])
@@ -237,7 +216,7 @@ class Tools(commands.Cog):
                 Emojis: {len(ctx.guild.emojis)}""",
             inline=False
         )
-        if options(ctx.guild.id)["JSONmenus"]:
+        if options(ctx.guild.id)["jsonMenus"]:
             await ctx.send(
                 f"""
 ```json
