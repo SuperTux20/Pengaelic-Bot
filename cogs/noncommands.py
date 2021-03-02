@@ -1,7 +1,6 @@
 import discord
 from pengaelicutils import options as getops
-from fnmatch import filter
-from fnmatch import fnmatch
+from fnmatch import filter, fnmatch
 from discord.utils import get
 from discord.ext import commands
 from json import load

@@ -1,4 +1,3 @@
-import apt
 import discord
 import os
 import sqlite3
@@ -8,13 +7,13 @@ from asyncio import sleep
 from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
-from random import choice, randint
 from pengaelicutils import options, remove_duplicates
 from platform import node as hostname
+from random import choice, randint
 print("Imported modules")
 
 devnull = open(os.devnull, "w")
-requirements = ["fortune-mod", "toilet", "neofetch"]
+requirements = ["fortune-mod", "fortunes-min", "toilet", "neofetch"]
 for package in requirements:
     retval = subprocess.call(
         ["dpkg", "-s", package],
@@ -23,11 +22,19 @@ for package in requirements:
     if retval != 0:
         print(f"Package {package} not installed.")
 devnull.close()
-
 if retval != 0:
     exit()
-
 print("Passed package test")
+
+requirements = ["discord.py", "python-dotenv", "num2words"]
+modules = [
+    r.decode().split('==')[0]
+    for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
+]
+for module in requirements:
+    if module not in modules:
+        print(f"Module {module} not installed.")
+print("Passed module test")
 
 if "TrueMintguin" in hostname():
     unstable = True

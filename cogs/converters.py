@@ -1,4 +1,3 @@
-import discord
 from num2words import num2words
 from fnmatch import fnmatch
 from discord.ext import commands
