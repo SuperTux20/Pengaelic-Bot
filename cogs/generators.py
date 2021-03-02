@@ -15,25 +15,28 @@ class Generators(commands.Cog):
 
     @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["namegen"], usage="[names to generate (1)] [max syllables (3)] [min syllables (2)]")
     async def name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):
-        with open("namegen_syllables.txt", "r") as syllables:
-            syllables = list2str(syllables.readlines(), 1).split()
-            if lower_limit < upper_limit:
-                await ctx.send(
-                    list2str(
-                        [
-                            "".join(
-                                [
-                                    choice(syllables)
-                                    for _ in range(randint(lower_limit, upper_limit))
-                                ]
-                            ).capitalize()
-                            for _ in range(amount)
-                        ],
-                        2
+        if amount > 0 and upper_limit > 0 and lower_limit > 0:
+            if not lower_limit > upper_limit:
+                with open("namegen_syllables.txt", "r") as syllables:
+                    syllables = list2str(syllables.readlines(), 1).split()
+                    await ctx.send(
+                        list2str(
+                            [
+                                "".join(
+                                    [
+                                        choice(syllables)
+                                        for _ in range(randint(lower_limit, upper_limit))
+                                    ]
+                                ).capitalize()
+                                for _ in range(amount)
+                            ],
+                            2
+                        )
                     )
-                )
             else:
                 await ctx.send("The lower limit cannot be higher than the upper limit.")
+        else:
+            await ctx.send("Values can't be zero.")
 
     @commands.command(name="floridaman", help="Generate random Florida Man headlines!", aliases=["florida"], usage="[other state/country]")
     async def florida_man(self, ctx, *, state="florida"):
@@ -106,6 +109,7 @@ class Generators(commands.Cog):
 
     @commands.command(name="img", help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
     async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
+        alphabet = list(alphabet)
         if word == None:
             await ctx.send("You didn't specify a keyword to search for!")
         else:
@@ -114,29 +118,46 @@ class Generators(commands.Cog):
                 if character not in alphabet:
                     invalid = True
             if invalid:
-                await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({alphabet})")
+                await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 3)})")
             else:
-                alphabet = list(alphabet)
-                async with ctx.typing():
-                    await ctx.send("Generating...")
-                    starttime = time()
-                    text = ""
-                    success = True
-                    while text.find(word) == -1:
-                        letter = alphabet[randint(0, len(alphabet) - 1)]
-                        text = text + letter
-                        if stopwatch(starttime) == "00:01:00":
-                            success = False
-                            break
-                    cutoff = ""
-                    textlen = len(text)
-                    if len(text) > 1000:
-                        text = f"...{text[-1000:]}"
-                        cutoff = " (last 1000 shown)"
-                    if success:
-                        await ctx.send(f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(starttime)}')
-                    else:
-                        await ctx.send(f'Could not find keyword "{word}" within one minute. :frowning:')
+                status = await ctx.send("Generating...")
+                starttime = time()
+                text = ""
+                success = True
+                while text.find(word) == -1:
+                    letter = alphabet[randint(0, len(alphabet) - 1)]
+                    text = text + letter
+                    if stopwatch(starttime) == "01:00":
+                        success = False
+                        break
+                cutoff = ""
+                textlen = len(text)
+                if len(text) > 1000:
+                    text = f"...{text[-1000:]}"
+                    cutoff = " (last 1000 shown)"
+                text = text.replace(
+                    "\\",
+                    "\\\\"
+                ).replace(
+                    "*",
+                    "\*"
+                ).replace(
+                    "_",
+                    "\_"
+                ).replace(
+                    "`",
+                    "\`"
+                ).replace(
+                    "~",
+                    "\~"
+                ).replace(
+                    "|",
+                    "\|"
+                )
+                if success:
+                    await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(starttime)}')
+                else:
+                    await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
 
     @commands.command(name="fortune", help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))")
     async def fortune(self, ctx):
@@ -152,6 +173,8 @@ In content: Must be 2000 or fewer in length.""":
             await ctx.send(
                 "Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!"
             )
+        elif str(error) == "Unexpected quote mark, '\"', in non-quoted string":
+            await ctx.send("You need to escape your \"quotation marks\" with backslashes (\\ these things \\\).")
         else:
             await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 

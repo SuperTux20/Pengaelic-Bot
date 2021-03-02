@@ -3,20 +3,36 @@ from time import time
 
 
 def stopwatch(intime):
-    value = time() - intime
-    h = (((value)/24)/60)
+    outtime = time() - intime
+    y = outtime/365/24/60/60
+    years = int(y)
+    d = (y - years)*365
+    days = int(d)
+    h = (d - days)*24
     hours = int(h)
-    m = (h - hours)*24
+    m = (h - hours)*60
     minutes = int(m)
     s = (m - minutes)*60
     seconds = int(s)
+    ms = int(round(s - seconds, 3)*1000)
     if len(str(hours)) == 1:
         hours = f"0{hours}"
     if len(str(minutes)) == 1:
         minutes = f"0{minutes}"
     if len(str(seconds)) == 1:
         seconds = f"0{seconds}"
-    return f"{hours}:{minutes}:{seconds}"
+    if years == 0:
+        if days == 0:
+            if hours == "00":
+                if minutes == "00":
+                    if seconds == "00":
+                        return f"{ms}ms"
+                    return f"{int(seconds)}.{ms} seconds"
+                return f"{minutes}:{seconds}"
+            return f"{hours}:{minutes}:{seconds}"
+        return f"{days}d {hours}:{minutes}:{seconds}"
+    else:
+        return f"{years}y {days}d {hours}:{minutes}:{seconds}"
 
 
 def options(guild):
@@ -48,6 +64,8 @@ def list2str(inlist: list, mode: int = 0):
         outstr = outstr.replace(", ", " ")  # remove commas
     elif mode == 2:
         outstr = outstr.replace(", ", "\n")  # replace commas with newlines
+    elif mode == 3:
+        outstr = outstr.replace(", ", "")  # remove all separation
     return outstr
 
 
