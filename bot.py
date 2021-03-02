@@ -1,6 +1,8 @@
+import apt
 import discord
 import os
 import sqlite3
+import subprocess
 import sys
 from asyncio import sleep
 from discord.ext import commands
@@ -10,6 +12,23 @@ from random import choice, randint
 from pengaelicutils import options, remove_duplicates
 from platform import node as hostname
 print("Imported modules")
+
+devnull = open(os.devnull, "w")
+requirements = ["fortune-mod", "toilet", "neofetch"]
+for package in requirements:
+    retval = subprocess.call(
+        ["dpkg", "-s", package],
+        stdout=devnull, stderr=subprocess.STDOUT
+    )
+    if retval != 0:
+        print(f"Package {package} not installed.")
+devnull.close()
+
+if retval != 0:
+    exit()
+
+print("Passed package test")
+
 if "TrueMintguin" in hostname():
     unstable = True
 else:
@@ -153,7 +172,8 @@ async def status_switcher():
                 type=discord.ActivityType.listening,
                 name=artist
             ),
-            discord.Game(
+            discord.Activity(
+                type=discord.ActivityType.playing,
                 name=game
             ),
             discord.Activity(
