@@ -63,7 +63,7 @@ else:
         intents=discord.Intents.all()
     )
 print("Defined client")
-database = "data/config.db"
+database = "config.db"
 
 
 def create_database():

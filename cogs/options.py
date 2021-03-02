@@ -12,7 +12,7 @@ class Options(commands.Cog):
         self.client = client
         self.wipe_censor_confirm = False
         self.reset_options_confirm = False
-        self.db = "data/config.db"
+        self.db = "config.db"
         self.cyan = 32639
     name = "options"
     name_typable = name
