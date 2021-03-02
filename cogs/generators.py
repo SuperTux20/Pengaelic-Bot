@@ -15,7 +15,7 @@ class Generators(commands.Cog):
 
     @commands.command(name="name", help="Generate a random name! They tend to be mystic-sounding :eyes:", aliases=["namegen"], usage="[names to generate (1)] [max syllables (3)] [min syllables (2)]")
     async def name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):
-        with open("data/namegen_syllables.txt", "r") as syllables:
+        with open("namegen_syllables.txt", "r") as syllables:
             syllables = list2str(syllables.readlines(), 1).split()
             if lower_limit < upper_limit:
                 await ctx.send(
