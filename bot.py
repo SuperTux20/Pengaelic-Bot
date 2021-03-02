@@ -384,7 +384,7 @@ async def h_noncommands(ctx):
             value="Like Dad Bot!"
         ).add_field(
             name="Yo mama so <mama type>",
-            value="Automatic Yo Mama jokes!"
+            value="Yo Mama jokes!"
         ).add_field(
             name="Yo mama list",
             value="Show the list of mama types to use in the auto-joker."

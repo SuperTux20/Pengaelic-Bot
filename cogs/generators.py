@@ -110,14 +110,13 @@ class Generators(commands.Cog):
             await ctx.send("You didn't specify a keyword to search for!")
         else:
             invalid = False
-            for character in word.lower():
+            for character in word:
                 if character not in alphabet:
                     invalid = True
             if invalid:
                 await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({alphabet})")
             else:
-                word = word.lower()
-                alphabet = list(alphabet.lower())
+                alphabet = list(alphabet)
                 async with ctx.typing():
                     await ctx.send("Generating...")
                     starttime = time()
@@ -126,7 +125,7 @@ class Generators(commands.Cog):
                     while text.find(word) == -1:
                         letter = alphabet[randint(0, len(alphabet) - 1)]
                         text = text + letter
-                        if stopwatch(starttime) == "0:1:0":
+                        if stopwatch(starttime) == "00:01:00":
                             success = False
                             break
                     cutoff = ""
