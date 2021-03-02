@@ -44,7 +44,7 @@ else:
     os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
 print(info)
 
-dotenv("data/.env")
+dotenv(".env")
 print("Loaded bot token")
 if unstable:
     client = commands.Bot(
