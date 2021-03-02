@@ -144,7 +144,7 @@ class NonCommands(commands.Cog):
 
         # this section randomizes yo mama jokes
         if options["yoMamaJokes"] == True:
-            with open(r"data/Yo Mama Jokes.json", "r") as AllTheJokes:
+            with open(r"data/yo_mama_jokes.json", "r") as AllTheJokes:
                 jokes = load(AllTheJokes)
             for mom in jokes:
                 if message.content.lower().startswith("yo mama "):
