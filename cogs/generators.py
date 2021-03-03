@@ -18,7 +18,7 @@ class Generators(commands.Cog):
         if amount > 0 and upper_limit > 0 and lower_limit > 0:
             if not lower_limit > upper_limit:
                 with open("namegen_syllables.txt", "r") as syllables:
-                    syllables = list2str(syllables.readlines(), 1).split()
+                    syllables = list2str(syllables.readlines(), 2).split()
                     await ctx.send(
                         list2str(
                             [
@@ -30,7 +30,7 @@ class Generators(commands.Cog):
                                 ).capitalize()
                                 for _ in range(amount)
                             ],
-                            2
+                            3
                         )
                     )
             else:
@@ -118,7 +118,7 @@ class Generators(commands.Cog):
                 if character not in alphabet:
                     invalid = True
             if invalid:
-                await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 3)})")
+                await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
             else:
                 status = await ctx.send("Generating...")
                 starttime = time()

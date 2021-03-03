@@ -57,15 +57,18 @@ def options(guild):
 
 
 def list2str(inlist: list, mode: int = 0):
-    outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "")
-    if mode == 0:
-        pass  # leave commas alone
-    elif mode == 1:
-        outstr = outstr.replace(", ", " ")  # remove commas
-    elif mode == 2:
-        outstr = outstr.replace(", ", "\n")  # replace commas with newlines
-    elif mode == 3:
-        outstr = outstr.replace(", ", "")  # remove all separation
+    if mode == 1:
+        # remove all separation
+        outstr = "".join(inlist)
+    else:
+        outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "")
+        if mode == 2:
+            # remove commas, leaving spaces behind
+            outstr = outstr.replace(", ", " ")
+        elif mode == 3:
+            # replace commas and spaces with newlines
+            outstr = outstr.replace(", ", "\n")
+    # mode = 0 leaves commas and spaces unaffected
     return outstr
 
 
