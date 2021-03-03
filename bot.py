@@ -22,7 +22,8 @@ for package in requirements:
     if retval != 0:
         print(f"Package {package} not installed.")
 devnull.close()
-if retval != 0:
+if retval:
+    print("Install these with APT.")
     exit()
 print("Passed package test")
 
@@ -31,9 +32,14 @@ modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
 ]
+retval = 0
 for module in requirements:
     if module not in modules:
         print(f"Module {module} not installed.")
+        retval = 1
+if retval:
+    print("Install these with Pip.")
+    exit()
 print("Passed module test")
 
 if "TrueMintguin" in hostname():
