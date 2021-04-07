@@ -110,10 +110,9 @@ def create_options(conn, guild_id):
         "dadJokes",
         "deadChat",
         "jsonMenus",
-        "polls",
         "rickRoulette",
-        "welcome",
-        "yoMamaJokes"
+        "suggestions",
+        "welcome"
     ]
     options = guild_id + tuple([False for _ in all_options])
     marks = tuple("?" for _ in range(len(all_options) - 1))
@@ -545,17 +544,15 @@ if not unstable:
                             for _ in update_log[2:-1].split("\n")
                         )
                     )
-                    await status.edit(
-                        content=f"""
+                    await status.edit(content=f"""
 ```json
-{update_log},
-"{update_summary}"
-```"""
-                    )
+{update_summary},
+"{update_log}"
+```""")
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
-                    await status.edit(embed=discord.Embed(description=update_log, footer=update_summary))
+                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, footer=update_summary))
                 await ctx.send("Restarting...")
                 await client.change_presence(
                     activity=discord.Game("Restarting..."),

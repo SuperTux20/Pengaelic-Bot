@@ -128,85 +128,53 @@ class NonCommands(commands.Cog):
                 if bad in message.content.split():
                     await message.delete()
 
-        # this section randomizes yo mama jokes
-        if getops(message.guild.id, "yoMamaJokes"):
-            with open(r"yo_mama_jokes.json", "r") as AllTheJokes:
-                jokes = load(AllTheJokes)
-            for mom in jokes:
-                if message.content.lower().startswith("yo mama "):
-                    if message.content.lower().startswith("yo mama so "):
-                        if message.content[11:] == mom:
-                            await message.channel.send(choice(jokes[mom]))
-                            break
-                        else:
-                            await message.channel.send("Invalid Yo Mama type detected...")
-                            await message.channel.send("Type `yo mama list` for a list of valid types!")
-                            break
-                    elif message.content == "yo mama list":
-                        await message.channel.send(str(list(jokes.keys()))[1:-1].replace("'", ""))
-                        break
-
         # bro, did someone seriously say the chat was dead?
         if ("dead" in message.content and ("chat" in message.content or "server" in message.content)) and getops(message.guild.id, "deadChat"):
             await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
-        # this section makes automatic polls in any validly named channel
-        if getops(message.guild.id, "polls"):
-            possiblechannels = filter(
-                [
-                    channel.name
-                    for channel in message.guild.text_channels
-                ],
-                f"*{'suggest'}*"
+        # this section makes automatic suggestion polls
+        if getops(message.guild.id, "suggestions") and ("suggest" in message.channel.name) and "discuss" not in message.channel.name:
+            thepoll = await message.channel.send(
+                embed=discord.Embed(
+                    color=randint(
+                        0,
+                        16777215
+                    ),
+                    title="Suggestion",
+                    description=message.content
+                ).set_author(
+                    name=message.author.name,
+                    icon_url=message.author.avatar_url
+                )
             )
-            for channelset in possiblechannels:
-                for channel in channelset:
-                    if message.channel.name == channel and "discuss" not in message.channel.name:
-                        try:
-                            thepoll = await get(
-                                message.guild.text_channels,
-                                name=channel
-                            ).send(
-                                embed=discord.Embed(
-                                    color=randint(
-                                        0,
-                                        16777215
-                                    ),
-                                    title="Suggestion",
-                                    description=message.content
-                                ).set_author(
-                                    name=message.author.name,
-                                    icon_url=message.author.avatar_url
-                                )
-                            )
-                            await thepoll.add_reaction("✅")
-                            await thepoll.add_reaction("❌")
-                            try:
-                                await message.delete()
-                            except:
-                                pass
-                            return
-                        except:
-                            continue
+            await thepoll.add_reaction("✅")
+            await thepoll.add_reaction("❌")
+            try:
+                await message.delete()
+            except:
+                pass
+            return
 
-        # a rickroll-themed game of russian roulette
+        # a rickroll-themed game of russian roulette, except the barrel is reset every time
         if "you know the rules" == message.content and getops(message.guild.id, "rickRoulette"):
             responses = [
                 "And so do I :pensive:"
                 for _ in range(5)
             ]
+            threats = [
+                "It's time to die <:handgun:829404528054501467>",
+                "Say goodbye <:handgun:829404528054501467>"
+            ]
             responses.append(
                 choice(
                     [
-                        "It's time to die <:handgun:828696987728740352>",
-                        "And so do I :pensive:\nSay goodbye <:handgun:828696987728740352>",
-                        "It's time to die <:handgun:828696987728740352>\nSay goodbye <:handgun:828696987728740352>"
+                        threats[0],
+                        responses[0] + "\n" + threats[1],
+                        threats[0] + "\n" + threats[1]
                     ]
                 )
             )
-            await message.channel.send(
-                choice(responses)
-            )
+            await message.channel.send(choice(responses))
 
 
 def setup(client):

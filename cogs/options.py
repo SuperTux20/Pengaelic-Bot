@@ -83,7 +83,7 @@ class Options(commands.Cog):
                             dadJokes = ?,
                             deadChat = ?,
                             jsonMenus = ?,
-                            polls = ?,
+                            suggestions = ?,
                             welcome = ?,
                             yoMamaJokes = ?
                         WHERE id = {ctx.guild.id}"""
@@ -185,25 +185,25 @@ class Options(commands.Cog):
             )
             await ctx.send("Menus will be shown in JSON format.")
 
-    @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
+    @toggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
-    async def toggle_polls(self, ctx):
-        if getops(ctx.guild.id, "polls"):
+    async def toggle_suggestions(self, ctx):
+        if getops(ctx.guild.id, "suggestions"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
-                "polls",
+                "suggestions",
                 False
             )
-            await ctx.send("Polls turned off.")
+            await ctx.send("Auto-suggestions turned off.")
         else:
             self.update_option(
                 self.db,
                 ctx.guild.id,
-                "polls",
+                "suggestions",
                 True
             )
-            await ctx.send("Polls turned on.")
+            await ctx.send("Auto-suggestions turned on.")
 
     @toggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
     @commands.has_permissions(manage_messages=True)
@@ -244,26 +244,6 @@ class Options(commands.Cog):
                 True
             )
             await ctx.send("Welcome messages turned on.")
-
-    @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
-    @commands.has_permissions(manage_messages=True)
-    async def toggle_yo_mama_jokes(self, ctx):
-        if getops(ctx.guild.id, "yoMamaJokes"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "yoMamaJokes",
-                False
-            )
-            await ctx.send("Yo Mama jokes turned off.")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "yoMamaJokes",
-                True
-            )
-            await ctx.send("Yo Mama jokes turned on.")
 
     @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
@@ -344,7 +324,7 @@ class Options(commands.Cog):
     @toggle_dad_jokes.error
     @toggle_yo_mama_jokes.error
     @toggle_welcome.error
-    @toggle_polls.error
+    @toggle_suggestions.error
     @censor.error
     @show_censor.error
     @add_censor.error
