@@ -337,11 +337,9 @@ class Converters(commands.Cog):
 In content: Must be 2000 or fewer in length.""":
             await ctx.send("Sending all that would put me over the 2000-character limit!")
         elif str(error) == "arg is a required argument that is missing.":
-            await ctx.send(
-                "You didn't specify any text to convert!"
-            )
+            await ctx.send("You didn't specify any text to convert!")
         else:
-            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):

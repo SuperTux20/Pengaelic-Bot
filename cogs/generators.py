@@ -173,10 +173,10 @@ In content: Must be 2000 or fewer in length.""":
             await ctx.send(
                 "Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!"
             )
-        elif str(error) == "Unexpected quote mark, '\"', in non-quoted string":
+        elif str(error) == "Unexpected quotation mark (\") in non-quoted string":
             await ctx.send("You need to escape your \"quotation marks\" with backslashes (\\ these things \\\).")
         else:
-            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):

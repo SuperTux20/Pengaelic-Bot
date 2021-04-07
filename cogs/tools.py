@@ -234,24 +234,14 @@ class Tools(commands.Cog):
                 }, you have insufficient permissions (Manage Messages)"""
             )
         else:
-            await ctx.send(
-                f"""Unhandled error occurred:
-                {
-                    error
-                }
-                If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"""
-            )
+            await ctx.send(f"Unhandled error occurred:\n```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
     @nuke.error
     async def nukeError(self, ctx, error):
         if str(error) == "You are missing Manage Channels permission(s) to run this command.":
-            await ctx.send(
-                f"""{
-                    ctx.author.mention
-                }, you have insufficient permissions (Manage Channels)"""
-            )
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)")
         else:
-            await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
     @get_avatar.error
     async def avatarError(self, ctx, error):

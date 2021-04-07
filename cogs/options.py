@@ -322,7 +322,6 @@ class Options(commands.Cog):
     @reset_options.error
     @toggle_censor.error
     @toggle_dad_jokes.error
-    @toggle_yo_mama_jokes.error
     @toggle_welcome.error
     @toggle_suggestions.error
     @censor.error
@@ -333,15 +332,9 @@ class Options(commands.Cog):
     @read_options.error
     async def messageError(self, ctx, error):
         if str(error) == "You are missing Manage Messages permission(s) to run this command.":
-            await ctx.send(f"""{
-                    ctx.author.mention
-                }, you have insufficient permissions (Manage Messages)""")
+            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
         else:
-            await ctx.send(f"""Unhandled error occurred:
-        {
-            error
-        }
-If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!""")
+            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 def setup(client):
