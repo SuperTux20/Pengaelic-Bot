@@ -14,15 +14,13 @@ print("Imported modules")
 
 devnull = open(os.devnull, "w")
 requirements = ["fortune-mod", "fortunes-min", "toilet", "neofetch"]
+need2install = False
 for package in requirements:
-    retval = subprocess.call(
-        ["dpkg", "-s", package],
-        stdout=devnull, stderr=subprocess.STDOUT
-    )
-    if retval != 0:
+    if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
         print(f"Package {package} not installed.")
+        need2install = True
 devnull.close()
-if retval:
+if need2install:
     print("Install these with APT.")
     exit()
 print("Passed package test")
@@ -32,17 +30,17 @@ modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
 ]
-retval = 0
+need2install = False
 for module in requirements:
     if module not in modules:
         print(f"Module {module} not installed.")
-        retval = 1
-if retval:
+        need2install = True
+if need2install:
     print("Install these with Pip.")
     exit()
 print("Passed module test")
 
-if "TrueMintguin" in hostname():
+if "Mintguin" in hostname():
     unstable = True
 else:
     unstable = False
@@ -77,7 +75,7 @@ else:
 print(info)
 
 dotenv(".env")
-print("Loaded bot token")
+print("Loaded bot token and developer IDs")
 if unstable:
     client = commands.Bot(
         command_prefix="p@",
@@ -113,6 +111,7 @@ def create_options(conn, guild_id):
         "deadChat",
         "jsonMenus",
         "polls",
+        "rickRoulette",
         "welcome",
         "yoMamaJokes"
     ]
@@ -134,10 +133,21 @@ def create_options(conn, guild_id):
         except sqlite3.OperationalError:
             pass
     try:
-        cur.execute(add_values, options)
+        cur.execute(
+            add_values,
+            options
+        )
+        conn.commit()
     except sqlite3.IntegrityError:
         pass
-    conn.commit()
+    try:
+        cur.execute(
+            f"""ALTER TABLE options
+                ADD COLUMN censorlist TEXT;"""
+        )
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
 
 
 async def status_switcher():
@@ -274,7 +284,7 @@ async def on_guild_join(guild, auto=True):
             create_options(sqlite3.connect(database), (guild.id))
             print(f"Options row created for {guild.name}")
 
-if unstable == False:
+if not unstable:
     @client.event
     async def on_command_error(ctx, error):
         # this checks if the individual commands have their own error handling. if not...
@@ -293,7 +303,7 @@ if unstable == False:
                     )
                 )
             else:
-                await ctx.send(f"Unhandled error occurred:\n`{error}`\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+                await ctx.send(f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
@@ -497,7 +507,7 @@ if not unstable:
 
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx):
-        if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+        if ctx.author.id in os.getenv("DEVELOPER_IDS"):
             await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
@@ -514,7 +524,7 @@ if not unstable:
 
     @client.command(name="update", aliases=["ud"])
     async def update(ctx):
-        if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
+        if ctx.author.id in os.getenv("DEVELOPER_IDS"):
             status = await ctx.send("Updating...")
             await client.change_presence(
                 activity=discord.Game("Updating..."),

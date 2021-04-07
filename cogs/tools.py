@@ -78,7 +78,7 @@ class Tools(commands.Cog):
             )
         except:
             await ctx.send(
-                "This server doesn't have an icon... :neutral_face:"
+                "This server doesn't have an icon... :pensive:"
             )
 
     @commands.command(name="emoji", help="Get the specified (server-specific) emoji.", usage="[:emoji:]", aliases=["emote"])
@@ -104,7 +104,7 @@ class Tools(commands.Cog):
             else:
                 await ctx.send("Invalid emoji specified!")
 
-    @commands.command(name="poll", help="Send a poll!", aliases=["suggest"], usage="<poll name (use double quotes for multi word names)> <poll content>")
+    @commands.command(name="poll", help="Send a poll!", aliases=["suggest"], usage='"<poll name>" <poll content>')
     async def poll(self, ctx, title=None, *, arg=None):
         if title == None:
             await ctx.send("You didn't specify a name for the poll!")
@@ -218,8 +218,7 @@ class Tools(commands.Cog):
         )
         if options(ctx.guild.id)["jsonMenus"]:
             await ctx.send(
-                f"""
-```json
+                f"""```json
 "server information": {jsoninfo}
 ```"""
             )

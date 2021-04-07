@@ -86,12 +86,10 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        options = getops(message.guild.id)
-        # this is the ID for Dad Bot, this is to prevent conflict.
-        if message.author.id == self.client.user.id or message.author.id == 503720029456695306:
-            return
+        message.content = message.content.lower()
+
         # this section is for Dad Bot-like responses
-        if options["dadJokes"] == True:
+        if getops(message.guild.id, "dadJokes"):
             dad_prefixes = [
                 "i'm",
                 "i`m",
@@ -101,8 +99,8 @@ class NonCommands(commands.Cog):
                 "i am"
             ]
             for dad in dad_prefixes:
-                if dad + " " == message.content[0:len(dad)+1].lower():
-                    if "pengaelic bot" in message.content.lower():
+                if dad + " " == message.content[0:len(dad)+1]:
+                    if "pengaelic bot" in message.content:
                         if "not" in message.content:
                             await message.channel.send("Darn right, you're not!")
                         else:
@@ -124,26 +122,15 @@ class NonCommands(commands.Cog):
                             await message.channel.send(f"Hi{message.content[len(dad):]}, I'm the Pengaelic Bot!")
 
         # this section is to auto-delete messages containing a keyphrase in the censor text file
-        if options["censor"] == True:
-            try:
-                try:
-                    open(
-                        rf"data/servers/{message.guild.id}censor.txt", "x").close()
-                    print(f"Censor file created for {message.guild.name}")
-                except FileExistsError:
-                    pass
-                with open(rf"data/servers/{message.guild.id}censor.txt", "r") as bads_file:
-                    all_bads = bads_file.read().split(", ")
-                    for bad in all_bads:
-                        for word in message.content.split():
-                            if fnmatch(bad.lower(), word.lower()):
-                                await message.delete()
-            except:
-                pass
+        if getops(message.guild.id, "censor"):
+            all_bads = getops(message.guild.id, "censorlist")
+            for bad in all_bads:
+                if bad in message.content.split():
+                    await message.delete()
 
         # this section randomizes yo mama jokes
-        if options["yoMamaJokes"] == True:
-            with open(r"data/yo_mama_jokes.json", "r") as AllTheJokes:
+        if getops(message.guild.id, "yoMamaJokes"):
+            with open(r"yo_mama_jokes.json", "r") as AllTheJokes:
                 jokes = load(AllTheJokes)
             for mom in jokes:
                 if message.content.lower().startswith("yo mama "):
@@ -160,11 +147,11 @@ class NonCommands(commands.Cog):
                         break
 
         # bro, did someone seriously say the chat was dead?
-        if ("dead" in message.content.lower() and ("chat" in message.content.lower() or "server" in message.content.lower())) and options["deadChat"]:
+        if ("dead" in message.content and ("chat" in message.content or "server" in message.content)) and getops(message.guild.id, "deadChat"):
             await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
         # this section makes automatic polls in any validly named channel
-        if options["polls"] == True:
+        if getops(message.guild.id, "polls"):
             possiblechannels = filter(
                 [
                     channel.name
@@ -174,7 +161,7 @@ class NonCommands(commands.Cog):
             )
             for channelset in possiblechannels:
                 for channel in channelset:
-                    if message.channel.name == channel:
+                    if message.channel.name == channel and "discuss" not in message.channel.name:
                         try:
                             thepoll = await get(
                                 message.guild.text_channels,
@@ -203,7 +190,7 @@ class NonCommands(commands.Cog):
                             continue
 
         # a rickroll-themed game of russian roulette
-        if "you know the rules" == message.content.lower():
+        if "you know the rules" == message.content and getops(message.guild.id, "rickRoulette"):
             responses = [
                 "And so do I :pensive:"
                 for _ in range(5)
@@ -211,9 +198,9 @@ class NonCommands(commands.Cog):
             responses.append(
                 choice(
                     [
-                        "It's time to die <:handgun:706698375592149013>",
-                        "And so do I :pensive:\nSay goodbye <:handgun:706698375592149013>",
-                        "It's time to die <:handgun:706698375592149013>\nSay goodbye <:handgun:706698375592149013>"
+                        "It's time to die <:handgun:828696987728740352>",
+                        "And so do I :pensive:\nSay goodbye <:handgun:828696987728740352>",
+                        "It's time to die <:handgun:828696987728740352>\nSay goodbye <:handgun:828696987728740352>"
                     ]
                 )
             )

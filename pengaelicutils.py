@@ -35,25 +35,36 @@ def stopwatch(intime):
         return f"{years}y {days}d {hours}:{minutes}:{seconds}"
 
 
-def options(guild):
+def options(guild, option):
     conn = sqlite3.connect("config.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
-    rows = cur.execute("SELECT * from options").fetchall()
+    if option == "*":
+        rows = cur.execute(f"SELECT * from options").fetchall()
+    else:
+        rows = cur.execute(f"SELECT id, {option} from options").fetchall()
     conn.commit()
     conn.close()
     currentserver = [
         server
         for server in [
-            dict(ix)
-            for ix in rows
+            dict(row)
+            for row in rows
         ]
         if server["id"] == guild
     ][0]
-    currentserver.pop("id")
-    for value in currentserver:
-        currentserver[value] = bool(currentserver[value])
-    return dict(sorted(currentserver.items()))
+    if option == "*":
+        currentserver.pop("id")
+        for value in currentserver:
+            currentserver[value] = bool(currentserver[value])
+        outdict = dict(sorted(currentserver.items()))
+        return outdict
+    else:
+        if option != "censorlist":
+            currentserver[option] = bool(currentserver[option])
+        elif option == "censorlist":
+            currentserver[option] = currentserver[option].split(", ")
+        return currentserver[option]
 
 
 def list2str(inlist: list, mode: int = 0):

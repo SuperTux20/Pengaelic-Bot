@@ -1,6 +1,6 @@
 import sqlite3
 import discord
-from pengaelicutils import options
+from pengaelicutils import options as getops
 from discord.ext import commands
 from json import dumps
 from asyncio import sleep
@@ -20,7 +20,7 @@ class Options(commands.Cog):
     description_long = description + \
         ' You need the "Manage Messages" permission to use these settings.\nType `p!help options [option]` for more info on each subcategory.'
 
-    def update_option(self, database, guild: int, option: str, value: bool):
+    def update_option(self, database, guild: int, option: str, value):
         conn = sqlite3.connect(database)
         with conn:
             sql = f"""UPDATE options
@@ -37,9 +37,10 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
         if ctx.invoked_subcommand == None:
+            options = getops(ctx.guild.id, "*")
             jsoninfo = str(
                 dumps(
-                    {"options": options(ctx.guild.id)},
+                    {"options": options},
                     sort_keys=True,
                     indent=4
                 )[6:-2].replace("\n    ", "\n")
@@ -47,11 +48,11 @@ class Options(commands.Cog):
             embedinfo = discord.Embed(
                 title="Options",
                 color=self.cyan)
-            for option in options(ctx.guild.id):
+            for option in options:
                 embedinfo.add_field(
                     name=option,
                     value=str(
-                        options(ctx.guild.id)[option]
+                        options[option]
                     ).replace(
                         "False",
                         "Disabled"
@@ -60,7 +61,7 @@ class Options(commands.Cog):
                         "Enabled"
                     )
                 )
-            if options(ctx.guild.id)["jsonMenus"]:
+            if getops(ctx.guild.id, "jsonMenus"):
                 await ctx.send(f"```json\n{jsoninfo}\n```")
             else:
                 await ctx.send(embed=embedinfo)
@@ -99,7 +100,7 @@ class Options(commands.Cog):
     @commands.group(name="toggle", help="Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
-            if options(ctx.guild.id)["jsonMenus"]:
+            if getops(ctx.guild.id, "jsonMenus"):
                 await ctx.send(f'```json\n"Type {self.client.command_prefix}options to see all options and their current statuses",\n"Type {self.client.command_prefix}toggle <option> to turn <option> on or off"```')
             else:
                 await ctx.send(f"Type `{self.client.command_prefix}options` to see all options and their current statuses\nType `{self.client.command_prefix}toggle <option>` to turn <option> on or off")
@@ -107,7 +108,7 @@ class Options(commands.Cog):
     @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
-        if options(ctx.guild.id)["censor"] == 1:
+        if getops(ctx.guild.id, "censor"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -127,7 +128,7 @@ class Options(commands.Cog):
     @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
-        if options(ctx.guild.id)["dadJokes"] == 1:
+        if getops(ctx.guild.id, "dadJokes"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -147,7 +148,7 @@ class Options(commands.Cog):
     @toggle.command(name="deadChat", help="Toggle the automatic \"no u\" response to someone saying \"dead chat\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dead_chat(self, ctx):
-        if options(ctx.guild.id)["dadJokes"] == 1:
+        if getops(ctx.guild.id, "deadChat"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -167,7 +168,7 @@ class Options(commands.Cog):
     @toggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_json(self, ctx):
-        if options(ctx.guild.id)["jsonMenus"] == 1:
+        if getops(ctx.guild.id, "jsonMenus"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -187,7 +188,7 @@ class Options(commands.Cog):
     @toggle.command(name="polls", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_polls(self, ctx):
-        if options(ctx.guild.id)["polls"] == 1:
+        if getops(ctx.guild.id, "polls"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -204,10 +205,30 @@ class Options(commands.Cog):
             )
             await ctx.send("Polls turned on.")
 
+    @toggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
+    @commands.has_permissions(manage_messages=True)
+    async def toggle_rick_roulette(self, ctx):
+        if getops(ctx.guild.id, "rickRoulette"):
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "rickRoulete",
+                False
+            )
+            await ctx.send("You know the rules, and so do I. (Rick Roulette turned off)")
+        else:
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "rickRoulette",
+                True
+            )
+            await ctx.send("You know the rules, it's time to die. (Rick Roulette turned on)")
+
     @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
-        if options(ctx.guild.id)["welcome"] == 1:
+        if getops(ctx.guild.id, "welcome"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -227,7 +248,7 @@ class Options(commands.Cog):
     @toggle.command(name="yoMamaJokes", help="Toggle the automatic Yo Mama jokes.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_yo_mama_jokes(self, ctx):
-        if options(ctx.guild.id)["yoMamaJokes"] == 1:
+        if getops(ctx.guild.id, "yoMamaJokes"):
             self.update_option(
                 self.db,
                 ctx.guild.id,
@@ -252,70 +273,53 @@ class Options(commands.Cog):
     @censor.command(name="show", help="Display the contents of the censorship filter.", aliases=["list", "get"])
     @commands.has_permissions(manage_messages=True)
     async def show_censor(self, ctx):
-        with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
-            all_bads = bads_file.read()
-            if all_bads.split(', ') == ['']:
-                await ctx.send("Filter is empty.")
-            else:
-                await ctx.send(f'```json\n"censor list": {dumps(all_bads.split(", "), indent=4, sort_keys=True)}\n```')
+        all_bads = list(getops(ctx.guild.id, "censorlist"))
+        if all_bads == ['']:
+            await ctx.send("Filter is empty.")
+        else:
+            await ctx.send(f'```json\n"censor list": {dumps(all_bads, indent=4, sort_keys=True)}\n```')
 
     @censor.command(name="add", help="Add a word to the censorship filter.", usage="<one phrase ONLY>")
     @commands.has_permissions(manage_messages=True)
-    async def add_censor(self, ctx, word2add):
-        with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
-            all_bads = bads_file.read()
-            oneword = []
-            if ", " in all_bads:
-                all_bads = all_bads.split(", ")
-            else:
-                oneword.append(all_bads)
-                all_bads = oneword
-            if all_bads == [""]:
-                all_bads = []
-            if word2add in all_bads:
-                await ctx.send("That word is already in the filter.")
-            else:
-                all_bads.append(word2add)
-                all_bads.sort()
-                finalbads = str(all_bads)[1:-1].replace("'", "")
-                with open(rf"data/{ctx.guild.id}censor.txt", "w") as bads_file_to:
-                    bads_file_to.write(finalbads)
-                    await ctx.send("Word added to the filter.")
-                    print(f"Censor file updated for {ctx.guild.name}")
+    async def add_censor(self, ctx, word):
+        all_bads = list(getops(ctx.guild.id, "censorlist"))
+        word = word.lower()
+        if all_bads == [""]:
+            all_bads = []
+        if word in all_bads:
+            await ctx.send("That word is already in the filter.")
+        else:
+            all_bads.append(word)
+            all_bads.sort()
+            finalbads = str(all_bads)[1:-1].replace("'", "")
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "censorlist",
+                finalbads
+            )
+            await ctx.send("Word added to the filter.")
 
     @censor.command(name="delete", help="Remove a word from the censorship filter.", usage="<one phrase ONLY>", aliases=["remove"])
     @commands.has_permissions(manage_messages=True)
-    async def del_censor(self, ctx, word2del):
-        with open(rf"data/{ctx.guild.id}censor.txt", "r") as bads_file:
-            all_bads = bads_file.read()
-            oneword = []
-            if ", " in all_bads:
-                all_bads = all_bads.split(
-                    ", ")
-            else:
-                oneword.append(
-                    all_bads)
-                all_bads = oneword
-            if all_bads == [""]:
-                all_bads = []
-            if word2del not in all_bads:
-                await ctx.send("That word is not in the filter.")
-            else:
-                all_bads.remove(
-                    word2del)
-                all_bads.sort()
-                finalbads = str(
-                    all_bads)[1:-1].replace(
-                    "'",
-                    "")
-                with open(rf"data/{ctx.guild.id}censor.txt", "w") as bads_file_to:
-                    bads_file_to.write(
-                        finalbads)
-                    await ctx.send("Word removed from the filter.")
-                    print(
-                        f"""Censor file updated for {
-                            ctx.guild.name
-                        }""")
+    async def del_censor(self, ctx, word):
+        all_bads = list(getops(ctx.guild.id, "censorlist"))
+        word = word.lower()
+        if all_bads == [""]:
+            all_bads = []
+        if word not in all_bads:
+            await ctx.send("That word is not in the filter.")
+        else:
+            all_bads.remove(word)
+            all_bads.sort()
+            finalbads = str(all_bads)[1:-1].replace("'", "")
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "censorlist",
+                finalbads
+            )
+            await ctx.send("Word removed from the filter.")
 
     @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
@@ -323,19 +327,16 @@ class Options(commands.Cog):
         if self.wipe_censor_confirm == False:
             await ctx.send("Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds.")
             self.wipe_censor_confirm = True
-            await sleep(
-                10)
+            await sleep(10)
             self.wipe_censor_confirm = False
             await ctx.send("Pending wipe expired.")
         elif self.wipe_censor_confirm == True:
-            open(
-                rf"data/{ctx.guild.id}censor.txt",
-                "w").close()
-            await ctx.send("Filter cleared.")
-            print(
-                f"""Censor file wiped for {
-                    ctx.guild.name
-                }""")
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                "censorlist",
+                ""
+            )
             self.wipe_censor_confirm = False
 
     @reset_options.error

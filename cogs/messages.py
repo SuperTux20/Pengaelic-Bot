@@ -34,16 +34,6 @@ class Messages(commands.Cog):
             "Biggest Helper": "legenden",
             "Other Helpers": "leasip"
         }
-        embed = discord.Embed(
-            color=32639,
-            title="Credits",
-            description="All the people on Discord who helped me become what I am today."
-        )
-        for cred in bot_credits:
-            embed.add_field(
-                name=cred,
-                value=bot_credits[cred]
-            )
         if options(ctx.guild.id)["JSONmenus"]:
             bot_credits = {
                 cred.lower(): bot_credits[cred]
@@ -55,6 +45,16 @@ class Messages(commands.Cog):
 ```
 """)
         else:
+            embed = discord.Embed(
+                color=32639,
+                title="Credits",
+                description="All the people on Discord who helped me become what I am today."
+            )
+            for cred in bot_credits:
+                embed.add_field(
+                    name=cred,
+                    value=bot_credits[cred]
+                )
             await ctx.send(embed=embed)
 
 
