@@ -2,37 +2,23 @@ import sqlite3
 from time import time
 
 
-def stopwatch(intime):
-    outtime = time() - intime
-    y = outtime/365/24/60/60
-    years = int(y)
-    d = (y - years)*365
-    days = int(d)
-    h = (d - days)*24
-    hours = int(h)
-    m = (h - hours)*60
+def stopwatch(start_time: time):
+    elapsed = time() - start_time
+    m = elapsed/60
     minutes = int(m)
     s = (m - minutes)*60
     seconds = int(s)
     ms = int(round(s - seconds, 3)*1000)
-    if len(str(hours)) == 1:
-        hours = f"0{hours}"
     if len(str(minutes)) == 1:
         minutes = f"0{minutes}"
     if len(str(seconds)) == 1:
         seconds = f"0{seconds}"
-    if years == 0:
-        if days == 0:
-            if hours == "00":
-                if minutes == "00":
-                    if seconds == "00":
-                        return f"{ms}ms"
-                    return f"{int(seconds)}.{ms} seconds"
-                return f"{minutes}:{seconds}"
-            return f"{hours}:{minutes}:{seconds}"
-        return f"{days}d {hours}:{minutes}:{seconds}"
+    if minutes == "00":
+        if seconds == "00":
+            return f"{ms}ms"
+        return f"{int(seconds)}.{ms} seconds"
     else:
-        return f"{years}y {days}d {hours}:{minutes}:{seconds}"
+        return f"{minutes}:{seconds}"
 
 
 def options(guild, option):
