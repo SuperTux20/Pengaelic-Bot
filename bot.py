@@ -371,6 +371,7 @@ if not unstable:
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "A" == update_log[0][0]:
                 await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
+                return False
             else:
                 if formatted:
                     update_summary = update_log[-1]
@@ -391,6 +392,7 @@ if not unstable:
                         await status.edit(embed=discord.Embed(content="", title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
                 if raw:
                     await ctx.send(f'Raw log contents...```{open("update.log", "r").read()}```')
+                return True
         else:
             await ctx.send("Hey, only my developers can do this!")
 
@@ -403,9 +405,11 @@ if not unstable:
                 status=discord.Status.idle
             )
             cmd("bash update.sh > update.log")
-            if not force:
-                await updatelog(ctx, True, False, status)
-            await restart(ctx)
+            if force:
+                await restart(ctx)
+            else:
+                if await updatelog(ctx, True, False, status):
+                    await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
