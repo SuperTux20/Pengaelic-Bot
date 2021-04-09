@@ -372,6 +372,7 @@ if not unstable:
             await status.edit(content="Pulling the latest commits from GitHub...")
             os.system("bash update.sh > update.log")
             update_log = [line for line in open("update.log", "r")][1:]
+            await ctx.send(update_log)
             if "Already up to date.\n" in update_log:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
