@@ -419,8 +419,9 @@ if not unstable:
                 await status.edit(content="```Already up to date.```")
             else:
                 update_log = update_log[2:]
+                update_summary = update_log[-1][1:-1]
                 if options(ctx.guild.id, "jsonMenus"):
-                    update_summary = update_log[-1][1:-1].split(", ")
+                    update_summary = update_summary.split(", ")
                     update_summary = {update_summary[0]:[update_summary[1],update_summary[2]]}
                     update_log = {
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
@@ -429,8 +430,7 @@ if not unstable:
                     updates = {"updates": {"summary": update_summary, "changes": update_log}}
                     await status.edit(content=f'```json\n{dumps(updates, indent=4)}```')
                 else:
-                    update_summary = update_log[-1][:-1]
-                    update_log = update_log[2:-1]
+                    update_log = update_log[:-1]
                     await status.edit(content="",embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
         else:
             await ctx.send("Hey, only my developers can do this!")
