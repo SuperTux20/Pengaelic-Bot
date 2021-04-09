@@ -6,7 +6,6 @@ from json import dumps
 from asyncio import sleep
 from random import choice
 
-
 class Options(commands.Cog):
     def __init__(self, client):
         self.client = client
