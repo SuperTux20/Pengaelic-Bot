@@ -434,7 +434,7 @@ async def restart(ctx):
     else:
         await ctx.send("Hey, only my developers can do this!")
 
-if not unstable:
+if not False:
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx):
         if ctx.author.id in developers.Everyone:
