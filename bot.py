@@ -410,6 +410,38 @@ if not unstable:
         else:
             await ctx.send("Hey, only my developers can do this!")
 
+    @client.command(name="updatelog", aliases=["ulog"])
+    async def update(ctx):
+        if developer(ctx.author):
+            status = await ctx.send("Updating...")
+            await client.change_presence(
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
+            )
+            await status.edit(content="Pulling the latest commits from GitHub...")
+            os.system("bash update.sh > update.log")
+            update_log = [line for line in open("update.log", "r")][1:]
+            if "Already up to date.\n" in update_log:
+                await status.edit(content="Already up to date, no restart required.")
+                await status_switcher()
+            else:
+                update_log = update_log[2:]
+                if options(ctx.guild.id, "jsonMenus"):
+                    update_summary = update_log[-1][1:-1].split(", ")
+                    update_summary = {update_summary[0]:[update_summary[1],update_summary[2]]}
+                    update_log = {
+                        str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
+                        for _ in str(update_log[:-1]).split("\n")
+                    }
+                    await status.edit(content=f'```json\n"{dumps(update_summary)}": {dumps(update_log, indent=4)}```')
+                else:
+                    update_summary = update_log[-1][:-1]
+                    update_log = update_log[2:-1]
+                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
+                await restart(ctx)
+        else:
+            await ctx.send("Hey, only my developers can do this!")
+
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx, *, cogname: str = None):
@@ -481,6 +513,9 @@ async def help(ctx, *, cogname: str = None):
         ).add_field(
             name="forceupdate",
             value="Same as update, but it always restarts regardless of what the update log says, because I'm sure I fucked up the regular update command somehow."
+        ).add_field(
+            name="updatelog",
+            value="Show the log of the last update."
         )
         await ctx.send(embed=menu)
     else:
