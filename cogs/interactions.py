@@ -5,7 +5,6 @@ from os import listdir
 from json import dumps
 from pengaelicutils import options as getops
 
-
 class Interactions(commands.Cog):
     def __init__(self, client):
         self.client = client

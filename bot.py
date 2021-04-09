@@ -1,15 +1,15 @@
-import os
 import sqlite3
 import subprocess
 import sys
 from asyncio import sleep
 from json import loads, dumps
+from os import system as cmd, getenv as env, listdir as ls, execl, devnull
 from pengaelicutils import options, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
-
-devnull = open(os.devnull, "w")
+cmd("bash update.sh > update.log")
+devnull = open(devnull, "w")
 requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
 for package in requirements:
@@ -69,10 +69,10 @@ GNU General Public License for more details.
 
 """
 if unstable:
-    os.system(
+    cmd(
         "toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
 else:
-    os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
+    cmd("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
 print(info)
 
 if unstable:
@@ -312,11 +312,11 @@ async def redo_welcome(ctx):
 
 # load token
 dotenv(".env")
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+DISCORD_TOKEN = env("DISCORD_TOKEN")
 
 # load all developer user IDs
 class developers():
-    everyone = loads(os.getenv("DEVELOPER_IDS"))
+    everyone = loads(env("DEVELOPER_IDS"))
 
 # function to make testing if someone's a dev easier
 def developer(user, dev=None):
@@ -353,7 +353,7 @@ if not unstable:
                 activity=discord.Game("Restarting..."),
                 status=discord.Status.dnd
             )
-            os.execl(
+            execl(
                 sys.executable,
                 sys.executable,
                 * sys.argv
@@ -369,7 +369,7 @@ if not unstable:
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
             )
-            os.system("bash update.sh > update.log")
+            cmd("bash update.sh > update.log")
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "A" == update_log[0][0]:
                 await status.edit(content=f'```json\n"a{update_log[0][1:-1]}"```')
@@ -401,8 +401,8 @@ if not unstable:
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
             )
-            os.system("bash update.sh > update.log")
-            await restart(ctx)
+            cmd("bash update.sh > update.log")
+            # await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
@@ -585,14 +585,14 @@ async def h_censor(ctx):
 client.loop.create_task(status_switcher())  # as defined above
 
 # load all the cogs
-for cog in os.listdir("cogs"):
+for cog in ls("cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
 
 while True:
     try:
-        client.run(os.getenv("DISCORD_TOKEN"))
+        client.run(env("DISCORD_TOKEN"))
     except KeyboardInterrupt:
         print("Disconnected")
         while True:
