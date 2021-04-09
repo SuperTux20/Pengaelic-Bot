@@ -242,6 +242,5 @@ class Tools(commands.Cog):
     async def avatarError(self, ctx, error):
         await ctx.send("Invalid user specified!")
 
-
 def setup(client):
     client.add_cog(Tools(client))
