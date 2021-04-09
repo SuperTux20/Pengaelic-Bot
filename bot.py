@@ -374,18 +374,18 @@ if not unstable:
             )
             await status.edit(content="Pulling the latest commits from GitHub...")
             os.system("bash update.sh > update.log")
-            update_log = [line for line in open("update.log", "r")][1:]
+            update_log = [line for line in open("update.log", "r")][3:]
             await ctx.send(update_log)
             if "Already up to date.\n" in update_log:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
             else:
                 if options(ctx.guild.id, "jsonMenus"):
-                    update_summary = update_log[-1][:-1]
+                    update_summary = update_log[-1]
                     await ctx.send(update_summary)
-                    update_log = dict(str(update_log[2:-1]).split("|") for _ in update_log[2:-1].split("\n"))
+                    update_log = dict(str(update_log[2:-1]).split("|") for _ in str(update_log[2:-1]).split("\n"))
                     await ctx.send(update_log)
-                    await status.edit(content=f'```json\n{update_summary},\n"{update_log}"```')
+                    await status.edit(content=f'```json\n"{update_summary}",\n"{update_log}"```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
