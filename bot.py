@@ -402,7 +402,7 @@ if not unstable:
                 status=discord.Status.idle
             )
             cmd("bash update.sh > update.log")
-            # await restart(ctx)
+            await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
