@@ -415,7 +415,7 @@ if not unstable:
         if developer(ctx.author):
             update_log = [line for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
-                await ctx.send(content="```Already up to date.```")
+                await ctx.send(content='```json\n"Already up to date."```')
             else:
                 update_log = update_log[2:]
                 update_summary = update_log[-1][1:-1]
