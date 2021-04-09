@@ -424,7 +424,6 @@ if not unstable:
             elif formatted:
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
-                await ctx.send(str(update_log))
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_summary.split(", ")
                     update_summary = {update_summary[0][1:]: [update_summary[1][:-3], update_summary[2][:-3]]}

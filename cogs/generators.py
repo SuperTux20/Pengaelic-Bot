@@ -4,7 +4,6 @@ from random import choice, randint
 from subprocess import check_output as bash
 from time import time
 
-
 class Generators(commands.Cog):
     def __init__(self, client):
         self.client = client
