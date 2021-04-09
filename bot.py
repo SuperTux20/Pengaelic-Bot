@@ -426,7 +426,7 @@ if not unstable:
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
-                    updates = {"updates": {"summary": {update_summary}, "changes": {update_log}}}
+                    updates = {"updates": {"summary": update_summary, "changes": update_log}}
                     await status.edit(content=f'```json\n{dumps(updates, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
