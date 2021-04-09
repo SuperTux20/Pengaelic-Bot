@@ -55,6 +55,7 @@ def list2str(inlist: list, mode: int = 0):
         # remove all separation
         outstr = "".join(inlist)
     else:
+        # remove single quotes and newlines
         outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "")
         if mode == 2:
             # remove commas, leaving spaces behind

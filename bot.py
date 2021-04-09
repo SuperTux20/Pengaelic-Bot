@@ -416,7 +416,7 @@ async def update(ctx, formatted=True):
     if developer(ctx.author):
         update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
         if "A" == update_log[0][0]:
-            await ctx.send(content=f'```json\n"{update_log[0][:-1].split()[1:]}": true```')
+            await ctx.send(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:])}": true```')
         elif formatted:
             update_summary = update_log[-1]
             update_log = update_log[2:-1]
