@@ -397,7 +397,6 @@ if not unstable:
     @client.command(name="forceupdate", aliases=["fud"])
     async def forceupdate(ctx):
         if developer(ctx.author):
-            await ctx.send("Updating...")
             await client.change_presence(
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
