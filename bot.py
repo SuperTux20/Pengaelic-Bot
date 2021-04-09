@@ -384,7 +384,7 @@ if not unstable:
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
-                    await status.edit(content=f'```json\n"{dumps(update_summary)}": {dumps(update_log, indent=4)}```')
+                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)}\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
@@ -413,17 +413,10 @@ if not unstable:
     @client.command(name="updatelog", aliases=["ulog"])
     async def update(ctx):
         if developer(ctx.author):
-            status = await ctx.send("Updating...")
-            await client.change_presence(
-                activity=discord.Game("Updating..."),
-                status=discord.Status.idle
-            )
-            await status.edit(content="Pulling the latest commits from GitHub...")
-            os.system("bash update.sh > update.log")
+            status = await ctx.send("Getting update log...")
             update_log = [line for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
-                await status.edit(content="Already up to date, no restart required.")
-                await status_switcher()
+                await status.edit(content="```Already up to date.```")
             else:
                 update_log = update_log[2:]
                 if options(ctx.guild.id, "jsonMenus"):
@@ -433,12 +426,11 @@ if not unstable:
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
-                    await status.edit(content="Why am I not showing this message? BECAUSE FUCK YOU, THAT'S WHY")
+                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)}\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
-                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
-                await restart(ctx)
+                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
         else:
             await ctx.send("Hey, only my developers can do this!")
 
