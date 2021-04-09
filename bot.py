@@ -345,9 +345,12 @@ async def restart(ctx):
 
 if not unstable:
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
-    async def restart(ctx):
+    async def restart(ctx, status: discord.Message =None):
         if developer(ctx.author):
-            await ctx.send("Restarting...")
+            if status:
+                status.edit(content="Restarting...")
+            else:
+                await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
                 activity=discord.Game("Restarting..."),
@@ -387,7 +390,7 @@ if not unstable:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
                     await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
-                await restart(ctx)
+                await restart(ctx, status)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
@@ -398,13 +401,13 @@ if not unstable:
     @client.command(name="forceupdate", aliases=["fud"])
     async def forceupdate(ctx):
         if developer(ctx.author):
-            await ctx.send("Updating...")
+            status = await ctx.send("Updating...")
             await client.change_presence(
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
             )
             os.system("bash update.sh > update.log")
-            await restart(ctx)
+            await restart(ctx, status)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
