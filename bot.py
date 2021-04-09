@@ -380,7 +380,7 @@ if not unstable:
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_log[-1]
                     await ctx.send(update_summary)
-                    update_log = dict(str(update_log[:-1]).split("|")[0], str(update_log[:-1]).split("|")[1] for _ in str(update_log[:-1]).split("\n"))
+                    update_log = {str(update_log[:-1]).split("|")[0]: str(update_log[:-1]).split("|")[1] for _ in str(update_log[:-1]).split("\n")}
                     await ctx.send(update_log)
                     await status.edit(content=f'```json\n"{update_summary}",\n"{update_log}"```')
                 else:
