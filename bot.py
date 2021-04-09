@@ -372,7 +372,7 @@ if not unstable:
             cmd("bash update.sh > update.log")
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "A" == update_log[0][0]:
-                await status.edit(content=f'```json\n"a{update_log[0][1:-1]}"```')
+                await status.edit(content=f'```json\n"{update_log[0][:-1].split()[1:]}": true```')
             else:
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
@@ -386,7 +386,7 @@ if not unstable:
                         update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
                         for item in range(len(update_log))
                     }
-                    await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
+                    await status.edit(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
                     await ctx.send(embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
@@ -416,7 +416,7 @@ async def update(ctx, formatted=True):
     if developer(ctx.author):
         update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
         if "A" == update_log[0][0]:
-            await ctx.send(content=f'```json\n"a{update_log[0][1:-1]}"```')
+            await ctx.send(content=f'```json\n"{update_log[0][:-1].split()[1:]}": true```')
         elif formatted:
             update_summary = update_log[-1]
             update_log = update_log[2:-1]
