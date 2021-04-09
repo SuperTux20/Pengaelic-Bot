@@ -424,12 +424,11 @@ if not unstable:
                     update_summary = {update_summary[0]: [update_summary[1][:-3], update_summary[2][:-3]]}
                     for item in range(len(update_log)):
                         while "  " in update_log[item]:
-                            await ctx.send(update_log[item])
                             update_log[item] = update_log[item].replace("  ", " ")
                         await ctx.send(update_log[item])
                     await ctx.send(update_log)
                     update_log = {
-                        str(update_log[:-1]).split("|")[0].replace(" ", ""): str(update_log[:-1]).split("|")[1]
+                        update_log[:-1].split("|")[0].replace(" ", ""): update_log[:-1].split("|")[1]
                         for _ in update_log
                     }
                     await ctx.send(str(update_log))

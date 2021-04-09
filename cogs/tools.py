@@ -6,7 +6,6 @@ from asyncio import sleep
 from random import randint
 from json import dumps
 
-
 class Tools(commands.Cog):
     def __init__(self, client):
         self.client = client
