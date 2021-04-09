@@ -417,8 +417,8 @@ if not unstable:
             if "Already up to date.\n" in update_log:
                 await ctx.send(content='```json\n"Already up to date."```')
             else:
-                update_log = update_log[2:]
                 update_summary = update_log[-1]
+                update_log = update_log[2:-1]
                 await ctx.send(update_summary)
                 await ctx.send(update_log)
                 if options(ctx.guild.id, "jsonMenus"):
