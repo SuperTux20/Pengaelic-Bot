@@ -397,10 +397,6 @@ if not unstable:
         else:
             await ctx.send("Hey, only my developers can do this!")
 
-    @update.error
-    async def update_error(ctx, error):
-        await ctx.send(f"An error occured while updating: ```{error}```")
-
     @client.command(name="forceupdate", aliases=["fud"])
     async def forceupdate(ctx):
         if developer(ctx.author):
@@ -413,6 +409,11 @@ if not unstable:
             await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
+
+    @update.error
+    async def update_error(ctx, error):
+        await ctx.send(f"An error occured while updating...```{error}```Attempting force-update.")
+        await forceupdate(ctx)
 
     @client.command(name="updatelog", aliases=["ul"])
     async def update(ctx, formatted=True):
