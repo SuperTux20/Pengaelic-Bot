@@ -415,9 +415,20 @@ async def h_censor(ctx):
                 value=command.help)
     await ctx.send(embed=help_menu)
 
+dotenv(".env")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+class developers():
+    Everyone = [
+        int(dev)
+        for dev in os.getenv("DEVELOPER_IDS").split()
+    ]
+    Tux, Hy = Everyone
+
+print("Loaded bot token and developer IDs")
+
 @client.command(name="exit", aliases=["quit"])
 async def restart(ctx):
-    if str(ctx.author.id) in os.getenv("DEVELOPER_IDS").split():
+    if ctx.author.id in developers.Everyone:
         await ctx.send("Goodbye...")
         exit(0)
     else:
@@ -426,7 +437,7 @@ async def restart(ctx):
 if unstable:
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx):
-        if str(ctx.author.id) in os.getenv("DEVELOPER_IDS").split():
+        if ctx.author.id in developers.Everyone:
             await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
@@ -443,7 +454,7 @@ if unstable:
 
     @client.command(name="update", aliases=["ud"])
     async def update(ctx):
-        if str(ctx.author.id) in os.getenv("DEVELOPER_IDS").split():
+        if ctx.author.id in developers.Everyone:
             status = await ctx.send("Updating...")
             await client.change_presence(
                 activity=discord.Game("Updating..."),
@@ -452,11 +463,11 @@ if unstable:
             await status.edit(content="Pulling the latest commits from GitHub...")
             os.system("bash update.sh > update.log")
             update_log = [line for line in open("update.log", "r")][1:]
-            if update_log == ["Already up to date.\n"]:
+            if "Already up to date.\n" in update_log:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
             else:
-                if options(ctx.guild.id)["jsonMenus"]:
+                if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_log[-1][:-1]
                     update_log = dict(
                         str(
@@ -479,9 +490,9 @@ if unstable:
 
 @update.error
 async def updateError(ctx, error):
-    await ctx.send("An error occured while updating: " + str(error))
+    await ctx.send(f"An error occured while updating: ```{error}```")
     with open(".env", "rb") as dotenvfile:
-        await client.get_user(id=int(os.getenv("DEVELOPER_IDS").split()[1])).send("The update command broke again...")
+        await client.get_user(id=developers.Tux).send(f"The update command broke again... ```{error}```")
 
 client.loop.create_task(status_switcher())  # as defined above
 
@@ -490,15 +501,6 @@ for cog in os.listdir("cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
-
-dotenv(".env")
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-class user():
-    Tux, Hy = [
-        client.get_user(id=int(dev))
-        for dev in os.getenv("DEVELOPER_IDS").split()
-    ]
-print("Loaded bot token and developer IDs")
 
 while True:
     try:
