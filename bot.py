@@ -343,7 +343,7 @@ async def restart(ctx):
     else:
         await ctx.send("Hey, only my developers can do this!")
 
-if not False:
+if not unstable:
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx):
         if developer(ctx.author):
@@ -395,7 +395,7 @@ if not False:
             await ctx.send("Hey, only my developers can do this!")
 
     @client.command(name="update", aliases=["ud"])
-    async def update(ctx):
+    async def update(ctx, force=False):
         if developer(ctx.author):
             status = await ctx.send(content="Pulling the latest commits from GitHub...")
             await client.change_presence(
@@ -403,19 +403,8 @@ if not False:
                 status=discord.Status.idle
             )
             cmd("bash update.sh > update.log")
-            await updatelog(ctx, True, False, status)
-            await restart(ctx)
-        else:
-            await ctx.send("Hey, only my developers can do this!")
-
-    @client.command(name="forceupdate", aliases=["fud"])
-    async def forceupdate(ctx):
-        if developer(ctx.author):
-            await client.change_presence(
-                activity=discord.Game("Updating..."),
-                status=discord.Status.idle
-            )
-            cmd("bash update.sh > update.log")
+            if not force:
+                await updatelog(ctx, True, False, status)
             await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
@@ -423,7 +412,7 @@ if not False:
     @update.error
     async def update_error(ctx, error):
         await ctx.send(f"An error occured while updating...```{error}```Attempting force-update.")
-        await forceupdate(ctx)
+        await update(ctx, True)
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx, *, cogname: str = None):
