@@ -43,13 +43,7 @@ class NonCommands(commands.Cog):
                         await get(
                             member.guild.text_channels,
                             name=channel
-                        ).send(
-                            f"""Welcome to {
-                                member.guild.name
-                            }, {
-                                member.name
-                            }!"""
-                        )
+                        ).send(f"Welcome to {member.guild.name}, {member.name}!")
                         return
                     except:
                         continue
