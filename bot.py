@@ -378,21 +378,16 @@ if not unstable:
             else:
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
-                await ctx.send(update_summary)
-                await ctx.send(update_log)
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_summary.split(", ")
                     update_summary = {update_summary[0]: [update_summary[1][:-3], update_summary[2][:-3]]}
                     for item in range(len(update_log)):
                         while "  " in update_log[item]:
                             update_log[item] = update_log[item].replace("  ", " ")
-                        await ctx.send(update_log[item])
-                    await ctx.send(update_log)
                     update_log = {
                         update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
                         for item in range(len(update_log))
                     }
-                    await ctx.send(str(update_log))
                     await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
@@ -420,7 +415,7 @@ if not unstable:
             await ctx.send("Hey, only my developers can do this!")
 
     @client.command(name="updatelog", aliases=["ul"])
-    async def update(ctx, formatted=False):
+    async def update(ctx, formatted=True):
         if developer(ctx.author):
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
