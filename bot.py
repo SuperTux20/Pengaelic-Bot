@@ -423,7 +423,7 @@ if not unstable:
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "A" == update_log[0][0]:
                 await ctx.send(content=f'```json\n"a{update_log[0][1:-1]}"```')
-            elif formatted:
+            elif formatted:#
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
                 if options(ctx.guild.id, "jsonMenus"):
