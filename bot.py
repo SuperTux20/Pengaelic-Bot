@@ -422,7 +422,7 @@ if not unstable:
                 update_summary = update_log[-1][1:-1]
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_summary.split(", ")
-                    update_summary = {update_summary[0]:[update_summary[1],update_summary[2]]}
+                    update_summary = {update_summary[0]: [update_summary[1],update_summary[2]]}
                     update_log = {
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")

@@ -75,11 +75,7 @@ class NonCommands(commands.Cog):
                         await get(
                             member.guild.text_channels,
                             name=channel
-                        ).send(
-                            f"""See you later, {
-                                member.name
-                            }..."""
-                        )
+                        ).send(f"See you later, {member.name}...")
                         return
                     except:
                         continue
