@@ -3,7 +3,6 @@ from discord.ext import commands
 from random import randint
 from os import listdir
 
-
 class Actions(commands.Cog):
     def __init__(self, client):
         self.client = client
