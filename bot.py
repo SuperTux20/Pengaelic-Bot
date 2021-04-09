@@ -3,6 +3,7 @@ import sqlite3
 import subprocess
 import sys
 from asyncio import sleep
+from json import loads
 from pengaelicutils import options, remove_duplicates
 from platform import node as hostname
 from random import choice, randint
@@ -36,9 +37,10 @@ if need2install:
     exit()
 print("Passed module test")
 import discord
-from discord.ext import commands
-from discord.utils import get
 from dotenv import load_dotenv as dotenv
+from discord.utils import get
+from discord.ext import commands
+
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
 else:
@@ -67,7 +69,8 @@ GNU General Public License for more details.
 
 """
 if unstable:
-    os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
+    os.system(
+        "toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
 else:
     os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
 print(info)
@@ -217,7 +220,8 @@ def help_menu(cog, client, ctx):
         if command.usage:
             menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -225,7 +229,8 @@ def help_menu(cog, client, ctx):
         else:
             menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help
             )
@@ -305,8 +310,105 @@ async def redo_welcome(ctx):
     await ctx.message.delete()
 
 
+# load token
+dotenv(".env")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+
+# load all developer user IDs
+class developers():
+    everyone = loads(os.getenv("DEVELOPER_IDS"))
+
+# function to make testing if someone's a dev easier
+def developer(user, dev=None):
+    if dev == None:
+        if user.id in list(developers.everyone.values()):
+            return True
+        else:
+            return False
+    else:
+        if user.id == developers.everyone[dev]:
+            return True
+        else:
+            return False
+
+
+print("Loaded bot token and developer IDs")
+
+
+@client.command(name="exit", aliases=["quit"])
+async def restart(ctx):
+    if ctx.author.id in developers.everyone:
+        await ctx.send("Goodbye...")
+        exit(0)
+    else:
+        await ctx.send("Hey, only my developers can do this!")
+
+if not unstable:
+    @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
+    async def restart(ctx):
+        if developer(ctx.author):
+            await ctx.send("Restarting...")
+            print("Restarting...")
+            await client.change_presence(
+                activity=discord.Game("Restarting..."),
+                status=discord.Status.dnd
+            )
+            os.execl(
+                sys.executable,
+                sys.executable,
+                * sys.argv
+            )
+        else:
+            await ctx.send("Hey, only my developers can do this!")
+
+    @client.command(name="update", aliases=["ud"])
+    async def update(ctx):
+        if developer(ctx.author):
+            status = await ctx.send("Updating...")
+            await client.change_presence(
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
+            )
+            await status.edit(content="Pulling the latest commits from GitHub...")
+            os.system("bash update.sh > update.log")
+            update_log = [line for line in open("update.log", "r")][1:]
+            if "Already up to date.\n" in update_log:
+                await status.edit(content="Already up to date, no restart required.")
+                await status_switcher()
+            else:
+                if options(ctx.guild.id, "jsonMenus"):
+                    update_summary = update_log[-1][:-1]
+                    update_log = dict(
+                        str(update_log[2:-1]).split("|") for _ in update_log[2:-1].split("\n"))
+                    await status.edit(content=f'```json\n{update_summary},\n"{update_log}"```')
+                else:
+                    update_summary = update_log[-1][:-1]
+                    update_log = update_log[2:-1]
+                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
+                await restart(ctx)
+        else:
+            await ctx.send("Hey, only my developers can do this!")
+
+    @update.error
+    async def update_error(ctx, error):
+        await ctx.send(f"An error occured while updating: ```{error}```")
+
+    @client.command(name="forceupdate", aliases=["fud"])
+    async def forceupdate(ctx):
+        if developer(ctx.author):
+            await ctx.send("Updating...")
+            await client.change_presence(
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
+            )
+            os.system("bash update.sh > update.log")
+            await restart(ctx)
+        else:
+            await ctx.send("Hey, only my developers can do this!")
+
+
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
-async def help(ctx, *, cogname: str=None):
+async def help(ctx, *, cogname: str = None):
     if cogname == None:
         menu = discord.Embed(
             title=client.description,
@@ -325,6 +427,12 @@ async def help(ctx, *, cogname: str=None):
             menu.add_field(
                 name="Options",
                 value=client.get_cog("Options").description,
+                inline=False
+            )
+        if developer(ctx.author):
+            menu.add_field(
+                name="Control",
+                value="Update, restart, that sort of thing.",
                 inline=False
             )
         menu.add_field(
@@ -352,13 +460,34 @@ async def help(ctx, *, cogname: str=None):
                 )[1:-1].replace("'", "").replace(", ", "\n")
             )
         await ctx.send(embed=menu)
+    elif cogname == "control" and developer(ctx.author):
+        menu = discord.Embed(
+            title="Control",
+            description="Commands for developers to control the bot itself.",
+            color=32639
+        ).add_field(
+            name="exit",
+            value="Shut off the bot."
+        ).add_field(
+            name="restart",
+            value="Reload the bot."
+        ).add_field(
+            name="update",
+            value="Check if there's new commits on GitHub, and if there are, pull them and restart."
+        ).add_field(
+            name="forceupdate",
+            value="Same as update, but it always restarts regardless of what the update log says, because I'm sure I fucked up the regular update command somehow."
+        )
+        await ctx.send(embed=menu)
     else:
         await ctx.send(embed=help_menu(client.get_cog(cogname.capitalize()), client, ctx))
+
 
 @help.error
 async def not_a_cog(ctx, error):
     if str(error) == "AttributeError: 'NoneType' object has no attribute 'name'":
         await ctx.send("There isn't a help menu for that.")
+
 
 @help.command(name="toggle")
 async def h_toggle(ctx):
@@ -374,7 +503,8 @@ async def h_toggle(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -402,7 +532,8 @@ async def h_censor(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -410,91 +541,12 @@ async def h_censor(ctx):
         else:
             help_menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help)
     await ctx.send(embed=help_menu)
 
-dotenv(".env")
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
-class developers():
-    Everyone = [
-        int(dev)
-        for dev in os.getenv("DEVELOPER_IDS").split()
-    ]
-    Tux, Hy = Everyone
-
-print("Loaded bot token and developer IDs")
-
-@client.command(name="exit", aliases=["quit"])
-async def restart(ctx):
-    if ctx.author.id in developers.Everyone:
-        await ctx.send("Goodbye...")
-        exit(0)
-    else:
-        await ctx.send("Hey, only my developers can do this!")
-
-if not False:
-    @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
-    async def restart(ctx):
-        if ctx.author.id in developers.Everyone:
-            await ctx.send("Restarting...")
-            print("Restarting...")
-            await client.change_presence(
-                activity=discord.Game("Restarting..."),
-                status=discord.Status.dnd
-            )
-            os.execl(
-                sys.executable,
-                sys.executable,
-                * sys.argv
-            )
-        else:
-            await ctx.send("Hey, only my developers can do this!")
-
-    @client.command(name="update", aliases=["ud"])
-    async def update(ctx):
-        if ctx.author.id in developers.Everyone:
-            status = await ctx.send("Updating...")
-            await client.change_presence(
-                activity=discord.Game("Updating..."),
-                status=discord.Status.idle
-            )
-            await status.edit(content="Pulling the latest commits from GitHub...")
-            os.system("bash update.sh > update.log")
-            update_log = [line for line in open("update.log", "r")][1:]
-            if "Already up to date.\n" in update_log:
-                await status.edit(content="Already up to date, no restart required.")
-                await status_switcher()
-            else:
-                if options(ctx.guild.id, "jsonMenus"):
-                    update_summary = update_log[-1][:-1]
-                    update_log = dict(str(update_log[2:-1]).split("|") for _ in update_log[2:-1].split("\n"))
-                    await status.edit(content=f'```json\n{update_summary},\n"{update_log}"```')
-                else:
-                    update_summary = update_log[-1][:-1]
-                    update_log = update_log[2:-1]
-                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
-                await restart(ctx)
-        else:
-            await ctx.send("Hey, only my developers can do this!")
-
-    @update.error
-    async def updateError(ctx, error):
-        await ctx.send(f"An error occured while updating: ```{error}```")
-
-    @client.command(name="forceupdate", aliases=["fud"])
-    async def forceupdate(ctx):
-        if ctx.author.id in developers.Everyone:
-            status = await ctx.send("Updating...")
-            await client.change_presence(
-                activity=discord.Game("Updating..."),
-                status=discord.Status.idle
-            )
-            os.system("bash update.sh > update.log")
-            await restart(ctx)
-        else:
-            await ctx.send("Hey, only my developers can do this!")
 
 client.loop.create_task(status_switcher())  # as defined above
 
