@@ -428,6 +428,7 @@ if not unstable:
                 update_log = update_log[2:-1]
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_summary.split(", ")
+                    await ctx.send(str(update_summary))
                     update_summary = {{"files changed": update_summary[0][1:].split()[0]}: {"insertions": update_summary[1][:-3].split()[0], "deletions": update_summary[2][:-3].split()[0]}}
                     await ctx.send(str(update_summary))
                     for item in range(len(update_log)):
