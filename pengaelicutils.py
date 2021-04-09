@@ -52,7 +52,6 @@ def options(guild, option):
             currentserver[option] = currentserver[option].split(", ")
         return currentserver[option]
 
-
 def list2str(inlist: list, mode: int = 0):
     if mode == 1:
         # remove all separation
