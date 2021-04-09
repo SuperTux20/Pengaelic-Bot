@@ -427,7 +427,7 @@ if not unstable:
                         update_log = update_log.replace("  ", " ")
                     await ctx.send(update_log)
                     update_log = {
-                        str(update_log[:-1]).split("|")[0][3:].replace(" ", ""): str(update_log[:-1]).split("|")[1]
+                        str(update_log[:-1]).split("|")[0].replace(" ", ""): str(update_log[:-1]).split("|")[1]
                         for _ in update_log
                     }
                     await ctx.send(str(update_log))
