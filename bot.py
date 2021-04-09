@@ -430,7 +430,7 @@ async def update(ctx, formatted=True):
                     update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
                     for item in range(len(update_log))
                 }
-                await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
+                await ctx.send(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
             else:
                 update_log = update_log[:-1]
                 await ctx.send(embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
