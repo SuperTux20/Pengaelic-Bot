@@ -378,18 +378,14 @@ if not unstable:
                 update_log = update_log[2:-1]
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_summary.split(", ")
-                    update_summary = {update_summary[0][1:]: [update_summary[1][:-3], update_summary[2][:-3]]}
-                    await ctx.send(str(update_summary))
+                    update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
                     for item in range(len(update_log)):
                         while "  " in update_log[item]:
                             update_log[item] = update_log[item].replace("  ", " ")
-                        await ctx.send(update_log[item])
-                    await ctx.send(update_log)
                     update_log = {
                         update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
                         for item in range(len(update_log))
                     }
-                    await ctx.send(str(update_log))
                     await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
@@ -427,15 +423,7 @@ async def update(ctx, formatted=True):
             update_log = update_log[2:-1]
             if options(ctx.guild.id, "jsonMenus"):
                 update_summary = update_summary.split(", ")
-                update_summary = [
-                    {
-                        "files changed": int(update_summary[0][1:].split()[0])
-                    },
-                    {
-                        "insertions": int(update_summary[1][:-3].split()[0]),
-                        "deletions": int(update_summary[2][:-3].split()[0])
-                    }
-                ]
+                update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
                 for item in range(len(update_log)):
                     while "  " in update_log[item]:
                         update_log[item] = update_log[item].replace("  ", " ")
