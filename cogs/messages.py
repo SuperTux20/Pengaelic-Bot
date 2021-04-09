@@ -48,6 +48,5 @@ class Messages(commands.Cog):
                 )
             await ctx.send(embed=embed)
 
-
 def setup(client):
     client.add_cog(Messages(client))
