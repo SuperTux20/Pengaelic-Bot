@@ -253,7 +253,7 @@ class Interactions(commands.Cog):
     )
 }
 ```"""
-                               )
+)
             else:
                 embed = discord.Embed(
                     color=32639,
