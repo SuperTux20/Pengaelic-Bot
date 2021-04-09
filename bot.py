@@ -420,12 +420,12 @@ if not unstable:
             await ctx.send("Hey, only my developers can do this!")
 
     @client.command(name="updatelog", aliases=["ul"])
-    async def update(ctx):
+    async def update(ctx, raw=False):
         if developer(ctx.author):
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
                 await ctx.send(content='```json\n"Already up to date."```')
-            else:
+            elif raw:
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
                 await ctx.send(update_summary)
