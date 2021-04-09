@@ -431,7 +431,7 @@ if not unstable:
                     await status.edit(content=f'```json\n{dumps(updates, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
-                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
+                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=str(update_log), color=32639).set_footer(text=update_summary))
         else:
             await ctx.send("Hey, only my developers can do this!")
 
