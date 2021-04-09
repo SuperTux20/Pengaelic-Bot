@@ -428,12 +428,12 @@ if not unstable:
                 update_log = update_log[2:]
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_log[-1][1:-1].split(", ")
-                    #update_summary = {update_summary[0]:[update_summary[1],update_summary[2]]}
+                    update_summary = {update_summary[0]:[update_summary[1],update_summary[2]]}
                     update_log = {
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
-                    await status.edit(content=f'```json\n"{dumps(update_summary)}": {dumps(update_log, indent=4)}```')
+                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)}\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
