@@ -422,9 +422,9 @@ if not unstable:
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_summary.split(", ")
                     update_summary = {update_summary[0]: [update_summary[1],update_summary[2]]}
-                    update_log = str(update_log)
-                    while "  " in update_log:
-                        update_log = update_log.replace("  ", " ")
+                    for item in update_log:
+                        while "  " in item:
+                            item = item.replace("  ", " ")
                     await ctx.send(update_log)
                     update_log = {
                         str(update_log[:-1]).split("|")[0].replace(" ", ""): str(update_log[:-1]).split("|")[1]
