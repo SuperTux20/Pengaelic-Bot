@@ -381,7 +381,7 @@ if not unstable:
                     update_summary = update_log[-1][1:-1]
                     await ctx.send(update_summary)
                     update_log = {
-                        str(update_log[:-1]).split("|")[0][3:-4]: str(update_log[:-1]).split("|")[1]
+                        str(update_log[:-1]).split("|")[0][3]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
                     await ctx.send(update_log)
