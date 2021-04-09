@@ -339,6 +339,5 @@ class Interactions(commands.Cog):
         else:
             await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
-
 def setup(client):
     client.add_cog(Interactions(client))

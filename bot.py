@@ -434,7 +434,7 @@ if not unstable:
                 else:
                     update_log = update_log[:-1]
                     await ctx.send(embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
-            await ctx.send(f'```{open("update.log", "r").read()}```')
+            await ctx.send(f'Raw log contents...```{open("update.log", "r").read()}```')
         else:
             await ctx.send("Hey, only my developers can do this!")
 
