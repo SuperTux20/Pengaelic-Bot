@@ -3,7 +3,7 @@ import sqlite3
 import subprocess
 import sys
 from asyncio import sleep
-from json import loads
+from json import loads, dumps
 from pengaelicutils import options, remove_duplicates
 from platform import node as hostname
 from random import choice, randint
@@ -378,11 +378,14 @@ if not unstable:
                 await status_switcher()
             else:
                 if options(ctx.guild.id, "jsonMenus"):
-                    update_summary = update_log[-1]
+                    update_summary = update_log[-1][:-1]
                     await ctx.send(update_summary)
-                    update_log = {str(update_log[:-1]).split("|")[0]: str(update_log[:-1]).split("|")[1] for _ in str(update_log[:-1]).split("\n")}
+                    update_log = {
+                        str(update_log[:-1]).split("|")[0]: str(update_log[:-1]).split("|")[1]
+                        for _ in str(update_log[:-1]).split("\n")
+                    }
                     await ctx.send(update_log)
-                    await status.edit(content=f'```json\n"{update_summary}",\n"{update_log}"```')
+                    await status.edit(content=f'```json\n"{update_summary}",\n{dumps(update_log)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
