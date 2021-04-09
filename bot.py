@@ -464,7 +464,7 @@ if not False:
             os.system("bash update.sh > update.log")
             update_log = [line for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
-                await status.edit(content="Already up to date, no restart required.")
+                await status.edit(content="Already up to date no restart required.")
                 await status_switcher()
             else:
                 if options(ctx.guild.id, "jsonMenus"):
