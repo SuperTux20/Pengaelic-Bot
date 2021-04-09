@@ -168,6 +168,5 @@ class NonCommands(commands.Cog):
                 )
                 await message.channel.send(choice(responses))
 
-
 def setup(client):
     client.add_cog(NonCommands(client))

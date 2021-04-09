@@ -425,8 +425,9 @@ if not unstable:
                     update_log = str(update_log)
                     while "  " in update_log:
                         update_log = update_log.replace("  ", " ")
+                    await ctx.send(update_log)
                     update_log = {
-                        str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
+                        str(update_log[:-1]).split("|")[0][3:].replace(" ", ""): str(update_log[:-1]).split("|")[1][:-4]
                         for _ in update_log
                     }
                     await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
