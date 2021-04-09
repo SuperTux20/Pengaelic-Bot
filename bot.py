@@ -441,7 +441,6 @@ if not unstable:
                 await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
-#
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx, *, cogname: str = None):
