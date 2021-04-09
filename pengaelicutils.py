@@ -65,6 +65,5 @@ def list2str(inlist: list, mode: int = 0):
     # mode = 0 leaves commas and spaces unaffected
     return outstr
 
-
 def remove_duplicates(inlist: list):
     return list(dict.fromkeys(inlist))
