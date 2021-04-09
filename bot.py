@@ -438,7 +438,7 @@ if not unstable:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
                     await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
-                await restart(ctx)#
+                await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
