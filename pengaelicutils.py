@@ -1,7 +1,6 @@
 import sqlite3
 from time import time
 
-
 def stopwatch(start_time: time):
     elapsed = time() - start_time
     m = elapsed/60
