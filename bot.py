@@ -385,7 +385,7 @@ if not unstable:
                         for _ in str(update_log[:-1]).split("\n")
                     }
                     await ctx.send(update_log)
-                    await status.edit(content=f'```json\n"{update_summary}",\n{dumps(update_log)}```')
+                    await status.edit(content=f'```json\n"{update_summary}": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
