@@ -434,7 +434,7 @@ async def restart(ctx):
     else:
         await ctx.send("Hey, only my developers can do this!")
 
-if unstable:
+if not unstable:
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx):
         if ctx.author.id in developers.Everyone:
@@ -488,11 +488,24 @@ if unstable:
         else:
             await ctx.send("Hey, only my developers can do this!")
 
-@update.error
-async def updateError(ctx, error):
-    await ctx.send(f"An error occured while updating: ```{error}```")
-    with open(".env", "rb") as dotenvfile:
-        await client.get_user(id=developers.Tux).send(f"The update command broke again... ```{error}```")
+    @update.error
+    async def updateError(ctx, error):
+        await ctx.send(f"An error occured while updating: ```{error}```")
+        with open(".env", "rb") as dotenvfile:
+            await client.get_user(id=developers.Tux).send(f"The update command broke again... ```{error}```")
+
+    @client.command(name="forceupdate", aliases=["fud"])
+    async def forceupdate(ctx):
+        if ctx.author.id in developers.Everyone:
+            status = await ctx.send("Updating...")
+            await client.change_presence(
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
+            )
+            os.system("bash update.sh > update.log")
+            await restart(ctx)
+        else:
+            await ctx.send("Hey, only my developers can do this!")
 
 client.loop.create_task(status_switcher())  # as defined above
 
