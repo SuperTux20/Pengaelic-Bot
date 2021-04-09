@@ -180,8 +180,4 @@ In content: Must be 2000 or fewer in length.""":
 
 
 def setup(client):
-    client.add_cog(
-        Generators(
-            client
-        )
-    )
+    client.add_cog(Generators(client))

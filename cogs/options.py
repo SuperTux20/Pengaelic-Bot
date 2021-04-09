@@ -33,6 +33,24 @@ class Options(commands.Cog):
             )
             conn.commit()
 
+    async def toggle_option(self, ctx, option, disable_message, enable_message):
+        if getops(ctx.guild.id, option):
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                option,
+                False
+            )
+            await ctx.send(disable_message)
+        else:
+            self.update_option(
+                self.db,
+                ctx.guild.id,
+                option,
+                True
+            )
+            await ctx.send(enable_message)
+
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
@@ -108,147 +126,42 @@ class Options(commands.Cog):
     @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
-        if getops(ctx.guild.id, "censor"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "censor",
-                False
-            )
-            await ctx.send("Censorship turned off.")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "censor",
-                True
-            )
-            await ctx.send("Censorship turned on.")
+        await self.toggle_option(ctx, "censor", "Censorship turned off.", "Censorship turned on.")
 
     @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
-        if getops(ctx.guild.id, "dadJokes"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "dadJokes",
-                False
-            )
-            await ctx.send("Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "dadJokes",
-                True
-            )
-            await ctx.send("Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)")
+        await self.toggle_option(ctx, "dadJokes", "Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)", "Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)")
 
     @toggle.command(name="deadChat", help="Toggle the automatic \"no u\" response to someone saying \"dead chat\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dead_chat(self, ctx):
-        if getops(ctx.guild.id, "deadChat"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "deadChat",
-                False
-            )
-            await ctx.send("The server lives! (dead chat jokes turned off)")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "deadChat",
-                True
-            )
-            await ctx.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)")
+        await self.toggle_option(ctx, "deadChat", "The server lives! (dead chat jokes turned off)", f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)")
 
     @toggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_json(self, ctx):
-        if getops(ctx.guild.id, "jsonMenus"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "jsonMenus",
-                False
-            )
-            await ctx.send("Menus will be shown in embed format.")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "jsonMenus",
-                True
-            )
-            await ctx.send("Menus will be shown in JSON format.")
+        await self.toggle_option(ctx, "jsonMenus", "Menus will be shown in embed format.", "Menus will be shown in JSON format.")
 
     @toggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_suggestions(self, ctx):
-        if getops(ctx.guild.id, "suggestions"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "suggestions",
-                False
-            )
-            await ctx.send("Auto-suggestions turned off.")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "suggestions",
-                True
-            )
-            await ctx.send("Auto-suggestions turned on.")
+        await self.toggle_option(ctx, "suggestions", "Auto-suggestions turned off.", "Auto-suggestions turned on.")
 
     @toggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_rick_roulette(self, ctx):
-        if getops(ctx.guild.id, "rickRoulette"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "rickRoulete",
-                False
-            )
-            await ctx.send("You know the rules, and so do I. (Rick Roulette turned off)")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "rickRoulette",
-                True
-            )
-            await ctx.send("You know the rules, it's time to die. (Rick Roulette turned on)")
+        await self.toggle_option(ctx, "rickRoulette", "You know the rules, and so do I. (Rick Roulette turned off)", "You know the rules, it's time to die. (Rick Roulette turned on)")
 
     @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
-        if getops(ctx.guild.id, "welcome"):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "welcome",
-                False
-            )
-            await ctx.send("Welcome messages turned off.")
-        else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                "welcome",
-                True
-            )
-            await ctx.send("Welcome messages turned on.")
+        await self.toggle_option(ctx, "welcome", "Welcome messages turned off.", "Welcome messages turned on.")
 
     @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("Available options: `(show/list/get), add, delete, (wipe/clear)`")
+            await ctx.send("Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`")
 
     @censor.command(name="show", help="Display the contents of the censorship filter.", aliases=["list", "get"])
     @commands.has_permissions(manage_messages=True)
@@ -338,6 +251,4 @@ class Options(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(
-        Options(
-            client))
+    client.add_cog(Options(client))

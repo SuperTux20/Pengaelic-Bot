@@ -14,17 +14,8 @@ class Messages(commands.Cog):
 
     @commands.command(name="say", help="I'll repeat whatever you tell me.", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
     async def say_back(self, ctx, *, arg):
-        await ctx.send(
-            arg
-        )
+        await ctx.send(arg)
         await ctx.message.delete()
-
-    @commands.command(name="delet", help="delet this.")
-    async def delet_this(self, ctx):
-        await ctx.message.delete()
-        await ctx.send(
-            "https://supertux20.github.io/Pengaelic-Bot/images/gifs/no_one_is_safe.gif"
-        )
 
     @commands.command(name="credits", help="See who helped me come to exist!")
     async def credits(self, ctx):
@@ -59,8 +50,4 @@ class Messages(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(
-        Messages(
-            client
-        )
-    )
+    client.add_cog(Messages(client))

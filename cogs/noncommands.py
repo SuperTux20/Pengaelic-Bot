@@ -180,8 +180,4 @@ class NonCommands(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(
-        NonCommands(
-            client
-        )
-    )
+    client.add_cog(NonCommands(client))

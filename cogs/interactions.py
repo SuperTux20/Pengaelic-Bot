@@ -341,8 +341,4 @@ class Interactions(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(
-        Interactions(
-            client
-        )
-    )
+    client.add_cog(Interactions(client))

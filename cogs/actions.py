@@ -28,7 +28,7 @@ class Actions(commands.Cog):
             embed=discord.Embed(
                 title=f"{actor} is {acting}",
                 color=self.cyan
-            )  # .set_image(url = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif")
+            )#.set_image(url = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif")
         )
 
     @commands.command(name="cry")
@@ -57,8 +57,4 @@ class Actions(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(
-        Actions(
-            client
-        )
-    )
+    client.add_cog(Actions(client))

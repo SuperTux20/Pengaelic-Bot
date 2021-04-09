@@ -113,10 +113,7 @@ class Tools(commands.Cog):
         else:
             the_poll = await ctx.send(
                 embed=discord.Embed(
-                    color=randint(
-                        0,
-                        16777215
-                    ),
+                    color=randint(0, 16777215),
                     title=title,
                     description=arg
                 ).set_author(
@@ -161,67 +158,67 @@ class Tools(commands.Cog):
     @commands.command(name="server", help="See a bunch of data about the server at a glance.", aliases=["info"])
     @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
-        creation = ctx.guild.created_at
+        guild = ctx.guild
+        owner = guild.owner
+        if guild.owner.nick == None:
+            owner.nick = owner.name
+        creation = guild.created_at
         jsoninfo = str(
             dumps(
                 {
                     "basic info": {
-                        "server name": ctx.guild.name,
-                        "server owner": f"{ctx.guild.owner.nick} ({ctx.guild.owner.name}#{ctx.guild.owner.discriminator})",
-                        "server id": ctx.guild.id,
-                        "two-factor authentication": str(bool(ctx.guild.mfa_level)),
+                        "server name": guild.name,
+                        "server owner": f"{owner.nick} ({owner.name}#{owner.discriminator})",
+                        "server id": guild.id,
+                        "two-factor authentication": bool(guild.mfa_level),
                         "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
                     },
                     "levels": {
-                        "verification level": f"{ctx.guild.verification_level[0]} (level {ctx.guild.verification_level[1]+1})",
-                        "notification level": f"{ctx.guild.default_notifications[0].replace('_',' ')} (level {ctx.guild.default_notifications[1]+1})",
-                        "content filter": f"{ctx.guild.explicit_content_filter[0].replace('_',' ')} (level {ctx.guild.explicit_content_filter[1]+1})"
+                        "verification level": f"{guild.verification_level[0]} (level {guild.verification_level[1]+1})",
+                        "notification level": f"{guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1})",
+                        "content filter": f"{guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})"
                     },
                     "counts": {
-                        "members": ctx.guild.member_count,
-                        "boosters": ctx.guild.premium_subscription_count,
-                        "text channels": len(ctx.guild.text_channels),
-                        "voice channels": len(ctx.guild.voice_channels),
-                        "channel categories": len(ctx.guild.categories),
-                        "emojis": len(ctx.guild.emojis)
+                        "members": guild.member_count,
+                        "boosters": guild.premium_subscription_count,
+                        "text channels": len(guild.text_channels),
+                        "voice channels": len(guild.voice_channels),
+                        "channel categories": len(guild.categories),
+                        "emojis": len(guild.emojis)
                     }
                 },
                 indent=4
-            ).replace("False", "disabled").replace("True", "enabled")
+            )
         )
         embedinfo = discord.Embed(
             title="Server Details",
             color=self.cyan
         ).add_field(
             name="Basic Info",
-            value=f"""Server Name: {ctx.guild.name}
-                Server Owner: "{ctx.guild.owner.nick}" (`{ctx.guild.owner.name}#{ctx.guild.owner.discriminator}`)
-                Server Id: `{ctx.guild.id}`
-                Two-factor Authentication: {bool(ctx.guild.mfa_level)}
-                Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""",
+            value=f"""Server Name: {guild.name}
+                Server Owner: "{owner.nick}" (`{owner.name}#{owner.discriminator}`)
+                Server ID: `{guild.id}`
+                Two-Factor Authentication: {bool(guild.mfa_level)}
+                Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""".replace("True", "Enabled").replace("False", "Disabled"),
             inline=False
         ).add_field(
             name="Levels",
-            value=f"""Verification Level: {ctx.guild.verification_level[0]} (level {ctx.guild.verification_level[1]+1}),
-                Notification Level: {ctx.guild.default_notifications[0].replace('_',' ')} (level {ctx.guild.default_notifications[1]+1}),
-                Content Filter: {ctx.guild.explicit_content_filter[0].replace('_',' ')} (level {ctx.guild.explicit_content_filter[1]+1})""",
+            value=f"""Verification Level: {guild.verification_level[0]} (level {guild.verification_level[1]+1}),
+                Notification Level: {guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1}),
+                Content Filter: {guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})""",
             inline=False
         ).add_field(
             name="Counts",
-            value=f"""Members: {ctx.guild.member_count}
-                Boosters: {ctx.guild.premium_subscription_count}
-                Text Channels: {len(ctx.guild.text_channels)}
-                Voice Channels: {len(ctx.guild.voice_channels)}
-                Channel Categories: {len(ctx.guild.categories)}
-                Emojis: {len(ctx.guild.emojis)}""",
+            value=f"""Members: {guild.member_count}
+                Boosters: {guild.premium_subscription_count}
+                Text Channels: {len(guild.text_channels)}
+                Voice Channels: {len(guild.voice_channels)}
+                Channel Categories: {len(guild.categories)}
+                Emojis: {len(guild.emojis)}""",
             inline=False
         )
-        if options(ctx.guild.id)["jsonMenus"]:
-            await ctx.send(
-                f"""```json
-"server information": {jsoninfo}
-```"""
-            )
+        if options(guild.id, "jsonMenus"):
+            await ctx.send(f'```json\n"server information": {jsoninfo}```')
         else:
             await ctx.send(embed=embedinfo)
 
@@ -229,9 +226,7 @@ class Tools(commands.Cog):
     async def clearError(self, ctx, error):
         if str(error) == "You are missing Manage Messages permission(s) to run this command.":
             await ctx.send(
-                f"""{
-                    ctx.author.mention
-                }, you have insufficient permissions (Manage Messages)"""
+                f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
             )
         else:
             await ctx.send(f"Unhandled error occurred:\n```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
@@ -245,14 +240,8 @@ class Tools(commands.Cog):
 
     @get_avatar.error
     async def avatarError(self, ctx, error):
-        await ctx.send(
-            "Invalid user specified!"
-        )
+        await ctx.send("Invalid user specified!")
 
 
 def setup(client):
-    client.add_cog(
-        Tools(
-            client
-        )
-    )
+    client.add_cog(Tools(client))

@@ -14,20 +14,13 @@ class Converters(commands.Cog):
 
     async def test_for_content(self, ctx, arg):
         if not arg:
-            return list(
-                await ctx.channel.history(
-                    limit=2
-                ).flatten()
-            )[1].content
+            return list(await ctx.channel.history(limit=2).flatten())[1].content
         else:
             return arg
 
     @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"], usage="<text to convert>")
     async def owoConverter(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
+        arg = await self.test_for_content(ctx, arg)
         await ctx.send(
             arg.replace(
                 "l",
@@ -57,10 +50,7 @@ class Converters(commands.Cog):
 
     @commands.command(name="blockify", help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.", aliases=["bigtext", "big"], usage="<text to convert>")
     async def big_text(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
+        arg = await self.test_for_content(ctx, arg)
         alphabet = "qwertyuiopasdfghjklzxcvbnm 1234567890"
         symbols = {
             "?": "question",
@@ -84,47 +74,20 @@ class Converters(commands.Cog):
                         number = True
                     except ValueError:
                         number = False
-
                     if number:
-                        textlist.append(
-                            f""":{
-                                num2words(
-                                    char
-                                )
-                            }:"""
-                        )
+                        textlist.append(f":{num2words(char)}:")
                     elif char == " ":
-                        textlist.append(
-                            "\n"
-                        )
+                        textlist.append("\n")
                     elif char in list(symbols.keys()):
-                        textlist.append(
-                            f""":{
-                                symbols[char]
-                            }:"""
-                        )
+                        textlist.append(f":{symbols[char]}:")
                         break
                     else:
-                        textlist.append(
-                            f""":regional_indicator_{
-                                char.lower()
-                            }:"""
-                        )
-        await ctx.send(
-            " ".join(
-                textlist
-            ).replace(
-                "\n ",
-                "\n"
-            )
-        )
+                        textlist.append(f":regional_indicator_{char.lower()}:")
+        await ctx.send(" ".join(textlist).replace("\n ", "\n"))
 
     @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.", usage="<text to convert>")
     async def greekify(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
+        arg = await self.test_for_content(ctx, arg)
         upper_alphabet = {
             "CH": "Χ",
             "PS": "Ψ",
@@ -165,81 +128,37 @@ class Converters(commands.Cog):
             "Y": "Υ",
             "Z": "Ζ"
         }
-        lower_alphabet = {
-            letter.lower(): upper_alphabet[letter].lower()
-            for letter in upper_alphabet
-        }
+        lower_alphabet = {letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet}
         alphabet = {**upper_alphabet, **lower_alphabet}
-        to_convert = arg
         for letter in alphabet:
-            to_convert = to_convert.replace(
-                letter,
-                alphabet[letter]
-            )
-        await ctx.send(
-            to_convert
-        )
+            arg = arg.replace(letter, alphabet[letter])
+        await ctx.send(arg)
 
     @commands.command(name="stroke", help="Shuffle a message", aliases=["shuffle", "mixup"], usage="<text to convert>")
     async def shuffle(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
-        to_shuffle = list(
-            arg
-        )
-        shuffle(
-            to_shuffle
-        )
-        await ctx.send(
-            "".join(
-                to_shuffle
-            )
-        )
+        arg = await self.test_for_content(ctx, arg)
+        to_shuffle = list(arg)
+        shuffle(to_shuffle)
+        await ctx.send("".join(to_shuffle))
 
     @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.", usage="<text to convert>")
     async def shufflebyword(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
+        arg = await self.test_for_content(ctx, arg)
         words_to_shuffle = arg.split()
         for to_shuffle in range(len(words_to_shuffle)):
-            words_to_shuffle[to_shuffle] = list(
-                words_to_shuffle[to_shuffle]
-            )
-            shuffle(
-                words_to_shuffle[to_shuffle]
-            )
-            words_to_shuffle[to_shuffle] = "".join(
-                words_to_shuffle[to_shuffle]
-            )
-        await ctx.send(
-            " ".join(
-                words_to_shuffle
-            )
-        )
+            words_to_shuffle[to_shuffle] = list(words_to_shuffle[to_shuffle])
+            shuffle(words_to_shuffle[to_shuffle])
+            words_to_shuffle[to_shuffle] = "".join(words_to_shuffle[to_shuffle])
+        await ctx.send(" ".join(words_to_shuffle))
 
     @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"], usage="<text to convert>")
     async def spacer(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
-        await ctx.send(
-            " ".join(
-                arg[i:i + 1]
-                for i in range(0, len(arg), 1)
-            )
-        )
+        arg = await self.test_for_content(ctx, arg)
+        await ctx.send(" ".join(arg[i:i + 1] for i in range(0, len(arg), 1)))
 
     @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"], usage="<text to convert>")
     async def dings(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
+        arg = await self.test_for_content(ctx, arg)
         alphabet = {
             "A": ":v:",
             "B": ":ok_hand:",
@@ -267,25 +186,16 @@ class Converters(commands.Cog):
             "X": ":diamond_shape_with_a_dot_inside:",
             "Y": ":star_of_david:",
             "Z": ":star_and_crescent:",
-            " ": "<:empty:725132670056661023>"
+            " ": "<:empty:829895578451312640>"
         }
         to_convert = arg.upper()
         for letter in alphabet:
-            to_convert = to_convert.replace(
-                letter,
-                alphabet[letter]
-            )
-        await ctx.send(
-            to_convert
-        )
+            to_convert = to_convert.replace(letter, alphabet[letter])
+        await ctx.send(to_convert)
 
-    @commands.command(name="sga", help="YOOOOOO HE SPEAKING ENCHANTING TABLE", aliases=["enchant", "enchantingtable"], usage="<text to convert>")
+    @commands.command(name="sga", help="Ever wanted to speak Enchanting Table?", aliases=["enchant", "enchantingtable"], usage="<text to convert>")
     async def sga(self, ctx, *, arg=None):
-        arg = await self.test_for_content(
-            ctx,
-            arg
-        )
-        ""
+        arg = await self.test_for_content(ctx, arg)
         alphabet = {
             "A": "ᔑ",
             "B": "ʖ",
@@ -316,13 +226,8 @@ class Converters(commands.Cog):
         }
         to_convert = arg.upper()
         for letter in alphabet:
-            to_convert = to_convert.replace(
-                letter,
-                alphabet[letter]
-            )
-        await ctx.send(
-            to_convert
-        )
+            to_convert = to_convert.replace(letter, alphabet[letter])
+        await ctx.send(to_convert)
 
     @owoConverter.error
     @big_text.error
@@ -343,8 +248,4 @@ In content: Must be 2000 or fewer in length.""":
 
 
 def setup(client):
-    client.add_cog(
-        Converters(
-            client
-        )
-    )
+    client.add_cog(Converters(client))
