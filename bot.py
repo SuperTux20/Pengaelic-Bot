@@ -391,7 +391,7 @@ if not unstable:
                 await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
-
+# so close nwo
     @update.error
     async def update_error(ctx, error):
         await ctx.send(f"An error occured while updating: ```{error}```")
