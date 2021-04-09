@@ -6,7 +6,6 @@ from discord.ext import commands
 from json import load
 from random import choice, randint
 
-
 class NonCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
