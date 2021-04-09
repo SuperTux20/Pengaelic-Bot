@@ -1,19 +1,15 @@
-import discord
 import os
 import sqlite3
 import subprocess
 import sys
 from asyncio import sleep
-from discord.ext import commands
-from discord.utils import get
-from dotenv import load_dotenv as dotenv
 from pengaelicutils import options, remove_duplicates
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
 
 devnull = open(os.devnull, "w")
-requirements = ["fortune-mod", "fortunes-min", "toilet", "neofetch"]
+requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
 for package in requirements:
     if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
@@ -39,8 +35,11 @@ if need2install:
     print("Install these with Pip.")
     exit()
 print("Passed module test")
-
-if "Mintguin" in hostname():
+import discord
+from discord.ext import commands
+from discord.utils import get
+from dotenv import load_dotenv as dotenv
+if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
 else:
     unstable = False
@@ -68,14 +67,11 @@ GNU General Public License for more details.
 
 """
 if unstable:
-    os.system(
-        "toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
+    os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
 else:
     os.system("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
 print(info)
 
-dotenv(".env")
-print("Loaded bot token and developer IDs")
 if unstable:
     client = commands.Bot(
         command_prefix="p@",
@@ -210,7 +206,7 @@ async def status_switcher():
 
 
 def help_menu(cog, client, ctx):
-    help_menu = discord.Embed(
+    menu = discord.Embed(
         title=cog.name.capitalize(),
         description=cog.description_long,
         color=32639
@@ -219,23 +215,21 @@ def help_menu(cog, client, ctx):
     )
     for command in cog.get_commands():
         if command.usage:
-            help_menu.add_field(
+            menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
             )
         else:
-            help_menu.add_field(
+            menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help
             )
-    return help_menu
+    return menu
 
 
 @client.event
@@ -312,132 +306,61 @@ async def redo_welcome(ctx):
 
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
-async def help(ctx):
-    if ctx.invoked_subcommand is None:
-        help_menu = discord.Embed(
+async def help(ctx, *, cogname: str=None):
+    if cogname == None:
+        menu = discord.Embed(
             title=client.description,
             description=f"Type `{client.command_prefix}help **<lowercase category name without spaces or dashes>** for more info on each category.",
             color=32639
         )
         cogs = dict(client.cogs)
         cogs.pop("Options")
+        cogs.pop("NonCommands")
         for cog in cogs:
-            help_menu.add_field(
+            menu.add_field(
                 name=cogs[cog].name.capitalize(),
                 value=cogs[cog].description
             )
-        help_menu.add_field(
-            name="Options",
-            value=client.get_cog("Options").description,
-            inline=False
-        ).add_field(
+        if not isinstance(ctx.channel, discord.channel.DMChannel):
+            menu.add_field(
+                name="Options",
+                value=client.get_cog("Options").description,
+                inline=False
+            )
+        menu.add_field(
             name="Links",
             value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
             inline=False
         )
-        await ctx.send(embed=help_menu)
-
-
-@help.command(name="all")
-async def h_all(ctx):
-    help_menu = discord.Embed(
-        title=client.description,
-        description="ALL COMMANDS across ALL MODULES for the ENTIRE BOT",
-        color=32639
-    )
-    cogs = dict(client.cogs)
-    cogs.pop("NonCommands")
-    for cog in cogs:
-        help_menu.add_field(
-            name=dict(client.cogs)[cog].name.capitalize(),
-            value=str(
-                [
-                    command.qualified_name
-                    for command in dict(client.cogs)[cog].walk_commands()
-                ]
-            )[1:-1].replace("'", "").replace(", ", "\n")
-        )
-    await ctx.send(
-        embed=help_menu
-    )
-
-
-@help.command(name="actions")
-async def h_actions(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Actions"), client, ctx))
-
-
-@help.command(name="actsofviolence")
-async def h_actsofviolence(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("ActsOfViolence"), client, ctx))
-
-
-@help.command(name="converters")
-async def h_converters(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Converters"), client, ctx))
-
-
-@help.command(name="games")
-async def h_games(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Games"), client, ctx))
-
-
-@help.command(name="generators")
-async def h_games(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Generators"), client, ctx))
-
-
-@help.command(name="interactions")
-async def h_interactions(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Interactions"), client, ctx))
-
-
-@help.command(name="messages")
-async def h_messages(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Messages"), client, ctx))
-
-
-@help.command(name="tools")
-async def h_tools(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("Tools"), client, ctx))
-
-
-@help.command(name="oddcommands")
-async def h_oddcommands(ctx):
-    await ctx.send(embed=help_menu(client.get_cog("OddCommands"), client, ctx))
-
-
-@help.group(name="options")
-async def h_options(ctx):
-    if ctx.invoked_subcommand is None:
-        await ctx.send(embed=help_menu(client.get_cog("Options"), client, ctx))
-
-
-@help.command(name="noncommands")
-async def h_noncommands(ctx):
-    cog = client.get_cog("NonCommands")
-    await ctx.send(
-        embed=discord.Embed(
-            title=cog.name.capitalize(),
-            description=cog.description_long,
+        await ctx.send(embed=menu)
+    elif cogname == "all":
+        menu = discord.Embed(
+            title=client.description,
+            description="ALL COMMANDS across ALL MODULES for the ENTIRE BOT",
             color=32639
-        ).add_field(
-            name="I'm <message>",
-            value="Like Dad Bot!"
-        ).add_field(
-            name="Yo mama so <mama type>",
-            value="Yo Mama jokes!"
-        ).add_field(
-            name="Yo mama list",
-            value="Show the list of mama types to use in the auto-joker."
-        ).add_field(
-            name="You know the rules",
-            value="A rickroll-themed Russian Roulette."
         )
-    )
+        cogs = dict(client.cogs)
+        cogs.pop("NonCommands")
+        for cog in cogs:
+            menu.add_field(
+                name=dict(client.cogs)[cog].name.capitalize(),
+                value=str(
+                    [
+                        command.qualified_name
+                        for command in dict(client.cogs)[cog].walk_commands()
+                    ]
+                )[1:-1].replace("'", "").replace(", ", "\n")
+            )
+        await ctx.send(embed=menu)
+    else:
+        await ctx.send(embed=help_menu(client.get_cog(cogname.capitalize()), client, ctx))
 
+@help.error
+async def not_a_cog(ctx, error):
+    if str(error) == "AttributeError: 'NoneType' object has no attribute 'name'":
+        await ctx.send("There isn't a help menu for that.")
 
-@h_options.command(name="toggle")
+@help.command(name="toggle")
 async def h_toggle(ctx):
     group = client.get_command("toggle")
     help_menu = discord.Embed(
@@ -451,8 +374,7 @@ async def h_toggle(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -466,7 +388,7 @@ async def h_toggle(ctx):
     await ctx.send(embed=help_menu)
 
 
-@h_options.command(name="censor", aliases=["filter"])
+@help.command(name="censor", aliases=["filter"])
 async def h_censor(ctx):
     group = client.get_command("censor")
     help_menu = discord.Embed(
@@ -480,8 +402,7 @@ async def h_censor(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -489,24 +410,23 @@ async def h_censor(ctx):
         else:
             help_menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help)
     await ctx.send(embed=help_menu)
 
-if not unstable:
-    @client.command(name="exit", aliases=["quit"])
-    async def restart(ctx):
-        if str(ctx.author) == "chickenmeister#7140" or str(ctx.author) == "Hyperfresh#8080":
-            await ctx.send("Goodbye...")
-            exit(0)
-        else:
-            await ctx.send("Hey, only my developers can do this!")
+@client.command(name="exit", aliases=["quit"])
+async def restart(ctx):
+    if str(ctx.author.id) in os.getenv("DEVELOPER_IDS").split():
+        await ctx.send("Goodbye...")
+        exit(0)
+    else:
+        await ctx.send("Hey, only my developers can do this!")
 
+if unstable:
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx):
-        if ctx.author.id in os.getenv("DEVELOPER_IDS"):
+        if str(ctx.author.id) in os.getenv("DEVELOPER_IDS").split():
             await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
@@ -523,7 +443,7 @@ if not unstable:
 
     @client.command(name="update", aliases=["ud"])
     async def update(ctx):
-        if ctx.author.id in os.getenv("DEVELOPER_IDS"):
+        if str(ctx.author.id) in os.getenv("DEVELOPER_IDS").split():
             status = await ctx.send("Updating...")
             await client.change_presence(
                 activity=discord.Game("Updating..."),
@@ -553,19 +473,15 @@ if not unstable:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
                     await status.edit(embed=discord.Embed(title="Updating...", description=update_log, footer=update_summary))
-                await ctx.send("Restarting...")
-                await client.change_presence(
-                    activity=discord.Game("Restarting..."),
-                    status=discord.Status.dnd
-                )
-                os.execl(
-                    sys.executable,
-                    sys.executable,
-                    * sys.argv
-                )
+                await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
+@update.error
+async def updateError(ctx, error):
+    await ctx.send("An error occured while updating: " + str(error))
+    with open(".env", "rb") as dotenvfile:
+        await client.get_user(id=int(os.getenv("DEVELOPER_IDS").split()[1])).send("The update command broke again...")
 
 client.loop.create_task(status_switcher())  # as defined above
 
@@ -574,6 +490,15 @@ for cog in os.listdir("cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
+
+dotenv(".env")
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+class user():
+    Tux, Hy = [
+        client.get_user(id=int(dev))
+        for dev in os.getenv("DEVELOPER_IDS").split()
+    ]
+print("Loaded bot token and developer IDs")
 
 while True:
     try:
