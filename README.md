@@ -19,7 +19,12 @@
 - Flip coins
 - Pop bubble wrap
 - Ask the magic 8 ball
+
+### Random generators
+
+- Make Florida Man headlines
 - Generate random names
+- Pull output directly from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))
 
 ### Emote actions
 
@@ -59,13 +64,12 @@
 
 - Toggle any of the auto-responses mentioned below
 - Enable or disable ANY of the modules mentioned above!
-- Change what keywords the censor deletes
-- Toggle an automatic welcome message
+- Delete messages based on a keyword filter
+- Toggle an automatic welcome/goodbye message
 
 ### Auto-responses
 
 - Dad jokes ("Hi hungry, I'm the Pengaelic Bot!") (Triggered with "I'm [insert text here]")
-- Yo Mama jokes (Triggered with "Yo mama so [mama type]")
 - Chat auto-reviver (Triggered with "dead chat" or "dead server")
 - Rickroll-themed Russian Roulette (Triggered with "You know the rules")
 - React with ✅ and ❌ for voting (Triggered with any message in a channel with "suggestion", "petition", or "poll" in the name)
