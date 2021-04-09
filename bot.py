@@ -395,6 +395,7 @@ if not unstable:
                 return True
         else:
             await ctx.send("Hey, only my developers can do this!")
+            return False
 
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
