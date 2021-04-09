@@ -364,16 +364,15 @@ if not unstable:
     @client.command(name="update", aliases=["ud"])
     async def update(ctx):
         if developer(ctx.author):
-            status = await ctx.send("Updating...")
+            status = await ctx.send(content="Pulling the latest commits from GitHub...")
             await client.change_presence(
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
             )
-            await status.edit(content="Pulling the latest commits from GitHub...")
             os.system("bash update.sh > update.log")
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "A" == update_log[0][0]:
-                await ctx.send(content=f'```json\n"a{update_log[0][1:-1]}"```')
+                await status.edit(content=f'```json\n"a{update_log[0][1:-1]}"```')
             else:
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
