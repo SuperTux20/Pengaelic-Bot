@@ -55,6 +55,5 @@ class Actions(commands.Cog):
             "sleeping..."
         )
 
-
 def setup(client):
     client.add_cog(Actions(client))

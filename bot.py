@@ -371,8 +371,8 @@ if not unstable:
             )
             await status.edit(content="Pulling the latest commits from GitHub...")
             os.system("bash update.sh > update.log")
-            update_log = [line for line in open("update.log", "r")][1:]
-            if "Already up to date.\n" in update_log:
+            update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
+            if "Already up to date." in update_log:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
             else:
@@ -413,7 +413,7 @@ if not unstable:
     @client.command(name="updatelog", aliases=["ul"])
     async def update(ctx):
         if developer(ctx.author):
-            update_log = [line for line in open("update.log", "r")][1:]
+            update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
                 await ctx.send(content='```json\n"Already up to date."```')
             else:
