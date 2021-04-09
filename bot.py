@@ -424,7 +424,7 @@ if not unstable:
             if "Already up to date.\n" in update_log:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
-            else:#
+            else:
                 update_log = update_log[2:]
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_log[-1][1:-1].split(", ")
