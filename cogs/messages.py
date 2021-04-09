@@ -3,7 +3,6 @@ from discord.ext import commands
 from pengaelicutils import options
 from json import dumps
 
-
 class Messages(commands.Cog):
     def __init__(self, client):
         self.client = client
