@@ -425,13 +425,13 @@ if not unstable:
                     update_summary = {update_summary[0]: [update_summary[1],update_summary[2]]}
                     update_log = {
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
-                        for _ in str(update_log[:-1]).split("\n")
+                        for _ in str(update_log[:-1]).split("\\n")
                     }
                     updates = {"updates": {"summary": update_summary, "changes": update_log}}
                     await status.edit(content=f'```json\n{dumps(updates, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
-                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=list2str(update_log), color=32639).set_footer(text=update_summary))
+                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
         else:
             await ctx.send("Hey, only my developers can do this!")
 
