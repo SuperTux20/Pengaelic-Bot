@@ -379,12 +379,10 @@ if not unstable:
                 update_log = update_log[2:]
                 if options(ctx.guild.id, "jsonMenus"):
                     update_summary = update_log[-1][1:-1]
-                    await ctx.send(update_summary)
                     update_log = {
                         str(update_log[:-1]).split("|")[0][3]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
-                    await ctx.send(update_log)
                     await status.edit(content=f'```json\n"{update_summary}": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
@@ -393,7 +391,7 @@ if not unstable:
                 await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
-#############
+
     @update.error
     async def update_error(ctx, error):
         await ctx.send(f"An error occured while updating: ```{error}```")
