@@ -376,15 +376,24 @@ if not unstable:
                 await status.edit(content="Already up to date, no restart required.")
                 await status_switcher()
             else:
-                update_log = update_log[2:]
+                update_summary = update_log[-1]
+                update_log = update_log[2:-1]
+                await ctx.send(update_summary)
+                await ctx.send(update_log)
                 if options(ctx.guild.id, "jsonMenus"):
-                    update_summary = update_log[-1][1:-1].split(", ")
-                    update_summary = {update_summary[0]:[update_summary[1],update_summary[2]]}
+                    update_summary = update_summary.split(", ")
+                    update_summary = {update_summary[0]: [update_summary[1][:-3], update_summary[2][:-3]]}
+                    for item in range(len(update_log)):
+                        while "  " in update_log[item]:
+                            update_log[item] = update_log[item].replace("  ", " ")
+                        await ctx.send(update_log[item])
+                    await ctx.send(update_log)
                     update_log = {
-                        str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
-                        for _ in str(update_log[:-1]).split("\n")
+                        update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
+                        for item in range(len(update_log))
                     }
-                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
+                    await ctx.send(str(update_log))
+                    await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
@@ -430,7 +439,7 @@ if not unstable:
                         await ctx.send(update_log[item])
                     await ctx.send(update_log)
                     update_log = {
-                        update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1]
+                        update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
                         for item in range(len(update_log))
                     }
                     await ctx.send(str(update_log))
