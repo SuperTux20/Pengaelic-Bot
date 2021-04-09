@@ -360,7 +360,7 @@ if not unstable:
             )
         else:
             await ctx.send("Hey, only my developers can do this!")
-
+# committing nothing lol
     @client.command(name="update", aliases=["ud"])
     async def update(ctx):
         if developer(ctx.author):
