@@ -419,7 +419,7 @@ if not unstable:
     async def update(ctx, formatted=True):
         if developer(ctx.author):
             update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
-            if "Already up to date.\n" in update_log:
+            if "Already up to date." in update_log:
                 await ctx.send(content='```json\n"Already up to date."```')
             elif formatted:
                 update_summary = update_log[-1]
