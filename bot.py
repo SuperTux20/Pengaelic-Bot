@@ -384,7 +384,7 @@ if not unstable:
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\n")
                     }
-                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)}\n"changes": {dumps(update_log, indent=4)}```')
+                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
@@ -413,10 +413,9 @@ if not unstable:
     @client.command(name="updatelog", aliases=["ulog"])
     async def update(ctx):
         if developer(ctx.author):
-            status = await ctx.send("Getting update log...")
             update_log = [line for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
-                await status.edit(content="```Already up to date.```")
+                await ctx.send(content="```Already up to date.```")
             else:
                 update_log = update_log[2:]
                 update_summary = update_log[-1][1:-1]
@@ -427,11 +426,10 @@ if not unstable:
                         str(update_log[:-1]).split("|")[0][3:]: str(update_log[:-1]).split("|")[1][:-4]
                         for _ in str(update_log[:-1]).split("\\n")
                     }
-                    updates = {"updates": {"summary": update_summary, "changes": update_log}}
-                    await status.edit(content=f'```json\n{dumps(updates, indent=4)}```')
+                    await ctx.send(f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
-                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
+                    await ctx.send(embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
         else:
             await ctx.send("Hey, only my developers can do this!")
 
