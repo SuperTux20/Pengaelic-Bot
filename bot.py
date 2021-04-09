@@ -361,19 +361,18 @@ if not unstable:
         else:
             await ctx.send("Hey, only my developers can do this!")
 
-    @client.command(name="update", aliases=["ud"])
-    async def update(ctx):
-        if developer(ctx.author):
-            status = await ctx.send(content="Pulling the latest commits from GitHub...")
-            await client.change_presence(
-                activity=discord.Game("Updating..."),
-                status=discord.Status.idle
-            )
-            cmd("bash update.sh > update.log")
-            update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
-            if "A" == update_log[0][0]:
-                await status.edit(content=f'```json\n"{update_log[0][:-1].split()[1:]}": true```')
-            else:
+@client.command(name="updatelog", aliases=["ul"])
+async def updatelog(ctx, formatted=True, raw=True, status=None):
+    if developer(ctx.author):
+        if status:
+            await status.edit(content="Looking in the logs...")
+        else:
+            status = await ctx.send("Looking in the logs...")
+        update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
+        if "A" == update_log[0][0]:
+            await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
+        else:
+            if formatted:
                 update_summary = update_log[-1]
                 update_log = update_log[2:-1]
                 if options(ctx.guild.id, "jsonMenus"):
@@ -389,8 +388,23 @@ if not unstable:
                     await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
-                    await ctx.send(embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
-                await restart(ctx)
+                    await status.edit(embed=discord.Embed(content="", title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
+            if raw:
+                await ctx.send(f'Raw log contents...```{open("update.log", "r").read()}```')
+    else:
+        await ctx.send("Hey, only my developers can do this!")
+
+    @client.command(name="update", aliases=["ud"])
+    async def update(ctx):
+        if developer(ctx.author):
+            status = await ctx.send(content="Pulling the latest commits from GitHub...")
+            await client.change_presence(
+                activity=discord.Game("Updating..."),
+                status=discord.Status.idle
+            )
+            cmd("bash update.sh > update.log")
+            updatelog(ctx, True, False, status)
+            await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
 
@@ -410,33 +424,6 @@ if not unstable:
     async def update_error(ctx, error):
         await ctx.send(f"An error occured while updating...```{error}```Attempting force-update.")
         await forceupdate(ctx)
-
-@client.command(name="updatelog", aliases=["ul"])
-async def update(ctx, formatted=True):
-    if developer(ctx.author):
-        update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
-        if "A" == update_log[0][0]:
-            await ctx.send(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:])}": true```')
-        elif formatted:
-            update_summary = update_log[-1]
-            update_log = update_log[2:-1]
-            if options(ctx.guild.id, "jsonMenus"):
-                update_summary = update_summary.split(", ")
-                update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
-                for item in range(len(update_log)):
-                    while "  " in update_log[item]:
-                        update_log[item] = update_log[item].replace("  ", " ")
-                update_log = {
-                    update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
-                    for item in range(len(update_log))
-                }
-                await ctx.send(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
-            else:
-                update_log = update_log[:-1]
-                await ctx.send(embed=discord.Embed(title="Updating...", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
-        await ctx.send(f'Raw log contents...```{open("update.log", "r").read()}```')
-    else:
-        await ctx.send("Hey, only my developers can do this!")
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx, *, cogname: str = None):
