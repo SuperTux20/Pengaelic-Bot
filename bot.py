@@ -464,7 +464,7 @@ if not unstable:
             os.system("bash update.sh > update.log")
             update_log = [line for line in open("update.log", "r")][1:]
             if "Already up to date.\n" in update_log:
-                await status.edit(content="Already up to date, no restart required.")
+                await status.edit(content="Already up to date restart required.")
                 await status_switcher()
             else:
                 if options(ctx.guild.id, "jsonMenus"):
@@ -474,7 +474,7 @@ if not unstable:
                 else:
                     update_summary = update_log[-1][:-1]
                     update_log = update_log[2:-1]
-                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, footer=update_summary))
+                    await status.edit(embed=discord.Embed(title="Updating...", description=update_log, color=32639).set_footer(text=update_summary))
                 await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
