@@ -362,7 +362,7 @@ if not unstable:
             await ctx.send("Hey, only my developers can do this!")
 
 @client.command(name="updatelog", aliases=["ul"])
-async def updatelog(ctx, formatted=True, raw=True, status=None):
+async def updatelog(ctx, formatted=True, raw=True, status: discord.Message=None):
     if developer(ctx.author):
         if status:
             await status.edit(content="Looking in the logs...")
