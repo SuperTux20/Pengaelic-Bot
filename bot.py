@@ -403,7 +403,7 @@ if not False:
                 status=discord.Status.idle
             )
             cmd("bash update.sh > update.log")
-            updatelog(ctx, True, False, status)
+            await updatelog(ctx, True, False, status)
             await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
