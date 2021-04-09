@@ -4,7 +4,7 @@ import subprocess
 import sys
 from asyncio import sleep
 from json import loads, dumps
-from pengaelicutils import options, remove_duplicates
+from pengaelicutils import options, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
@@ -431,7 +431,7 @@ if not unstable:
                     await status.edit(content=f'```json\n{dumps(updates, indent=4)}```')
                 else:
                     update_log = update_log[:-1]
-                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=str(update_log), color=32639).set_footer(text=update_summary))
+                    await status.edit(content="",embed=discord.Embed(title="Updating...", description=list2str(update_log), color=32639).set_footer(text=update_summary))
         else:
             await ctx.send("Hey, only my developers can do this!")
 
