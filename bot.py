@@ -491,8 +491,6 @@ if not unstable:
     @update.error
     async def updateError(ctx, error):
         await ctx.send(f"An error occured while updating: ```{error}```")
-        with open(".env", "rb") as dotenvfile:
-            await client.get_user(id=developers.Tux).send(f"The update command broke again... ```{error}```")
 
     @client.command(name="forceupdate", aliases=["fud"])
     async def forceupdate(ctx):
