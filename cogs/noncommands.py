@@ -153,13 +153,13 @@ class NonCommands(commands.Cog):
                     for _ in range(5)
                 ]
                 threats = [
-                    "It's time to die <:handgun:829404528054501467>",
-                    "Say goodbye <:handgun:829404528054501467>"
+                    "It's time to die",
+                    "Say goodbye <:delet_this:828693389712949269>"
                 ]
                 responses.append(
                     choice(
                         [
-                            threats[0],
+                            threats[0] + "<:delet_this:828693389712949269>",
                             responses[0] + "\n" + threats[1],
                             threats[0] + "\n" + threats[1]
                         ]
