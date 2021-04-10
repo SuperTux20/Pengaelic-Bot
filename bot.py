@@ -330,9 +330,7 @@ def developer(user, dev=None):
         else:
             return False
 
-
 print("Loaded bot token and developer IDs")
-
 
 @client.command(name="exit", aliases=["quit"])
 async def restart(ctx):
@@ -361,7 +359,7 @@ if not unstable:
             await ctx.send("Hey, only my developers can do this!")
 
     @client.command(name="updatelog", aliases=["ul"])
-    async def updatelog(ctx, formatted=True, raw=True, status: discord.Message=None):
+    async def updatelog(ctx, formatted=True, status: discord.Message=None):
         if developer(ctx.author):
             if getops(ctx.guild.id, "jsonMenus"):
                 if status:
@@ -386,7 +384,7 @@ if not unstable:
                             for item in range(len(update_log))
                         }
                         await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
-                    if raw:
+                    else:
                         await ctx.send(f'Raw log contents```{open("update.log", "r").read()}```')
             else:
                 if status:
@@ -402,9 +400,8 @@ if not unstable:
                         update_summary = update_log[-1]
                         update_log = update_log[2:-1]
                         await status.edit(embed=discord.Embed(title=update_log[0], description=list2str(update_log, 3), color=0x007f7f).set_footer(text=update_summary))
-                    if raw:
-                        if not formatted:
-                            await status.delete()
+                    else:
+                        await status.delete()
                         await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=0xff0000))
                 return True
         else:
@@ -426,7 +423,7 @@ if not unstable:
             if force:
                 await restart(ctx)
             else:
-                if await updatelog(ctx, True, False, status):
+                if await updatelog(ctx, True, status):
                     await restart(ctx)
         else:
             await ctx.send("Hey, only my developers can do this!")
