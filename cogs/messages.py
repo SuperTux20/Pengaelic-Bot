@@ -14,15 +14,14 @@ class Messages(commands.Cog):
     @commands.command(name="say", help="I'll repeat whatever you tell me.", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
     async def say_back(self, ctx, *, arg):
         await ctx.send(arg)
-        await ctx.message.delete()
+        if not isinstance(ctx.channel, discord.channel.DMChannel):
+            await ctx.message.delete()
 
     @commands.command(name="credits", help="See who helped me come to exist!")
     async def credits(self, ctx):
         bot_credits = {
             "Main Developer and Creator": "chickenmeister",
-            "Current Host": "Hyperfresh",
-            "Biggest Helper": "legenden",
-            "Other Helpers": "leasip"
+            "Current Host": "Hyperfresh"
         }
         if options(ctx.guild.id)["JSONmenus"]:
             bot_credits = {
