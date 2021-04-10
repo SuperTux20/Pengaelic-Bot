@@ -1,15 +1,14 @@
 import discord
-from pengaelicutils import options
+from pengaelicutils import getops
 from subprocess import check_output
 from discord.ext import commands
 from asyncio import sleep
-from random import randint
 from json import dumps
 
 class Tools(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.cyan = 32639
+        self.teal = 0x007f7f
     nukeconfirm = False
     name = "tools"
     name_typable = name
@@ -34,7 +33,7 @@ class Tools(commands.Cog):
             embed=discord.Embed(
                 title=":ping_pong: Pong!",
                 description=f"{round(self.client.latency * 1000)} ms",
-                color=32639
+                color=self.teal
             ).set_image(url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif")
         )
 
@@ -47,19 +46,19 @@ class Tools(commands.Cog):
         avatar2get = ctx.author
         embed = discord.Embed(
             title="Here's your avatar!",
-            color=32639
+            color=self.teal
         )
         if member:
             avatar2get = member
             if member.id == 736720500285505596:
                 embed = discord.Embed(
                     title="Here's my avatar!",
-                    color=32639
+                    color=self.teal
                 )
             else:
                 embed = discord.Embed(
                     title=f"Here's {member.display_name}'s avatar!",
-                    color=32639
+                    color=self.teal
                 )
         embed.set_image(url=avatar2get.avatar_url)
         await ctx.send(embed=embed)
@@ -70,7 +69,7 @@ class Tools(commands.Cog):
             await ctx.send(
                 embed=discord.Embed(
                     title="Here's the server icon!",
-                    color=32639
+                    color=self.teal
                 ).set_image(
                     url=ctx.guild.icon_url
                 )
@@ -95,7 +94,7 @@ class Tools(commands.Cog):
                 await ctx.send(
                     embed=discord.Embed(
                         title="Here's your emoji!",
-                        color=32639
+                        color=self.teal
                     ).set_image(
                         url=emojiurls[emojis.index(emoji)]
                     )
@@ -112,7 +111,7 @@ class Tools(commands.Cog):
         else:
             the_poll = await ctx.send(
                 embed=discord.Embed(
-                    color=randint(0, 16777215),
+                    color=self.teal,
                     title=title,
                     description=arg
                 ).set_author(
@@ -191,7 +190,7 @@ class Tools(commands.Cog):
         )
         embedinfo = discord.Embed(
             title="Server Details",
-            color=self.cyan
+            color=self.teal
         ).add_field(
             name="Basic Info",
             value=f"""Server Name: {guild.name}
@@ -216,7 +215,7 @@ class Tools(commands.Cog):
                 Emojis: {len(guild.emojis)}""",
             inline=False
         )
-        if options(guild.id, "jsonMenus"):
+        if getops(guild.id, "jsonMenus"):
             await ctx.send(f'```json\n"server information": {jsoninfo}```')
         else:
             await ctx.send(embed=embedinfo)

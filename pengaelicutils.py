@@ -19,7 +19,7 @@ def stopwatch(start_time: time):
     else:
         return f"{minutes}:{seconds}"
 
-def options(guild, option):
+def getops(guild, option):
     conn = sqlite3.connect("config.db")
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()

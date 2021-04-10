@@ -3,13 +3,13 @@ from discord.ext import commands
 from random import choice, randint
 from os import listdir
 from json import dumps
-from pengaelicutils import options as getops
+from pengaelicutils import getops
 
 class Interactions(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.formatChars = "*`~|"
-        self.cyan = 32639
+        self.teal = 0x007f7f
     name = "interactions"
     name_typable = name
     description = "Interact with other server members!"
@@ -34,7 +34,7 @@ class Interactions(commands.Cog):
                     await ctx.send(
                         embed=discord.Embed(
                             title=choice(responses),
-                            color=self.cyan
+                            color=self.teal
                         ).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/interactions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/interactions/{act}'))-1)}.gif"))
             else:
                 await ctx.send(f"Sorry, you can't {act} bots...")
@@ -64,7 +64,7 @@ class Interactions(commands.Cog):
             else:
                 embed = discord.Embed(
                     title=choice(responses),
-                    color=32639
+                    color=self.teal
                 ).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/interactions/{act}.jpg")
                 await ctx.send(embed=embed)
         else:
@@ -189,7 +189,7 @@ class Interactions(commands.Cog):
             await ctx.send(
                 embed=discord.Embed(
                     title=f"{persongiving} gave a {item} to {persongetting}",
-                    color=self.cyan
+                    color=self.teal
                 )
             )
             if person2give2.bot:
@@ -255,7 +255,7 @@ class Interactions(commands.Cog):
 )
             else:
                 embed = discord.Embed(
-                    color=32639,
+                    color=self.teal,
                     title="Available food items"
                 )
                 for food_type in items:

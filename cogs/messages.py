@@ -1,11 +1,12 @@
 import discord
 from discord.ext import commands
-from pengaelicutils import options
+from pengaelicutils import getops
 from json import dumps
 
 class Messages(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.teal = 0x007f7f
     name = "messages"
     name_typable = name
     description = "Make me say all sorts of things."
@@ -23,7 +24,7 @@ class Messages(commands.Cog):
             "Main Developer and Creator": "chickenmeister",
             "Current Host": "Hyperfresh"
         }
-        if options(ctx.guild.id)["JSONmenus"]:
+        if getops(ctx.guild.id)["JSONmenus"]:
             bot_credits = {
                 cred.lower(): bot_credits[cred]
                 for cred in bot_credits
@@ -35,7 +36,7 @@ class Messages(commands.Cog):
 """)
         else:
             embed = discord.Embed(
-                color=32639,
+                color=self.teal,
                 title="Credits",
                 description="All the people on Discord who helped me become what I am today."
             )

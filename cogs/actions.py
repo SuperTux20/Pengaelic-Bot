@@ -7,7 +7,7 @@ class Actions(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.formatChars = "*`~|"
-        self.cyan = 32639
+        self.teal = 0x007f7f
     name = "actions"
     name_typable = name
     description = "Emote actions!"
@@ -26,7 +26,7 @@ class Actions(commands.Cog):
         await ctx.send(
             embed=discord.Embed(
                 title=f"{actor} is {acting}",
-                color=self.cyan
+                color=self.teal
             )#.set_image(url = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif")
         )
 

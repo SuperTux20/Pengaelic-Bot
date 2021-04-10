@@ -1,5 +1,5 @@
 import discord
-from pengaelicutils import options as getops
+from pengaelicutils import getops
 from fnmatch import filter
 from discord.utils import get
 from discord.ext import commands
@@ -127,12 +127,9 @@ class NonCommands(commands.Cog):
             if getops(message.guild.id, "suggestions") and ("suggest" in message.channel.name) and "discuss" not in message.channel.name:
                 thepoll = await message.channel.send(
                     embed=discord.Embed(
-                        color=randint(
-                            0,
-                            16777215
-                        ),
                         title="Suggestion",
-                        description=message.content
+                        description=message.content,
+                        color=self.teal
                     ).set_author(
                         name=message.author.name,
                         icon_url=message.author.avatar_url

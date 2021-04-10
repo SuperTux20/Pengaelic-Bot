@@ -1,6 +1,6 @@
 import sqlite3
 import discord
-from pengaelicutils import options as getops
+from pengaelicutils import getops
 from discord.ext import commands
 from json import dumps
 from asyncio import sleep
@@ -12,7 +12,7 @@ class Options(commands.Cog):
         self.wipe_censor_confirm = False
         self.reset_options_confirm = False
         self.db = "config.db"
-        self.cyan = 32639
+        self.teal = 0x007f7f
     name = "options"
     name_typable = name
     description = "My settings."
@@ -64,7 +64,7 @@ class Options(commands.Cog):
             )
             embedinfo = discord.Embed(
                 title="Options",
-                color=self.cyan)
+                color=self.teal)
             for option in options:
                 embedinfo.add_field(
                     name=option,

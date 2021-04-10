@@ -4,7 +4,7 @@ import sys
 from asyncio import sleep
 from json import loads, dumps
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull
-from pengaelicutils import options, remove_duplicates, list2str
+from pengaelicutils import getops, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
@@ -211,7 +211,7 @@ def help_menu(cog, client, ctx):
     menu = discord.Embed(
         title=cog.name.capitalize(),
         description=cog.description_long,
-        color=32639
+        color=0x007f7f
     ).set_footer(
         text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
     )
@@ -256,7 +256,7 @@ async def on_guild_join(guild, auto=True):
         welcomeembed = discord.Embed(
             title="Howdy fellas! I'm the Pengaelic Bot!",
             description=f"Type `{client.command_prefix}help` for a list of commands.",
-            color=32639
+            color=0x007f7f
         ).set_thumbnail(url=client.user.avatar_url)
         possiblechannels = [
             "general",
@@ -363,7 +363,7 @@ if not unstable:
     @client.command(name="updatelog", aliases=["ul"])
     async def updatelog(ctx, formatted=True, raw=True, status: discord.Message=None):
         if developer(ctx.author):
-            if options(ctx.guild.id, "jsonMenus"):
+            if getops(ctx.guild.id, "jsonMenus"):
                 if status:
                     await status.edit(content="Looking in the logs...")
                 else:
@@ -390,22 +390,22 @@ if not unstable:
                         await ctx.send(f'Raw log contents```{open("update.log", "r").read()}```')
             else:
                 if status:
-                    await status.edit(embed=discord.Embed(title="Looking in the logs...", color=32639))
+                    await status.edit(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 else:
-                    status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=32639))
+                    status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
+                await status.edit(embed=discord.Embed(title=update_log[0], color=0x007f7f))
                 if "A" == update_log[0][0]:
-                    await status.edit(embed=discord.Embed(title=update_log[0], color=32639))
                     return False
                 else:
                     if formatted:
                         update_summary = update_log[-1]
                         update_log = update_log[2:-1]
-                        await status.edit(embed=discord.Embed(title="Update", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
+                        await status.edit(embed=discord.Embed(title=update_log[0], description=list2str(update_log, 3), color=0x007f7f).set_footer(text=update_summary))
                     if raw:
                         if not formatted:
                             await status.delete()
-                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=16711680))
+                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=0xff0000))
                 return True
         else:
             await ctx.send("Hey, only my developers can do this!")
@@ -414,10 +414,10 @@ if not unstable:
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
         if developer(ctx.author):
-            if options(ctx.guild.id, "jsonMenus"):
+            if getops(ctx.guild.id, "jsonMenus"):
                 status = await ctx.send("Pulling the latest commits from GitHub...")
             else:
-                status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub...", color=32639))
+                status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub...", color=0x007f7f))
             await client.change_presence(
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
@@ -442,7 +442,7 @@ async def help(ctx, *, cogname: str = None):
         menu = discord.Embed(
             title=client.description,
             description=f"Type `{client.command_prefix}help **<lowercase category name without spaces or dashes>** for more info on each category.",
-            color=32639
+            color=0x007f7f
         )
         cogs = dict(client.cogs)
         cogs.pop("Options")
@@ -474,7 +474,7 @@ async def help(ctx, *, cogname: str = None):
         menu = discord.Embed(
             title=client.description,
             description="ALL COMMANDS across ALL MODULES for the ENTIRE BOT",
-            color=32639
+            color=0x007f7f
         )
         cogs = dict(client.cogs)
         cogs.pop("NonCommands")
@@ -493,7 +493,7 @@ async def help(ctx, *, cogname: str = None):
         menu = discord.Embed(
             title="Control",
             description="Commands for developers to control the bot itself.",
-            color=32639
+            color=0x007f7f
         ).add_field(
             name="exit",
             value="Shut off the bot."
@@ -527,7 +527,7 @@ async def h_toggle(ctx):
     help_menu = discord.Embed(
         title=group.name.capitalize(),
         description=group.help,
-        color=32639
+        color=0x007f7f
     ).set_footer(
         text=f"Command prefix is {client.command_prefix}toggle\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
     )
@@ -556,7 +556,7 @@ async def h_censor(ctx):
     help_menu = discord.Embed(
         title=group.name.capitalize(),
         description=group.help,
-        color=32639
+        color=0x007f7f
     ).set_footer(
         text=f"Command prefix is {client.command_prefix}censor or {client.command_prefix}filter\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
     )
