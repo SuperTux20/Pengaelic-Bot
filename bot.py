@@ -391,12 +391,12 @@ if not unstable:
                         await ctx.send(f'Raw log contents```{open("update.log", "r").read()}```')
             else:
                 if status:
-                    await status.edit(embed=discord.Embed(title="Looking in the logs..."))
+                    await status.edit(embed=discord.Embed(title="Looking in the logs...", color=32639))
                 else:
-                    status = await ctx.send(embed=discord.Embed(title="Looking in the logs..."))
+                    status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=32639))
                 update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
                 if "A" == update_log[0][0]:
-                    await status.edit(embed=discord.Embed(title=update_log[0]))
+                    await status.edit(embed=discord.Embed(title=update_log[0], color=32639))
                     return False
                 else:
                     if formatted:
@@ -404,7 +404,7 @@ if not unstable:
                         update_log = update_log[2:-1]
                         await status.edit(embed=discord.Embed(title="Update", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
                     if raw:
-                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read()))
+                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=32639))
                 return True
         else:
             await ctx.send("Hey, only my developers can do this!")
