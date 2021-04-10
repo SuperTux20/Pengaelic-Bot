@@ -403,6 +403,7 @@ if not unstable:
                         update_log = update_log[2:-1]
                         await status.edit(embed=discord.Embed(title="Update", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
                     if raw:
+                        await status.delete()
                         await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=16711680))
                 return True
         else:
@@ -415,7 +416,7 @@ if not unstable:
             if options(ctx.guild.id, "jsonMenus"):
                 status = await ctx.send("Pulling the latest commits from GitHub...")
             else:
-                status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub..."))
+                status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub...", color=32639))
             await client.change_presence(
                 activity=discord.Game("Updating..."),
                 status=discord.Status.idle
