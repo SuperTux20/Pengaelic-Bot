@@ -403,7 +403,8 @@ if not unstable:
                         update_log = update_log[2:-1]
                         await status.edit(embed=discord.Embed(title="Update", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
                     if raw:
-                        await status.delete()
+                        if not formatted:
+                            await status.delete()
                         await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=16711680))
                 return True
         else:
