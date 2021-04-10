@@ -8,7 +8,6 @@ from pengaelicutils import options, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
-cmd("bash update.sh > update.log")
 devnull = open(devnull, "w")
 requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
@@ -404,7 +403,7 @@ if not unstable:
                         update_log = update_log[2:-1]
                         await status.edit(embed=discord.Embed(title="Update", description=list2str(update_log, 3), color=32639).set_footer(text=update_summary))
                     if raw:
-                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=32639))
+                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=16711680))
                 return True
         else:
             await ctx.send("Hey, only my developers can do this!")
