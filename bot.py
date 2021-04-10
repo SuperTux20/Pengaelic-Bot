@@ -32,7 +32,7 @@ for module in requirements:
         print(f"Module {module} not installed.")
         need2install = True
 if need2install:
-    print("Install these with Pip.")
+    print("Install these with PIP.")
     exit()
 print("Passed module test")
 import discord
