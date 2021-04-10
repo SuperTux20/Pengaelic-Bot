@@ -403,7 +403,7 @@ if not unstable:
                     else:
                         await status.delete()
                         await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=0xff0000))
-                return True
+            return True
         else:
             await ctx.send("Hey, only my developers can do this!")
             return False
