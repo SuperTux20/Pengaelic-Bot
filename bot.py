@@ -367,25 +367,24 @@ if not unstable:
                 else:
                     status = await ctx.send("Looking in the logs...")
                 update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
-                if "A" == update_log[0][0]:
-                    await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
-                    return False
+                if formatted:
+                    if "A" == update_log[0][0]:
+                        await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
+                        return False
+                    update_summary = update_log[-1]
+                    update_log = update_log[2:-1]
+                    update_summary = update_summary.split(", ")
+                    update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
+                    for item in range(len(update_log)):
+                        while "  " in update_log[item]:
+                            update_log[item] = update_log[item].replace("  ", " ")
+                    update_log = {
+                        update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
+                        for item in range(len(update_log))
+                    }
+                    await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
                 else:
-                    if formatted:
-                        update_summary = update_log[-1]
-                        update_log = update_log[2:-1]
-                        update_summary = update_summary.split(", ")
-                        update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
-                        for item in range(len(update_log)):
-                            while "  " in update_log[item]:
-                                update_log[item] = update_log[item].replace("  ", " ")
-                        update_log = {
-                            update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
-                            for item in range(len(update_log))
-                        }
-                        await status.edit(content=f'```json\n"summary": {dumps(update_summary, indent=4)},\n"changes": {dumps(update_log, indent=4)}```')
-                    else:
-                        await ctx.send(f'Raw log contents```{open("update.log", "r").read()}```')
+                    await ctx.send(f'Raw log contents```{open("update.log", "r").read()}```')
             else:
                 if status:
                     await status.edit(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
@@ -393,16 +392,16 @@ if not unstable:
                     status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
                 await status.edit(embed=discord.Embed(title=update_log[0], color=0x007f7f))
-                if "A" == update_log[0][0]:
-                    return False
-                else:
-                    if formatted:
+                if formatted:
+                    if "A" == update_log[0][0]:
+                        return False
+                    else:
                         update_summary = update_log[-1]
                         update_log = update_log[2:-1]
                         await status.edit(embed=discord.Embed(title=update_log[0], description=list2str(update_log, 3), color=0x007f7f).set_footer(text=update_summary))
-                    else:
-                        await status.delete()
-                        await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=0xff0000))
+                else:
+                    await status.delete()
+                    await ctx.send(embed=discord.Embed(title="Raw log contents", description=open("update.log", "r").read(), color=0xff0000))
             return True
         else:
             await ctx.send("Hey, only my developers can do this!")
