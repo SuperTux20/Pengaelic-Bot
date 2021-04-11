@@ -39,10 +39,6 @@ import discord
 from dotenv import load_dotenv as dotenv
 from discord.utils import get
 from discord.ext import commands
-log=open("update.log", "r").readlines()
-for line in range(len(log)):
-    if log[line].startswith("Updating"):
-        log.pop(line)
 
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
