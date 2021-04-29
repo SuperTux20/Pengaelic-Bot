@@ -135,7 +135,7 @@ class Games(commands.Cog):
                 else:
                     response = f"a total of {total}"
             else:
-                response = total
+                response = str(total)
         await ctx.send(":game_die:You rolled " + response)
 
     @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "flipcoin", "coinflip"], usage="[number of coins (1)]")
