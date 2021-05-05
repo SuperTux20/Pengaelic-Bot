@@ -138,7 +138,7 @@ class Games(commands.Cog):
                 response = str(total)
         await ctx.send(":game_die:You rolled " + response)
 
-    @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "flipcoin", "coinflip"], usage="[number of coins (1)]")
+    @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip"], usage="[number of coins (1)]")
     async def flip_coins(self, ctx, coins: int = 1):
         if coins == 1:
             response = f"You flipped a {choice(['head', 'tail'])}"
@@ -150,13 +150,14 @@ class Games(commands.Cog):
             response = "You flipped NaN heads and [ERROR] tails."
         else:
             if coins > 1000000:
-                await ctx.send(f":moneybag:{coins} coins? That's just silly.")
+                response = f"{coins} coins? That's just silly."
             else:
-                results = [randint(0,2)for _ in range(coins)]
-                for result in results:
-                    if result == 2:
-                        for _ in range(5):
-                            result = randint(0,2)
+                results = [randint(0,2) for _ in range(coins)]
+                for _ in range(10):
+                    if 2 in results:
+                        for result in range(len(results)):
+                            if results[result] == 2:
+                                results[result] = randint(0,2)
                 if results.count(2) > 0:
                     if results.count(2) == 1:
                         response = ", and a coin even landed on its edge."
@@ -164,7 +165,8 @@ class Games(commands.Cog):
                         response = f", and {results.count(2)} coins landed on their edges."
                 else:
                     response = "."
-        await ctx.send(f":moneybag:You flipped {results.count(0)} heads and {results.count(1)} tails{response}")
+                response = f"You flipped {results.count(0)} heads and {results.count(1)} tails{response}"
+        await ctx.send(":moneybag:" + response)
 
     @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (False)]")
     async def draw_cards(self, ctx, cards: int = 1, replace_cards: bool = False):
