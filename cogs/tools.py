@@ -1,19 +1,47 @@
+# -*- coding: utf-8 -*-
+
 import discord
-from pengaelicutils import getops
-from subprocess import check_output
-from discord.ext import commands
+import speedtest
+import time
 from asyncio import sleep
+from asyncio.events import get_event_loop
+from discord.ext import commands
+from concurrent.futures import ThreadPoolExecutor
 from json import dumps
+from pengaelicutils import getops
+from re import search
+from subprocess import check_output
+from tinydb import TinyDB, Query
 
 class Tools(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.teal = 0x007f7f
+    teal = 0x007f7f
     nukeconfirm = False
+    testing = False
+    db = TinyDB("config.json")
     name = "tools"
     name_typable = name
     description = "Various tools and info."
     description_long = description
+
+    def UpdateTime(self, speed=False):
+        global CurrentTime
+        global SpeedPerformTime
+        CurrentTime = (time.strftime("%d %b %Y %H:%M:%S", time.localtime()))
+        if speed: # record this as the time the speedtest was done
+            SpeedPerformTime = CurrentTime
+
+    def TestSpeed(self):
+        global results
+        self.UpdateTime(True)
+        s = speedtest.Speedtest()
+        s.get_best_server()
+        s.download(threads=None)
+        s.upload(threads=None)
+        s.results.share()
+        results = s.results.dict()
+        return results
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
@@ -219,6 +247,69 @@ class Tools(commands.Cog):
             await ctx.send(f'```json\n"server information": {jsoninfo}```')
         else:
             await ctx.send(embed=embedinfo)
+
+    @commands.command(name="speedtest")
+    async def speedtest(self, ctx):
+        if self.testing == False:
+            self.testing = True
+            async with ctx.Typing:
+                loop = get_event_loop()
+                await loop.run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
+                downspeed = float((results["download"])/1000000)
+                upspeed = float((results["upload"])/1000000)
+                downspeed = round(downspeed,2)
+                upspeed = round(upspeed,2)
+            await ctx.channel.send("**Results**\nPerformed: **" + str(SpeedPerformTime) + "** (South Australia Time)\nServer: **" + str(results["server"]["sponsor"]) + " " + str(results["server"]["name"])  + "**\nPing: **" + str(results["ping"]) + " ms**\nDownload: **" + str(downspeed) + " Mbps**\nUpload: **" + str(upspeed) + " Mbps**\n\n*Conducted using Ookla's Speedtest CLI: https://speedtest.net\nSpeeds are converted from bits to megabits, and rounded to two decimal places.*")
+            await ctx.clear_reactions()
+            await ctx.add_reaction("✅")
+            self.testing = False
+        else:
+            await ctx.add_reaction("❌")
+
+# Thanks to https://github.com/iwa for helping Hy out with the custom roles system, and thanks to Hy for letting me reuse and adapt their code
+    @commands.command(name="role")
+    async def role(self, ctx, color, *, role_name):
+        member = ctx.author
+        if (getops(ctx.guild.id, "roleRequiredForCustomRoles") in str(member.roles)):
+            user = Query()
+            result = self.db.search(user.memberId == member.id)
+            hex_code_match = search(r"(?:[0-9a-fA-F]{3}){1,2}$", color)
+            if(len(result) == 1):
+                if hex_code_match:
+                    role_color = discord.Color(int(color, 16))
+                    role = ctx.guild.get_role(result[0]["roleId"])
+                    await role.edit(name=role_name, color=role_color)
+                    await member.add_roles(role)
+                    await ctx.send(f"Role {role.mention} edited.")
+                else:
+                    await ctx.send("Invalid hex code.")
+            else:
+                if hex_code_match:
+                    role_color = discord.Color(int(color, 16))
+                    role = await ctx.guild.create_role(name=role_name, colour=role_color)
+                    await member.add_roles(role)
+                    self.db.insert({"memberId": member.id, "roleId": role.id})
+                    await ctx.send(f"Role {role.mention} created and given.")
+                else:
+                    await ctx.send("Invalid hex code.")
+        else:
+            await ctx.send("**You can't do that**\nThis is for Level 30+ use only.")
+
+    @commands.command(name="delrole")
+    async def delrole(self, ctx):
+        member = ctx.author
+        if (getops(ctx.guild.id, "roleRequiredForCustomRoles") in str(member.roles)):
+            user = Query()
+            result = self.db.search(user.memberId == member.id)
+            if(len(result) == 1):
+                role = ctx.guild.get_role(result[0]['roleId'])
+                await member.remove_roles(role)
+                await ctx.channel.send("**Role removed**\n<@{0}>, I removed your custom role.\nDo `-role` to create a new custom role".format(member.id))
+            else:
+                await ctx.channel.send("**You can't do that**\n<@{0}>, you don't have any custom role!".format(member.id))
+        else:
+            await ctx.channel.send("**You can't do that**\nThis is for Level 30+ use only.")
+
 
     @clear.error
     async def clearError(self, ctx, error):

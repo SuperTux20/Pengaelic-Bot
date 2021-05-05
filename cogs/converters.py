@@ -1,12 +1,14 @@
+# -*- coding: utf-8 -*-
+
 from num2words import num2words
 from fnmatch import fnmatch
 from discord.ext import commands
 from random import choice, shuffle
 
-
 class Converters(commands.Cog):
     def __init__(self, client):
         self.client = client
+    teal=0x007f7f
     name = "converters"
     name_typable = name
     description = "Run some text through a converter to make it look funny!"

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import discord
 from discord.ext import commands
 from random import choice, randint
@@ -242,7 +244,7 @@ class Interactions(commands.Cog):
             ]
         }
         if member == None or type(item) is not str:
-            if getops(ctx.guild.id, "jsonMenus"):
+            if getops(ctx.guild.id, "toggles", "jsonMenus"):
                 await ctx.send(f"""availableFoodItems:
 ```json
 {

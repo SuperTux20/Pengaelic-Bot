@@ -127,7 +127,7 @@ dmypy.json
 .pyre/
 
 # Configs
-*.db
+config.*
 
 # VS Code configs
 .vscode/

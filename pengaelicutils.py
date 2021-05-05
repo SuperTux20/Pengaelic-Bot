@@ -1,5 +1,7 @@
-import sqlite3
+# -*- coding: utf-8 -*-
+
 from time import time
+from tinydb import TinyDB
 
 def stopwatch(start_time: time):
     elapsed = time() - start_time
@@ -19,52 +21,60 @@ def stopwatch(start_time: time):
     else:
         return f"{minutes}:{seconds}"
 
-def getops(guild, option):
-    conn = sqlite3.connect("config.db")
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-    if option == "*":
-        rows = cur.execute(f"SELECT * from options").fetchall()
-    else:
-        rows = cur.execute(f"SELECT id, {option} from options").fetchall()
-    conn.commit()
-    conn.close()
-    currentserver = [
-        server
-        for server in [
-            dict(row)
-            for row in rows
-        ]
-        if server["id"] == guild
-    ][0]
-    if option == "*":
-        currentserver.pop("id")
-        for value in currentserver:
-            currentserver[value] = bool(currentserver[value])
-        outdict = dict(sorted(currentserver.items()))
-        return outdict
-    else:
-        if option != "censorlist":
-            currentserver[option] = bool(currentserver[option])
-        elif option == "censorlist":
-            currentserver[option] = currentserver[option].split(", ")
-        return currentserver[option]
-
 def list2str(inlist: list, mode: int = 0):
+    # if mode == 0: leave commas and spaces unaffected
+    # if mode == 1: remove all separation
+    # if mode == 2: remove commas, leaving spaces behind
+    # if mode == 3: replace commas and spaces with newlines
     if mode == 1:
-        # remove all separation
         outstr = "".join(inlist)
     else:
-        # remove single quotes and newlines
-        outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "")
+        outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "") # remove single quotes and newlines
         if mode == 2:
-            # remove commas, leaving spaces behind
             outstr = outstr.replace(", ", " ")
         elif mode == 3:
-            # replace commas and spaces with newlines
             outstr = outstr.replace(", ", "\n")
-    # mode = 0 leaves commas and spaces unaffected
     return outstr
 
 def remove_duplicates(inlist: list):
     return list(dict.fromkeys(inlist))
+
+def newops():
+    bools = [
+        "censor",
+        "dadJokes",
+        "deadChat",
+        "jsonMenus",
+        "lockCustomRoles",
+        "rickRoulette",
+        "suggestions",
+        "welcome"
+    ]
+    channels = [
+        "commands",
+        "suggestions"
+    ]
+    roles = [
+        "bots",
+        "customRoleLock",
+        "moderator",
+        "muted",
+    ]
+    bool_options = {toggle_bool: False for toggle_bool in bools}
+    channel_options = {channel_id: None for channel_id in channels}
+    role_options = {role_id: None for role_id in roles}
+    all_options = {"toggles": bool_options, "channels": channel_options, "roles": role_options, "lists": {"censorList": []}}
+    return all_options
+
+def getops(guild: str, category: str = None, option: str = None):
+    db = TinyDB("config.json")
+    options = db.all()[0]
+    if option == None:
+        options = dict(sorted(options[str(guild)].items()))
+        if options["lists"]["censorList"] == []:
+            options["lists"]["censorList"] = None
+        else:
+            options["lists"]["censorList"] = list2str(options["lists"]["censorList"])
+    else:
+        options = options[str(guild)][category][option]
+    return options

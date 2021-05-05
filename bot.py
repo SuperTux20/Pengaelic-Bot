@@ -1,10 +1,11 @@
-import sqlite3
+# -*- coding: utf-8 -*-
+
 import subprocess
 import sys
 from asyncio import sleep
 from json import loads, dumps
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull
-from pengaelicutils import getops, remove_duplicates, list2str
+from pengaelicutils import newops, getops, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
@@ -21,7 +22,7 @@ if need2install:
     exit()
 print("Passed package test")
 
-requirements = ["discord.py", "python-dotenv", "num2words"]
+requirements = ["discord.py", "num2words", "python-dotenv", "speedtest", "tinydb"]
 modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
@@ -39,6 +40,7 @@ import discord
 from dotenv import load_dotenv as dotenv
 from discord.utils import get
 from discord.ext import commands
+from tinydb import TinyDB
 
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
@@ -91,61 +93,7 @@ else:
         intents=discord.Intents.all()
     )
 print("Defined client")
-database = "config.db"
-
-
-def create_database():
-    global database
-    conn = sqlite3.connect(database)
-    conn.cursor().execute(
-        "CREATE TABLE IF NOT EXISTS options (id INTEGER PRIMARY KEY);"
-    )
-
-
-def create_options(conn, guild_id):
-    all_options = [
-        "censor",
-        "dadJokes",
-        "deadChat",
-        "jsonMenus",
-        "rickRoulette",
-        "suggestions",
-        "welcome"
-    ]
-    options = guild_id + tuple([False for _ in all_options])
-    marks = tuple("?" for _ in range(len(all_options) - 1))
-    make_columns = [
-        f"""ALTER TABLE options
-            ADD COLUMN {option} BIT NOT NULL DEFAULT 0;"""
-        for option in all_options
-    ]
-    values = ["id"] + list(all_options)
-    add_values = f"""INSERT INTO options {str(tuple(values)).replace("'", "")}
-                VALUES{str(marks + ("?", "?")).replace("'", "")}"""
-    cur = conn.cursor()
-    for make in make_columns:
-        try:
-            cur.execute(make)
-            conn.commit()
-        except sqlite3.OperationalError:
-            pass
-    try:
-        cur.execute(
-            add_values,
-            options
-        )
-        conn.commit()
-    except sqlite3.IntegrityError:
-        pass
-    try:
-        cur.execute(
-            f"""ALTER TABLE options
-                ADD COLUMN censorlist TEXT;"""
-        )
-        conn.commit()
-    except sqlite3.OperationalError:
-        pass
-
+db = TinyDB("config.json")
 
 async def status_switcher():
     global client
@@ -187,7 +135,7 @@ async def status_switcher():
             "Spiderman: Into the Spiderverse",
             "Back to the Future"
         ])
-        activities = [
+        activity = choice([
             discord.Activity(
                 type=discord.ActivityType.listening,
                 name=artist
@@ -200,14 +148,13 @@ async def status_switcher():
                 type=discord.ActivityType.watching,
                 name=moviesyt
             )
-        ]
-        activity = choice(activities)
+        ])
         await client.change_presence(activity=activity)
         # task runs every few minutes (random 2-10)
         await sleep(randint(2, 10) * 60)
 
 
-def help_menu(cog, client, ctx):
+def help_menu(cog, client):
     menu = discord.Embed(
         title=cog.name.capitalize(),
         description=cog.description_long,
@@ -219,8 +166,7 @@ def help_menu(cog, client, ctx):
         if command.usage:
             menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -228,8 +174,7 @@ def help_menu(cog, client, ctx):
         else:
             menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help
             )
@@ -238,14 +183,11 @@ def help_menu(cog, client, ctx):
 
 @client.event
 async def on_ready():
-    global database
-    create_database()  # just to be sure
+    global db
     # create a server's configs
-    for guild in client.guilds:
-        with sqlite3.connect(database) as conn:
-            create_options(conn, tuple([guild.id]))
+    if db.all() == []:
+        db.insert({guild.id: newops() for guild in client.guilds})
     print(f"{client.description} connected to Discord")
-
 
 @client.event
 async def on_guild_join(guild, auto=True):
@@ -278,36 +220,34 @@ async def on_guild_join(guild, auto=True):
                 continue
         if auto:
             # create fresh options row for new server
-            create_options(sqlite3.connect(database), (guild.id))
+            db.update({guild.id: newops()})
             print(f"Options row created for {guild.name}")
 
-if not unstable:
-    @client.event
-    async def on_command_error(ctx, error):
-        # this checks if the individual commands have their own error handling. if not...
-        if not hasattr(ctx.command, 'on_error'):
-            # ...send the global error
-            if "is not found" in str(error):
-                await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
-                print(
-                    "Invalid command {}{} sent in {} in #{} by {}#{}".format(
-                        client.command_prefix,
-                        str(error).split('"')[1],
-                        ctx.guild,
-                        ctx.channel,
-                        ctx.message.author.name,
-                        ctx.message.author.discriminator
-                    )
-                )
-            else:
-                await ctx.send(f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
-
+# if not unstable:
+#     @client.event
+#     async def on_command_error(ctx, error):
+#         # this checks if the individual commands have their own error handling. if not...
+#         if not hasattr(ctx.command, 'on_error'):
+#             # ...send the global error
+#             if "is not found" in str(error):
+#                 await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
+#                 print(
+#                     "Invalid command {}{} sent in {} in #{} by {}#{}".format(
+#                         client.command_prefix,
+#                         str(error).split('"')[1],
+#                         ctx.guild,
+#                         ctx.channel,
+#                         ctx.message.author.name,
+#                         ctx.message.author.discriminator
+#                     )
+#                 )
+#             else:
+#                 await ctx.send(f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redo_welcome(ctx):
     await on_guild_join(ctx.guild, False)
     await ctx.message.delete()
-
 
 # load token
 dotenv(".env")
@@ -361,7 +301,7 @@ if not unstable:
     @client.command(name="updatelog", aliases=["ul"])
     async def updatelog(ctx, formatted=True, status: discord.Message=None):
         if developer(ctx.author):
-            if getops(ctx.guild.id, "jsonMenus"):
+            if getops(ctx.guild.id, "toggles", "jsonMenus"):
                 if status:
                     await status.edit(content="Looking in the logs...")
                 else:
@@ -410,7 +350,7 @@ if not unstable:
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
         if developer(ctx.author):
-            if getops(ctx.guild.id, "jsonMenus"):
+            if getops(ctx.guild.id, "toggles", "jsonMenus"):
                 status = await ctx.send("Pulling the latest commits from GitHub...")
             else:
                 status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub...", color=0x007f7f))
@@ -437,7 +377,7 @@ async def help(ctx, *, cogname: str = None):
     if cogname == None:
         menu = discord.Embed(
             title=client.description,
-            description=f"Type `{client.command_prefix}help **<lowercase category name without spaces or dashes>** for more info on each category.",
+            description=f"Type `{client.command_prefix}help `**`<lowercase category name without spaces or dashes>`** for more info on each category.",
             color=0x007f7f
         )
         cogs = dict(client.cogs)
@@ -485,6 +425,21 @@ async def help(ctx, *, cogname: str = None):
                 )[1:-1].replace("'", "").replace(", ", "\n")
             )
         await ctx.send(embed=menu)
+    elif cogname == "options":
+        menu = discord.Embed(
+            title="Options",
+            description=client.get_cog("Options").description_long,
+            color=0x007f7f
+        ).set_footer(text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with")
+        for command in client.get_cog("Options").get_commands():
+            menu.add_field(
+                name="options",
+                value="Show the current values of all options."
+            )
+        for subcommand in list(command.walk_commands()):
+            if subcommand.parents[0] == command:
+                menu.add_field(name=subcommand.name, value=subcommand.help)
+        await ctx.send(embed=menu)
     elif cogname == "control" and developer(ctx.author):
         menu = discord.Embed(
             title="Control",
@@ -508,7 +463,7 @@ async def help(ctx, *, cogname: str = None):
         )
         await ctx.send(embed=menu)
     else:
-        await ctx.send(embed=help_menu(client.get_cog(cogname.capitalize()), client, ctx))
+        await ctx.send(embed=help_menu(client.get_cog(cogname.capitalize()), client))
 
 
 @help.error
@@ -531,8 +486,7 @@ async def h_toggle(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -560,8 +514,7 @@ async def h_censor(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -569,8 +522,7 @@ async def h_censor(ctx):
         else:
             help_menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help)
     await ctx.send(embed=help_menu)

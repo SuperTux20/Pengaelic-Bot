@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from discord.ext import commands
 from pengaelicutils import list2str, stopwatch
 from random import choice, randint

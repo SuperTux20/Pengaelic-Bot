@@ -1,60 +1,44 @@
-import sqlite3
+# -*- coding: utf-8 -*-
+
 import discord
-from pengaelicutils import getops
+from asyncio import sleep
 from discord.ext import commands
 from json import dumps
-from asyncio import sleep
+from pengaelicutils import newops, getops
 from random import choice
+from tinydb import TinyDB, Query
 
 class Options(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.wipe_censor_confirm = False
-        self.reset_options_confirm = False
-        self.db = "config.db"
-        self.teal = 0x007f7f
+    db = TinyDB("config.json")
+    teal = 0x007f7f
+    wipe_censor_confirm = False
+    reset_options_confirm = False
     name = "options"
     name_typable = name
     description = "My settings."
-    description_long = description + \
-        ' You need the "Manage Messages" permission to use these settings.\nType `p!help options [option]` for more info on each subcategory.'
+    description_long = "You need permissions to use these settings."
 
-    def update_option(self, database, guild: int, option: str, value):
-        conn = sqlite3.connect(database)
-        with conn:
-            sql = f"""UPDATE options
-                    SET {option} = ?
-                    WHERE id = ?"""
-            cur = conn.cursor()
-            cur.execute(
-                sql,
-                (value, guild)
-            )
-            conn.commit()
+    def update_option(self, guild: str, category: str, option: str, value):
+        options = self.db.all()[0][str(guild)]
+        options[category][option] = value
+        self.db.update({guild: options})
 
     async def toggle_option(self, ctx, option, disable_message, enable_message):
-        if getops(ctx.guild.id, option):
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                option,
-                False
-            )
+        status = getops(ctx.guild.id, "toggles", option)
+        self.update_option(ctx.guild.id, "toggles", option, not status)
+        if status:
             await ctx.send(disable_message)
         else:
-            self.update_option(
-                self.db,
-                ctx.guild.id,
-                option,
-                True
-            )
             await ctx.send(enable_message)
 
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
         if ctx.invoked_subcommand == None:
-            options = getops(ctx.guild.id, "*")
+            p = self.client.command_prefix
+            options = getops(ctx.guild.id)
             jsoninfo = str(
                 dumps(
                     {"options": options},
@@ -62,26 +46,61 @@ class Options(commands.Cog):
                     indent=4
                 )[6:-2].replace("\n    ", "\n")
             )
-            embedinfo = discord.Embed(
+            header = discord.Embed(
                 title="Options",
-                color=self.teal)
-            for option in options:
-                embedinfo.add_field(
-                    name=option,
-                    value=str(
-                        options[option]
-                    ).replace(
-                        "False",
-                        "Disabled"
-                    ).replace(
-                        "True",
-                        "Enabled"
-                    )
-                )
-            if getops(ctx.guild.id, "jsonMenus"):
+                description=f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"',
+                color=self.teal
+            )
+            channels = discord.Embed(
+                title="Channels",
+                description="Channels for specific functions.",
+                color=self.teal
+            )
+            lists = discord.Embed(
+                title="Lists",
+                description="The censor list. Maybe more lists will be necessary in the future, I don't know.",
+                color=self.teal
+            )
+            roles = discord.Embed(
+                title="Roles",
+                description="Roles for specific functions.",
+                color=self.teal
+            )
+            toggles = discord.Embed(
+                title="Toggles",
+                description="Toggleable options.",
+                color=self.teal
+            )
+            for category in options.items():
+                if category[0] == "channels":
+                    for option in category[1].items():
+                        channels.add_field(
+                            name=option[0],
+                            value=str(option[1]).replace("None", "No Channel Set")
+                        )
+                elif category[0] == "lists":
+                    for option in category[1].items():
+                        lists.add_field(
+                            name=option[0],
+                            value=str(option[1]).replace("None", "Empty")
+                        )
+                elif category[0] == "roles":
+                    for option in category[1].items():
+                        roles.add_field(
+                            name=option[0],
+                            value=str(option[1]).replace("None", "No Role Set")
+                        )
+                elif category[0] == "toggles":
+                    for option in category[1].items():
+                        toggles.add_field(
+                            name=option[0],
+                            value=str(option[1]).replace("False", "Disabled").replace("True", "Enabled")
+                        )
+            if getops(ctx.guild.id, "toggles", "jsonMenus"):
                 await ctx.send(f"```json\n{jsoninfo}\n```")
             else:
-                await ctx.send(embed=embedinfo)
+                for embed in [header, channels, lists, roles, toggles]:
+                    await ctx.send(embed=embed)
 
     @read_options.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
     @commands.has_permissions(manage_messages=True)
@@ -94,33 +113,20 @@ class Options(commands.Cog):
                 self.reset_options_confirm = False
                 await ctx.send("Pending reset expired.")
         elif self.reset_options_confirm:
-            with sqlite3.connect(self.db) as conn:
-                options = f""" UPDATE options
-                        SET censor = ?,
-                            dadJokes = ?,
-                            deadChat = ?,
-                            jsonMenus = ?,
-                            suggestions = ?,
-                            welcome = ?,
-                            yoMamaJokes = ?
-                        WHERE id = {ctx.guild.id}"""
-                cur = conn.cursor()
-                cur.execute(
-                    options,
-                    ([0 for _ in range(7)])
-                )
-                conn.commit()
+            self.db.update({str(ctx.guild.id): newops()})
             await ctx.send("Options reset to defaults.")
             await self.read_options(ctx)
             self.reset_options_confirm = False
 
-    @commands.group(name="toggle", help="Toggle an option.")
+    @read_options.group(name="toggle", help="Toggle an option.")
     async def toggle(self, ctx):
         if ctx.invoked_subcommand is None:
-            if getops(ctx.guild.id, "jsonMenus"):
-                await ctx.send(f'```json\n"Type {self.client.command_prefix}options to see all options and their current statuses",\n"Type {self.client.command_prefix}toggle <option> to turn <option> on or off"```')
-            else:
-                await ctx.send(f"Type `{self.client.command_prefix}options` to see all options and their current statuses\nType `{self.client.command_prefix}toggle <option>` to turn <option> on or off")
+            await ctx.send("You didn't specify an option to toggle!")
+
+    @read_options.group(name="set", help="Set an option.")
+    async def set(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("You didn't specify an option to set!")
 
     @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
     @commands.has_permissions(manage_messages=True)
@@ -142,6 +148,11 @@ class Options(commands.Cog):
     async def toggle_json(self, ctx):
         await self.toggle_option(ctx, "jsonMenus", "Menus will be shown in embed format.", "Menus will be shown in JSON format.")
 
+    @toggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
+    @commands.has_permissions(manage_roles=True)
+    async def toggle_role_lock(self, ctx):
+        await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. Use `{self.client.command_prefix}options roleRequiredForCustomRoles @role_name` to set what role they should be locked behind.")
+
     @toggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_suggestions(self, ctx):
@@ -157,7 +168,37 @@ class Options(commands.Cog):
     async def toggle_welcome(self, ctx):
         await self.toggle_option(ctx, "welcome", "Welcome messages turned off.", "Welcome messages turned on.")
 
-    @commands.group(name="censor", help="Edit the censor.", aliases=["filter"])
+    @set.command(name="customRoleLock", help="Set what role is required to use custom roles (if they're locked in the first place)")
+    @commands.has_permissions(manage_roles=True)
+    async def change_required_role(self, ctx, *, role: discord.Role):
+        self.update_option(ctx.guild.id, "roles", "customRoleLock", role)
+        await ctx.send(f"Role {role} is now required for custom roles.")
+
+    @set.command(name="modRole", help="Set what role the moderators are.")
+    @commands.has_permissions(manage_roles=True)
+    async def change_mod_role(self, ctx, *, role: discord.Role):
+        self.update_option(ctx.guild.id, "roles", "moderator", role)
+        await ctx.send(f"Role {role} is now set as the mod role.")
+
+    @set.command(name="muteRole", help="Set the muted role.")
+    @commands.has_permissions(manage_roles=True)
+    async def change_mute_role(self, ctx, *, role: discord.Role):
+        self.update_option(ctx.guild.id, "roles", "muted", role)
+        await ctx.send(f"Role {role} is now set as the muted role.")
+
+    @set.command(name="commandsChannel", help="Set what channel bot commands are ususally sent to.")
+    @commands.has_permissions(manage_roles=True)
+    async def change_bot_channel(self, ctx, *, channel: discord.TextChannel):
+        self.update_option(ctx.guild.id, "channels", "commands", channel)
+        await ctx.send(f"Channel {channel} is set as the default command channel.")
+
+    @set.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
+    @commands.has_permissions(manage_roles=True)
+    async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
+        self.update_option(ctx.guild.id, "channels", "suggestions", channel)
+        await ctx.send(f"Channel {channel} is now the suggestions channel.")
+
+    @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send("Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`")
@@ -165,7 +206,7 @@ class Options(commands.Cog):
     @censor.command(name="show", help="Display the contents of the censorship filter.", aliases=["list", "get"])
     @commands.has_permissions(manage_messages=True)
     async def show_censor(self, ctx):
-        all_bads = list(getops(ctx.guild.id, "censorlist"))
+        all_bads = list(getops(ctx.guild.id, "censorList"))
         if all_bads == ['']:
             await ctx.send("Filter is empty.")
         else:
@@ -174,79 +215,75 @@ class Options(commands.Cog):
     @censor.command(name="add", help="Add a word to the censorship filter.", usage="<one phrase ONLY>")
     @commands.has_permissions(manage_messages=True)
     async def add_censor(self, ctx, word):
-        all_bads = list(getops(ctx.guild.id, "censorlist"))
+        all_bads = getops(ctx.guild.id, "censorList")
         word = word.lower()
-        if all_bads == [""]:
-            all_bads = []
         if word in all_bads:
             await ctx.send("That word is already in the filter.")
         else:
             all_bads.append(word)
             all_bads.sort()
-            finalbads = str(all_bads)[1:-1].replace("'", "")
             self.update_option(
-                self.db,
                 ctx.guild.id,
-                "censorlist",
-                finalbads
+                "lists",
+                "censorList",
+                all_bads
             )
             await ctx.send("Word added to the filter.")
 
     @censor.command(name="delete", help="Remove a word from the censorship filter.", usage="<one phrase ONLY>", aliases=["remove"])
     @commands.has_permissions(manage_messages=True)
     async def del_censor(self, ctx, word):
-        all_bads = list(getops(ctx.guild.id, "censorlist"))
+        all_bads = getops(ctx.guild.id, "censorList")
         word = word.lower()
-        if all_bads == [""]:
-            all_bads = []
         if word not in all_bads:
             await ctx.send("That word is not in the filter.")
         else:
             all_bads.remove(word)
             all_bads.sort()
-            finalbads = str(all_bads)[1:-1].replace("'", "")
             self.update_option(
-                self.db,
                 ctx.guild.id,
-                "censorlist",
-                finalbads
+                "lists",
+                "censorList",
+                all_bads
             )
             await ctx.send("Word removed from the filter.")
 
     @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
     async def wipe_censor(self, ctx):
-        if self.wipe_censor_confirm == False:
+        if not self.wipe_censor_confirm:
             await ctx.send("Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds.")
             self.wipe_censor_confirm = True
             await sleep(10)
-            self.wipe_censor_confirm = False
-            await ctx.send("Pending wipe expired.")
-        elif self.wipe_censor_confirm == True:
+            if self.wipe_censor_confirm:
+                self.wipe_censor_confirm = False
+                await ctx.send("Pending wipe expired.")
+        elif self.wipe_censor_confirm:
             self.update_option(
-                self.db,
                 ctx.guild.id,
-                "censorlist",
-                ""
+                "lists",
+                "censorList",
+                []
             )
+            await ctx.send("Filter wiped.")
             self.wipe_censor_confirm = False
 
-    @reset_options.error
-    @toggle_censor.error
-    @toggle_dad_jokes.error
-    @toggle_welcome.error
-    @toggle_suggestions.error
-    @censor.error
-    @show_censor.error
-    @add_censor.error
-    @del_censor.error
-    @wipe_censor.error
-    @read_options.error
-    async def messageError(self, ctx, error):
-        if str(error) == "You are missing Manage Messages permission(s) to run this command.":
-            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
-        else:
-            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+    # @reset_options.error
+    # @toggle_censor.error
+    # @toggle_dad_jokes.error
+    # @toggle_welcome.error
+    # @toggle_suggestions.error
+    # @censor.error
+    # @show_censor.error
+    # @add_censor.error
+    # @del_censor.error
+    # @wipe_censor.error
+    # @read_options.error
+    # async def messageError(self, ctx, error):
+    #     if str(error) == "You are missing Manage Messages permission(s) to run this command.":
+    #         await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
+    #     else:
+    #         await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 def setup(client):
     client.add_cog(Options(client))

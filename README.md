@@ -5,7 +5,7 @@
 ## 📄 About
 
 - Language used: `Python`
-- Libraries used: `discord.py`, `num2words`, `python-dotenv`
+- Libraries used: `discord.py`, `num2words`, `python-dotenv`, `speedtest`, `tinydb`
 
 ## 🤝 Contributing
 
@@ -24,7 +24,7 @@
 
 ---
 
-*Some of the code in Pengaelic Bot originates from CAutomator Legacy, one of Hyperfresh's bots. CAutomator Legacy is licensed under LGPLv3.*
+*Some of the code in Pengaelic Bot originates from CAutomator Legacy, a bot created by [Hyperfresh](https://github.com/Hyperfresh). CAutomator Legacy is licensed under LGPLv3.*
 
 *CAutomator Legacy - the custom-built Discord bot, coded in Python.*
 

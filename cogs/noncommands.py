@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import discord
 from pengaelicutils import getops
 from fnmatch import filter
 from discord.utils import get
 from discord.ext import commands
-from json import load
-from random import choice, randint
+from random import choice
 
 class NonCommands(commands.Cog):
     def __init__(self, client):
@@ -75,12 +76,15 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        if self.client.user.mention in message.content:
+            await message.channel.send(f"My prefix is `{self.client.command_prefix}` :smiley:")
         # lowercase everything to make my life easier
         message.content = message.content.lower()
         # check if it's a DM, in which case, don't test options (because there are none)
-        if not isinstance(message.channel, discord.channel.DMChannel):
+        # then make sure the message it's reading doesn't belong to the bot itself
+        if not isinstance(message.channel, discord.channel.DMChannel) and message.author is not self.client.user:
             # this section is for Dad Bot-like responses
-            if getops(message.guild.id, "dadJokes"):
+            if getops(message.guild.id, "toggles", "dadJokes"):
                 dad_prefixes = [
                     "i'm",
                     "i`m",
@@ -113,18 +117,19 @@ class NonCommands(commands.Cog):
                                 await message.channel.send(f"Hi{message.content[len(dad):]}, I'm the Pengaelic Bot!")
 
             # this section is to auto-delete messages containing a keyphrase in the censor text file
-            if getops(message.guild.id, "censor"):
-                all_bads = getops(message.guild.id, "censorlist")
+            if getops(message.guild.id, "toggles", "censor"):
+                all_bads = getops(message.guild.id, "lists", "censorList")
                 for bad in all_bads:
                     if bad in message.content.split():
                         await message.delete()
+                        await message.author.send(f"Hey, that word `{bad}` isn't allowed here!")
 
             # bro, did someone seriously say the chat was dead?
-            if ("dead" in message.content and ("chat" in message.content or "server" in message.content)) and getops(message.guild.id, "deadChat"):
+            if ("dead" in message.content and ("chat" in message.content or "server" in message.content)) and getops(message.guild.id, "toggles", "deadChat"):
                 await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
             # this section makes automatic suggestion polls
-            if getops(message.guild.id, "suggestions") and ("suggest" in message.channel.name) and "discuss" not in message.channel.name:
+            if getops(message.guild.id, "toggles", "suggestions") and (message.channel.id == getops(message.guild.id, "channels", "suggestions")):
                 thepoll = await message.channel.send(
                     embed=discord.Embed(
                         title="Suggestion",
@@ -144,7 +149,7 @@ class NonCommands(commands.Cog):
                 return
 
             # a rickroll-themed game of russian roulette, except the barrel is reset every time
-            if "you know the rules" == message.content and getops(message.guild.id, "rickRoulette"):
+            if "you know the rules" == message.content and getops(message.guild.id, "toggles", "rickRoulette"):
                 responses = [
                     "And so do I :pensive:"
                     for _ in range(5)
