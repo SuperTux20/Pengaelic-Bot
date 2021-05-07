@@ -119,80 +119,80 @@ class Options(commands.Cog):
             self.reset_options_confirm = False
 
     @read_options.group(name="toggle", help="Toggle an option.")
-    async def toggle(self, ctx):
+    async def optoggle(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send("You didn't specify an option to toggle!")
 
     @read_options.group(name="set", help="Set an option.")
-    async def set(self, ctx):
+    async def opset(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send("You didn't specify an option to set!")
 
-    @toggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
+    @optoggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
         await self.toggle_option(ctx, "censor", "Censorship turned off.", "Censorship turned on.")
 
-    @toggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+    @optoggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
         await self.toggle_option(ctx, "dadJokes", "Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)", "Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)")
 
-    @toggle.command(name="deadChat", help="Toggle the automatic \"no u\" response to someone saying \"dead chat\".")
+    @optoggle.command(name="deadChat", help="Toggle the automatic \"no u\" response to someone saying \"dead chat\".")
     @commands.has_permissions(manage_messages=True)
     async def toggle_dead_chat(self, ctx):
         await self.toggle_option(ctx, "deadChat", "The server lives! (dead chat jokes turned off)", f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)")
 
-    @toggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
+    @optoggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_json(self, ctx):
         await self.toggle_option(ctx, "jsonMenus", "Menus will be shown in embed format.", "Menus will be shown in JSON format.")
 
-    @toggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
+    @optoggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
     @commands.has_permissions(manage_roles=True)
     async def toggle_role_lock(self, ctx):
         await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. Use `{self.client.command_prefix}options roleRequiredForCustomRoles @role_name` to set what role they should be locked behind.")
 
-    @toggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
+    @optoggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_suggestions(self, ctx):
         await self.toggle_option(ctx, "suggestions", "Auto-suggestions turned off.", "Auto-suggestions turned on.")
 
-    @toggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
+    @optoggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_rick_roulette(self, ctx):
         await self.toggle_option(ctx, "rickRoulette", "You know the rules, and so do I. (Rick Roulette turned off)", "You know the rules, it's time to die. (Rick Roulette turned on)")
 
-    @toggle.command(name="welcome", help="Toggle the automatic welcome messages.")
+    @optoggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
         await self.toggle_option(ctx, "welcome", "Welcome messages turned off.", "Welcome messages turned on.")
 
-    @set.command(name="customRoleLock", help="Set what role is required to use custom roles (if they're locked in the first place)")
+    @opset.command(name="customRoleLock", help="Set what role is required to use custom roles (if they're locked in the first place)")
     @commands.has_permissions(manage_roles=True)
     async def change_required_role(self, ctx, *, role: discord.Role):
         self.update_option(ctx.guild.id, "roles", "customRoleLock", role)
         await ctx.send(f"Role {role} is now required for custom roles.")
 
-    @set.command(name="modRole", help="Set what role the moderators are.")
+    @opset.command(name="modRole", help="Set what role the moderators are.")
     @commands.has_permissions(manage_roles=True)
     async def change_mod_role(self, ctx, *, role: discord.Role):
         self.update_option(ctx.guild.id, "roles", "moderator", role)
         await ctx.send(f"Role {role} is now set as the mod role.")
 
-    @set.command(name="muteRole", help="Set the muted role.")
+    @opset.command(name="muteRole", help="Set the muted role.")
     @commands.has_permissions(manage_roles=True)
     async def change_mute_role(self, ctx, *, role: discord.Role):
         self.update_option(ctx.guild.id, "roles", "muted", role)
         await ctx.send(f"Role {role} is now set as the muted role.")
 
-    @set.command(name="commandsChannel", help="Set what channel bot commands are ususally sent to.")
+    @opset.command(name="commandsChannel", help="Set what channel bot commands are ususally sent to.")
     @commands.has_permissions(manage_roles=True)
     async def change_bot_channel(self, ctx, *, channel: discord.TextChannel):
         self.update_option(ctx.guild.id, "channels", "commands", channel)
         await ctx.send(f"Channel {channel} is set as the default command channel.")
 
-    @set.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
+    @opset.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
     @commands.has_permissions(manage_roles=True)
     async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
         self.update_option(ctx.guild.id, "channels", "suggestions", channel)

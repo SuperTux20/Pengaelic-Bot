@@ -70,8 +70,7 @@ GNU General Public License for more details.
 
 """
 if unstable:
-    cmd(
-        "toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
+    cmd(r"toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)")
 else:
     cmd("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
 print(info)
@@ -193,7 +192,6 @@ async def on_ready():
 async def on_guild_join(guild, auto=True):
     global unstable
     if not unstable:
-        global database
         print(f"Joined {guild.name}")
         welcomeembed = discord.Embed(
             title="Howdy fellas! I'm the Pengaelic Bot!",
