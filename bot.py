@@ -9,7 +9,7 @@ from pengaelicutils import newops, getops, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
-subprocess.check_output([sys.executable, '-m', 'pip', 'uninstall' , 'speedtest'])
+
 devnull = open(devnull, "w")
 requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
