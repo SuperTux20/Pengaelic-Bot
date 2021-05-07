@@ -34,7 +34,9 @@ for module in requirements:
         print(f"Module {module} not installed.")
         need2install = True
 if need2install:
+    print("Installing...")
     subprocess.check_output([sys.executable, '-m', 'pip', 'install'] + requirements)
+    print("Done.")
 print("Passed module test")
 import discord
 from dotenv import load_dotenv as dotenv

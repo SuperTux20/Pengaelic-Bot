@@ -108,57 +108,57 @@ class Generators(commands.Cog):
         headline.append(choice(objects))
         await ctx.send(" ".join(headline))
 
-    @commands.command(name="img", help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
-    async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
-        alphabet = list(alphabet)
-        if word == None:
-            await ctx.send("You didn't specify a keyword to search for!")
-        else:
-            invalid = False
-            for character in word:
-                if character not in alphabet:
-                    invalid = True
-            if invalid:
-                await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
-            else:
-                status = await ctx.send("Generating...")
-                starttime = time()
-                text = ""
-                success = True
-                while text.find(word) == -1:
-                    letter = alphabet[randint(0, len(alphabet) - 1)]
-                    text = text + letter
-                    if stopwatch(starttime) == "01:00":
-                        success = False
-                        break
-                cutoff = ""
-                textlen = len(text)
-                if len(text) > 1000:
-                    text = f"...{text[-1000:]}"
-                    cutoff = " (last 1000 shown)"
-                text = text.replace(
-                    "\\",
-                    "\\\\"
-                ).replace(
-                    "*",
-                    "\*"
-                ).replace(
-                    "_",
-                    "\_"
-                ).replace(
-                    "`",
-                    "\`"
-                ).replace(
-                    "~",
-                    "\~"
-                ).replace(
-                    "|",
-                    "\|"
-                )
-                if success:
-                    await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(starttime)}')
-                else:
-                    await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
+    # @commands.command(name="img", help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
+    # async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
+    #     alphabet = list(alphabet)
+    #     if word == None:
+    #         await ctx.send("You didn't specify a keyword to search for!")
+    #     else:
+    #         invalid = False
+    #         for character in word:
+    #             if character not in alphabet:
+    #                 invalid = True
+    #         if invalid:
+    #             await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
+    #         else:
+    #             status = await ctx.send("Generating...")
+    #             starttime = time()
+    #             text = ""
+    #             success = True
+    #             while text.find(word) == -1:
+    #                 letter = alphabet[randint(0, len(alphabet) - 1)]
+    #                 text = text + letter
+    #                 if stopwatch(starttime) == "01:00":
+    #                     success = False
+    #                     break
+    #             cutoff = ""
+    #             textlen = len(text)
+    #             if len(text) > 1000:
+    #                 text = f"...{text[-1000:]}"
+    #                 cutoff = " (last 1000 shown)"
+    #             text = text.replace(
+    #                 "\\",
+    #                 "\\\\"
+    #             ).replace(
+    #                 "*",
+    #                 "\*"
+    #             ).replace(
+    #                 "_",
+    #                 "\_"
+    #             ).replace(
+    #                 "`",
+    #                 "\`"
+    #             ).replace(
+    #                 "~",
+    #                 "\~"
+    #             ).replace(
+    #                 "|",
+    #                 "\|"
+    #             )
+    #             if success:
+    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(starttime)}')
+    #             else:
+    #                 await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
 
     @commands.command(name="fortune", help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))")
     async def fortune(self, ctx):
@@ -166,7 +166,7 @@ class Generators(commands.Cog):
 
     @name_generator.error
     @florida_man.error
-    @img.error
+    # @img.error
     @fortune.error
     async def error(self, ctx, error):
         if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body

@@ -182,6 +182,27 @@ class Tools(commands.Cog):
             await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
+    @commands.command(name="mute", help="Mute a member.")
+    @commands.has_permissions(kick_members=True)
+    async def mute(self, ctx, member: discord.Member, *, reason=None):
+        try:
+            await member.add_roles(get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "muteRole")), reason=reason)
+            await ctx.send(f"Muted {member} for reason `{reason}`.")
+        except:
+            await ctx.send(f"To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
+
+    @commands.command(name="kick", help="Kick a member.")
+    @commands.has_permissions(kick_members=True)
+    async def kick(self, ctx, member: discord.Member, *, reason=None):
+        await member.kick(reason=reason)
+        await ctx.send(f"Kicked {member} for reason `{reason}`.")
+
+    @commands.command(name="ban", help="Ban a member.")
+    @commands.has_permissions(kick_members=True)
+    async def ban(self, ctx, member: discord.Member, *, reason=None):
+        await member.ban(reason=reason)
+        await ctx.send(f"Banned {member} for reason `{reason}`.")
+
     @commands.command(name="server", help="See a bunch of data about the server at a glance.", aliases=["info"])
     @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
@@ -255,13 +276,16 @@ class Tools(commands.Cog):
         if self.testing == False:
             self.testing = True
             async with ctx.typing():
-                loop = get_event_loop()
-                await loop.run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
-                downspeed = float((results["download"])/1000000)
-                upspeed = float((results["upload"])/1000000)
-                downspeed = round(downspeed,2)
-                upspeed = round(upspeed,2)
-            await ctx.channel.send(f'Performed: {SpeedPerformTime} (South Australia Time)\nServer: {results["server"]["sponsor"]} {results["server"]["name"]}\nPing: {results["ping"]} ms\nDownload: {downspeed} Mbps\nUpload: {upspeed} Mbps\n\n*Conducted using [Ookla\'s Speedtest CLI](https://speedtest.net)')
+                await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
+            await ctx.channel.send(
+f"""{SpeedPerformTime} South Australia Time
+Server: {results["server"]["sponsor"]} {results["server"]["name"]}
+Ping: {results["ping"]} ms
+Download: {round(float((results["download"])/1000000), 2)} Mbps
+Upload: {round(float((results["upload"])/1000000), 2)} Mbps
+
+*Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*"""
+)
             self.testing = False
         else:
             await ctx.send("A test is already in progress. Please wait...")
@@ -270,7 +294,7 @@ class Tools(commands.Cog):
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
         role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
-        if role_lock in member.roles:
+        if role_lock in member.roles or role_lock == None:
             try:
                 result = getops(ctx.guild.id, "customRoles", str(member.id))
             except KeyError:
@@ -300,7 +324,7 @@ class Tools(commands.Cog):
     async def delrole(self, ctx):
         member = ctx.author
         role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
-        if role_lock in member.roles:
+        if role_lock in member.roles or role_lock == None:
             result = getops(ctx.guild.id, "customRoles", str(member.id))
             if result:
                 await member.remove_roles(ctx.guild.get_role(int(result)))
