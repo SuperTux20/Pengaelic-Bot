@@ -26,7 +26,7 @@ class Messages(commands.Cog):
             "Main Developer and Creator": "chickenmeister",
             "Current Host": "Hyperfresh"
         }
-        if getops(ctx.guild.id)["JSONmenus"]:
+        if getops(ctx.guild.id, "toggles", "jsonMenus"):
             bot_credits = {
                 cred.lower(): bot_credits[cred]
                 for cred in bot_credits
