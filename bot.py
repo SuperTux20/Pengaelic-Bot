@@ -335,7 +335,7 @@ if not unstable:
                         return False
                     else:
                         update_summary = update_log[-1]
-                        update_log = update_log[2:-1]
+                        update_log = update_log[1:-1]
                         await status.edit(embed=discord.Embed(title=update_log[0], description=list2str(update_log, 3), color=0x007f7f).set_footer(text=update_summary))
                 else:
                     await status.delete()

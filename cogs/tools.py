@@ -261,7 +261,7 @@ class Tools(commands.Cog):
                 upspeed = float((results["upload"])/1000000)
                 downspeed = round(downspeed,2)
                 upspeed = round(upspeed,2)
-            await ctx.channel.send("**Results**\nPerformed: **" + str(SpeedPerformTime) + "** (South Australia Time)\nServer: **" + str(results["server"]["sponsor"]) + " " + str(results["server"]["name"])  + "**\nPing: **" + str(results["ping"]) + " ms**\nDownload: **" + str(downspeed) + " Mbps**\nUpload: **" + str(upspeed) + " Mbps**\n\n*Conducted using Ookla's Speedtest CLI: https://speedtest.net\nSpeeds are converted from bits to megabits, and rounded to two decimal places.*")
+            await ctx.channel.send(f'Performed: {SpeedPerformTime} (South Australia Time)\nServer: {results["server"]["sponsor"]} {results["server"]["name"]}\nPing: {results["ping"]} ms\nDownload: {downspeed} Mbps\nUpload: {upspeed} Mbps\n\n*Conducted using [Ookla\'s Speedtest CLI](https://speedtest.net)')
             self.testing = False
         else:
             await ctx.send("A test is already in progress. Please wait...")
