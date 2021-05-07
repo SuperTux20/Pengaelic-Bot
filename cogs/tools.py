@@ -249,11 +249,12 @@ class Tools(commands.Cog):
         else:
             await ctx.send(embed=embedinfo)
 
+# Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
     @commands.command(name="speedtest")
     async def speedtest(self, ctx):
         if self.testing == False:
             self.testing = True
-            async with ctx.Typing:
+            async with ctx.typing():
                 loop = get_event_loop()
                 await loop.run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
                 downspeed = float((results["download"])/1000000)
@@ -261,13 +262,10 @@ class Tools(commands.Cog):
                 downspeed = round(downspeed,2)
                 upspeed = round(upspeed,2)
             await ctx.channel.send("**Results**\nPerformed: **" + str(SpeedPerformTime) + "** (South Australia Time)\nServer: **" + str(results["server"]["sponsor"]) + " " + str(results["server"]["name"])  + "**\nPing: **" + str(results["ping"]) + " ms**\nDownload: **" + str(downspeed) + " Mbps**\nUpload: **" + str(upspeed) + " Mbps**\n\n*Conducted using Ookla's Speedtest CLI: https://speedtest.net\nSpeeds are converted from bits to megabits, and rounded to two decimal places.*")
-            await ctx.clear_reactions()
-            await ctx.add_reaction("✅")
             self.testing = False
         else:
-            await ctx.add_reaction("❌")
+            await ctx.send("A test is already in progress. Please wait...")
 
-# Thanks to https://github.com/iwa for helping Hy out with the custom roles system, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
     @commands.command(name="role")
     async def role(self, ctx, color, *, role_name):
         member = ctx.author

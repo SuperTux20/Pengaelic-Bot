@@ -9,7 +9,7 @@ from pengaelicutils import newops, getops, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
-
+subprocess.check_output([sys.executable, '-m', 'pip', 'uninstall' , 'speedtest'])
 devnull = open(devnull, "w")
 requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
@@ -23,7 +23,7 @@ if need2install:
     exit()
 print("Passed package test")
 
-requirements = ["discord.py", "num2words", "python-dotenv", "speedtest", "tinydb"]
+requirements = ["discord.py", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
@@ -34,8 +34,7 @@ for module in requirements:
         print(f"Module {module} not installed.")
         need2install = True
 if need2install:
-    print("Install these with PIP.")
-    exit()
+    subprocess.check_output([sys.executable, '-m', 'pip', 'install'] + requirements)
 print("Passed module test")
 import discord
 from dotenv import load_dotenv as dotenv
