@@ -40,31 +40,44 @@ def remove_duplicates(inlist: list):
     return list(dict.fromkeys(inlist))
 
 def newops():
-    bools = [
-        "censor",
-        "dadJokes",
-        "deadChat",
-        "jsonMenus",
-        "lockCustomRoles",
-        "rickRoulette",
-        "suggestions",
-        "welcome"
-    ]
-    channels = [
-        "commands",
-        "suggestions"
-    ]
-    roles = [
-        "bots",
-        "customRoleLock",
-        "moderator",
-        "muted",
-    ]
-    bool_options = {toggle_bool: False for toggle_bool in bools}
-    channel_options = {channel_id: None for channel_id in channels}
-    role_options = {role_id: None for role_id in roles}
-    all_options = {"toggles": bool_options, "channels": channel_options, "roles": role_options, "lists": {"censorList": []}}
-    return all_options
+    return {
+        "channels": {
+            channel_id: None
+            for channel_id in [
+                "suggestionsChannel",
+                "welcomeChannel"
+            ]
+        },
+        "lists": {
+            "censorList": []
+        },
+        "messages": {
+            "welcome": "Welcome to SERVER, USER!",
+            "goodbye": "See you later, USER."
+        },
+        "roles": {
+            role_id: None
+            for role_id in [
+                "customRoleLock",
+                "modRole",
+                "muteRole",
+            ]
+        },
+        "toggles": {
+            toggle_bool: False
+            for toggle_bool in [
+                "censor",
+                "dadJokes",
+                "deadChat",
+                "jsonMenus",
+                "lockCustomRoles",
+                "rickRoulette",
+                "suggestions",
+                "welcome"
+            ]
+        },
+        "customRoles":{}
+    }
 
 def getops(guild: str, category: str = None, option: str = None):
     db = TinyDB("config.json")
@@ -78,3 +91,9 @@ def getops(guild: str, category: str = None, option: str = None):
     else:
         options = options[str(guild)][category][option]
     return options
+
+def updop(guild: str, category: str, option: str, value):
+    db = TinyDB("config.json")
+    options = db.all()[0][str(guild)]
+    options[category][option] = value
+    db.update({guild: options})

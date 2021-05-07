@@ -6,12 +6,13 @@ import time
 from asyncio import sleep
 from asyncio.events import get_event_loop
 from discord.ext import commands
+from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
-from pengaelicutils import getops
+from pengaelicutils import getops, updop
 from re import search
 from subprocess import check_output
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 
 class Tools(commands.Cog):
     def __init__(self, client):
@@ -266,49 +267,50 @@ class Tools(commands.Cog):
         else:
             await ctx.add_reaction("❌")
 
-# Thanks to https://github.com/iwa for helping Hy out with the custom roles system, and thanks to Hy for letting me reuse and adapt their code
+# Thanks to https://github.com/iwa for helping Hy out with the custom roles system, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
     @commands.command(name="role")
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
-        if (getops(ctx.guild.id, "roleRequiredForCustomRoles") in str(member.roles)):
-            user = Query()
-            result = self.db.search(user.memberId == member.id)
+        role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+        if role_lock in member.roles:
+            try:
+                result = getops(ctx.guild.id, "customRoles", str(member.id))
+            except KeyError:
+                result = None
             hex_code_match = search(r"(?:[0-9a-fA-F]{3}){1,2}$", color)
-            if(len(result) == 1):
+            if result:
                 if hex_code_match:
-                    role_color = discord.Color(int(color, 16))
-                    role = ctx.guild.get_role(result[0]["roleId"])
-                    await role.edit(name=role_name, color=role_color)
+                    role = ctx.guild.get_role(int(result))
+                    await role.edit(name=role_name, color=discord.Color(int(color, 16)))
                     await member.add_roles(role)
                     await ctx.send(f"Role {role.mention} edited.")
                 else:
-                    await ctx.send("Invalid hex code.")
+                    await ctx.send(f"Invalid hex code `{color}`.")
             else:
                 if hex_code_match:
                     role_color = discord.Color(int(color, 16))
                     role = await ctx.guild.create_role(name=role_name, colour=role_color)
                     await member.add_roles(role)
-                    self.db.insert({"memberId": member.id, "roleId": role.id})
+                    updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
                     await ctx.send(f"Role {role.mention} created and given.")
                 else:
                     await ctx.send("Invalid hex code.")
         else:
-            await ctx.send("**You can't do that**\nThis is for Level 30+ use only.")
+            await ctx.send(f"{member.mention}, this is only for users with the {role_lock} role.")
 
     @commands.command(name="delrole")
     async def delrole(self, ctx):
         member = ctx.author
-        if (getops(ctx.guild.id, "roleRequiredForCustomRoles") in str(member.roles)):
-            user = Query()
-            result = self.db.search(user.memberId == member.id)
-            if(len(result) == 1):
-                role = ctx.guild.get_role(result[0]['roleId'])
-                await member.remove_roles(role)
-                await ctx.channel.send("**Role removed**\n<@{0}>, I removed your custom role.\nDo `-role` to create a new custom role".format(member.id))
+        role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+        if role_lock in member.roles:
+            result = getops(ctx.guild.id, "customRoles", str(member.id))
+            if result:
+                await member.remove_roles(ctx.guild.get_role(int(result)))
+                await ctx.channel.send(f"Removed custom role.")
             else:
-                await ctx.channel.send("**You can't do that**\n<@{0}>, you don't have any custom role!".format(member.id))
+                await ctx.channel.send(f"{member.mention}, you don't have a custom role to remove!")
         else:
-            await ctx.channel.send("**You can't do that**\nThis is for Level 30+ use only.")
+            await ctx.channel.send(f"{member.mention}, this is only for users with the {role_lock} role.")
 
 
     @clear.error

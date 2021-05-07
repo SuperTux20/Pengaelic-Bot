@@ -525,8 +525,8 @@ async def h_censor(ctx):
                 value=command.help)
     await ctx.send(embed=help_menu)
 
-
-client.loop.create_task(status_switcher())  # as defined above
+if not unstable:
+    client.loop.create_task(status_switcher())  # as defined above
 
 # load all the cogs
 for cog in ls("cogs"):
