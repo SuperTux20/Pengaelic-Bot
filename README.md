@@ -5,7 +5,7 @@
 ## 📄 About
 
 - Language used: `Python`
-- Libraries used: `discord.py`, `num2words`, `python-dotenv`, `speedtest`, `tinydb`
+- Libraries used: `discord.py`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
 
 ## 🤝 Contributing
 
