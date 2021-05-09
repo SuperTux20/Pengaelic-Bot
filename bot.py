@@ -223,26 +223,26 @@ async def on_guild_join(guild, auto=True):
             db.update({guild.id: newops()})
             print(f"Options row created for {guild.name}")
 
-# if not unstable:
-#     @client.event
-#     async def on_command_error(ctx, error):
-#         # this checks if the individual commands have their own error handling. if not...
-#         if not hasattr(ctx.command, 'on_error'):
-#             # ...send the global error
-#             if "is not found" in str(error):
-#                 await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
-#                 print(
-#                     "Invalid command {}{} sent in {} in #{} by {}#{}".format(
-#                         client.command_prefix,
-#                         str(error).split('"')[1],
-#                         ctx.guild,
-#                         ctx.channel,
-#                         ctx.message.author.name,
-#                         ctx.message.author.discriminator
-#                     )
-#                 )
-#             else:
-#                 await ctx.send(f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+if not unstable:
+    @client.event
+    async def on_command_error(ctx, error):
+        # this checks if the individual commands have their own error handling. if not...
+        if not hasattr(ctx.command, 'on_error'):
+            # ...send the global error
+            if "is not found" in str(error):
+                await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
+                print(
+                    "Invalid command {}{} sent in {} in #{} by {}#{}".format(
+                        client.command_prefix,
+                        str(error).split('"')[1],
+                        ctx.guild,
+                        ctx.channel,
+                        ctx.message.author.name,
+                        ctx.message.author.discriminator
+                    )
+                )
+            else:
+                await ctx.send(f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redo_welcome(ctx):
@@ -402,7 +402,7 @@ async def help(ctx, *, cogname: str = None):
             )
         menu.add_field(
             name="Links",
-            value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/oauth2/authorize?client_id=721092139953684580&permissions=388176&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
+            value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=271969366&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
             inline=False
         )
         await ctx.send(embed=menu)
