@@ -1,6 +1,6 @@
-var fs = require('fs');
+import { readdir } from "fs";
 
-fs.readdir(".", (err, files) => {
+readdir(".", (err, files) => {
     console.log(files.length);
 });
 
