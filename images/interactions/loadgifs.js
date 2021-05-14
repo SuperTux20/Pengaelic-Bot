@@ -1,7 +1,6 @@
-import { readdir } from 'fs';
-const dir = './directory';
+var fs = require('fs');
 
-readdir(dir, (err, files) => {
+fs.readdir(".", (err, files) => {
     console.log(files.length);
 });
 
