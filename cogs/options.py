@@ -87,7 +87,7 @@ class Options(commands.Cog):
                     for option in category[1].items():
                         channels.add_field(
                             name=option[0],
-                            value=f"<#{option[1]}>".replace("<#None>", "No Channel Set")
+                            value=f"{option[1]}".replace("None", "No Channel Set")
                         )
                 elif category[0] == "lists":
                     for option in category[1].items():
@@ -105,7 +105,7 @@ class Options(commands.Cog):
                     for option in category[1].items():
                         roles.add_field(
                             name=option[0],
-                            value=f"<@&{option[1]}>".replace("<@&None>", "No Role Set")
+                            value=f"{option[1]}".replace("None", "No Role Set")
                         )
                 elif category[0] == "toggles":
                     for option in category[1].items():

@@ -486,11 +486,12 @@ async def help(ctx, *, cogname: str = None):
 
 @client.command(name="dogofwisdom")
 async def dog(ctx, *, channel: discord.TextChannel = None):
-    if not channel:
-        channel = await ctx.guild.create_text_channel("dog-of-wisdom")
-        await channel.edit(category=ctx.guild.categories[0])
-    hook = await channel.create_webhook(name="The Dog of Wisdom")
-    await client.get_user(developers.everyone["tux"]).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + hook.url.replace("https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='))
+    if getops(ctx.guild.id, "modRole") in ctx.author.roles:
+        if not channel:
+            channel = await ctx.guild.create_text_channel("dog-of-wisdom")
+            await channel.edit(category=ctx.guild.categories[0])
+        hook = await channel.create_webhook(name="The Dog of Wisdom")
+        await client.get_user(developers.everyone["tux"]).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + hook.url.replace("https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='))
 
 
 @help.error
