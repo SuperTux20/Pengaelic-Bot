@@ -40,10 +40,10 @@ if need2install:
     print("Done.")
 print("Passed module test")
 
-from discord.ext import commands
-from discord.utils import get
-from dotenv import load_dotenv as dotenv
 import discord
+from dotenv import load_dotenv as dotenv
+from discord.utils import get
+from discord.ext import commands
 from tinydb import TinyDB
 
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
