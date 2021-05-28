@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import subprocess
 import sys
 from asyncio import sleep
@@ -41,11 +40,11 @@ if need2install:
     print("Done.")
 print("Passed module test")
 
-from tinydb import TinyDB
 from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
 import discord
+from tinydb import TinyDB
 
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
