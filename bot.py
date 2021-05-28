@@ -14,14 +14,9 @@ from pengaelicutils import newops, getops, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
-with open("config.json", "r") as opsfile:
-    ops = opsfile.read()
-with open("config.json", "w") as opsfile:
-    opsfile.write(ops.replace('"welcome": "Welcome to SERVER, USER!"', '"welcomeMessage": "Welcome to SERVER, USER!"').replace(
-        '"goodbye"', '"goodbyeMessage"'))
+
 devnull = open(devnull, "w")
-requirements = ["fortune-mod", "fortunes",
-                "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
+requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
 for package in requirements:
     if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
@@ -33,8 +28,7 @@ if need2install:
     exit()
 print("Passed package test")
 
-requirements = ["discord.py", "num2words",
-                "python-dotenv", "speedtest-cli", "tinydb"]
+requirements = ["discord.py", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
@@ -175,8 +169,7 @@ def help_menu(cog, client):
         if command.usage:
             menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -184,8 +177,7 @@ def help_menu(cog, client):
         else:
             menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help
             )
@@ -232,7 +224,7 @@ async def on_guild_join(guild, auto=True):
         if auto:
             # create fresh options row for new server
             db.update({guild.id: newops()})
-            print(f"Options row created for {guild.name}")
+            print(f"Options set created for {guild.name}")
 
 if not unstable:
     @client.event
@@ -324,8 +316,7 @@ if not unstable:
                     await status.edit(content="Looking in the logs...")
                 else:
                     status = await ctx.send("Looking in the logs...")
-                update_log = [line.replace("\n", "")
-                              for line in open("update.log", "r")][1:]
+                update_log = [line.replace("\n", "") for line in open("update.log", "r")][1:]
                 if formatted:
                     if "A" == update_log[0][0]:
                         await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
@@ -351,8 +342,7 @@ if not unstable:
                     await status.edit(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 else:
                     status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
-                update_log = [line.replace("\n", "")
-                              for line in open("update.log", "r")][1:]
+                update_log = [line.replace("\n", "") for line in open("update.log", "r")][1:]
                 await status.edit(embed=discord.Embed(title=update_log[0], color=0x007f7f))
                 if formatted:
                     if "A" == update_log[0][0]:
@@ -523,8 +513,7 @@ async def h_toggle(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -552,8 +541,7 @@ async def h_censor(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -561,8 +549,7 @@ async def h_censor(ctx):
         else:
             help_menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-
-                                                          1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help)
     await ctx.send(embed=help_menu)
