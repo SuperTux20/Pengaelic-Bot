@@ -35,8 +35,7 @@ for module in requirements:
         need2install = True
 if need2install:
     print("Installing...")
-    subprocess.check_output(
-        [sys.executable, '-m', 'pip', 'install'] + requirements)
+    subprocess.check_output([sys.executable, '-m', 'pip', 'install'] + requirements)
     print("Done.")
 print("Passed module test")
 
