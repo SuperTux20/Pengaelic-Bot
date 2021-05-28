@@ -3,6 +3,7 @@
 from time import time
 from tinydb import TinyDB
 
+
 def stopwatch(start_time: time):
     elapsed = time() - start_time
     m = elapsed/60
@@ -21,6 +22,7 @@ def stopwatch(start_time: time):
     else:
         return f"{minutes}:{seconds}"
 
+
 def list2str(inlist: list, mode: int = 0):
     # if mode == 0: leave commas and spaces unaffected
     # if mode == 1: remove all separation
@@ -29,15 +31,18 @@ def list2str(inlist: list, mode: int = 0):
     if mode == 1:
         outstr = "".join(inlist)
     else:
-        outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "") # remove single quotes and newlines
+        # remove single quotes and newlines
+        outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "")
         if mode == 2:
             outstr = outstr.replace(", ", " ")
         elif mode == 3:
             outstr = outstr.replace(", ", "\n")
     return outstr
 
+
 def remove_duplicates(inlist: list):
     return list(dict.fromkeys(inlist))
+
 
 def newops():
     return {
@@ -52,8 +57,8 @@ def newops():
             "censorList": []
         },
         "messages": {
-            "welcome": "Welcome to SERVER, USER!",
-            "goodbye": "See you later, USER."
+            "welcomeMessage": "Welcome to SERVER, USER!",
+            "goodbyeMessage": "See you later, USER."
         },
         "roles": {
             role_id: None
@@ -76,8 +81,9 @@ def newops():
                 "welcome"
             ]
         },
-        "customRoles":{}
+        "customRoles": {}
     }
+
 
 def getops(guild: str, category: str = None, option: str = None):
     db = TinyDB("config.json")
@@ -87,10 +93,12 @@ def getops(guild: str, category: str = None, option: str = None):
         if options["lists"]["censorList"] == []:
             options["lists"]["censorList"] = None
         else:
-            options["lists"]["censorList"] = list2str(options["lists"]["censorList"])
+            options["lists"]["censorList"] = list2str(
+                options["lists"]["censorList"])
     else:
         options = options[str(guild)][category][option]
     return options
+
 
 def updop(guild: str, category: str, option: str, value):
     db = TinyDB("config.json")

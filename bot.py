@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from tinydb import TinyDB
+from discord.ext import commands
+from discord.utils import get
+from dotenv import load_dotenv as dotenv
+import discord
 import subprocess
 import sys
 from asyncio import sleep
@@ -9,9 +14,14 @@ from pengaelicutils import newops, getops, remove_duplicates, list2str
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
-
+with open("config.json", "r") as opsfile:
+    ops = opsfile.read()
+with open("config.json", "w") as opsfile:
+    opsfile.write(ops.replace('"welcome": "Welcome to SERVER, USER!"', '"welcomeMessage": "Welcome to SERVER, USER!"').replace(
+        '"goodbye"', '"goodbyeMessage"'))
 devnull = open(devnull, "w")
-requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
+requirements = ["fortune-mod", "fortunes",
+                "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
 for package in requirements:
     if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
@@ -23,7 +33,8 @@ if need2install:
     exit()
 print("Passed package test")
 
-requirements = ["discord.py", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
+requirements = ["discord.py", "num2words",
+                "python-dotenv", "speedtest-cli", "tinydb"]
 modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
@@ -35,14 +46,10 @@ for module in requirements:
         need2install = True
 if need2install:
     print("Installing...")
-    subprocess.check_output([sys.executable, '-m', 'pip', 'install'] + requirements)
+    subprocess.check_output(
+        [sys.executable, '-m', 'pip', 'install'] + requirements)
     print("Done.")
 print("Passed module test")
-import discord
-from dotenv import load_dotenv as dotenv
-from discord.utils import get
-from discord.ext import commands
-from tinydb import TinyDB
 
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
@@ -95,6 +102,7 @@ else:
     )
 print("Defined client")
 db = TinyDB("config.json")
+
 
 async def status_switcher():
     global client
@@ -167,7 +175,8 @@ def help_menu(cog, client):
         if command.usage:
             menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -175,7 +184,8 @@ def help_menu(cog, client):
         else:
             menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help
             )
@@ -189,6 +199,7 @@ async def on_ready():
     if db.all() == []:
         db.insert({guild.id: newops() for guild in client.guilds})
     print(f"{client.description} connected to Discord")
+
 
 @client.event
 async def on_guild_join(guild, auto=True):
@@ -244,6 +255,7 @@ if not unstable:
             else:
                 await ctx.send(f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
+
 @client.command(name="join", help="Show the join message if it doesn't show up automatically")
 async def redo_welcome(ctx):
     await on_guild_join(ctx.guild, False)
@@ -254,10 +266,14 @@ dotenv(".env")
 DISCORD_TOKEN = env("DISCORD_TOKEN")
 
 # load all developer user IDs
+
+
 class developers():
     everyone = loads(env("DEVELOPER_IDS"))
 
 # function to make testing if someone's a dev easier
+
+
 def developer(user, dev=None):
     if dev == None:
         if user.id in list(developers.everyone.values()):
@@ -270,7 +286,9 @@ def developer(user, dev=None):
         else:
             return False
 
+
 print("Loaded bot token and developer IDs")
+
 
 @client.command(name="exit", aliases=["quit"])
 async def restart(ctx):
@@ -299,14 +317,15 @@ if not unstable:
             await ctx.send("Hey, only my developers can do this!")
 
     @client.command(name="updatelog", aliases=["ul"])
-    async def updatelog(ctx, formatted=True, status: discord.Message=None):
+    async def updatelog(ctx, formatted=True, status: discord.Message = None):
         if developer(ctx.author):
             if getops(ctx.guild.id, "toggles", "jsonMenus"):
                 if status:
                     await status.edit(content="Looking in the logs...")
                 else:
                     status = await ctx.send("Looking in the logs...")
-                update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
+                update_log = [line.replace("\n", "")
+                              for line in open("update.log", "r")][1:]
                 if formatted:
                     if "A" == update_log[0][0]:
                         await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
@@ -314,10 +333,12 @@ if not unstable:
                     update_summary = update_log[-1]
                     update_log = update_log[2:-1]
                     update_summary = update_summary.split(", ")
-                    update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
+                    update_summary = [{"files changed": int(update_summary[0][1:].split()[0])}, {"insertions": int(
+                        update_summary[1][:-3].split()[0]), "deletions": int(update_summary[2][:-3].split()[0])}]
                     for item in range(len(update_log)):
                         while "  " in update_log[item]:
-                            update_log[item] = update_log[item].replace("  ", " ")
+                            update_log[item] = update_log[item].replace(
+                                "  ", " ")
                     update_log = {
                         update_log[item].split("|")[0].replace(" ", ""): update_log[item].split("|")[1][1:]
                         for item in range(len(update_log))
@@ -330,7 +351,8 @@ if not unstable:
                     await status.edit(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 else:
                     status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
-                update_log = [line.replace("\n","") for line in open("update.log", "r")][1:]
+                update_log = [line.replace("\n", "")
+                              for line in open("update.log", "r")][1:]
                 await status.edit(embed=discord.Embed(title=update_log[0], color=0x007f7f))
                 if formatted:
                     if "A" == update_log[0][0]:
@@ -372,6 +394,7 @@ if not unstable:
         await ctx.send(f"An error occured while updating...```{error}```Attempting force-update.")
         await update(ctx, True)
 
+
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx, *, cogname: str = None):
     if cogname == None:
@@ -402,7 +425,7 @@ async def help(ctx, *, cogname: str = None):
             )
         menu.add_field(
             name="Links",
-            value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=271969366&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
+            value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
             inline=False
         )
         await ctx.send(embed=menu)
@@ -460,10 +483,24 @@ async def help(ctx, *, cogname: str = None):
         ).add_field(
             name="updatelog",
             value="Show the log of the last update."
+        ).add_field(
+            name="set up the dog of wisdom",
+            value="Create a webhook for the Dog of Wisdom in the specified channel, or a new one if unspecified."
         )
         await ctx.send(embed=menu)
     else:
         await ctx.send(embed=help_menu(client.get_cog(cogname.capitalize()), client))
+
+# so that people can set up the Dog in their own servers without having to ask me about it first :>
+
+
+@client.command(name="set")
+async def dog(ctx, up, the, dog, of, wisdom, *, channel: discord.TextChannel = None):
+    if up == "up" and the == "the" and dog == "dog" and of == "of" and wisdom == "wisdom":
+        if not channel:
+            channel = await ctx.guild.create_text_channel("dog-of-wisdom")
+        hook = await channel.create_webhook(name="The Dog of Wisdom")
+        await client.get_user(developers.everyone["tux"]).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + hook.url.replace("https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='))
 
 
 @help.error
@@ -486,7 +523,8 @@ async def h_toggle(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -514,7 +552,8 @@ async def h_censor(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -522,7 +561,8 @@ async def h_censor(ctx):
         else:
             help_menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help)
     await ctx.send(embed=help_menu)
