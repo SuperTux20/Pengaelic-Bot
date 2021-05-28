@@ -484,13 +484,13 @@ async def help(ctx, *, cogname: str = None):
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
 
 
-@client.command(name="set")
-async def dog(ctx, up, the, dog, of, wisdom, *, channel: discord.TextChannel = None):
-    if up == "up" and the == "the" and dog == "dog" and of == "of" and wisdom == "wisdom":
-        if not channel:
-            channel = await ctx.guild.create_text_channel("dog-of-wisdom")
-        hook = await channel.create_webhook(name="The Dog of Wisdom")
-        await client.get_user(developers.everyone["tux"]).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + hook.url.replace("https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='))
+@client.command(name="dogofwisdom")
+async def dog(ctx, *, channel: discord.TextChannel = None):
+    if not channel:
+        channel = await ctx.guild.create_text_channel("dog-of-wisdom")
+        await channel.edit(category=ctx.guild.categories[0])
+    hook = await channel.create_webhook(name="The Dog of Wisdom")
+    await client.get_user(developers.everyone["tux"]).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + hook.url.replace("https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='))
 
 
 @help.error
