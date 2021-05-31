@@ -283,7 +283,7 @@ print("Loaded bot token and developer IDs")
 
 
 @client.command(name="exit", aliases=["quit"])
-async def restart(ctx):
+async def quit_the_bot(ctx):
     if ctx.author.id in developers.everyone:
         await ctx.send("Goodbye...")
         exit(0)
