@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from tinydb import TinyDB
+from discord.ext import commands
+from discord.utils import get
+from dotenv import load_dotenv as dotenv
+import discord
 import subprocess
 import sys
 from asyncio import sleep
@@ -11,7 +16,8 @@ from random import choice, randint
 print("Imported modules")
 
 devnull = open(devnull, "w")
-requirements = ["fortune-mod", "fortunes", "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
+requirements = ["fortune-mod", "fortunes",
+                "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
 need2install = False
 for package in requirements:
     if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
@@ -23,7 +29,8 @@ if need2install:
     exit()
 print("Passed package test")
 
-requirements = ["discord.py", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
+requirements = ["discord.py", "num2words",
+                "python-dotenv", "speedtest-cli", "tinydb"]
 modules = [
     r.decode().split('==')[0]
     for r in subprocess.check_output([sys.executable, '-m', 'pip', 'freeze']).split()
@@ -35,15 +42,11 @@ for module in requirements:
         need2install = True
 if need2install:
     print("Installing...")
-    subprocess.check_output([sys.executable, '-m', 'pip', 'install'] + requirements)
+    subprocess.check_output(
+        [sys.executable, '-m', 'pip', 'install'] + requirements)
     print("Done.")
 print("Passed module test")
 
-import discord
-from dotenv import load_dotenv as dotenv
-from discord.utils import get
-from discord.ext import commands
-from tinydb import TinyDB
 
 if any(tuxPC in hostname() for tuxPC in ["Mintguin", "Winguin", "Pengwindows"]):
     unstable = True
@@ -59,7 +62,7 @@ info = r"""
 |__\______|__|
 
 Pengaelic Bot - the custom-built Discord bot, coded in Python
-Copyright (C) 2020 Tux Penguin | https://github.com/SuperTux20/Pengaelic-Bot/
+Copyright (C) 2020-2021 Tux Penguin | https://github.com/SuperTux20/Pengaelic-Bot/
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -157,30 +160,44 @@ async def status_switcher():
         await sleep(randint(2, 10) * 60)
 
 
-def help_menu(cog, client):
-    menu = discord.Embed(
-        title=cog.name.capitalize(),
-        description=cog.description_long,
-        color=0x007f7f
-    ).set_footer(
-        text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
-    )
-    for command in cog.get_commands():
-        if command.usage:
-            menu.add_field(
-                name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
-                    command.usage
-                ),
-                value=command.help
-            )
-        else:
-            menu.add_field(
-                name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
-                ),
-                value=command.help
-            )
+def help_menu(guild, cog, client):
+    if getops(guild, "toggles", "jsonMenus"):
+        menu = dumps(
+            {
+                cog.name: {
+                    "description": cog.description_long
+                } | {
+                    list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in cog.get_commands()
+                }
+            },
+            indent=4
+        )
+    else:
+        menu = discord.Embed(
+            title=cog.name.capitalize(),
+            description=cog.description_long,
+            color=0x007f7f
+        ).set_footer(
+            text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
+        )
+        for command in cog.get_commands():
+            if command.usage:
+                menu.add_field(
+                    name="({})\n{}".format(
+                        str([command.name] + command.aliases)[1:-
+                                                              1].replace("'", "").replace(", ", "/"),
+                        command.usage
+                    ),
+                    value=command.help
+                )
+            else:
+                menu.add_field(
+                    name="({})".format(
+                        str([command.name] + command.aliases)[1:-
+                                                              1].replace("'", "").replace(", ", "/")
+                    ),
+                    value=command.help
+                )
     return menu
 
 
@@ -316,7 +333,8 @@ if not unstable:
                     await status.edit(content="Looking in the logs...")
                 else:
                     status = await ctx.send("Looking in the logs...")
-                update_log = [line.replace("\n", "") for line in open("update.log", "r")][1:]
+                update_log = [line.replace("\n", "")
+                              for line in open("update.log", "r")][1:]
                 if formatted:
                     if "A" == update_log[0][0]:
                         await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
@@ -342,7 +360,8 @@ if not unstable:
                     await status.edit(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 else:
                     status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
-                update_log = [line.replace("\n", "") for line in open("update.log", "r")][1:]
+                update_log = [line.replace("\n", "")
+                              for line in open("update.log", "r")][1:]
                 await status.edit(embed=discord.Embed(title=update_log[0], color=0x007f7f))
                 if formatted:
                     if "A" == update_log[0][0]:
@@ -479,7 +498,7 @@ async def help(ctx, *, cogname: str = None):
         )
         await ctx.send(embed=menu)
     else:
-        await ctx.send(embed=help_menu(client.get_cog(cogname.capitalize()), client))
+        await ctx.send(embed=help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
 
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
 
@@ -514,7 +533,8 @@ async def h_toggle(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -542,7 +562,8 @@ async def h_censor(ctx):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"),
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/"),
                     command.usage
                 ),
                 value=command.help
@@ -550,7 +571,8 @@ async def h_censor(ctx):
         else:
             help_menu.add_field(
                 name="({})".format(
-                    str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")
+                    str([command.name] + command.aliases)[1:-
+                                                          1].replace("'", "").replace(", ", "/")
                 ),
                 value=command.help)
     await ctx.send(embed=help_menu)
