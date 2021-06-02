@@ -498,7 +498,10 @@ async def help(ctx, *, cogname: str = None):
         )
         await ctx.send(embed=menu)
     else:
-        await ctx.send(embed=help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
+        if getops(ctx.guild.id, "toggles", "jsonMenus"):
+            await ctx.send(help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
+        else:
+            await ctx.send(embed=help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
 
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
 
