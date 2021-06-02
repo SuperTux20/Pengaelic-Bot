@@ -105,3 +105,7 @@ def updop(guild: str, category: str, option: str, value):
     options = db.all()[0][str(guild)]
     options[category][option] = value
     db.update({guild: options})
+
+
+def jsoncheck(guild: str):
+    return getops(guild, "toggles", "jsonMenus")

@@ -4,9 +4,10 @@ import discord
 from asyncio import sleep
 from discord.ext import commands
 from json import dumps
-from pengaelicutils import newops, getops, updop
+from pengaelicutils import newops, getops, updop, jsoncheck
 from random import choice
 from tinydb import TinyDB
+
 
 class Options(commands.Cog):
     def __init__(self, client):
@@ -37,12 +38,14 @@ class Options(commands.Cog):
             options.pop("customRoles")
             for option, value in options["channels"].items():
                 try:
-                    options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name
+                    options["channels"][option] = "#" + \
+                        ctx.guild.get_channel(int(value)).name
                 except TypeError:
                     pass
             for option, value in options["roles"].items():
                 try:
-                    options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
+                    options["roles"][option] = "@" + \
+                        ctx.guild.get_role(int(value)).name
                 except TypeError:
                     pass
             jsoninfo = str(
@@ -87,7 +90,8 @@ class Options(commands.Cog):
                     for option in category[1].items():
                         channels.add_field(
                             name=option[0],
-                            value=f"{option[1]}".replace("None", "No Channel Set")
+                            value=f"{option[1]}".replace(
+                                "None", "No Channel Set")
                         )
                 elif category[0] == "lists":
                     for option in category[1].items():
@@ -111,9 +115,10 @@ class Options(commands.Cog):
                     for option in category[1].items():
                         toggles.add_field(
                             name=option[0],
-                            value=str(option[1]).replace("False", "Disabled").replace("True", "Enabled")
+                            value=str(option[1]).replace(
+                                "False", "Disabled").replace("True", "Enabled")
                         )
-            if getops(ctx.guild.id, "toggles", "jsonMenus"):
+            if jsoncheck(ctx.guild.id):
                 await ctx.send(f"```json\n{jsoninfo}\n```")
             else:
                 for embed in [header, channels, lists, messages, roles, toggles]:
@@ -331,6 +336,7 @@ class Options(commands.Cog):
                 await ctx.send(f"{ctx.author.mention}, that isn't a valid role.")
         else:
             await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+
 
 def setup(client):
     client.add_cog(Options(client))

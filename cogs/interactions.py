@@ -7,6 +7,7 @@ from os import listdir
 from json import dumps
 from pengaelicutils import getops
 
+
 class Interactions(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -162,127 +163,6 @@ class Interactions(commands.Cog):
             squish
         )
 
-    async def giveitem(self, ctx, item, person2give2):
-        persongiving = ctx.author.display_name.replace(
-            "_",
-            r"\_"
-        )
-        for char in self.formatChars:
-            persongiving = persongiving.replace(
-                char,
-                "\\" + char
-            )
-        try:
-            persongetting = person2give2.display_name.replace(
-                "_",
-                r"\_"
-            )
-            for char in self.formatChars:
-                persongetting = persongetting.replace(
-                    char,
-                    "\\" + char
-                )
-        except:
-            await ctx.send(f"You can't just give a {item} to thin air! (Unless you're giving it to a ghost?)")
-            return
-        if person2give2 == ctx.author:
-            await ctx.send(f"You didn't give the {item} to anyone in particular")
-        else:
-            await ctx.send(
-                embed=discord.Embed(
-                    title=f"{persongiving} gave a {item} to {persongetting}",
-                    color=self.teal
-                )
-            )
-            if person2give2.bot:
-                await ctx.send(f"Sorry, you can't give foods to bots...")
-                if person2give2.id == self.client.user.id:
-                    await ctx.send(f"Thanks anyway.")
-
-    @commands.command(name="give", help="Give someone something to eat!", usage=" <username, nickname, or @mention> <item>")
-    async def give(self, ctx, member: discord.Member = None, *, item=None):
-        items = {
-            "candies": [
-                "3 musketeers",
-                "cake",
-                "chocolate bar",
-                "cookie",
-                "kitkat",
-                "snickers",
-                "truffle"
-            ],
-            "dinners": [
-                "burger",
-                "burrito",
-                "lasagna",
-                "taco"
-            ],
-            "drinks": [
-                "dr. pepper",
-                "coke",
-                "mcdonald's sprite",
-                "pepsi",
-                "root beer",
-                "sprite",
-                "water"
-            ],
-            "fruits": [
-                "apple",
-                "banana",
-                "handful of berries",
-                "orange",
-                "peach",
-                "pear"
-            ],
-            "sandwiches": [
-                "blt",
-                "club sandwich",
-                "cuban sandwich",
-                "grilled cheese",
-                "pb&j",
-                "reuben"
-            ]
-        }
-        if member == None or type(item) is not str:
-            if getops(ctx.guild.id, "toggles", "jsonMenus"):
-                await ctx.send(f"""availableFoodItems:
-```json
-{
-    dumps(
-        items,
-        indent = 4
-    )
-}
-```"""
-)
-            else:
-                embed = discord.Embed(
-                    color=self.teal,
-                    title="Available food items"
-                )
-                for food_type in items:
-                    embed.add_field(
-                        name=food_type,
-                        value=items[food_type]
-                    )
-                await ctx.send(embed)
-        else:
-            tests = {
-                food_type: True
-                for food_type in items
-            }
-            for food_type in list(items.keys()):
-                if item in items[food_type]:
-                    await self.giveitem(
-                        ctx,
-                        item,
-                        member
-                    )
-                else:
-                    tests[food_type] = False
-            if True not in list(tests.values()):
-                await ctx.send("That item isn't in the list!")
-
     @commands.command(name="slap", help="Slap someone!", usage="<username or nickname or @mention>")
     async def slap(self, ctx, *, slap: discord.Member = None):
         await self.vact(
@@ -333,12 +213,12 @@ class Interactions(commands.Cog):
     @tickle.error
     @kiss.error
     @squish.error
-    @give.error
     async def error(self, ctx, error):
         if "Member" in str(error) and "not found" in str(error):
             await ctx.send("Invalid user specified!")
         else:
             await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+
 
 def setup(client):
     client.add_cog(Interactions(client))

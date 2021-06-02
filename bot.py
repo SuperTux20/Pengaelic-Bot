@@ -10,7 +10,7 @@ import sys
 from asyncio import sleep
 from json import loads, dumps
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull
-from pengaelicutils import newops, getops, remove_duplicates, list2str
+from pengaelicutils import newops, getops, remove_duplicates, list2str, jsoncheck
 from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
@@ -105,64 +105,72 @@ async def status_switcher():
     global client
     await client.wait_until_ready()
     while client.is_ready:
-        artist = choice([
-            "Tux Penguin",
-            "Qumu",
-            "Robotic Wisp",
-            "xGravity",
-            "Nick Nitro",
-            "ynk",
-            "KidoKat",
-            "Jesse Cook",
-            "musical rock",
-            "SharaX"
-        ])
-        game = choice([
-            "Minecraft",
-            "OpenRA",
-            "3D Pinball: Space Cadet",
-            "SuperTux",
-            "Project Muse",
-            "Shattered Pixel Dungeon",
-            "Super Hexagon",
-            "osu!",
-            "AstroMenace",
-            "Space Pirates and Zombies"
-        ])
-        moviesyt = choice([
-            "Ethoslab",
-            "MumboJumbo",
-            "Blue Television Games",
-            "The King of Random",
-            "Phoenix SC",
-            "Avengers: Endgame",
-            "Avengers: Infinity War",
-            "Star Wars Episode IV: A New Hope",
-            "Spiderman: Into the Spiderverse",
-            "Back to the Future"
-        ])
-        activity = choice([
-            discord.Activity(
-                type=discord.ActivityType.listening,
-                name=artist
-            ),
-            discord.Activity(
-                type=discord.ActivityType.playing,
-                name=game
-            ),
-            discord.Activity(
-                type=discord.ActivityType.watching,
-                name=moviesyt
-            )
-        ])
+        artist = choice(
+            [
+                "Tux Penguin",
+                "Qumu",
+                "Chipzel",
+                "Gooseworx",
+                "Nick Nitro",
+                "Zakarra",
+                "Kawai Sprite",
+                "Jesse Cook",
+                "Chai Tea Music",
+                "SharaX"
+            ]
+        )
+        game = choice(
+            [
+                "Minecraft",
+                "OpenRA",
+                "3D Pinball: Space Cadet",
+                "SuperTux",
+                "Project Arrhythmia",
+                "Shattered Pixel Dungeon",
+                "Super Hexagon",
+                "Slime Rancher",
+                "AstroMenace",
+                "Space Pirates and Zombies"
+            ]
+        )
+        moviesyt = choice(
+            [
+                "Ethoslab",
+                "MumboJumbo",
+                "Blue Television Games",
+                "The King of Random",
+                "Alan Becker",
+                "Avengers: Endgame",
+                "Avengers: Infinity War",
+                "Star Wars Episode IV: A New Hope",
+                "Spiderman: Into the Spiderverse",
+                "Back to the Future"
+            ]
+        )
+        activity = choice(
+            [
+                discord.Activity(
+                    type=discord.ActivityType.listening,
+                    name=artist
+                ),
+                discord.Activity(
+                    type=discord.ActivityType.playing,
+                    name=game
+                ),
+                discord.Activity(
+                    type=discord.ActivityType.watching,
+                    name=moviesyt
+                )
+            ]
+        )
         await client.change_presence(activity=activity)
         # task runs every few minutes (random 2-10)
         await sleep(randint(2, 10) * 60)
 
 
 def help_menu(guild, cog, client):
-    if getops(guild, "toggles", "jsonMenus"):
-        menu = dumps(
+    if jsoncheck(guild):
+        menu = "```json\n" + dumps(
             {
                 cog.name: {
                     "description": cog.description_long
@@ -171,7 +179,7 @@ def help_menu(guild, cog, client):
                 }
             },
             indent=4
-        )
+        ) + "```"
     else:
         menu = discord.Embed(
             title=cog.name.capitalize(),
@@ -325,16 +333,18 @@ if not unstable:
         else:
             await ctx.send("Hey, only my developers can do this!")
 
-    @client.command(name="updatelog", aliases=["ul"])
+    @client.command(name="updatelog", aliases=["ul", "ulog"])
     async def updatelog(ctx, formatted=True, status: discord.Message = None):
         if developer(ctx.author):
-            if getops(ctx.guild.id, "toggles", "jsonMenus"):
+            if jsoncheck(ctx.guild.id):
                 if status:
                     await status.edit(content="Looking in the logs...")
                 else:
                     status = await ctx.send("Looking in the logs...")
-                update_log = [line.replace("\n", "")
-                              for line in open("update.log", "r")][1:]
+                update_log = [
+                    line.replace("\n", "")
+                    for line in open("update.log", "r")
+                ][1:]
                 if formatted:
                     if "A" == update_log[0][0]:
                         await status.edit(content=f'```json\n"{list2str(update_log[0][:-1].split()[1:], 2)}": true```')
@@ -360,8 +370,10 @@ if not unstable:
                     await status.edit(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
                 else:
                     status = await ctx.send(embed=discord.Embed(title="Looking in the logs...", color=0x007f7f))
-                update_log = [line.replace("\n", "")
-                              for line in open("update.log", "r")][1:]
+                update_log = [
+                    line.replace("\n", "")
+                    for line in open("update.log", "r")
+                ][1:]
                 await status.edit(embed=discord.Embed(title=update_log[0], color=0x007f7f))
                 if formatted:
                     if "A" == update_log[0][0]:
@@ -381,7 +393,7 @@ if not unstable:
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
         if developer(ctx.author):
-            if getops(ctx.guild.id, "toggles", "jsonMenus"):
+            if jsoncheck(ctx.guild.id):
                 status = await ctx.send("Pulling the latest commits from GitHub...")
             else:
                 status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub...", color=0x007f7f))
@@ -407,56 +419,61 @@ if not unstable:
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
 async def help(ctx, *, cogname: str = None):
     if cogname == None:
-        menu = discord.Embed(
-            title=client.description,
-            description=f"Type `{client.command_prefix}help `**`<lowercase category name without spaces or dashes>`** for more info on each category.",
-            color=0x007f7f
-        )
         cogs = dict(client.cogs)
         cogs.pop("Options")
         cogs.pop("NonCommands")
-        for cog in cogs:
-            menu.add_field(
-                name=cogs[cog].name.capitalize(),
-                value=cogs[cog].description
+        if jsoncheck(ctx.guild.id):
+            info = {
+                client.description:
+                    {
+                        "help": f"type {client.command_prefix}help <category name without spaces or dashes> for more info on each category."
+                    } | {
+                        cogs[cog].name: cogs[cog].description.lower()
+                        for cog in cogs
+                    }
+            }
+            if not isinstance(ctx.channel, discord.channel.DMChannel):
+                info |= {
+                    "options": client.get_cog("Options").description.lower()
+                }
+            if developer(ctx.author):
+                info |= {
+                    "control": "update, restart, that sort of thing"
+                }
+            menu = dumps(
+                info,
+                indent=4
             )
-        if not isinstance(ctx.channel, discord.channel.DMChannel):
+            await ctx.send(f"```json\n{menu}```")
+        else:
+            menu = discord.Embed(
+                title=client.description,
+                description=f"Type `{client.command_prefix}help `**`<lowercase category name without spaces or dashes>`** for more info on each category.",
+                color=0x007f7f
+            )
+            for cog in cogs:
+                menu.add_field(
+                    name=cogs[cog].name.capitalize(),
+                    value=cogs[cog].description
+                )
+            if not isinstance(ctx.channel, discord.channel.DMChannel):
+                menu.add_field(
+                    name="Options",
+                    value=client.get_cog("Options").description,
+                    inline=False
+                )
+            if developer(ctx.author):
+                menu.add_field(
+                    name="Control",
+                    value="Update, restart, that sort of thing.",
+                    inline=False
+                )
             menu.add_field(
-                name="Options",
-                value=client.get_cog("Options").description,
+                name="Links",
+                value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
                 inline=False
             )
-        if developer(ctx.author):
-            menu.add_field(
-                name="Control",
-                value="Update, restart, that sort of thing.",
-                inline=False
-            )
-        menu.add_field(
-            name="Links",
-            value=f"My official [support server](https://discord.gg/DHHpA7k)\n[Invite me](https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot) to your own server\nMy [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)",
-            inline=False
-        )
-        await ctx.send(embed=menu)
-    elif cogname == "all":
-        menu = discord.Embed(
-            title=client.description,
-            description="ALL COMMANDS across ALL MODULES for the ENTIRE BOT",
-            color=0x007f7f
-        )
-        cogs = dict(client.cogs)
-        cogs.pop("NonCommands")
-        for cog in cogs:
-            menu.add_field(
-                name=dict(client.cogs)[cog].name.capitalize(),
-                value=str(
-                    [
-                        command.qualified_name
-                        for command in dict(client.cogs)[cog].walk_commands()
-                    ]
-                )[1:-1].replace("'", "").replace(", ", "\n")
-            )
-        await ctx.send(embed=menu)
+            await ctx.send(embed=menu)
     elif cogname == "options":
         menu = discord.Embed(
             title="Options",
@@ -498,7 +515,7 @@ async def help(ctx, *, cogname: str = None):
         )
         await ctx.send(embed=menu)
     else:
-        if getops(ctx.guild.id, "toggles", "jsonMenus"):
+        if jsoncheck(ctx.guild.id):
             await ctx.send(help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
         else:
             await ctx.send(embed=help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))

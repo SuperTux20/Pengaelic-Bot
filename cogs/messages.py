@@ -2,8 +2,9 @@
 
 import discord
 from discord.ext import commands
-from pengaelicutils import getops
+from pengaelicutils import jsoncheck
 from json import dumps
+
 
 class Messages(commands.Cog):
     def __init__(self, client):
@@ -26,7 +27,7 @@ class Messages(commands.Cog):
             "Main Developer and Creator": "chickenmeister",
             "Current Host": "Hyperfresh"
         }
-        if getops(ctx.guild.id, "toggles", "jsonMenus"):
+        if jsoncheck(ctx.guild.id):
             bot_credits = {
                 cred.lower(): bot_credits[cred]
                 for cred in bot_credits
@@ -48,6 +49,7 @@ class Messages(commands.Cog):
                     value=bot_credits[cred]
                 )
             await ctx.send(embed=embed)
+
 
 def setup(client):
     client.add_cog(Messages(client))
