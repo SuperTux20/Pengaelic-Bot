@@ -520,6 +520,8 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
 async def not_a_cog(ctx, error):
     if str(error) == "AttributeError: 'NoneType' object has no attribute 'name'":
         await ctx.send("There isn't a help menu for that.")
+    else:
+        await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
 
 
 @help.command(name="toggle")
