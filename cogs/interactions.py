@@ -163,6 +163,21 @@ class Interactions(commands.Cog):
             squish
         )
 
+    @commands.command(name="nom", help="Sqweesh someone's face >3<", usage="<username or nickname or @mention>")
+    async def nom(self, ctx, *, nom: discord.Member = None):
+        await self.act(
+            ctx,
+            [
+                "You break all meaning of Euclidean space and eat yourself.",
+                "You pull your reflection out of the mirror and eat them.",
+                "You shove your hand into your mouth, then give up."
+            ],
+            "nom",
+            "nommed",
+            "nomming",
+            nom
+        )
+
     @commands.command(name="slap", help="Slap someone!", usage="<username or nickname or @mention>")
     async def slap(self, ctx, *, slap: discord.Member = None):
         await self.vact(
