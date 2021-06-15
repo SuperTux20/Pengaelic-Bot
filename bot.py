@@ -170,16 +170,20 @@ async def status_switcher():
 
 def help_menu(guild, cog, client):
     if jsoncheck(guild):
-        menu = "```json\n" + dumps(
-            {
-                cog.name: {
-                    "description": cog.description_long
-                } | {
-                    list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in cog.get_commands()
-                }
-            },
-            indent=4
-        ) + "```"
+        try:
+            menu = f'```json\n"{cog.name}": "{cog.description_long.lower()}",\n"commands": ' + dumps(
+                {
+                    list2str([command.name] + command.aliases, 0).replace(", ", "/"): command.usage.split("\n") for command in cog.get_commands()
+                },
+                indent=4
+            ) + "```"
+        except AttributeError:
+            menu = f'```json\n"{cog.name}": "{cog.description_long.lower()}",\n"commands": ' + dumps(
+                {
+                    list2str([command.name] + command.aliases, 0).replace(", ", "/"): command.usage for command in cog.get_commands()
+                },
+                indent=4
+            ) + "```"
     else:
         menu = discord.Embed(
             title=cog.name.capitalize(),
@@ -424,17 +428,12 @@ async def help(ctx, *, cogname: str = None):
         cogs.pop("NonCommands")
         if jsoncheck(ctx.guild.id):
             info = {
-                client.description:
-                    {
-                        "help": f"type {client.command_prefix}help <category name without spaces or dashes> for more info on each category."
-                    } | {
-                        cogs[cog].name: cogs[cog].description.lower()
-                        for cog in cogs
-                    }
+                cogs[cog].name: cogs[cog].description.lower()[:-1]
+                for cog in cogs
             }
             if not isinstance(ctx.channel, discord.channel.DMChannel):
                 info |= {
-                    "options": client.get_cog("Options").description.lower()
+                    "options": client.get_cog("Options").description.lower()[:-1]
                 }
             if developer(ctx.author):
                 info |= {
@@ -444,7 +443,7 @@ async def help(ctx, *, cogname: str = None):
                 info,
                 indent=4
             )
-            await ctx.send(f"```json\n{menu}```")
+            await ctx.send(f'```json\n"help": "type {client.command_prefix}help <category name without spaces or dashes> for more info on each category",\n"pengaelic bot": {menu}```')
         else:
             menu = discord.Embed(
                 title=client.description,
@@ -475,45 +474,73 @@ async def help(ctx, *, cogname: str = None):
             )
             await ctx.send(embed=menu)
     elif cogname == "options":
-        menu = discord.Embed(
-            title="Options",
-            description=client.get_cog("Options").description_long,
-            color=0x007f7f
-        ).set_footer(text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with")
-        for command in client.get_cog("Options").get_commands():
-            menu.add_field(
-                name="options",
-                value="Show the current values of all options."
+        if jsoncheck(ctx.guild.id):
+            await ctx.send(
+                f'```json\n"options": "{client.get_cog("Options").description_long.lower()}",\n"commands": ' + dumps(
+                    {
+                        list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in client.get_cog("Options").get_commands()
+                    } | {
+                        list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in list(client.get_cog("Options").get_commands()[0].walk_commands()) if command.parents[0] == client.get_cog("Options").get_commands()[0]
+                    },
+                    indent=4
+                ) + "```"
             )
-        for subcommand in list(command.walk_commands()):
-            if subcommand.parents[0] == command:
-                menu.add_field(name=subcommand.name, value=subcommand.help)
-        await ctx.send(embed=menu)
+        else:
+            menu = discord.Embed(
+                title="Options",
+                description=client.get_cog("Options").description_long,
+                color=0x007f7f
+            ).set_footer(text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with")
+            for command in client.get_cog("Options").get_commands():
+                menu.add_field(
+                    name="options",
+                    value="Show the current values of all options."
+                )
+            for subcommand in list(command.walk_commands()):
+                if subcommand.parents[0] == command:
+                    menu.add_field(name=subcommand.name, value=subcommand.help)
+            await ctx.send(embed=menu)
     elif cogname == "control" and developer(ctx.author):
-        menu = discord.Embed(
-            title="Control",
-            description="Commands for developers to control the bot itself.",
-            color=0x007f7f
-        ).add_field(
-            name="exit",
-            value="Shut off the bot."
-        ).add_field(
-            name="restart",
-            value="Reload the bot."
-        ).add_field(
-            name="update",
-            value="Check if there's new commits on GitHub, and if there are, pull them and restart."
-        ).add_field(
-            name="forceupdate",
-            value="Same as update, but it always restarts regardless of what the update log says, because I'm sure I fucked up the regular update command somehow."
-        ).add_field(
-            name="updatelog",
-            value="Show the log of the last update."
-        ).add_field(
-            name="set up the dog of wisdom",
-            value="Create a webhook for the Dog of Wisdom in the specified channel, or a new one if unspecified."
-        )
-        await ctx.send(embed=menu)
+        if jsoncheck(ctx.guild.id):
+            await ctx.send(
+                f'```json\n"control": "update, restart, that sort of thing",\n"commands": ' + dumps(
+                    [
+                        "exit",
+                        "restart",
+                        "udpate",
+                        "forceupdate",
+                        "udpatelog",
+                        "dogofwisdom"
+                    ],
+                    indent=4
+                ) + "```"
+            )
+        else:
+            await ctx.send(
+                embed=discord.Embed(
+                    title="Control",
+                    description="Commands for developers to control the bot itself.",
+                    color=0x007f7f
+                ).add_field(
+                    name="exit",
+                    value="Shut off the bot."
+                ).add_field(
+                    name="restart",
+                    value="Reload the bot."
+                ).add_field(
+                    name="update",
+                    value="Check if there's new commits on GitHub, and if there are, pull them and restart."
+                ).add_field(
+                    name="forceupdate",
+                    value="Same as update, but it always restarts regardless of what the update log says, because I'm sure I fucked up the regular update command somehow."
+                ).add_field(
+                    name="updatelog",
+                    value="Show the log of the last update."
+                ).add_field(
+                    name="dogofwisdom",
+                    value="Create a webhook for the Dog of Wisdom in the specified channel, or a new one if unspecified."
+                )
+            )
     else:
         if jsoncheck(ctx.guild.id):
             await ctx.send(help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
