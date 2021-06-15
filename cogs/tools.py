@@ -14,6 +14,7 @@ from re import search
 from subprocess import check_output
 from tinydb import TinyDB
 
+
 class Tools(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -30,7 +31,7 @@ class Tools(commands.Cog):
         global CurrentTime
         global SpeedPerformTime
         CurrentTime = (time.strftime("%d %b %Y %H:%M:%S", time.localtime()))
-        if speed: # record this as the time the speedtest was done
+        if speed:  # record this as the time the speedtest was done
             SpeedPerformTime = CurrentTime
 
     def TestSpeed(self):
@@ -278,14 +279,14 @@ class Tools(commands.Cog):
             async with ctx.typing():
                 await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
             await ctx.channel.send(
-f"""{SpeedPerformTime} South Australia Time
+                f"""{SpeedPerformTime} South Australia Time
 Server: {results["server"]["sponsor"]} {results["server"]["name"]}
 Ping: {results["ping"]} ms
 Download: {round(float((results["download"])/1000000), 2)} Mbps
 Upload: {round(float((results["upload"])/1000000), 2)} Mbps
 
 *Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*"""
-)
+            )
             self.testing = False
         else:
             await ctx.send("A test is already in progress. Please wait...")
@@ -293,14 +294,15 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
     @commands.command(name="role")
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
-        role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+        role_lock = get(ctx.guild.roles, id=getops(
+            ctx.guild.id, "roles", "customRoleLock"))
         if role_lock in member.roles or role_lock == None:
             try:
                 result = getops(ctx.guild.id, "customRoles", str(member.id))
             except KeyError:
                 result = None
             hex_code_match = search(r"(?:[0-9a-fA-F]{3}){1,2}$", color)
-            if result:
+            if result and ctx.guild.get_role(int(result)):
                 if hex_code_match:
                     role = ctx.guild.get_role(int(result))
                     await role.edit(name=role_name, color=discord.Color(int(color, 16)))
@@ -313,7 +315,8 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
                     role_color = discord.Color(int(color, 16))
                     role = await ctx.guild.create_role(name=role_name, colour=role_color)
                     await member.add_roles(role)
-                    updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
+                    updop(ctx.guild.id, "customRoles",
+                          str(member.id), str(role.id))
                     await ctx.send(f"Role {role.mention} created and given.")
                 else:
                     await ctx.send("Invalid hex code.")
@@ -323,7 +326,8 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
     @commands.command(name="delrole")
     async def delrole(self, ctx):
         member = ctx.author
-        role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+        role_lock = get(ctx.guild.roles, id=getops(
+            ctx.guild.id, "roles", "customRoleLock"))
         if role_lock in member.roles or role_lock == None:
             result = getops(ctx.guild.id, "customRoles", str(member.id))
             if result:
@@ -333,7 +337,6 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
                 await ctx.channel.send(f"{member.mention}, you don't have a custom role to remove!")
         else:
             await ctx.channel.send(f"{member.mention}, this is only for users with the {role_lock} role.")
-
 
     @clear.error
     async def clearError(self, ctx, error):
@@ -354,6 +357,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
     @get_avatar.error
     async def avatarError(self, ctx, error):
         await ctx.send("Invalid user specified!")
+
 
 def setup(client):
     client.add_cog(Tools(client))
