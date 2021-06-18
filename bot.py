@@ -10,19 +10,22 @@ from platform import node as hostname
 from random import choice, randint
 print("Imported modules")
 
-devnull = open(devnull, "w")
-requirements = ["fortune-mod", "fortunes",
+if hostname() != "localhost":
+    devnull = open(devnull, "w")
+    requirements = ["fortune-mod", "fortunes",
                 "fortunes-min", "neofetch", "toilet", "toilet-fonts"]
-need2install = False
-for package in requirements:
-    if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
-        print(f"Package {package} not installed.")
-        need2install = True
-devnull.close()
-if need2install:
-    print("Install these with APT.")
-    exit()
-print("Passed package test")
+    need2install = False
+    for package in requirements:
+        if subprocess.call(["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT):
+            print(f"Package {package} not installed.")
+            need2install = True
+    devnull.close()
+    if need2install:
+        print("Install these with APT.")
+        exit()
+    print("Passed package test")
+else:
+    print("Ignored package test")
 
 requirements = ["discord.py", "num2words",
                 "python-dotenv", "speedtest-cli", "tinydb"]
