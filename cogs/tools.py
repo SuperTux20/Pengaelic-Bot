@@ -48,7 +48,7 @@ class Tools(commands.Cog):
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
-        os = (
+        system = (
             check_output(
                 'neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"', shell=True
             )
@@ -64,7 +64,15 @@ class Tools(commands.Cog):
             .decode()
             .split(":")[1][1:-2]
         )
-        await ctx.send(f"I'm running on {os}, kernel version {kernel}.")
+        os = str(check_output("uname -o", shell=True))[2:-3]
+        emoji = ":desktop:"
+        if os == "Android":
+            emoji = "<:android:855493322591830016>"
+        elif os == "GNU/Linux":
+            emoji = "<:linux:855493980267479080>"
+        elif os == "Windows":
+            emoji = "<:windows:855493279797084200>"
+        await ctx.send(f"I'm running on {system}, kernel version {kernel}. {emoji}")
 
     @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
     async def ping(self, ctx):
@@ -80,15 +88,7 @@ class Tools(commands.Cog):
 
     @commands.command(name="test", help="Am I online? I'm not sure.")
     async def test(self, ctx):
-        os = str(check_output("uname -o", shell=True))[2:-3]
-        emoji = ":sunglasses:"
-        if os == "Android":
-            emoji = "<:android:855493322591830016>"
-        elif os == "GNU/Linux":
-            emoji = "<:linux:855493980267479080>"
-        elif os == "Windows":
-            emoji = "<:windows:855493279797084200>"
-        await ctx.send("Yep, I'm alive " + emoji)
+        await ctx.send("Yep, I'm alive :sunglasses:")
 
     @commands.command(
         name="avatar",
