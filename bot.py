@@ -8,7 +8,6 @@ if "3.9" not in pyversion:
     print("Please run Pengaelic Bot with Python 3.9")
     exit()
 
-import subprocess
 from asyncio import sleep
 from json import loads, dumps
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull, environ
@@ -66,7 +65,9 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB
 
-if environ["HOME"] == "/home/tux":  # I would use $USER, but Termux doesn't have that variable. :/
+if (
+    environ["HOME"] == "/home/tux"
+):  # I would use $USER, but Termux doesn't have that variable. :/
     try:
         if args[1]:
             unstable = False
