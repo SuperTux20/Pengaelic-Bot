@@ -31,7 +31,7 @@ class Tools(commands.Cog):
     def UpdateTime(self, speed=False):
         global CurrentTime
         global SpeedPerformTime
-        CurrentTime = time.strftime("%d %b %Y %H:%M:%S", time.localtime())
+        CurrentTime = time.strftime("%a/%b %d/%Y %l:%M:%S %p %Z", time.localtime())
         if speed:  # record this as the time the speedtest was done
             SpeedPerformTime = CurrentTime
 
@@ -64,7 +64,7 @@ class Tools(commands.Cog):
             .decode()
             .split(":")[1][1:-2]
         )
-        os = str(check_output("uname -o", shell=True))[2:-3]
+        os = check_output("uname -o", shell=True).decode()
         emoji = ""
         if os == "Android":
             emoji = "<:android:855493322591830016>"
@@ -326,13 +326,15 @@ class Tools(commands.Cog):
                     ThreadPoolExecutor(), self.TestSpeed
                 )
             await ctx.channel.send(
-                f"""{SpeedPerformTime} South Australia Time
-Server: {results["server"]["sponsor"]} {results["server"]["name"]}
+                embed=discord.Embed(
+                    title="Speedtest Results",
+                    description=f"""Server: {results["server"]["sponsor"]} {results["server"]["name"]}
 Ping: {results["ping"]} ms
 Download: {round(float((results["download"])/1000000), 2)} Mbps
 Upload: {round(float((results["upload"])/1000000), 2)} Mbps
 
-*Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*"""
+*Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*""",
+                ).set_footer(SpeedPerformTime)
             )
             self.testing = False
         else:
