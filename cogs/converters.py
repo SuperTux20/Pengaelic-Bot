@@ -5,10 +5,12 @@ from fnmatch import fnmatch
 from discord.ext import commands
 from random import choice, shuffle
 
+
 class Converters(commands.Cog):
     def __init__(self, client):
         self.client = client
-    teal=0x007f7f
+
+    teal = 0x007F7F
     name = "converters"
     name_typable = name
     description = "Run some text through a converter to make it look funny!"
@@ -20,37 +22,30 @@ class Converters(commands.Cog):
         else:
             return arg
 
-    @commands.command(name="owo", help="Convert whatever text into owo-speak... oh god why did i make this", aliases=["uwu", "furry"], usage="<text to convert>")
+    @commands.command(
+        name="owo",
+        help="Convert whatever text into owo-speak... oh god why did i make this",
+        aliases=["uwu", "furry"],
+        usage="<text to convert>",
+    )
     async def owoConverter(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         await ctx.send(
-            arg.replace(
-                "l",
-                "w"
-            ).replace(
-                "r",
-                "w"
-            ).replace(
-                "t",
-                "tw"
-            ).replace(
-                "twh",
-                "thw"
-            ).replace(
-                "n",
-                "ny"
-            ) + " " + choice(
-                [
-                    "OwO",
-                    "UwU",
-                    "owo",
-                    "uwu",
-                    "^w^"
-                ]
-            )
+            arg.replace("l", "w")
+            .replace("r", "w")
+            .replace("t", "tw")
+            .replace("twh", "thw")
+            .replace("n", "ny")
+            + " "
+            + choice(["OwO", "UwU", "owo", "uwu", "^w^"])
         )
 
-    @commands.command(name="blockify", help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.", aliases=["bigtext", "big"], usage="<text to convert>")
+    @commands.command(
+        name="blockify",
+        help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.",
+        aliases=["bigtext", "big"],
+        usage="<text to convert>",
+    )
     async def big_text(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         alphabet = "qwertyuiopasdfghjklzxcvbnm 1234567890"
@@ -65,7 +60,7 @@ class Converters(commands.Cog):
             "÷": "heavy_division_sign",
             "☼": "high_brightness",
             "♫": "musical_note",
-            "†": "cross"
+            "†": "cross",
         }
         textlist = []
         for char in arg:
@@ -87,7 +82,11 @@ class Converters(commands.Cog):
                         textlist.append(f":regional_indicator_{char.lower()}:")
         await ctx.send(" ".join(textlist).replace("\n ", "\n"))
 
-    @commands.command(name="greekify", help="Make words *look* Greek, but the pronunciation is still almost the same as in English.", usage="<text to convert>")
+    @commands.command(
+        name="greekify",
+        help="Make words *look* Greek, but the pronunciation is still almost the same as in English.",
+        usage="<text to convert>",
+    )
     async def greekify(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         upper_alphabet = {
@@ -128,22 +127,33 @@ class Converters(commands.Cog):
             "W": "ΟΥ",
             "X": "Ξ",
             "Y": "Υ",
-            "Z": "Ζ"
+            "Z": "Ζ",
         }
-        lower_alphabet = {letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet}
+        lower_alphabet = {
+            letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet
+        }
         alphabet = {**upper_alphabet, **lower_alphabet}
         for letter in alphabet:
             arg = arg.replace(letter, alphabet[letter])
         await ctx.send(arg)
 
-    @commands.command(name="stroke", help="Shuffle a message", aliases=["shuffle", "mixup"], usage="<text to convert>")
+    @commands.command(
+        name="stroke",
+        help="Shuffle a message",
+        aliases=["shuffle", "mixup"],
+        usage="<text to convert>",
+    )
     async def shuffle(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         to_shuffle = list(arg)
         shuffle(to_shuffle)
         await ctx.send("".join(to_shuffle))
 
-    @commands.command(name="strokebyword", help="Shuffle the individual words instead of the entire message.", usage="<text to convert>")
+    @commands.command(
+        name="strokebyword",
+        help="Shuffle the individual words instead of the entire message.",
+        usage="<text to convert>",
+    )
     async def shufflebyword(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         words_to_shuffle = arg.split()
@@ -153,12 +163,22 @@ class Converters(commands.Cog):
             words_to_shuffle[to_shuffle] = "".join(words_to_shuffle[to_shuffle])
         await ctx.send(" ".join(words_to_shuffle))
 
-    @commands.command(name="spacer", help="Insert spaces between every character", aliases=["space", "gaps"], usage="<text to convert>")
+    @commands.command(
+        name="spacer",
+        help="Insert spaces between every character",
+        aliases=["space", "gaps"],
+        usage="<text to convert>",
+    )
     async def spacer(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
-        await ctx.send(" ".join(arg[i:i + 1] for i in range(0, len(arg), 1)))
+        await ctx.send(" ".join(arg[i : i + 1] for i in range(0, len(arg), 1)))
 
-    @commands.command(name="wingdings", help="You heard what the River Person said.", aliases=["dings", "gaster", "wd"], usage="<text to convert>")
+    @commands.command(
+        name="wingdings",
+        help="You heard what the River Person said.",
+        aliases=["dings", "gaster", "wd"],
+        usage="<text to convert>",
+    )
     async def dings(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         alphabet = {
@@ -188,14 +208,19 @@ class Converters(commands.Cog):
             "X": ":diamond_shape_with_a_dot_inside:",
             "Y": ":star_of_david:",
             "Z": ":star_and_crescent:",
-            " ": "<:empty:829895556217569290>"
+            " ": "<:empty:829895556217569290>",
         }
         to_convert = arg.upper()
         for letter in alphabet:
             to_convert = to_convert.replace(letter, alphabet[letter])
         await ctx.send(to_convert)
 
-    @commands.command(name="sga", help="Ever wanted to speak Enchanting Table?", aliases=["enchant", "enchantingtable"], usage="<text to convert>")
+    @commands.command(
+        name="sga",
+        help="Ever wanted to speak Enchanting Table?",
+        aliases=["enchant", "enchantingtable"],
+        usage="<text to convert>",
+    )
     async def sga(self, ctx, *, arg=None):
         arg = await self.test_for_content(ctx, arg)
         alphabet = {
@@ -240,13 +265,21 @@ class Converters(commands.Cog):
     @dings.error
     @sga.error
     async def overcharlimit(self, ctx, error):
-        if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be 2000 or fewer in length.""":
-            await ctx.send("Sending all that would put me over the 2000-character limit!")
+        if (
+            str(error)
+            == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be 2000 or fewer in length."""
+        ):
+            await ctx.send(
+                "Sending all that would put me over the 2000-character limit!"
+            )
         elif str(error) == "arg is a required argument that is missing.":
             await ctx.send("You didn't specify any text to convert!")
         else:
-            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+            await ctx.send(
+                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+            )
+
 
 def setup(client):
     client.add_cog(Converters(client))

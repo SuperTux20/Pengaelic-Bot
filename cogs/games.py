@@ -1,19 +1,29 @@
+# -*- coding: utf-8 -*-
+
 from discord.ext import commands
 from random import choice, randint
+
 
 class Games(commands.Cog):
     def __init__(self, client):
         self.client = client
+
     name = "games"
     name_typable = name
     description = "All sorts of fun stuff!"
     description_long = description
 
-    @commands.command(name="8ball", help="Ask the ball and receive wisdom... :eyes:", aliases=["magic8ball"], usage="[question]")
+    @commands.command(
+        name="8ball",
+        help="Ask the ball and receive wisdom... :eyes:",
+        aliases=["magic8ball"],
+        usage="[question]",
+    )
     async def magic_8_ball(self, ctx, *, question=None):
         if question:
             await ctx.send(
-                ":8ball:" + choice(
+                ":8ball:"
+                + choice(
                     choice(
                         [
                             [
@@ -36,8 +46,9 @@ class Games(commands.Cog):
                                 "The universe is weird sometimes... I can't find an answer",
                                 "Try again, but harder",
                                 "Try again later",
-                                "Why would you ask such a stupid question?"
-                            ], [
+                                "Why would you ask such a stupid question?",
+                            ],
+                            [
                                 "Don’t count on it",
                                 "Don’t count on it, buster",
                                 "Heck no",
@@ -53,12 +64,13 @@ class Games(commands.Cog):
                                 "Outlook not so good",
                                 "Outlook not so good. Use Gmail instead",
                                 "Pfft, don’t count on it",
-                                "The law requires that I answer \"no\"",
+                                'The law requires that I answer "no"',
                                 "Very doubtful",
                                 "Uh, no",
                                 ":thumbsdown:",
-                                ":x:"
-                            ], [
+                                ":x:",
+                            ],
+                            [
                                 "Absolutely",
                                 "Always",
                                 "Always and forever",
@@ -78,8 +90,9 @@ class Games(commands.Cog):
                                 "mhm",
                                 "Most likely",
                                 "Obviously",
-                                "Oh yeah"
-                            ], [
+                                "Oh yeah",
+                            ],
+                            [
                                 "Outlook good",
                                 "Pfft, yeah!",
                                 "Probably lol",
@@ -99,8 +112,8 @@ class Games(commands.Cog):
                                 "Yes",
                                 "You may rely on it",
                                 ":thumbsup:",
-                                ":white_check_mark:"
-                            ]
+                                ":white_check_mark:",
+                            ],
                         ]
                     )
                 )
@@ -108,7 +121,12 @@ class Games(commands.Cog):
         else:
             await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
-    @commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)]\n[number of sides (6)]")
+    @commands.command(
+        name="roll",
+        help="Roll some dice!",
+        aliases=["dice"],
+        usage="[number of dice (1)]\n[number of sides (6)]",
+    )
     async def roll_dice(self, ctx, dice: int = 1, sides: int = 6):
         if dice == 0:
             response = "You didn't roll any dice."
@@ -127,7 +145,9 @@ class Games(commands.Cog):
             response = f"{sides}-sided dice? That's just silly."
         else:
             side_list = [side for side in range(1, sides)]
-            roll_results = [side_list[randint(0,side_list[-1]) - 1] for _ in range(dice)]
+            roll_results = [
+                side_list[randint(0, side_list[-1]) - 1] for _ in range(dice)
+            ]
             total = sum(roll_results)
             if dice > 1:
                 if len(str(roll_results[:-1])[1:-1]) < 2000:
@@ -138,7 +158,12 @@ class Games(commands.Cog):
                 response = str(total)
         await ctx.send(":game_die:You rolled " + response)
 
-    @commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip"], usage="[number of coins (1)]")
+    @commands.command(
+        name="flip",
+        help="Flip some coins!",
+        aliases=["coin", "coinflip"],
+        usage="[number of coins (1)]",
+    )
     async def flip_coins(self, ctx, coins: int = 1):
         if coins == 1:
             response = f"You flipped a {choice(['head', 'tail'])}"
@@ -152,30 +177,32 @@ class Games(commands.Cog):
             if coins > 1000000:
                 response = f"{coins} coins? That's just silly."
             else:
-                results = [randint(0,2) for _ in range(coins)]
+                results = [randint(0, 2) for _ in range(coins)]
                 for _ in range(10):
                     if 2 in results:
                         for result in range(len(results)):
                             if results[result] == 2:
-                                results[result] = randint(0,2)
+                                results[result] = randint(0, 2)
                 if results.count(2) > 0:
                     if results.count(2) == 1:
                         response = ", and a coin even landed on its edge."
                     else:
-                        response = f", and {results.count(2)} coins landed on their edges."
+                        response = (
+                            f", and {results.count(2)} coins landed on their edges."
+                        )
                 else:
                     response = "."
                 response = f"You flipped {results.count(0)} heads and {results.count(1)} tails{response}"
         await ctx.send(":moneybag:" + response)
 
-    @commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (False)]")
+    @commands.command(
+        name="draw",
+        help="Draw some cards!",
+        aliases=["card"],
+        usage="[number of cards (1)]\n[replace cards in deck (False)]",
+    )
     async def draw_cards(self, ctx, cards: int = 1, replace_cards: bool = False):
-        suits = [
-            "Diamonds",
-            "Spades",
-            "Hearts",
-            "Clubs"
-        ]
+        suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
         values = {
             1: "Ace",
             2: 2,
@@ -189,7 +216,7 @@ class Games(commands.Cog):
             10: 10,
             11: "Jack",
             12: "Queen",
-            13: "King"
+            13: "King",
         }
         all_cards = []
         faces = []
@@ -198,14 +225,19 @@ class Games(commands.Cog):
         if replace_cards:
             for _ in range(cards):
                 random_value = str(choice(list(values.values())))
-                card = str(random_value + (" " * (6 - len(random_value))) + "of " + choice(suits))
+                card = str(
+                    random_value
+                    + (" " * (6 - len(random_value)))
+                    + "of "
+                    + choice(suits)
+                )
                 if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
                     faces.append(card)
                 else:
                     numbers.append(card)
             drawn = faces + numbers
         else:
-            for suit in range(int(len(suits)/1)):
+            for suit in range(int(len(suits) / 1)):
                 for value in values:
                     if value == 10:
                         length = 2
@@ -217,17 +249,26 @@ class Games(commands.Cog):
                         length = 5
                     else:
                         length = 1
-                    all_cards.append(str(values[value]) + (" " * (6 - length)) + "of " + suits[suit])
+                    all_cards.append(
+                        str(values[value]) + (" " * (6 - length)) + "of " + suits[suit]
+                    )
             if cards > 52:
                 await ctx.send(":black_joker:You can't draw more than the entire deck!")
                 return
             elif cards == 52:
-                await ctx.send(":black_joker:You picked up the entire deck. What was the point of that?")
+                await ctx.send(
+                    ":black_joker:You picked up the entire deck. What was the point of that?"
+                )
                 return
             else:
                 for _ in range(cards):
                     card = choice(all_cards)
-                    if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":
+                    if (
+                        card[1] == "0"
+                        or card[1] == "1"
+                        or card[1] == "2"
+                        or card[1] == "3"
+                    ):
                         faces.append(card)
                     else:
                         numbers.append(card)
@@ -238,9 +279,18 @@ class Games(commands.Cog):
                 drawn[0] = drawn[0].replace("  ", " ")
             await ctx.send(f":black_joker:You drew {drawn[0]}")
         else:
-            await ctx.send(":black_joker:You drew...```{}```".format(str(drawn)[1:-1].replace("'", "").replace(", ", "\n")))
+            await ctx.send(
+                ":black_joker:You drew...```{}```".format(
+                    str(drawn)[1:-1].replace("'", "").replace(", ", "\n")
+                )
+            )
 
-    @commands.command(name="pop", help="Get a sheet of bubble wrap! Click to pop.", aliases=["bubblewrap", "bubbles"], usage="[size of sheet (5x5 or 5)")
+    @commands.command(
+        name="pop",
+        help="Get a sheet of bubble wrap! Click to pop.",
+        aliases=["bubblewrap", "bubbles"],
+        usage="[size of sheet (5x5 or 5)",
+    )
     async def bubblewrap(self, ctx, size: str = "5"):
         try:
             if len(size) == 5:
@@ -260,15 +310,23 @@ class Games(commands.Cog):
                 width = int(size)
                 height = int(size)
             else:
-                raise(SyntaxError)
+                raise (SyntaxError)
             if width > 10 or height > 10:
-                raise(SyntaxError)
+                raise (SyntaxError)
         except SyntaxError:
-            await ctx.send("Invalid size parameter. Use just a single number or two numbers with an `x` in between (e.g. `3x5`), and no larger than `10x10`")
+            await ctx.send(
+                "Invalid size parameter. Use just a single number or two numbers with an `x` in between (e.g. `3x5`), and no larger than `10x10`"
+            )
             return
         sheet = ""
         for _ in range(height):
-            sheet = sheet + str(["||pop||" for _ in range(width)])[1:-1].replace("'", "").replace(", ", "") + "\n"
+            sheet = (
+                sheet
+                + str(["||pop||" for _ in range(width)])[1:-1]
+                .replace("'", "")
+                .replace(", ", "")
+                + "\n"
+            )
         await ctx.send(sheet)
 
     @magic_8_ball.error
@@ -277,11 +335,19 @@ class Games(commands.Cog):
     @draw_cards.error
     @bubblewrap.error
     async def error(self, ctx, error):
-        if str(error) == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be 2000 or fewer in length.""":
-            await ctx.send("Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!")
+        if (
+            str(error)
+            == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be 2000 or fewer in length."""
+        ):
+            await ctx.send(
+                "Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!"
+            )
         else:
-            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+            await ctx.send(
+                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+            )
+
 
 def setup(client):
     client.add_cog(Games(client))

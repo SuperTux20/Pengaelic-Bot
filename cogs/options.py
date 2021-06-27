@@ -12,8 +12,9 @@ from tinydb import TinyDB
 class Options(commands.Cog):
     def __init__(self, client):
         self.client = client
+
     db = TinyDB("config.json")
-    teal = 0x007f7f
+    teal = 0x007F7F
     wipe_censor_confirm = False
     reset_options_confirm = False
     name = "options"
@@ -38,85 +39,78 @@ class Options(commands.Cog):
             options.pop("customRoles")
             for option, value in options["channels"].items():
                 try:
-                    options["channels"][option] = "#" + \
-                        ctx.guild.get_channel(int(value)).name
+                    options["channels"][option] = (
+                        "#" + ctx.guild.get_channel(int(value)).name
+                    )
                 except TypeError:
                     pass
             for option, value in options["roles"].items():
                 try:
-                    options["roles"][option] = "@" + \
-                        ctx.guild.get_role(int(value)).name
+                    options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
                 except TypeError:
                     pass
             jsoninfo = str(
-                dumps(
-                    {"options": options},
-                    sort_keys=True,
-                    indent=4
-                )[6:-2].replace("\n    ", "\n")
+                dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
+                    "\n    ", "\n"
+                )
             )
             header = discord.Embed(
                 title="Options",
                 description=f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"`',
-                color=self.teal
+                color=self.teal,
             )
             channels = discord.Embed(
                 title="Channels",
                 description="Channels for specific functions.",
-                color=self.teal
+                color=self.teal,
             )
             lists = discord.Embed(
                 title="Lists",
                 description="List items, such as the censor.",
-                color=self.teal
+                color=self.teal,
             )
             messages = discord.Embed(
                 title="Messages",
                 description="Custom messages for joining/leaving, and whatever else may be added. The all-caps keywords should be pretty self-explanatory.",
-                color=self.teal
+                color=self.teal,
             )
             roles = discord.Embed(
                 title="Roles",
                 description="Roles for specific functions.",
-                color=self.teal
+                color=self.teal,
             )
             toggles = discord.Embed(
-                title="Toggles",
-                description="Toggleable options.",
-                color=self.teal
+                title="Toggles", description="Toggleable options.", color=self.teal
             )
             for category in options.items():
                 if category[0] == "channels":
                     for option in category[1].items():
                         channels.add_field(
                             name=option[0],
-                            value=f"{option[1]}".replace(
-                                "None", "No Channel Set")
+                            value=f"{option[1]}".replace("None", "No Channel Set"),
                         )
                 elif category[0] == "lists":
                     for option in category[1].items():
                         lists.add_field(
                             name=option[0],
-                            value=str(option[1]).replace("None", "Empty")
+                            value=str(option[1]).replace("None", "Empty"),
                         )
                 elif category[0] == "messages":
                     for option in category[1].items():
-                        messages.add_field(
-                            name=option[0],
-                            value=str(option[1])
-                        )
+                        messages.add_field(name=option[0], value=str(option[1]))
                 elif category[0] == "roles":
                     for option in category[1].items():
                         roles.add_field(
                             name=option[0],
-                            value=f"{option[1]}".replace("None", "No Role Set")
+                            value=f"{option[1]}".replace("None", "No Role Set"),
                         )
                 elif category[0] == "toggles":
                     for option in category[1].items():
                         toggles.add_field(
                             name=option[0],
-                            value=str(option[1]).replace(
-                                "False", "Disabled").replace("True", "Enabled")
+                            value=str(option[1])
+                            .replace("False", "Disabled")
+                            .replace("True", "Enabled"),
                         )
             if jsoncheck(ctx.guild.id):
                 await ctx.send(f"```json\n{jsoninfo}\n```")
@@ -124,11 +118,15 @@ class Options(commands.Cog):
                 for embed in [header, channels, lists, messages, roles, toggles]:
                     await ctx.send(embed=embed)
 
-    @read_options.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
+    @read_options.command(
+        name="reset", help="Reset to the default options.", aliases=["defaults"]
+    )
     @commands.has_permissions(manage_messages=True)
     async def reset_options(self, ctx):
         if not self.reset_options_confirm:
-            await ctx.send("Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds.")
+            await ctx.send(
+                "Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
+            )
             self.reset_options_confirm = True
             await sleep(10)
             if self.reset_options_confirm:
@@ -150,47 +148,108 @@ class Options(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send("You didn't specify a valid option to set!")
 
-    @optoggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
+    @optoggle.command(
+        name="censor",
+        help="Toggle the automatic deletion of messages containing specific keywords.",
+        aliases=["filter"],
+    )
     @commands.has_permissions(manage_messages=True)
     async def toggle_censor(self, ctx):
-        await self.toggle_option(ctx, "censor", "Censorship turned off.", "Censorship turned on.")
+        await self.toggle_option(
+            ctx, "censor", "Censorship turned off.", "Censorship turned on."
+        )
 
-    @optoggle.command(name="dadJokes", help="Toggle the automatic Dad Bot-like responses to messages starting with \"I'm\".")
+    @optoggle.command(
+        name="dadJokes",
+        help='Toggle the automatic Dad Bot-like responses to messages starting with "I\'m".',
+    )
     @commands.has_permissions(manage_messages=True)
     async def toggle_dad_jokes(self, ctx):
-        await self.toggle_option(ctx, "dadJokes", "Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)", "Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)")
+        await self.toggle_option(
+            ctx,
+            "dadJokes",
+            "Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)",
+            "Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)",
+        )
 
-    @optoggle.command(name="deadChat", help="Toggle the automatic \"no u\" response to someone saying \"dead chat\".")
+    @optoggle.command(
+        name="deadChat",
+        help='Toggle the automatic "no u" response to someone saying "dead chat".',
+    )
     @commands.has_permissions(manage_messages=True)
     async def toggle_dead_chat(self, ctx):
-        await self.toggle_option(ctx, "deadChat", "The server lives! (dead chat jokes turned off)", f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)")
+        await self.toggle_option(
+            ctx,
+            "deadChat",
+            "The server lives! (dead chat jokes turned off)",
+            f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)",
+        )
 
-    @optoggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
+    @optoggle.command(
+        name="jsonMenus",
+        help="Change whether menus should be shown in embed or JSON format.",
+    )
     @commands.has_permissions(manage_messages=True)
     async def toggle_json(self, ctx):
-        await self.toggle_option(ctx, "jsonMenus", "Menus will be shown in embed format.", "Menus will be shown in JSON format.")
+        await self.toggle_option(
+            ctx,
+            "jsonMenus",
+            "Menus will be shown in embed format.",
+            "Menus will be shown in JSON format.",
+        )
 
-    @optoggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
+    @optoggle.command(
+        name="lockCustomRoles",
+        help="Change whether custom roles should be locked to members with only a specific role.",
+    )
     @commands.has_permissions(manage_roles=True)
     async def toggle_role_lock(self, ctx):
-        await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. Use `{self.client.command_prefix}options set customRoleLock <role name>` to set what role they should be locked behind.")
+        await self.toggle_option(
+            ctx,
+            "lockCustomRoles",
+            "Custom roles are now available to everyone.",
+            f"Custom roles are now locked. Use `{self.client.command_prefix}options set customRoleLock <role name>` to set what role they should be locked behind.",
+        )
 
-    @optoggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
+    @optoggle.command(
+        name="suggestions",
+        help="Turn automatic poll-making on or off. This does not effect the p!suggest command.",
+    )
     @commands.has_permissions(manage_messages=True)
     async def toggle_suggestions(self, ctx):
-        await self.toggle_option(ctx, "suggestions", "Auto-suggestions turned off.", "Auto-suggestions turned on.")
+        await self.toggle_option(
+            ctx,
+            "suggestions",
+            "Auto-suggestions turned off.",
+            "Auto-suggestions turned on.",
+        )
 
-    @optoggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
+    @optoggle.command(
+        name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off."
+    )
     @commands.has_permissions(manage_messages=True)
     async def toggle_rick_roulette(self, ctx):
-        await self.toggle_option(ctx, "rickRoulette", "You know the rules, and so do I. (Rick Roulette turned off)", "You know the rules, it's time to die. (Rick Roulette turned on)")
+        await self.toggle_option(
+            ctx,
+            "rickRoulette",
+            "You know the rules, and so do I. (Rick Roulette turned off)",
+            "You know the rules, it's time to die. (Rick Roulette turned on)",
+        )
 
     @optoggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
-        await self.toggle_option(ctx, "welcome", "Welcome messages turned off.", "Welcome messages turned on.")
+        await self.toggle_option(
+            ctx,
+            "welcome",
+            "Welcome messages turned off.",
+            "Welcome messages turned on.",
+        )
 
-    @opset.command(name="customRoleLock", help="Set what role is required to use custom roles (if they're locked in the first place)")
+    @opset.command(
+        name="customRoleLock",
+        help="Set what role is required to use custom roles (if they're locked in the first place)",
+    )
     @commands.has_permissions(manage_roles=True)
     async def change_required_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "customRoleLock", role.id)
@@ -208,25 +267,37 @@ class Options(commands.Cog):
         updop(ctx.guild.id, "roles", "muteRole", role.id)
         await ctx.send(f"Role {role} is now set as the muted role.")
 
-    @opset.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
+    @opset.command(
+        name="suggestionsChannel",
+        help="Set what channel auto-suggestions should be converted in.",
+    )
     @commands.has_permissions(manage_roles=True)
     async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
         updop(ctx.guild.id, "channels", "suggestionsChannel", channel.id)
         await ctx.send(f"Channel {channel} is now the suggestions channel.")
 
-    @opset.command(name="welcomeChannel", help="Set what channel welcome messages should be sent in.")
+    @opset.command(
+        name="welcomeChannel",
+        help="Set what channel welcome messages should be sent in.",
+    )
     @commands.has_permissions(manage_roles=True)
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
         updop(ctx.guild.id, "channels", "welcomeChannel", channel.id)
         await ctx.send(f"Channel {channel} is now the welcome channel.")
 
-    @opset.command(name="welcomeMessage", help="Set what message should be sent in the welcome channel when someone joins.")
+    @opset.command(
+        name="welcomeMessage",
+        help="Set what message should be sent in the welcome channel when someone joins.",
+    )
     @commands.has_permissions(manage_roles=True)
     async def change_welcome_message(self, ctx, *, message: str):
         updop(ctx.guild.id, "messages", "welcomeMessage", message)
         await ctx.send(f'Welcome message set to "{message}".')
 
-    @opset.command(name="goodbyeMessage", help="Set what message should be sent in the welcome channel when someone leaves.")
+    @opset.command(
+        name="goodbyeMessage",
+        help="Set what message should be sent in the welcome channel when someone leaves.",
+    )
     @commands.has_permissions(manage_roles=True)
     async def change_goodbye_message(self, ctx, *, message: str):
         updop(ctx.guild.id, "messages", "goodbyeMessage", message)
@@ -235,18 +306,30 @@ class Options(commands.Cog):
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`")
+            await ctx.send(
+                "Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`"
+            )
 
-    @censor.command(name="show", help="Display the contents of the censorship filter.", aliases=["list", "get"])
+    @censor.command(
+        name="show",
+        help="Display the contents of the censorship filter.",
+        aliases=["list", "get"],
+    )
     @commands.has_permissions(manage_messages=True)
     async def show_censor(self, ctx):
         all_bads = list(getops(ctx.guild.id, "censorList"))
-        if all_bads == ['']:
+        if all_bads == [""]:
             await ctx.send("Filter is empty.")
         else:
-            await ctx.send(f'```json\n"censor list": {dumps(all_bads, indent=4, sort_keys=True)}\n```')
+            await ctx.send(
+                f'```json\n"censor list": {dumps(all_bads, indent=4, sort_keys=True)}\n```'
+            )
 
-    @censor.command(name="add", help="Add a word to the censorship filter.", usage="<one phrase ONLY>")
+    @censor.command(
+        name="add",
+        help="Add a word to the censorship filter.",
+        usage="<one phrase ONLY>",
+    )
     @commands.has_permissions(manage_messages=True)
     async def add_censor(self, ctx, word):
         all_bads = getops(ctx.guild.id, "censorList")
@@ -256,15 +339,15 @@ class Options(commands.Cog):
         else:
             all_bads.append(word)
             all_bads.sort()
-            updop(
-                ctx.guild.id,
-                "lists",
-                "censorList",
-                all_bads
-            )
+            updop(ctx.guild.id, "lists", "censorList", all_bads)
             await ctx.send("Word added to the filter.")
 
-    @censor.command(name="delete", help="Remove a word from the censorship filter.", usage="<one phrase ONLY>", aliases=["remove"])
+    @censor.command(
+        name="delete",
+        help="Remove a word from the censorship filter.",
+        usage="<one phrase ONLY>",
+        aliases=["remove"],
+    )
     @commands.has_permissions(manage_messages=True)
     async def del_censor(self, ctx, word):
         all_bads = getops(ctx.guild.id, "censorList")
@@ -274,31 +357,23 @@ class Options(commands.Cog):
         else:
             all_bads.remove(word)
             all_bads.sort()
-            updop(
-                ctx.guild.id,
-                "lists",
-                "censorList",
-                all_bads
-            )
+            updop(ctx.guild.id, "lists", "censorList", all_bads)
             await ctx.send("Word removed from the filter.")
 
     @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
     async def wipe_censor(self, ctx):
         if not self.wipe_censor_confirm:
-            await ctx.send("Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds.")
+            await ctx.send(
+                "Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds."
+            )
             self.wipe_censor_confirm = True
             await sleep(10)
             if self.wipe_censor_confirm:
                 self.wipe_censor_confirm = False
                 await ctx.send("Pending wipe expired.")
         elif self.wipe_censor_confirm:
-            updop(
-                ctx.guild.id,
-                "lists",
-                "censorList",
-                []
-            )
+            updop(ctx.guild.id, "lists", "censorList", [])
             await ctx.send("Filter wiped.")
             self.wipe_censor_confirm = False
 
@@ -327,15 +402,22 @@ class Options(commands.Cog):
     @del_censor.error
     @wipe_censor.error
     async def messageError(self, ctx, error):
-        if str(error) == "You are missing Manage Messages permission(s) to run this command.":
-            await ctx.send(f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)")
+        if (
+            str(error)
+            == "You are missing Manage Messages permission(s) to run this command."
+        ):
+            await ctx.send(
+                f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
+            )
         if str(error).endswith('" not found.'):
             if str(error).startswith('Channel "'):
                 await ctx.send(f"{ctx.author.mention}, that isn't a valid channel.")
             if str(error).startswith('Role "'):
                 await ctx.send(f"{ctx.author.mention}, that isn't a valid role.")
         else:
-            await ctx.send(f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!")
+            await ctx.send(
+                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+            )
 
 
 def setup(client):

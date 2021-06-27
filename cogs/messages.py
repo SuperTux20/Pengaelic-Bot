@@ -9,7 +9,8 @@ from json import dumps
 class Messages(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.teal = 0x007f7f
+        self.teal = 0x007F7F
+
     name = "messages"
     name_typable = name
     description = "Make me say all sorts of things."
@@ -25,29 +26,25 @@ class Messages(commands.Cog):
     async def credits(self, ctx):
         bot_credits = {
             "Main Developer and Creator": "chickenmeister",
-            "Current Host": "Hyperfresh"
+            "Current Host": "Hyperfresh",
         }
         if jsoncheck(ctx.guild.id):
-            bot_credits = {
-                cred.lower(): bot_credits[cred]
-                for cred in bot_credits
-            }
-            await ctx.send(f"""
+            bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
+            await ctx.send(
+                f"""
 ```json
 "credits": {str(dumps(bot_credits, indent=4))}
 ```
-""")
+"""
+            )
         else:
             embed = discord.Embed(
                 color=self.teal,
                 title="Credits",
-                description="All the people on Discord who helped me become what I am today."
+                description="All the people on Discord who helped me become what I am today.",
             )
             for cred in bot_credits:
-                embed.add_field(
-                    name=cred,
-                    value=bot_credits[cred]
-                )
+                embed.add_field(name=cred, value=bot_credits[cred])
             await ctx.send(embed=embed)
 
 
