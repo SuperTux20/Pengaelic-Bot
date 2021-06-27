@@ -1,9 +1,9 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import sys
+from sys import executable as python, argv as args, version as pyversion
 
-if "3.9" not in sys.version:
+if "3.9" not in pyversion:
     print("Pengaelic Bot requires Python 3.9 to function properly.")
     print("Please run Pengaelic Bot with Python 3.9")
     exit()
@@ -13,11 +13,11 @@ from asyncio import sleep
 from json import loads, dumps
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull, environ
 from pengaelicutils import newops, getops, remove_duplicates, list2str, jsoncheck
-from platform import node as hostname
 from random import choice, randint
+from subprocess import check_output as shell, call, STDOUT
 
 print("Imported modules")
-if environ["SHELL"] != "/data/data/com.termux/files/usr/bin/bash":
+if shell("uname -o", shell=True).decode()[:-1] != "Android":
     devnull = open(devnull, "w")
     requirements = [
         "figlet",
@@ -31,9 +31,7 @@ if environ["SHELL"] != "/data/data/com.termux/files/usr/bin/bash":
     needed = []
     missing_dependencies = False
     for package in requirements:
-        if subprocess.call(
-            ["dpkg", "-s", package], stdout=devnull, stderr=subprocess.STDOUT
-        ):
+        if call(["dpkg", "-s", package], stdout=devnull, stderr=STDOUT):
             needed.append(package)
             missing_dependencies = True
     devnull.close()
@@ -48,8 +46,7 @@ else:
 requirements = ["discord.py", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 needed = []
 modules = [
-    r.decode().split("==")[0]
-    for r in subprocess.check_output([sys.executable, "-m", "pip", "freeze"]).split()
+    r.decode().split("==")[0] for r in shell([python, "-m", "pip", "freeze"]).split()
 ]
 missing_dependencies = False
 for module in requirements:
@@ -59,7 +56,7 @@ for module in requirements:
 if missing_dependencies:
     print("Modules " + list2str(needed, 0, True) + " are not installed.")
     print("Installing them now...")
-    subprocess.check_output([sys.executable, "-m", "pip", "install"] + requirements)
+    shell([python, "-m", "pip", "install"] + requirements)
     print("Done.")
 print("Passed module test")
 
@@ -69,9 +66,9 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB
 
-if "True" in hostname() and "guin" in hostname():
+if environ["USER"] == "tux":
     try:
-        if sys.argv[1]:
+        if args[1]:
             unstable = False
     except IndexError:
         unstable = True
@@ -363,7 +360,7 @@ if not unstable:
             await client.change_presence(
                 activity=discord.Game("Restarting..."), status=discord.Status.dnd
             )
-            execl(sys.executable, sys.executable, *sys.argv)
+            execl(python, python, *args)
         else:
             await ctx.send("Hey, only my developers can do this!")
 

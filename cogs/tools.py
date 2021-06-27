@@ -9,9 +9,10 @@ from discord.ext import commands
 from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
+from os import environ
 from pengaelicutils import getops, updop
 from re import search
-from subprocess import check_output
+from subprocess import check_output as shell
 from tinydb import TinyDB
 
 
@@ -50,7 +51,7 @@ class Tools(commands.Cog):
     async def showOS(self, ctx):
         async with ctx.typing():
             system = (
-                check_output(
+                shell(
                     'neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
                     shell=True,
                 )
@@ -59,21 +60,23 @@ class Tools(commands.Cog):
                 .split("x86")[0][:-1]
             )
             kernel = (
-                check_output(
+                shell(
                     'neofetch | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
                     shell=True,
                 )
                 .decode()
                 .split(":")[1][1:-2]
             )
-        os = check_output("uname -o", shell=True).decode()[:-1]
+        os = shell("uname -o", shell=True).decode()[:-1]
         emoji = ""
         if os == "Android":
             emoji = "<:android:855493322591830016>"
         elif os == "GNU/Linux":
-            emoji = "<:linux:855493980267479080>"
-        elif os == "Windows":
-            emoji = "<:windows:855493279797084200>"
+            try:
+                if environ["WSL_DISTRO_NAME"]:
+                    emoji = "<:windows:855493279797084200>"
+            except KeyError:
+                emoji = "<:linux:855493980267479080>"
         await ctx.send(f"I'm running on {system}, kernel version {kernel} {emoji}")
 
     @commands.command(name="test", help="Am I online? I'm not sure.")
