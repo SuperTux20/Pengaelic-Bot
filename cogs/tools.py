@@ -80,7 +80,15 @@ class Tools(commands.Cog):
 
     @commands.command(name="test", help="Am I online? I'm not sure.")
     async def test(self, ctx):
-        await ctx.send("Yep, I'm alive :sunglasses:")
+        os = str(check_output("uname -o", shell=True))[2:-3]
+        emoji = ":sunglasses:"
+        if os == "Android":
+            emoji = "<:android:855493322591830016>"
+        elif os == "GNU/Linux":
+            emoji = "<:linux:855493980267479080>"
+        elif os == "Windows":
+            emoji = "<:windows:855493279797084200>"
+        await ctx.send("Yep, I'm alive " + emoji)
 
     @commands.command(
         name="avatar",
