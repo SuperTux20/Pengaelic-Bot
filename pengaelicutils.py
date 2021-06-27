@@ -6,11 +6,11 @@ from tinydb import TinyDB
 
 def stopwatch(start_time: time):
     elapsed = time() - start_time
-    m = elapsed/60
+    m = elapsed / 60
     minutes = int(m)
-    s = (m - minutes)*60
+    s = (m - minutes) * 60
     seconds = int(s)
-    ms = int(round(s - seconds, 3)*1000)
+    ms = int(round(s - seconds, 3) * 1000)
     if len(str(minutes)) == 1:
         minutes = f"0{minutes}"
     if len(str(seconds)) == 1:
@@ -23,16 +23,27 @@ def stopwatch(start_time: time):
         return f"{minutes}:{seconds}"
 
 
-def list2str(inlist: list, mode: int = 0):
-    # if mode == 0: leave commas and spaces unaffected
+def list2str(inlist: list, mode: int = 0, add_and: bool = False):
+    # if mode == 0: proper sentence formatting (minus period)
     # if mode == 1: remove all separation
     # if mode == 2: remove commas, leaving spaces behind
     # if mode == 3: replace commas and spaces with newlines
     if mode == 1:
         outstr = "".join(inlist)
     else:
-        # remove single quotes and newlines
-        outstr = str(inlist)[1:-1].replace("'", "").replace("\\n", "")
+        if add_and and len(inlist) > 1:
+            inlist.append(inlist[-1])
+            inlist[-2] = "and"
+        outstr = (
+            str(inlist)[1:-1]
+            .replace("'", "")
+            .replace("\\n", "")  # remove single quotes and newlines
+        )
+        if add_and:
+            if len(inlist) == 3:
+                outstr = "".join(outstr.split(","))  # remove all commas
+            else:
+                outstr = "".join(outstr.rsplit(",", 1))  # remove the last comma
         if mode == 2:
             outstr = outstr.replace(", ", " ")
         elif mode == 3:
@@ -47,18 +58,12 @@ def remove_duplicates(inlist: list):
 def newops():
     return {
         "channels": {
-            channel_id: None
-            for channel_id in [
-                "suggestionsChannel",
-                "welcomeChannel"
-            ]
+            channel_id: None for channel_id in ["suggestionsChannel", "welcomeChannel"]
         },
-        "lists": {
-            "censorList": []
-        },
+        "lists": {"censorList": []},
         "messages": {
             "welcomeMessage": "Welcome to SERVER, USER!",
-            "goodbyeMessage": "See you later, USER."
+            "goodbyeMessage": "See you later, USER.",
         },
         "roles": {
             role_id: None
@@ -78,10 +83,10 @@ def newops():
                 "lockCustomRoles",
                 "rickRoulette",
                 "suggestions",
-                "welcome"
+                "welcome",
             ]
         },
-        "customRoles": {}
+        "customRoles": {},
     }
 
 
@@ -93,8 +98,7 @@ def getops(guild: str, category: str = None, option: str = None):
         if options["lists"]["censorList"] == []:
             options["lists"]["censorList"] = None
         else:
-            options["lists"]["censorList"] = list2str(
-                options["lists"]["censorList"])
+            options["lists"]["censorList"] = list2str(options["lists"]["censorList"])
     else:
         options = options[str(guild)][category][option]
     return options
