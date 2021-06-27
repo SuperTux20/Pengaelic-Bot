@@ -66,7 +66,7 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB
 
-if environ["USER"] == "tux":
+if environ["HOME"] == "/home/tux":  # I would use $USER, but Termux doesn't have that variable. :/
     try:
         if args[1]:
             unstable = False
