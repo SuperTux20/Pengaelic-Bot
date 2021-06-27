@@ -72,7 +72,7 @@ class Tools(commands.Cog):
             emoji = "<:linux:855493980267479080>"
         elif os == "Windows":
             emoji = "<:windows:855493279797084200>"
-        await ctx.send(f"I'm running on {system}, kernel version {kernel}. {emoji}")
+        await ctx.send(f"I'm running on {system}, kernel version {kernel} {emoji}")
 
     @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
     async def ping(self, ctx):
