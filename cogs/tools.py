@@ -48,25 +48,25 @@ class Tools(commands.Cog):
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
-        neofetch = check_output("neofetch", shell=True)
-        system = (
-            check_output(
-                '%s | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"' % neofetch,
-                shell=True,
+        async with ctx.typing():
+            system = (
+                check_output(
+                    'neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
+                    shell=True,
+                )
+                .decode()
+                .split(":")[1][1:-2]
+                .split("x86")[0][:-1]
             )
-            .decode()
-            .split(":")[1][1:-2]
-            .split("x86")[0][:-1]
-        )
-        kernel = (
-            check_output(
-                '%s | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"' % neofetch,
-                shell=True,
+            kernel = (
+                check_output(
+                    'neofetch | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
+                    shell=True,
+                )
+                .decode()
+                .split(":")[1][1:-2]
             )
-            .decode()
-            .split(":")[1][1:-2]
-        )
-        os = check_output("uname -o", shell=True).decode()
+        os = check_output("uname -o", shell=True).decode()[:-1]
         emoji = ""
         if os == "Android":
             emoji = "<:android:855493322591830016>"
@@ -324,6 +324,7 @@ Download: {round(float((results["download"])/1000000), 2)} Mbps
 Upload: {round(float((results["upload"])/1000000), 2)} Mbps
 
 *Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*""",
+                    color=0x007F7F,
                 ).set_footer(text=SpeedPerformTime)
             )
             self.testing = False
