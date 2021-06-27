@@ -427,19 +427,18 @@ if not unstable:
                 update_log = [
                     line.replace("\n", "") for line in open("update.log", "r")
                 ][1:]
-                update_number = update_log[0]
                 await status.edit(
-                    embed=discord.Embed(title=update_number, color=0x007F7F)
+                    embed=discord.Embed(title=update_log[0], color=0x007F7F)
                 )
                 if formatted:
                     if "A" == update_log[0][0]:
                         return False
                     else:
                         update_summary = update_log[-1]
-                        update_log = update_log[1:-1]
+                        update_log = update_log[:-1]
                         await status.edit(
                             embed=discord.Embed(
-                                title=update_number,
+                                title=update_log[0],
                                 description=list2str(update_log, 3),
                                 color=0x007F7F,
                             ).set_footer(text=update_summary)
