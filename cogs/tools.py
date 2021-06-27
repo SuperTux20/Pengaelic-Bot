@@ -65,7 +65,7 @@ class Tools(commands.Cog):
             .split(":")[1][1:-2]
         )
         os = str(check_output("uname -o", shell=True))[2:-3]
-        emoji = ":desktop:"
+        emoji = ""
         if os == "Android":
             emoji = "<:android:855493322591830016>"
         elif os == "GNU/Linux":
