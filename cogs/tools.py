@@ -48,9 +48,11 @@ class Tools(commands.Cog):
 
     @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
+        neofetch = check_output("neofetch", shell=True)
         system = (
             check_output(
-                'neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"', shell=True
+                '%s | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"' % neofetch,
+                shell=True,
             )
             .decode()
             .split(":")[1][1:-2]
@@ -58,7 +60,7 @@ class Tools(commands.Cog):
         )
         kernel = (
             check_output(
-                'neofetch | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
+                '%s | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"' % neofetch,
                 shell=True,
             )
             .decode()
@@ -73,18 +75,6 @@ class Tools(commands.Cog):
         elif os == "Windows":
             emoji = "<:windows:855493279797084200>"
         await ctx.send(f"I'm running on {system}, kernel version {kernel} {emoji}")
-
-    @commands.command(name="ping", help="How slow am I to respond?", aliases=["ng"])
-    async def ping(self, ctx):
-        await ctx.send(
-            embed=discord.Embed(
-                title=":ping_pong: Pong!",
-                description=f"{round(self.client.latency * 1000)} ms",
-                color=self.teal,
-            ).set_image(
-                url="https://supertux20.github.io/Pengaelic-Bot/images/gifs/pingpong.gif"
-            )
-        )
 
     @commands.command(name="test", help="Am I online? I'm not sure.")
     async def test(self, ctx):
@@ -317,7 +307,7 @@ class Tools(commands.Cog):
             await ctx.send(embed=embedinfo)
 
     # Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
-    @commands.command(name="speedtest")
+    @commands.command(name="speedtest", aliases=["st", "ping"])
     async def speedtest(self, ctx):
         if self.testing == False:
             self.testing = True
@@ -334,7 +324,7 @@ Download: {round(float((results["download"])/1000000), 2)} Mbps
 Upload: {round(float((results["upload"])/1000000), 2)} Mbps
 
 *Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*""",
-                ).set_footer(SpeedPerformTime)
+                ).set_footer(text=SpeedPerformTime)
             )
             self.testing = False
         else:
