@@ -149,6 +149,19 @@ class Options(commands.Cog):
             await ctx.send("You didn't specify a valid option to set!")
 
     @optoggle.command(
+        name="atSomeone",
+        help="Change whether custom roles should be locked to members with only a specific role.",
+    )
+    @commands.has_permissions(manage_roles=True)
+    async def toggle_at_someone(self, ctx):
+        await self.toggle_option(
+            ctx,
+            "atSomeone",
+            "Server members can no longer ping @someone.",
+            "Server members can now ping @someone.",
+        )
+
+    @optoggle.command(
         name="censor",
         help="Toggle the automatic deletion of messages containing specific keywords.",
         aliases=["filter"],
@@ -212,6 +225,18 @@ class Options(commands.Cog):
         )
 
     @optoggle.command(
+        name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off."
+    )
+    @commands.has_permissions(manage_messages=True)
+    async def toggle_rick_roulette(self, ctx):
+        await self.toggle_option(
+            ctx,
+            "rickRoulette",
+            "You know the rules, and so do I. (Rick Roulette turned off)",
+            "You know the rules, it's time to die. (Rick Roulette turned on)",
+        )
+
+    @optoggle.command(
         name="suggestions",
         help="Turn automatic poll-making on or off. This does not effect the p!suggest command.",
     )
@@ -222,18 +247,6 @@ class Options(commands.Cog):
             "suggestions",
             "Auto-suggestions turned off.",
             "Auto-suggestions turned on.",
-        )
-
-    @optoggle.command(
-        name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off."
-    )
-    @commands.has_permissions(manage_messages=True)
-    async def toggle_rick_roulette(self, ctx):
-        await self.toggle_option(
-            ctx,
-            "rickRoulette",
-            "You know the rules, and so do I. (Rick Roulette turned off)",
-            "You know the rules, it's time to die. (Rick Roulette turned on)",
         )
 
     @optoggle.command(name="welcome", help="Toggle the automatic welcome messages.")

@@ -65,14 +65,8 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB
 
-if (
-    environ["HOME"] == "/home/tux"
-):  # I would use $USER, but Termux doesn't have that variable. :/
-    try:
-        if args[1]:
-            unstable = False
-    except IndexError:
-        unstable = True
+if "--unstable" in args:
+    unstable = True
 else:
     unstable = False
 info = r"""
@@ -124,6 +118,10 @@ else:
     )
 print("Defined client")
 db = TinyDB("config.json")
+
+if "--reset-options" in args:
+    print("Options reset")
+    db.truncate()
 
 
 async def status_switcher():
@@ -250,7 +248,19 @@ async def on_ready():
     global db
     # create a server's configs
     if db.all() == []:
-        db.insert({guild.id: newops() for guild in client.guilds})
+        for server in [{"guildID": guild.id} | newops() for guild in client.guilds]:
+            db.insert(server)
+    else:
+        for server in range(len(db.all())):
+            ops = db.all()[server]
+            ops.pop("guildID")
+            nops = newops()
+            for opts in ops.keys():
+                if opts != newops().keys():
+                    for key in ops[opts]:
+                        nops[opts].pop(key)
+                    ops[opts] |= nops[opts]
+                    db.update(ops)
     print(f"{client.description} connected to Discord")
 
 
@@ -351,17 +361,17 @@ async def quit_the_bot(ctx):
         await ctx.send("Hey, only my developers can do this!")
 
 
-if not unstable:
+if unstable:
 
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
-    async def restart(ctx):
+    async def restart(ctx, *, restargs=""):
         if developer(ctx.author):
             await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
                 activity=discord.Game("Restarting..."), status=discord.Status.dnd
             )
-            execl(python, python, *args)
+            execl(python, python, *[args[0]] + restargs.split())
         else:
             await ctx.send("Hey, only my developers can do this!")
 

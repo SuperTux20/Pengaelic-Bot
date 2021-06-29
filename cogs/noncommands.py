@@ -149,6 +149,15 @@ class NonCommands(commands.Cog):
                 )
                 await message.channel.send(choice(responses))
 
+            # bring back @someone from an april fools update
+            if "@someone" == messagetext and getops(
+                message.guild.id, "toggles", "atSomeone"
+            ):
+                await message.channel.send(
+                    choice(message.guild.members).mention
+                    + ", you have been randomly selected by a @someone ping!"
+                )
+
 
 def setup(client):
     client.add_cog(NonCommands(client))

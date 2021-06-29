@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from time import time
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 
 
 def stopwatch(start_time: time):
@@ -76,6 +76,7 @@ def newops():
         "toggles": {
             toggle_bool: False
             for toggle_bool in [
+                "atSomeone",
                 "censor",
                 "dadJokes",
                 "deadChat",
@@ -92,23 +93,25 @@ def newops():
 
 def getops(guild: str, category: str = None, option: str = None):
     db = TinyDB("config.json")
-    options = db.all()[0]
+    server = Query()
     if option == None:
-        options = dict(sorted(options[str(guild)].items()))
+        options = dict(sorted(db.search(server.guildID == guild)[0].items()))
+        options.pop("guildID")
         if options["lists"]["censorList"] == []:
             options["lists"]["censorList"] = None
         else:
             options["lists"]["censorList"] = list2str(options["lists"]["censorList"])
     else:
-        options = options[str(guild)][category][option]
+        options = db.search(server.guildID == guild)[0][category][option]
     return options
 
 
 def updop(guild: str, category: str, option: str, value):
     db = TinyDB("config.json")
-    options = db.all()[0][str(guild)]
-    options[category][option] = value
-    db.update({guild: options})
+    server = Query()
+    options = db.search(server.guildID == guild)[0][category]
+    options[option] = value
+    db.update({category: options}, server.guildID == guild)
 
 
 def jsoncheck(guild: str):
