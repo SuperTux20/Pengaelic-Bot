@@ -16,17 +16,24 @@ class Messages(commands.Cog):
     description = "Make me say all sorts of things."
     description_long = description + " And possibly make me die inside."
 
-    # @commands.command(name="say", help="I'll repeat whatever you tell me.", pass_context=True, aliases=["repeat", "parrot"], usage="<message>")
-    # async def say_back(self, ctx, *, arg):
-    #     await ctx.send(arg)
-    #     if not isinstance(ctx.channel, discord.channel.DMChannel):
-    #         await ctx.message.delete()
+    @commands.command(
+        name="say",
+        help="I'll repeat whatever you tell me.",
+        pass_context=True,
+        aliases=["repeat", "parrot"],
+        usage="<message>",
+    )
+    async def say_back(self, ctx, *, arg):
+        await ctx.send(arg)
+        if not isinstance(ctx.channel, discord.channel.DMChannel):
+            await ctx.message.delete()
 
     @commands.command(name="credits", help="See who helped me come to exist!")
     async def credits(self, ctx):
         bot_credits = {
-            "Main Developer and Creator": "chickenmeister",
-            "Current Host": "Hyperfresh",
+            "Main Developer and Creator": "Tux Penguin (your local comfort OC dealer#7140)",
+            "Original Host": "Hy Asencion (Hyperfresh#8080)",
+            "Current Host": "Cherry Rain (Cherry, Femboy of Serenity#0356)",
         }
         if jsoncheck(ctx.guild.id):
             bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
