@@ -361,7 +361,7 @@ async def quit_the_bot(ctx):
         await ctx.send("Hey, only my developers can do this!")
 
 
-if unstable:
+if not unstable:
 
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx, *, restargs=""):
