@@ -41,7 +41,7 @@ class NonCommands(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         # for when someone doesn't know what the prefix is
-        if self.client.user.mention == message.content:
+        if "<@!" + str(self.client.user.id) + ">" == message.content:
             await message.channel.send(f"My prefix is `{self.client.command_prefix}`")
         # lowercase everything to make my life easier
         messagetext = message.content.lower()
