@@ -42,12 +42,12 @@ class Options(commands.Cog):
                     options["channels"][option] = (
                         "#" + ctx.guild.get_channel(int(value)).name
                     )
-                except TypeError:
+                except:
                     pass
             for option, value in options["roles"].items():
                 try:
                     options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
-                except TypeError:
+                except:
                     pass
             jsoninfo = str(
                 dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
@@ -390,47 +390,47 @@ class Options(commands.Cog):
             await ctx.send("Filter wiped.")
             self.wipe_censor_confirm = False
 
-    @read_options.error
-    @reset_options.error
-    @optoggle.error
-    @opset.error
-    @toggle_censor.error
-    @toggle_dad_jokes.error
-    @toggle_dead_chat.error
-    @toggle_role_lock.error
-    @toggle_json.error
-    @toggle_rick_roulette.error
-    @toggle_suggestions.error
-    @toggle_welcome.error
-    @change_mod_role.error
-    @change_mute_role.error
-    @change_required_role.error
-    @change_suggestions_channel.error
-    @change_welcome_channel.error
-    @change_welcome_message.error
-    @change_goodbye_message.error
-    @censor.error
-    @show_censor.error
-    @add_censor.error
-    @del_censor.error
-    @wipe_censor.error
-    async def messageError(self, ctx, error):
-        if (
-            str(error)
-            == "You are missing Manage Messages permission(s) to run this command."
-        ):
-            await ctx.send(
-                f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
-            )
-        if str(error).endswith('" not found.'):
-            if str(error).startswith('Channel "'):
-                await ctx.send(f"{ctx.author.mention}, that isn't a valid channel.")
-            if str(error).startswith('Role "'):
-                await ctx.send(f"{ctx.author.mention}, that isn't a valid role.")
-        else:
-            await ctx.send(
-                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+    # @read_options.error
+    # @reset_options.error
+    # @optoggle.error
+    # @opset.error
+    # @toggle_censor.error
+    # @toggle_dad_jokes.error
+    # @toggle_dead_chat.error
+    # @toggle_role_lock.error
+    # @toggle_json.error
+    # @toggle_rick_roulette.error
+    # @toggle_suggestions.error
+    # @toggle_welcome.error
+    # @change_mod_role.error
+    # @change_mute_role.error
+    # @change_required_role.error
+    # @change_suggestions_channel.error
+    # @change_welcome_channel.error
+    # @change_welcome_message.error
+    # @change_goodbye_message.error
+    # @censor.error
+    # @show_censor.error
+    # @add_censor.error
+    # @del_censor.error
+    # @wipe_censor.error
+    # async def messageError(self, ctx, error):
+    #     if (
+    #         str(error)
+    #         == "You are missing Manage Messages permission(s) to run this command."
+    #     ):
+    #         await ctx.send(
+    #             f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
+    #         )
+    #     if str(error).endswith('" not found.'):
+    #         if str(error).startswith('Channel "'):
+    #             await ctx.send(f"{ctx.author.mention}, that isn't a valid channel.")
+    #         if str(error).startswith('Role "'):
+    #             await ctx.send(f"{ctx.author.mention}, that isn't a valid role.")
+    #     else:
+    #         await ctx.send(
+    #             f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+    #         )
 
 
 def setup(client):
