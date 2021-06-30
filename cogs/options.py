@@ -42,12 +42,16 @@ class Options(commands.Cog):
                     options["channels"][option] = (
                         "#" + ctx.guild.get_channel(int(value)).name
                     )
-                except:
+                except AttributeError:
+                    options["channels"][option] = "#invalid-channel"
+                except TypeError:
                     pass
             for option, value in options["roles"].items():
                 try:
                     options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
-                except:
+                except AttributeError:
+                    options["roles"][option] = "@deleted-role"
+                except TypeError:
                     pass
             jsoninfo = str(
                 dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
