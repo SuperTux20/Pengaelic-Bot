@@ -36,6 +36,7 @@ class Options(commands.Cog):
         if ctx.invoked_subcommand == None:
             p = self.client.command_prefix
             options = getops(ctx.guild.id)
+            options.pop("lists")
             options.pop("customRoles")
             for option, value in options["channels"].items():
                 try:
@@ -68,11 +69,6 @@ class Options(commands.Cog):
                 description="Channels for specific functions.",
                 color=self.teal,
             )
-            lists = discord.Embed(
-                title="Lists",
-                description="List items, such as the censor.",
-                color=self.teal,
-            )
             messages = discord.Embed(
                 title="Messages",
                 description="Custom messages for joining/leaving, and whatever else may be added. The all-caps keywords should be pretty self-explanatory.",
@@ -92,12 +88,6 @@ class Options(commands.Cog):
                         channels.add_field(
                             name=option[0],
                             value=f"{option[1]}".replace("None", "No Channel Set"),
-                        )
-                elif category[0] == "lists":
-                    for option in category[1].items():
-                        lists.add_field(
-                            name=option[0],
-                            value=str(option[1]).replace("None", "Empty"),
                         )
                 elif category[0] == "messages":
                     for option in category[1].items():
@@ -119,7 +109,7 @@ class Options(commands.Cog):
             if jsoncheck(ctx.guild.id):
                 await ctx.send(f"```json\n{jsoninfo}\n```")
             else:
-                for embed in [header, channels, lists, messages, roles, toggles]:
+                for embed in [header, channels, messages, roles, toggles]:
                     await ctx.send(embed=embed)
 
     @read_options.command(
@@ -334,7 +324,7 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_messages=True)
     async def show_censor(self, ctx):
-        all_bads = list(getops(ctx.guild.id, "censorList"))
+        all_bads = list(getops(ctx.guild.id, "lists", "censorList"))
         if all_bads == [""]:
             await ctx.send("Filter is empty.")
         else:
@@ -349,7 +339,7 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_messages=True)
     async def add_censor(self, ctx, word):
-        all_bads = getops(ctx.guild.id, "censorList")
+        all_bads = getops(ctx.guild.id, "lists", "censorList")
         word = word.lower()
         if word in all_bads:
             await ctx.send("That word is already in the filter.")
@@ -367,7 +357,7 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_messages=True)
     async def del_censor(self, ctx, word):
-        all_bads = getops(ctx.guild.id, "censorList")
+        all_bads = getops(ctx.guild.id, "lists", "censorList")
         word = word.lower()
         if word not in all_bads:
             await ctx.send("That word is not in the filter.")
