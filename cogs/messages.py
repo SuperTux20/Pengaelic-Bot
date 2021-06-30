@@ -33,7 +33,7 @@ class Messages(commands.Cog):
         bot_credits = {
             "Main Developer and Creator": "Tux Penguin (your local comfort OC dealer#7140)",
             "Original Host": "Hy Asencion (Hyperfresh#8080)",
-            "Current Host": "Cherry Rain (Cherry, Femboy of Serenity#0356)",
+            "Current Host": "Cherry Rain (Dichromatic Cherry Blossom#0356)",
         }
         if jsoncheck(ctx.guild.id):
             bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
