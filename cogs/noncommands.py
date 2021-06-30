@@ -40,17 +40,16 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.client.user.mention in message.content:
-            await message.channel.send(
-                f"My prefix is `{self.client.command_prefix}` :smiley:"
-            )
+        # for when someone doesn't know what the prefix is
+        if self.client.user.mention == message.content:
+            await message.channel.send(f"My prefix is `{self.client.command_prefix}`")
         # lowercase everything to make my life easier
         messagetext = message.content.lower()
         # check if it's a DM, in which case, don't test options (because there are none)
-        # then make sure the message it's reading doesn't belong to the bot itself
+        # then make sure the message it's reading doesn't belong to a bot
         if (
             not isinstance(message.channel, discord.channel.DMChannel)
-            and message.author != self.client.user
+            and not message.author.bot
         ):
             # this section is for Dad Bot-like responses
             if getops(message.guild.id, "toggles", "dadJokes"):
@@ -102,9 +101,14 @@ class NonCommands(commands.Cog):
 
             # bro, did someone seriously say the chat was dead?
             if (
-                "dead" in messagetext
-                and ("chat" in messagetext or "server" in messagetext)
-            ) and getops(message.guild.id, "toggles", "deadChat"):
+                (
+                    "dead" in messagetext
+                    and ("chat" in messagetext or "server" in messagetext)
+                )
+                and getops(message.guild.id, "toggles", "deadChat")
+                and list(await message.channel.history(limit=2).flatten())[0].author
+                != self.client.user
+            ):
                 await message.channel.send(
                     f"{choice(['N', 'n'])}o {choice(['U', 'u'])}"
                 )
