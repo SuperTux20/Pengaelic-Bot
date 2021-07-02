@@ -2,12 +2,12 @@
 
 ## A simple multi-purpose Discord bot
 
-## 📄 About
+## About
 
 - Language used: `Python`
 - Libraries used: `discord.py`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
 
-## 🤝 Contributing
+## Contributing
 
 - Download the code
 - Make a pull request with your modified code

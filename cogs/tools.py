@@ -217,7 +217,7 @@ class Tools(commands.Cog):
             await ctx.send(f"Muted {member} for reason `{reason}`.")
         except:
             await ctx.send(
-                f"To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`."
+                f"There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`."
             )
 
     @commands.command(name="kick", help="Kick a member.")

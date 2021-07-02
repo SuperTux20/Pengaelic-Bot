@@ -302,16 +302,16 @@ if not unstable:
                 await ctx.send(
                     f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages."
                 )
-                print(
-                    "Invalid command {}{} sent in {} in #{} by {}#{}".format(
-                        client.command_prefix,
-                        str(error).split('"')[1],
-                        ctx.guild,
-                        ctx.channel,
-                        ctx.message.author.name,
-                        ctx.message.author.discriminator,
-                    )
-                )
+                # print(
+                #     "Invalid command {}{} sent in {} in #{} by {}#{}".format(
+                #         client.command_prefix,
+                #         str(error).split('"')[1],
+                #         ctx.guild,
+                #         ctx.channel,
+                #         ctx.message.author.name,
+                #         ctx.message.author.discriminator,
+                #     )
+                # )
             else:
                 await ctx.send(
                     f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
