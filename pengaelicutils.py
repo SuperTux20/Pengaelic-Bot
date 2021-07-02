@@ -96,6 +96,7 @@ def getops(guild: str, category: str = None, option: str = None):
     server = Query()
     if option == None:
         options = dict(sorted(db.search(server.guildID == guild)[0].items()))
+        options.pop("guildName")
         options.pop("guildID")
         if options["lists"]["censorList"] == []:
             options["lists"]["censorList"] = None

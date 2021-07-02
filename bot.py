@@ -63,7 +63,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
-from tinydb import TinyDB
+from tinydb import TinyDB, Query
 
 if "--unstable" in args:
     unstable = True
@@ -182,6 +182,19 @@ async def status_switcher():
         await sleep(randint(2, 10) * 60)
 
 
+async def statuses():
+    if not unstable:
+        if "--casual-status" in args:
+            client.loop.create_task(status_switcher())  # as defined above
+        else:
+            await client.change_presence(
+                activity=discord.Activity(
+                    type=discord.ActivityType.watching,
+                    name=str(len(db.all())) + " servers! | p!help",
+                )
+            )
+
+
 def help_menu(guild, cog, client):
     if jsoncheck(guild):
         try:
@@ -245,23 +258,42 @@ def help_menu(guild, cog, client):
 
 @client.event
 async def on_ready():
-    global db
     # create a server's configs
     if db.all() == []:
-        for server in [{"guildID": guild.id} | newops() for guild in client.guilds]:
+        for server in [
+            {"guildName": guild.name, "guildID": guild.id} | newops()
+            for guild in client.guilds
+        ]:
             db.insert(server)
     else:
-        for server in range(len(db.all())):
-            ops = db.all()[server]
+        print(dumps(db.all(), indent=4))
+        for guild in client.guilds:
+            ops = db.all()[client.guilds.index(guild)]
+            print(dumps(ops, indent=4))
+            ops.pop("guildName")
             ops.pop("guildID")
             nops = newops()
             for opts in ops.keys():
                 if opts != newops().keys():
                     for key in ops[opts]:
-                        nops[opts].pop(key)
+                        try:
+                            nops[opts].pop(key)
+                        except KeyError:
+                            pass
                     ops[opts] |= nops[opts]
-                    db.update(ops)
-    print(f"{client.description} connected to Discord")
+                    db.update({"guildName": guild.name}, Query().guildID == guild.id)
+                    db.update(
+                        {"channels": ops["channels"]}, Query().guildID == guild.id
+                    )
+                    db.update({"lists": ops["lists"]}, Query().guildID == guild.id)
+                    db.update(
+                        {"messages": ops["messages"]}, Query().guildID == guild.id
+                    )
+                    db.update({"roles": ops["roles"]}, Query().guildID == guild.id)
+                    db.update({"toggles": ops["toggles"]}, Query().guildID == guild.id)
+    await statuses()
+    print(f"{client.description} connected to Discord.")
+    print(f"Currently on {len(db.all())} servers.")
 
 
 @client.event
@@ -723,14 +755,12 @@ async def h_censor(ctx):
     await ctx.send(embed=help_menu)
 
 
-if not unstable:
-    client.loop.create_task(status_switcher())  # as defined above
-
 # load all the cogs
 for cog in ls("cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
+
 
 while True:
     try:
