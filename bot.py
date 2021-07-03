@@ -35,7 +35,7 @@ if shell("uname -o", shell=True).decode()[:-1] != "Android":
             missing_dependencies = True
     devnull.close()
     if missing_dependencies:
-        print("Packages " + list2str(needed, 0, True) + " are not installed.")
+        print(f"Packages {list2str(needed, 0, True)} are not installed.")
         print("Install them with APT.")
         exit()
     print("Passed package test")
@@ -53,7 +53,7 @@ for module in requirements:
         needed.append(module)
         missing_dependencies = True
 if missing_dependencies:
-    print("Modules " + list2str(needed, 0, True) + " are not installed.")
+    print(f"Modules {list2str(needed, 0, True)} are not installed.")
     print("Installing them now...")
     shell([python, "-m", "pip", "install"] + requirements)
     print("Done.")
