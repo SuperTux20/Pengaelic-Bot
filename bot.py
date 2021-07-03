@@ -50,7 +50,7 @@ modules = [
 missing_dependencies = False
 for module in requirements:
     if module not in modules:
-        needed.append(package)
+        needed.append(module)
         missing_dependencies = True
 if missing_dependencies:
     print("Modules " + list2str(needed, 0, True) + " are not installed.")
@@ -290,8 +290,8 @@ async def on_ready():
                     db.update({"roles": ops["roles"]}, Query().guildID == guild.id)
                     db.update({"toggles": ops["toggles"]}, Query().guildID == guild.id)
     await statuses()
-    print(f"{client.description} connected to Discord.")
-    print(f"Currently on {len(db.all())} servers.")
+    print(f"{client.description} connected to Discord")
+    print(f"Currently on {len(db.all())} servers")
 
 
 @client.event
