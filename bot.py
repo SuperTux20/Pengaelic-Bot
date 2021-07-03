@@ -266,7 +266,6 @@ async def on_ready():
         ]:
             db.insert(server)
     else:
-        print(dumps(db.all(), indent=4))
         for guild in client.guilds:
             ops = db.all()[client.guilds.index(guild)]
             ops.pop("guildName")
