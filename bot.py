@@ -269,7 +269,6 @@ async def on_ready():
         print(dumps(db.all(), indent=4))
         for guild in client.guilds:
             ops = db.all()[client.guilds.index(guild)]
-            print(dumps(ops, indent=4))
             ops.pop("guildName")
             ops.pop("guildID")
             nops = newops()
