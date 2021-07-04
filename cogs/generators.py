@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
-from pengaelicutils import list2str, stopwatch
+from pengaelicutils import list2str, Stopwatch
 from random import choice, randint
 from subprocess import check_output as bash
 from time import time
@@ -113,7 +113,7 @@ class Generators(commands.Cog):
     #             await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
     #         else:
     #             status = await ctx.send("Generating...")
-    #             starttime = time()
+    #             Stopwatch.start()
     #             text = ""
     #             success = True
     #             while text.find(word) == -1:
@@ -147,7 +147,7 @@ class Generators(commands.Cog):
     #                 "\|"
     #             )
     #             if success:
-    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {stopwatch(starttime)}')
+    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.end()}')
     #             else:
     #                 await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
 

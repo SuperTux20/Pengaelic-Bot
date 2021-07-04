@@ -11,7 +11,7 @@ from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import environ
-from pengaelicutils import getops, updop
+from pengaelicutils import getops, updop, Stopwatch
 from re import search
 from subprocess import check_output as shell
 from tinydb import TinyDB
@@ -390,6 +390,28 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
             await ctx.channel.send(
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
+
+    @commands.group(name="stopwatch", help="Track how long something goes.")
+    async def stopwatch(self, ctx):
+        if ctx.invoked_subcommand == None:
+            await ctx.send(
+                embed=discord.Embed(
+                    title="Stopwatch",
+                    description="Track how long something goes.",
+                    color=self.yellow,
+                )
+                .add_field(name="(start/begin)", value="Start the stopwatch.")
+                .add_field(name="(stop/end)", value="Stop the stopwatch.")
+            )
+
+    @stopwatch.command(name="start", help="Start the stopwatch.", aliases=["begin"])
+    async def stopwatch_start(self, ctx):
+        Stopwatch.start(self)
+        await ctx.send("Started the stopwatch.")
+
+    @stopwatch.command(name="stop", help="Stop the stopwatch.", aliases=["end"])
+    async def stopwatch_end(self, ctx):
+        await ctx.send(Stopwatch.end(self))
 
     @clear.error
     async def clearError(self, ctx, error):
