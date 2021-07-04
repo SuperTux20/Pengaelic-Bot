@@ -32,6 +32,24 @@ class Stopwatch:
         except AttributeError:
             return "The stopwatch was never started."
 
+    def monkeywatch(self, start: time):  # specific to the infinite monkey generator
+        elapsed = time() - start
+        m = elapsed / 60
+        minutes = int(m)
+        s = (m - minutes) * 60
+        seconds = int(s)
+        ms = int(round(s - seconds, 3) * 1000)
+        if len(str(minutes)) == 1:
+            minutes = f"0{minutes}"
+        if len(str(seconds)) == 1:
+            seconds = f"0{seconds}"
+        if minutes == "00":
+            if seconds == "00":
+                return f"{ms}ms"
+            return f"{int(seconds)}.{ms} seconds"
+        else:
+            return f"{minutes}:{seconds}"
+
 
 def list2str(inlist: list, mode: int = 0, add_and: bool = False):
     # if mode == 0: proper sentence formatting (minus period)
