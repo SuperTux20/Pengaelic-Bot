@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
-from pengaelicutils import list2str, Stopwatch
+from pengaelicutils import list2str, Stopwatch, syllables
 from random import choice, randint
 from subprocess import check_output as bash
 from time import time
@@ -28,24 +28,20 @@ class Generators(commands.Cog):
     ):
         if amount > 0 and upper_limit > 0 and lower_limit > 0:
             if not lower_limit > upper_limit:
-                with open("namegen_syllables.txt", "r") as syllables:
-                    syllables = list2str(syllables.readlines(), 2).split()
-                    await ctx.send(
-                        list2str(
-                            [
-                                "".join(
-                                    [
-                                        choice(syllables)
-                                        for _ in range(
-                                            randint(lower_limit, upper_limit)
-                                        )
-                                    ]
-                                ).capitalize()
-                                for _ in range(amount)
-                            ],
-                            3,
-                        )
+                await ctx.send(
+                    list2str(
+                        [
+                            "".join(
+                                [
+                                    choice(syllables)
+                                    for _ in range(randint(lower_limit, upper_limit))
+                                ]
+                            ).capitalize()
+                            for _ in range(amount)
+                        ],
+                        3,
                     )
+                )
             else:
                 await ctx.send("The lower limit cannot be higher than the upper limit.")
         else:
