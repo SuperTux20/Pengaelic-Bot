@@ -92,13 +92,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 """
-if unstable:
-    cmd(
-        r"toilet -w 1000 -f standard -F border -F gay Pengaelic Bot \(Unstable Dev Version\)"
-    )
-else:
-    cmd("toilet -w 1000 -f standard -F border -F gay Pengaelic Bot")
-print(info)
 
 if unstable:
     client = commands.Bot(
@@ -116,6 +109,8 @@ else:
         help_command=None,
         intents=discord.Intents.all(),
     )
+cmd(f"toilet -w 1000 -f standard -F border -F gay {client.description}")
+print(info)
 print("Defined client")
 db = TinyDB("config.json")
 

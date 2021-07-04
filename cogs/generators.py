@@ -113,7 +113,7 @@ class Generators(commands.Cog):
     #             await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
     #         else:
     #             status = await ctx.send("Generating...")
-    #             Stopwatch.start()
+    #             Stopwatch.start(self)
     #             text = ""
     #             success = True
     #             while text.find(word) == -1:
@@ -147,7 +147,7 @@ class Generators(commands.Cog):
     #                 "\|"
     #             )
     #             if success:
-    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.end()}')
+    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.end(self)}')
     #             else:
     #                 await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
 
