@@ -143,7 +143,7 @@ class Generators(commands.Cog):
     #                 "\|"
     #             )
     #             if success:
-    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.mokneytime(self, starttime)}')
+    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.mokneywatch(self, starttime)}')
     #             else:
     #                 await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
 
