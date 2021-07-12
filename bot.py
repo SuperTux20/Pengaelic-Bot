@@ -254,39 +254,38 @@ def help_menu(guild, cog, client):
 @client.event
 async def on_ready():
     # create a server's configs
-    if db.all() == []:
-        for server in [
-            {"guildName": guild.name, "guildID": guild.id} | newops()
-            for guild in client.guilds
-        ]:
-            db.insert(server)
-    else:
-        for guild in client.guilds:
-            ops = db.all()[client.guilds.index(guild)]
-            ops.pop("guildName")
-            ops.pop("guildID")
-            nops = newops()
-            for opts in ops.keys():
-                if opts != newops().keys():
-                    for key in ops[opts]:
-                        try:
-                            nops[opts].pop(key)
-                        except KeyError:
-                            pass
-                    ops[opts] |= nops[opts]
-                    db.update({"guildName": guild.name}, Query().guildID == guild.id)
-                    db.update(
-                        {"channels": ops["channels"]}, Query().guildID == guild.id
-                    )
-                    db.update({"lists": ops["lists"]}, Query().guildID == guild.id)
-                    db.update(
-                        {"messages": ops["messages"]}, Query().guildID == guild.id
-                    )
-                    db.update({"roles": ops["roles"]}, Query().guildID == guild.id)
-                    db.update({"toggles": ops["toggles"]}, Query().guildID == guild.id)
+    newconfigs = [
+        {"guildName": guild.name, "guildID": guild.id} | newops()
+        for guild in client.guilds
+    ]
+    for server in range(len(newconfigs)):
+        try:
+            db.all()[server]
+        except IndexError:
+            db.insert(newconfigs[server])
+    # add any options that may have been created since the option dicts' creation
+    for guild in client.guilds:
+        ops = db.all()[client.guilds.index(guild)]
+        ops.pop("guildName")
+        ops.pop("guildID")
+        nops = newops()
+        for opts in ops.keys():
+            if opts != newops().keys():
+                for key in ops[opts]:
+                    try:
+                        nops[opts].pop(key)
+                    except KeyError:
+                        pass
+                ops[opts] |= nops[opts]
+                db.update({"guildName": guild.name}, Query().guildID == guild.id)
+                db.update({"channels": ops["channels"]}, Query().guildID == guild.id)
+                db.update({"lists": ops["lists"]}, Query().guildID == guild.id)
+                db.update({"messages": ops["messages"]}, Query().guildID == guild.id)
+                db.update({"roles": ops["roles"]}, Query().guildID == guild.id)
+                db.update({"toggles": ops["toggles"]}, Query().guildID == guild.id)
     await statuses()
     print(f"{client.description} connected to Discord")
-    print(f"Currently on {len(db.all())} servers")
+    print(f"Currently on {len(client.guilds)} servers")
 
 
 @client.event

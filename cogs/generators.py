@@ -95,7 +95,12 @@ class Generators(commands.Cog):
         headline.append(choice(objects))
         await ctx.send(" ".join(headline))
 
-    # @commands.command(name="img", help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
+    # @commands.command(
+    #     name="img",
+    #     help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)",
+    #     aliases=["monkeys", "infinitemonkey", "monkeygen"],
+    #     usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]",
+    # )
     # async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
     #     alphabet = list(alphabet)
     #     if word == None:
@@ -106,10 +111,12 @@ class Generators(commands.Cog):
     #             if character not in alphabet:
     #                 invalid = True
     #         if invalid:
-    #             await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
+    #             await ctx.send(
+    #                 f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})"
+    #             )
     #         else:
     #             status = await ctx.send("Generating...")
-    #             starttime=time()
+    #             starttime = time()
     #             text = ""
     #             success = True
     #             while text.find(word) == -1:
@@ -123,29 +130,22 @@ class Generators(commands.Cog):
     #             if len(text) > 1000:
     #                 text = f"...{text[-1000:]}"
     #                 cutoff = " (last 1000 shown)"
-    #             text = text.replace(
-    #                 "\\",
-    #                 "\\\\"
-    #             ).replace(
-    #                 "*",
-    #                 "\*"
-    #             ).replace(
-    #                 "_",
-    #                 "\_"
-    #             ).replace(
-    #                 "`",
-    #                 "\`"
-    #             ).replace(
-    #                 "~",
-    #                 "\~"
-    #             ).replace(
-    #                 "|",
-    #                 "\|"
+    #             text = (
+    #                 text.replace("\\", "\\\\")
+    #                 .replace("*", "\*")
+    #                 .replace("_", "\_")
+    #                 .replace("`", "\`")
+    #                 .replace("~", "\~")
+    #                 .replace("|", "\|")
     #             )
     #             if success:
-    #                 await status.edit(content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.mokneywatch(self, starttime)}')
+    #                 await status.edit(
+    #                     content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.mokneywatch(self, starttime)}'
+    #                 )
     #             else:
-    #                 await status.edit(content=f'Could not find keyword "{word}" within one minute. :frowning:')
+    #                 await status.edit(
+    #                     content=f'Could not find keyword "{word}" within one minute. :frowning:'
+    #                 )
 
     @commands.command(
         name="fortune",
