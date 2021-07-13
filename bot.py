@@ -258,12 +258,15 @@ async def on_ready():
         {"guildName": guild.name, "guildID": guild.id} | newops()
         for guild in client.guilds
     ]
-    for server in range(len(newconfigs)):
+    # try to make configs for a server that the bot was added to while it was offline
+    for server in range(len(client.guilds)):
         try:
-            db.all()[server]
+            if newconfigs[server]["guildName"] != db.all()[server]["guildName"]:
+                db.insert(newconfigs[server])
+                break
         except IndexError:
-            db.insert(newconfigs[server])
-    # add any options that may have been created since the option dicts' creation
+            pass
+    # add any options that may have been created since the option dicts' creation, and account for a server's name changing
     for guild in client.guilds:
         ops = db.all()[client.guilds.index(guild)]
         ops.pop("guildName")
@@ -312,7 +315,7 @@ async def on_guild_join(guild, auto=True):
         if auto:
             # create fresh options row for new server
             db.update({guild.id: newops()})
-            print(f"Options set created for {guild.name}")
+            print(f"Options created for {guild.name}")
 
 
 if not unstable:
