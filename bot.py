@@ -10,6 +10,7 @@ if "3.9" not in pyversion:
 
 from asyncio import sleep
 from json import loads, dumps
+from operator import itemgetter
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull, environ
 from pengaelicutils import newops, getops, remove_duplicates, list2str, jsoncheck
 from random import choice, randint
@@ -254,14 +255,18 @@ def help_menu(guild, cog, client):
 @client.event
 async def on_ready():
     # create a server's configs
-    newconfigs = [
-        {"guildName": guild.name, "guildID": guild.id} | newops()
-        for guild in client.guilds
-    ]
+    newconfigs = sorted(
+        [
+            {"guildName": guild.name, "guildID": guild.id} | newops()
+            for guild in client.guilds
+        ],
+        key=itemgetter("guildID"),
+    )
+    servers = sorted(db.all(), key=itemgetter("guildID"))
     # try to make configs for a server that the bot was added to while it was offline
     for server in range(len(client.guilds)):
         try:
-            if newconfigs[server]["guildName"] != db.all()[server]["guildName"]:
+            if newconfigs[server]["guildID"] != servers[server]["guildID"]:
                 db.insert(newconfigs[server])
                 break
         except IndexError:
