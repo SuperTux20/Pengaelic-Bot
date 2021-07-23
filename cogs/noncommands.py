@@ -163,7 +163,8 @@ class NonCommands(commands.Cog):
                     + ", you have been randomly selected by a @someone ping!"
                 )
         elif message.attachments[0].filename == "config.json":
-            message.attachments[0].save()
+            await message.attachments[0].save()
+            await message.channel.send("Downloaded new config file.")
 
 
 def setup(client):
