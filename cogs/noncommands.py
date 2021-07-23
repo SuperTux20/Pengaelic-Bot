@@ -162,6 +162,8 @@ class NonCommands(commands.Cog):
                     choice(message.guild.members).mention
                     + ", you have been randomly selected by a @someone ping!"
                 )
+        elif message.attachments[0].filename == "config.json":
+            message.attachments[0].save()
 
 
 def setup(client):
