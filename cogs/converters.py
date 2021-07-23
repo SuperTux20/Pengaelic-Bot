@@ -139,6 +139,49 @@ class Converters(commands.Cog):
         await ctx.send(arg)
 
     @commands.command(
+        name="japanize",
+        help="Make text look and sound Japanese according to [this image](https://imgur.com/a/qEiCfhG). (Disclaimer: this is not Japanese at all)",
+        usage="<text to convert>",
+    )
+    async def japanize(self, ctx, *, arg=None):
+        arg = await self.test_for_content(ctx, arg)
+        output = ""
+        alphabet = {
+            "a": "ka",
+            "b": "tu",
+            "c": "mi",
+            "d": "te",
+            "e": "ku",
+            "f": "lu",
+            "g": "ji",
+            "h": "ri",
+            "i": "ki",
+            "j": "zu",
+            "k": "me",
+            "l": "ta",
+            "m": "rin",
+            "n": "to",
+            "o": "mo",
+            "p": "no",
+            "q": "ke",
+            "r": "shi",
+            "s": "ari",
+            "t": "chi",
+            "u": "do",
+            "v": "ru",
+            "w": "mei",
+            "x": "na",
+            "y": "fu",
+            "z": "zi",
+        }
+        for letter in range(len(arg)):
+            try:
+                output += alphabet[arg[letter].lower()]
+            except KeyError:
+                output += arg[letter]
+        await ctx.send(output.capitalize())
+
+    @commands.command(
         name="stroke",
         help="Shuffle a message",
         aliases=["shuffle", "mixup"],
@@ -266,14 +309,11 @@ class Converters(commands.Cog):
     @dings.error
     @sga.error
     async def overcharlimit(self, ctx, error):
-        if (
-            str(error)
-            == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be 2000 or fewer in length."""
+        if str(error).startswith(
+            """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
+In content: Must be"""
         ):
-            await ctx.send(
-                "Sending all that would put me over the 2000-character limit!"
-            )
+            await ctx.send("Sending all that would put me over the character limit!")
         elif str(error) == "arg is a required argument that is missing.":
             await ctx.send("You didn't specify any text to convert!")
         else:
