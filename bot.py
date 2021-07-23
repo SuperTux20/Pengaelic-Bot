@@ -255,22 +255,20 @@ def help_menu(guild, cog, client):
 @client.event
 async def on_ready():
     # create a server's configs
-    newconfigs = sorted(
+    if db.all() == []:
         [
-            {"guildName": guild.name, "guildID": guild.id} | newops()
+            db.insert({"guildName": guild.name, "guildID": guild.id} | newops())
             for guild in client.guilds
-        ],
-        key=itemgetter("guildID"),
-    )
-    servers = sorted(db.all(), key=itemgetter("guildID"))
+        ]
+    newconfigs = [
+        {"guildName": guild.name, "guildID": guild.id} | newops()
+        for guild in client.guilds
+    ]
     # try to make configs for a server that the bot was added to while it was offline
     for server in range(len(client.guilds)):
-        try:
-            if newconfigs[server]["guildID"] != servers[server]["guildID"]:
-                db.insert(newconfigs[server])
-                break
-        except IndexError:
-            pass
+        if newconfigs[server] not in db.all():
+            db.insert(newconfigs[server])
+            print(f"Configs created for {newconfigs[server]['guildName']}")
     # add any options that may have been created since the option dicts' creation, and account for a server's name changing
     for guild in client.guilds:
         ops = db.all()[client.guilds.index(guild)]
@@ -308,19 +306,21 @@ async def on_guild_join(guild, auto=True):
         ).set_thumbnail(url=client.user.avatar_url)
         possiblechannels = ["general", "general-1", "general-2"]
         for channel in possiblechannels:
-            succ = False
-            if succ:
+            success = False
+            if success:
                 break
             try:
                 await get(guild.text_channels, name=channel).send(embed=welcomeembed)
-                succ = True
+                success = True
                 break
             except:
                 continue
         if auto:
             # create fresh options row for new server
-            db.update({guild.id: newops()})
-            print(f"Options created for {guild.name}")
+            newconfigs = {"guildName": guild.name, "guildID": guild.id} | newops()
+            if newconfigs not in db.all():
+                db.insert(newconfigs)
+            print(f"Configs created for {guild.name}")
 
 
 if not unstable:
