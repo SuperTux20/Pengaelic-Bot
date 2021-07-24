@@ -434,7 +434,7 @@ In content: Must be 2000 or fewer in length."""
             str(error)
             == "Command raised an exception: HTTPException: 400 Bad Request (error code: 50006): Cannot send an empty message"
         ):
-            pass
+            "for some reason, hangman throws this error when nothing is even really supposed to happen in the first place"
         else:
             await ctx.send(
                 f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"

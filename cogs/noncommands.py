@@ -2,9 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import discord
-from pengaelicutils import getops, Developers
 from discord.utils import get
 from discord.ext import commands
+from pengaelicutils import getops, Developers
+from os import system as cmd
 from random import choice
 
 
@@ -175,7 +176,8 @@ class NonCommands(commands.Cog):
                     await message.attachments[0].save("config.json")
                     await message.channel.send("Downloaded new config file.")
                 if message.attachments[0].filename == "env":
-                    await message.attachments[0].save(".env")
+                    await message.attachments[0].save("env")
+                    cmd("mv env .env")
                     await message.channel.send("Downloaded new dotenv file.")
 
 
