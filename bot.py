@@ -386,8 +386,9 @@ async def sh(ctx, *, args):
             else:
                 await ctx.send("```\n" + shell(args, shell=True).decode() + "```")
         except CalledProcessError as error:
-            error = str(error).split("returned non-zero exit status")[1][:-1]
+            error = str(error)
             if "returned non-zero exit status" in error:
+                error = int(float(error.split("returned non-zero exit status ")[1]))
                 if args.startswith("rm") and error == 1:
                     await ctx.send("That file doesn't exist.")
                 elif args.startswith("python") and error == 1:
