@@ -379,7 +379,7 @@ if not unstable:
 
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx, *, restargs=""):
-        if Developers.check(ctx.author):
+        if Developers.check(None, ctx.author):
             await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
@@ -391,7 +391,7 @@ if not unstable:
 
     @client.command(name="updatelog", aliases=["ul", "ulog"])
     async def updatelog(ctx, formatted=True, status: discord.Message = None):
-        if Developers.check(ctx.author):
+        if Developers.check(None, ctx.author):
             if jsoncheck(ctx.guild.id):
                 if status:
                     await status.edit(content="Looking in the logs...")
@@ -479,7 +479,7 @@ if not unstable:
 
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
-        if Developers.check(ctx.author):
+        if Developers.check(None, ctx.author):
             if jsoncheck(ctx.guild.id):
                 status = await ctx.send("Pulling the latest commits from GitHub...")
             else:
