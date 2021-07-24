@@ -48,7 +48,12 @@ class Tools(commands.Cog):
         results = s.results.dict()
         return results
 
-    @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
+    @commands.command(
+        name="os",
+        help="Read what OS I'm running on!",
+        aliases=["getos"],
+        usage="no args",
+    )
     async def showOS(self, ctx):
         async with ctx.typing():
             system = (
@@ -80,7 +85,7 @@ class Tools(commands.Cog):
                 emoji = "<:linux:855493980267479080>"
         await ctx.send(f"I'm running on {system}, kernel version {kernel} {emoji}")
 
-    @commands.command(name="test", help="Am I online? I'm not sure.")
+    @commands.command(name="test", help="Am I online? I'm not sure.", usage="no args")
     async def test(self, ctx):
         await ctx.send("Yep, I'm alive :sunglasses:")
 
@@ -105,7 +110,10 @@ class Tools(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(
-        name="icon", help="Get the icon for the server.", aliases=["servericon"]
+        name="icon",
+        help="Get the icon for the server.",
+        aliases=["servericon"],
+        usage="no args",
     )
     async def get_icon(self, ctx):
         try:
@@ -187,6 +195,7 @@ class Tools(commands.Cog):
         name="nuke",
         help="Purge a channel of EVERYTHING.",
         aliases=["wipe", "wipechannel"],
+        usage="no args",
     )
     @commands.has_permissions(manage_channels=True)
     async def nuke(self, ctx):
@@ -221,13 +230,13 @@ class Tools(commands.Cog):
                 f"There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`."
             )
 
-    @commands.command(name="kick", help="Kick a member.")
+    @commands.command(name="kick", help="Kick a member.", usage="<member>")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         await member.kick(reason=reason)
         await ctx.send(f"Kicked {member} for reason `{reason}`.")
 
-    @commands.command(name="ban", help="Ban a member.")
+    @commands.command(name="ban", help="Ban a member.", usage="<member>")
     @commands.has_permissions(kick_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         await member.ban(reason=reason)
@@ -237,6 +246,7 @@ class Tools(commands.Cog):
         name="server",
         help="See a bunch of data about the server at a glance.",
         aliases=["info"],
+        usage="no args",
     )
     @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
@@ -311,7 +321,7 @@ class Tools(commands.Cog):
             await ctx.send(embed=embedinfo)
 
     # Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
-    @commands.command(name="speedtest", aliases=["st", "ping"])
+    @commands.command(name="speedtest", aliases=["st", "ping"], usage="no args")
     async def speedtest(self, ctx):
         if self.testing == False:
             self.testing = True
@@ -335,7 +345,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
         else:
             await ctx.send("A test is already in progress. Please wait...")
 
-    @commands.command(name="role")
+    @commands.command(name="role", usage="<hex code>\n<role name>")
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
         role_lock = get(
@@ -371,7 +381,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.command(name="delrole")
+    @commands.command(name="delrole", usage="no args")
     async def delrole(self, ctx):
         member = ctx.author
         role_lock = get(
@@ -404,12 +414,16 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
                 .add_field(name="(stop/end)", value="Stop the stopwatch.")
             )
 
-    @stopwatch.command(name="start", help="Start the stopwatch.", aliases=["begin"])
+    @stopwatch.command(
+        name="start", help="Start the stopwatch.", aliases=["begin"], usage="no args"
+    )
     async def stopwatch_start(self, ctx):
         Stopwatch.start(self)
         await ctx.send("Started the stopwatch.")
 
-    @stopwatch.command(name="stop", help="Stop the stopwatch.", aliases=["end"])
+    @stopwatch.command(
+        name="stop", help="Stop the stopwatch.", aliases=["end"], usage="no args"
+    )
     async def stopwatch_end(self, ctx):
         await ctx.send(Stopwatch.end(self))
 

@@ -9,10 +9,16 @@ if "3.9" not in pyversion:
     exit()
 
 from asyncio import sleep
-from json import loads, dumps
-from operator import itemgetter
-from os import system as cmd, getenv as env, listdir as ls, execl, devnull, environ
-from pengaelicutils import newops, getops, remove_duplicates, list2str, jsoncheck
+from json import dumps
+from os import system as cmd, getenv as env, listdir as ls, execl, devnull
+from pengaelicutils import (
+    newops,
+    getops,
+    remove_duplicates,
+    list2str,
+    jsoncheck,
+    Developers,
+)
 from random import choice, randint
 from subprocess import check_output as shell, call, STDOUT
 
@@ -192,64 +198,55 @@ async def statuses():
 
 
 def help_menu(guild, cog, client):
-    if jsoncheck(guild):
-        try:
+    try:
+        if jsoncheck(guild):
             menu = (
-                f'```json\n"{cog.name}": "{cog.description_long.lower()}",\n"commands": '
+                f'```json\n"{cog.name}": '
                 + dumps(
-                    {
-                        list2str([command.name] + command.aliases, 0).replace(
-                            ", ", "/"
-                        ): command.usage.split("\n")
-                        for command in cog.get_commands()
+                    {"description": cog.description_long.lower()}
+                    | {
+                        "commands": {
+                            list2str([command.name] + command.aliases, 0).replace(
+                                ", ", "/"
+                            ): command.usage.split("\n")
+                            for command in cog.get_commands()
+                        }
                     },
                     indent=4,
                 )
                 + "```"
             )
-        except AttributeError:
-            menu = (
-                f'```json\n"{cog.name}": "{cog.description_long.lower()}",\n"commands": '
-                + dumps(
-                    {
-                        list2str([command.name] + command.aliases, 0).replace(
-                            ", ", "/"
-                        ): command.usage
-                        for command in cog.get_commands()
-                    },
-                    indent=4,
-                )
-                + "```"
+        else:
+            menu = discord.Embed(
+                title=cog.name.capitalize(),
+                description=cog.description_long,
+                color=0x007F7F,
+            ).set_footer(
+                text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
             )
-    else:
-        menu = discord.Embed(
-            title=cog.name.capitalize(),
-            description=cog.description_long,
-            color=0x007F7F,
-        ).set_footer(
-            text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
-        )
-        for command in cog.get_commands():
-            if command.usage:
-                menu.add_field(
-                    name="({})\n{}".format(
-                        str([command.name] + command.aliases)[1:-1]
-                        .replace("'", "")
-                        .replace(", ", "/"),
-                        command.usage,
-                    ),
-                    value=command.help,
-                )
-            else:
-                menu.add_field(
-                    name="({})".format(
-                        str([command.name] + command.aliases)[1:-1]
-                        .replace("'", "")
-                        .replace(", ", "/")
-                    ),
-                    value=command.help,
-                )
-    return menu
+            for command in cog.get_commands():
+                if command.usage:
+                    menu.add_field(
+                        name="({})\n{}".format(
+                            str([command.name] + command.aliases)[1:-1]
+                            .replace("'", "")
+                            .replace(", ", "/"),
+                            command.usage,
+                        ),
+                        value=command.help,
+                    )
+                else:
+                    menu.add_field(
+                        name="({})".format(
+                            str([command.name] + command.aliases)[1:-1]
+                            .replace("'", "")
+                            .replace(", ", "/")
+                        ),
+                        value=command.help,
+                    )
+        return menu
+    except AttributeError:
+        return "Invalid menu."
 
 
 @client.event
@@ -366,31 +363,12 @@ async def redo_welcome(ctx):
 dotenv(".env")
 DISCORD_TOKEN = env("DISCORD_TOKEN")
 
-# load all developer user IDs
-class developers:
-    everyone = loads(env("DEVELOPER_IDS"))
-
-
-# function to make testing if someone's a dev easier
-def developer(user, dev=None):
-    if dev == None:
-        if user.id in list(developers.everyone.values()):
-            return True
-        else:
-            return False
-    else:
-        if user.id == developers.everyone[dev]:
-            return True
-        else:
-            return False
-
-
 print("Loaded bot token and developer IDs")
 
 
 @client.command(name="exit", aliases=["quit"])
 async def quit_the_bot(ctx):
-    if developer(ctx.author):
+    if Developers.check(ctx.author):
         await ctx.send("Goodbye...")
         exit(0)
     else:
@@ -401,7 +379,7 @@ if not unstable:
 
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
     async def restart(ctx, *, restargs=""):
-        if developer(ctx.author):
+        if Developers.check(ctx.author):
             await ctx.send("Restarting...")
             print("Restarting...")
             await client.change_presence(
@@ -413,7 +391,7 @@ if not unstable:
 
     @client.command(name="updatelog", aliases=["ul", "ulog"])
     async def updatelog(ctx, formatted=True, status: discord.Message = None):
-        if developer(ctx.author):
+        if Developers.check(ctx.author):
             if jsoncheck(ctx.guild.id):
                 if status:
                     await status.edit(content="Looking in the logs...")
@@ -501,7 +479,7 @@ if not unstable:
 
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
-        if developer(ctx.author):
+        if Developers.check(ctx.author):
             if jsoncheck(ctx.guild.id):
                 status = await ctx.send("Pulling the latest commits from GitHub...")
             else:
@@ -539,14 +517,24 @@ async def help(ctx, *, cogname: str = None):
         cogs.pop("NonCommands")
         if jsoncheck(ctx.guild.id):
             info = {cogs[cog].name: cogs[cog].description.lower()[:-1] for cog in cogs}
+            links = {
+                "support server": "<https://discord.gg/DHHpA7k>",
+                "invite me": "<https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot>",
+                "github": "<https://github.com/SuperTux20/Pengaelic-Bot>",
+            }
             if not isinstance(ctx.channel, discord.channel.DMChannel):
                 info |= {"options": client.get_cog("Options").description.lower()[:-1]}
-            if developer(ctx.author):
+            if Developers.check(ctx.author):
                 info |= {"control": "update, restart, that sort of thing"}
-            menu = dumps(info, indent=4)
-            await ctx.send(
-                f'```json\n"help": "type {client.command_prefix}help <category name without spaces or dashes> for more info on each category",\n"pengaelic bot": {menu}```'
+            menu = dumps(
+                {
+                    "help": f"type {client.command_prefix}help <category name without spaces or dashes> for more info on each category",
+                    "categories": info,
+                    "links": links,
+                },
+                indent=4,
             )
+            await ctx.send(f'```json\n"pengaelic bot": {menu}```')
         else:
             menu = discord.Embed(
                 title=client.description,
@@ -563,7 +551,7 @@ async def help(ctx, *, cogname: str = None):
                     value=client.get_cog("Options").description,
                     inline=False,
                 )
-            if developer(ctx.author):
+            if Developers.check(ctx.author):
                 menu.add_field(
                     name="Control",
                     value="Update, restart, that sort of thing.",
@@ -616,7 +604,7 @@ async def help(ctx, *, cogname: str = None):
                 if subcommand.parents[0] == command:
                     menu.add_field(name=subcommand.name, value=subcommand.help)
             await ctx.send(embed=menu)
-    elif cogname == "control" and developer(ctx.author):
+    elif cogname == "control" and Developers.check(ctx.author):
         if jsoncheck(ctx.guild.id):
             await ctx.send(
                 f'```json\n"control": "update, restart, that sort of thing",\n"commands": '
@@ -670,8 +658,6 @@ async def help(ctx, *, cogname: str = None):
 
 
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
-
-
 @client.command(name="dogofwisdom")
 async def dog(ctx, *, channel: discord.TextChannel = None):
     if getops(ctx.guild.id, "modRole") in ctx.author.roles:
@@ -679,7 +665,7 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
             channel = await ctx.guild.create_text_channel("dog-of-wisdom")
             await channel.edit(category=ctx.guild.categories[0])
         hook = await channel.create_webhook(name="The Dog of Wisdom")
-        await client.get_user(developers.everyone["tux"]).send(
+        await client.get_user(Developers.get("tux")).send(
             f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n"
             + hook.url.replace(
                 "https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='

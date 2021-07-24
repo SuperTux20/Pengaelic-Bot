@@ -1,9 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from bot import developer
 import discord
-from pengaelicutils import getops
+from pengaelicutils import getops, Developers
 from discord.utils import get
 from discord.ext import commands
 from random import choice
@@ -170,13 +169,14 @@ class NonCommands(commands.Cog):
             elif (
                 isinstance(message.channel, discord.channel.DMChannel)
                 and message.attachments
-                and developer(message.author)
+                and Developers.check(message.author)
             ):
                 if message.attachments[0].filename == "config.json":
                     await message.attachments[0].save("config.json")
-                    await message.channel.send(
-                        f"{self.client.description} downloaded new config file."
-                    )
+                    await message.channel.send("Downloaded new config file.")
+                if message.attachments[0].filename == "env":
+                    await message.attachments[0].save(".env")
+                    await message.channel.send("Downloaded new dotenv file.")
 
 
 def setup(client):

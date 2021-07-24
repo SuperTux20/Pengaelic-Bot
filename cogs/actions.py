@@ -28,15 +28,15 @@ class Actions(commands.Cog):
             )  # .set_image(url = f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif")
         )
 
-    @commands.command(name="cry")
+    @commands.command(name="cry", usage="no args")
     async def cry(self, ctx):
         await self.act(ctx, "cry", "crying...")
 
-    @commands.command(name="laugh")
+    @commands.command(name="laugh", usage="no args")
     async def laugh(self, ctx):
         await self.act(ctx, "laugh", "laughing!")
 
-    @commands.command(name="sleep")
+    @commands.command(name="sleep", usage="no args")
     async def snore(self, ctx):
         await self.act(ctx, "sleep", "sleeping...")
 

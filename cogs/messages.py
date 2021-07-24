@@ -3,7 +3,7 @@
 
 import discord
 from discord.ext import commands
-from pengaelicutils import jsoncheck
+from pengaelicutils import jsoncheck, Developers
 from json import dumps
 
 
@@ -29,12 +29,14 @@ class Messages(commands.Cog):
         if not isinstance(ctx.channel, discord.channel.DMChannel):
             await ctx.message.delete()
 
-    @commands.command(name="credits", help="See who helped me come to exist!")
+    @commands.command(
+        name="credits", help="See who helped me come to exist!", usage="no args"
+    )
     async def credits(self, ctx):
         bot_credits = {
-            "Main Developer and Creator": "Tux Penguin (your local comfort OC dealer#7140)",
-            "Original Host": "Hy Asencion (Hyperfresh#8080)",
-            "Current Host": "Cherry Rain (Dichromatic Cherry Blossom#0356)",
+            "Main Developer and Creator": f"Tux Penguin ({self.client.get_user(Developers.get(None, 'tux'))})",
+            "Current Host": f"Hy Asencion ({self.client.get_user(Developers.get(None, 'hy'))})",
+            "Side Developer and Backup Host": f"Cherry Rain ({self.client.get_user(Developers.get(None, 'cherry'))})",
         }
         if jsoncheck(ctx.guild.id):
             bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}

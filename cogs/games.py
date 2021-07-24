@@ -293,7 +293,7 @@ class Games(commands.Cog):
         name="pop",
         help="Get a sheet of bubble wrap! Click to pop.",
         aliases=["bubblewrap", "bubbles"],
-        usage="[size of sheet (5x5 or 5)",
+        usage="[size of sheet (5x5 or 5)]",
     )
     async def bubblewrap(self, ctx, size: str = "5"):
         try:
@@ -336,6 +336,7 @@ class Games(commands.Cog):
     @commands.command(
         name="hangman",
         help="A classic! Guess the letters to solve the word before you run out of attempts.",
+        usage="no args",
     )
     async def hangman(self, ctx):
         word = choice(list(hangman_words.keys()))

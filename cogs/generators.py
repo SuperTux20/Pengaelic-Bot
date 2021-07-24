@@ -21,7 +21,7 @@ class Generators(commands.Cog):
         name="name",
         help="Generate a random name! They tend to be mystic-sounding :eyes:",
         aliases=["namegen"],
-        usage="[names to generate (1)] [max syllables (3)] [min syllables (2)]",
+        usage="[names to generate (1)]\n[max syllables (3)]\n[min syllables (2)]",
     )
     async def name_generator(
         self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2
@@ -122,7 +122,7 @@ class Generators(commands.Cog):
     #             while text.find(word) == -1:
     #                 letter = alphabet[randint(0, len(alphabet) - 1)]
     #                 text = text + letter
-    #                 if stopwatch(starttime) == "01:00":
+    #                 if Stopwatch.monkeywatch(starttime) == "01:00":
     #                     success = False
     #                     break
     #             cutoff = ""
@@ -150,6 +150,7 @@ class Generators(commands.Cog):
     @commands.command(
         name="fortune",
         help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))",
+        usage="no args",
     )
     async def fortune(self, ctx):
         await ctx.send(f"```{bash('fortune', shell=True).decode()}```")

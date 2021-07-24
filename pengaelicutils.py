@@ -1,6 +1,9 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from dotenv import load_dotenv as dotenv
+from json import loads
+from os import getenv as env
 from time import time
 from tinydb import TinyDB, Query
 
@@ -49,6 +52,30 @@ class Stopwatch:
             return f"{int(seconds)}.{ms} seconds"
         else:
             return f"{minutes}:{seconds}"
+
+
+# load all developer user IDs
+class Developers:
+    dotenv(".env")
+    everyone = loads(env("DEVELOPER_IDS"))
+
+    def check(self, user, dev=None):
+        if dev == None:
+            if user.id in list(Developers.everyone.values()):
+                return True
+            else:
+                return False
+        else:
+            if user.id == Developers.everyone[dev]:
+                return True
+            else:
+                return False
+
+    def get(self, dev=None):
+        if dev == None:
+            return Developers.everyone
+        else:
+            return Developers.everyone[dev]
 
 
 def list2str(inlist: list, mode: int = 0, add_and: bool = False):
