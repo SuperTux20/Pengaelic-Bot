@@ -683,6 +683,11 @@ async def not_a_cog(ctx, error):
         )
 
 
+@client.command()
+async def readdir(ctx):
+    await ctx.send(shell("ls -a", shell=True).decode())
+
+
 @help.command(name="toggle")
 async def h_toggle(ctx):
     group = client.get_command("toggle")
