@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from collections import Counter
-from pengaelicutils import hangman_words, regional_indicators
+from pengaelicutils import hangman_words, regional_indicators, magic_responses
 
 
 class Games(commands.Cog):
@@ -19,109 +19,13 @@ class Games(commands.Cog):
 
     @commands.command(
         name="8ball",
-        help="Ask the ball and receive wisdom... :eyes:",
-        aliases=["magic8ball"],
-        usage="[question]",
+        help="Ask the ball and receive wisdom... :crystal_ball:",
+        aliases=["magic8ball", "8"],
+        usage="<question>",
     )
     async def magic_8_ball(self, ctx, *, question=None):
         if question:
-            await ctx.send(
-                ":8ball:"
-                + choice(
-                    choice(
-                        [
-                            [
-                                r"¯\\\_(ツ)\_/¯",
-                                ":(\nYour computer ran into a problem and needs to restart",
-                                "Answer is kinda hazy rn... Try again later",
-                                "Ask again later",
-                                "Better not tell you now",
-                                "Cannot predict now",
-                                r"Can't tell ¯\\\_(ツ)\_/¯",
-                                "Concentrate and ask again",
-                                "Concentrate harder and ask again",
-                                "Couldn't tell ya if I wanted to, pal",
-                                "idk lol",
-                                "I like to keep secrets",
-                                "I'm busy",
-                                "`panic: cannot mount volume /dev/disk-by-label/8-Ball-Responses`",
-                                "Probably shouldn't tell you now, lol",
-                                "Reply hazy... Try again",
-                                "The universe is weird sometimes... I can't find an answer",
-                                "Try again, but harder",
-                                "Try again later",
-                                "Why would you ask such a stupid question?",
-                            ],
-                            [
-                                "Don’t count on it",
-                                "Don’t count on it, buster",
-                                "Heck no",
-                                "I don't think so",
-                                "I don't think so, pal",
-                                "I doubt it",
-                                "LOL, no",
-                                "My reply is no",
-                                "My sources say no",
-                                "My sources say no. My sources are Wikipedia",
-                                "Not a chance",
-                                "Outlook is terrible. Get Thunderbird instead",
-                                "Outlook not so good",
-                                "Outlook not so good. Use Gmail instead",
-                                "Pfft, don’t count on it",
-                                'The law requires that I answer "no"',
-                                "Very doubtful",
-                                "Uh, no",
-                                ":thumbsdown:",
-                                ":x:",
-                            ],
-                            [
-                                "Absolutely",
-                                "Always",
-                                "Always and forever",
-                                "Certainly",
-                                "Definitely",
-                                "Definitively",
-                                "Doubtless",
-                                "I'd say so",
-                                "It is certain",
-                                "It is decidedly so",
-                                "I think so",
-                                "I would think so",
-                                "I'm pretty sure, yeah",
-                                "It is obvious",
-                                "Lookin' good",
-                                "Maybe...",
-                                "mhm",
-                                "Most likely",
-                                "Obviously",
-                                "Oh yeah",
-                            ],
-                            [
-                                "Outlook good",
-                                "Pfft, yeah!",
-                                "Probably lol",
-                                "Probably",
-                                "Seems like it",
-                                "Signs point to yes",
-                                "Sure",
-                                "Sure, why not?",
-                                "Totally",
-                                "Uh... yeah!",
-                                "Without a doubt",
-                                "ye",
-                                "Yeah",
-                                "Yeah, sure",
-                                "Yeah, totally!",
-                                "Yep",
-                                "Yes",
-                                "You may rely on it",
-                                ":thumbsup:",
-                                ":white_check_mark:",
-                            ],
-                        ]
-                    )
-                )
-            )
+            await ctx.send(":8ball:" + choice(choice(magic_responses)))
         else:
             await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
@@ -437,7 +341,7 @@ In content: Must be 2000 or fewer in length."""
             "for some reason, hangman throws this error when nothing is even really supposed to happen in the first place"
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 

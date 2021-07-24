@@ -155,7 +155,7 @@ class Tools(commands.Cog):
         name="poll",
         help="Send a poll!",
         aliases=["suggest"],
-        usage='"<poll name>" <poll content>',
+        usage="'<poll name>' <poll content>",
     )
     async def poll(self, ctx, title=None, *, arg=None):
         if title == None:
@@ -216,7 +216,7 @@ class Tools(commands.Cog):
             await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
-    @commands.command(name="mute", help="Mute a member.")
+    @commands.command(name="mute", help="Mute a member.", usage="<member>")
     @commands.has_permissions(kick_members=True)
     async def mute(self, ctx, member: discord.Member, *, reason=None):
         try:
@@ -401,7 +401,9 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.group(name="stopwatch", help="Track how long something goes.")
+    @commands.group(
+        name="stopwatch", help="Track how long something goes.", usage="<start, stop>"
+    )
     async def stopwatch(self, ctx):
         if ctx.invoked_subcommand == None:
             await ctx.send(
@@ -438,7 +440,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
             )
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
     @nuke.error
@@ -452,7 +454,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
             )
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
     @get_avatar.error

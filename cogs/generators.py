@@ -174,7 +174,7 @@ In content: Must be 2000 or fewer in length."""
             )
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 

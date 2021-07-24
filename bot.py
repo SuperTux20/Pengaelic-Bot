@@ -200,55 +200,55 @@ async def statuses():
 
 
 def help_menu(guild, cog, client):
-    try:
-        if jsoncheck(guild):
-            menu = (
-                f'```json\n"{cog.name}": '
-                + dumps(
-                    {"description": cog.description_long.lower()}
-                    | {
-                        "commands": {
-                            list2str([command.name] + command.aliases, 0).replace(
-                                ", ", "/"
-                            ): command.usage.split("\n")
-                            for command in cog.get_commands()
-                        }
-                    },
-                    indent=4,
+    if jsoncheck(guild):
+        info = {"description": cog.description_long.lower()} | {
+            "commands": {
+                list2str([command.name] + command.aliases, 0).replace(
+                    ", ", "/"
+                ): command.usage.split("\n")
+                for command in cog.get_commands()
+            }
+        }
+        for command in info["commands"]:
+            if len(info["commands"][command]) == 1:
+                info["commands"][command] = info["commands"][command][0]
+        menu = (
+            f'```json\n"{cog.name}": '
+            + dumps(
+                info,
+                indent=4,
+            )
+            + "```"
+        )
+    else:
+        menu = discord.Embed(
+            title=cog.name.capitalize(),
+            description=cog.description_long,
+            color=0x007F7F,
+        ).set_footer(
+            text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
+        )
+        for command in cog.get_commands():
+            if command.usage == "no args":
+                menu.add_field(
+                    name="({})".format(
+                        str([command.name] + command.aliases)[1:-1]
+                        .replace("'", "")
+                        .replace(", ", "/")
+                    ),
+                    value=command.help,
                 )
-                + "```"
-            )
-        else:
-            menu = discord.Embed(
-                title=cog.name.capitalize(),
-                description=cog.description_long,
-                color=0x007F7F,
-            ).set_footer(
-                text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
-            )
-            for command in cog.get_commands():
-                if command.usage:
-                    menu.add_field(
-                        name="({})\n{}".format(
-                            str([command.name] + command.aliases)[1:-1]
-                            .replace("'", "")
-                            .replace(", ", "/"),
-                            command.usage,
-                        ),
-                        value=command.help,
-                    )
-                else:
-                    menu.add_field(
-                        name="({})".format(
-                            str([command.name] + command.aliases)[1:-1]
-                            .replace("'", "")
-                            .replace(", ", "/")
-                        ),
-                        value=command.help,
-                    )
-        return menu
-    except AttributeError:
-        return "Invalid menu."
+            else:
+                menu.add_field(
+                    name="({})\n{}".format(
+                        str([command.name] + command.aliases)[1:-1]
+                        .replace("'", "")
+                        .replace(", ", "/"),
+                        command.usage,
+                    ),
+                    value=command.help,
+                )
+    return menu
 
 
 @client.event
@@ -584,13 +584,11 @@ async def help(ctx, *, cogname: str = None):
                 menu.add_field(
                     name="Options",
                     value=client.get_cog("Options").description,
-                    inline=False,
                 )
             if Developers.check(None, ctx.author):
                 menu.add_field(
                     name="Control",
                     value="Update, restart, that sort of thing.",
-                    inline=False,
                 )
             menu.add_field(
                 name="Links",
