@@ -524,7 +524,7 @@ async def help(ctx, *, cogname: str = None):
             }
             if not isinstance(ctx.channel, discord.channel.DMChannel):
                 info |= {"options": client.get_cog("Options").description.lower()[:-1]}
-            if Developers.check(ctx.author):
+            if Developers.check(None, ctx.author):
                 info |= {"control": "update, restart, that sort of thing"}
             menu = dumps(
                 {
@@ -604,7 +604,7 @@ async def help(ctx, *, cogname: str = None):
                 if subcommand.parents[0] == command:
                     menu.add_field(name=subcommand.name, value=subcommand.help)
             await ctx.send(embed=menu)
-    elif cogname == "control" and Developers.check(ctx.author):
+    elif cogname == "control" and Developers.check(None, ctx.author):
         if jsoncheck(ctx.guild.id):
             await ctx.send(
                 f'```json\n"control": "update, restart, that sort of thing",\n"commands": '
