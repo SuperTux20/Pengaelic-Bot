@@ -308,10 +308,10 @@ class Converters(commands.Cog):
     @spacer.error
     @dings.error
     @sga.error
+    @japanize.error
     async def overcharlimit(self, ctx, error):
         if str(error).startswith(
-            """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be"""
+            "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
         ):
             await ctx.send("Sending all that would put me over the character limit!")
         elif str(error) == "arg is a required argument that is missing.":
