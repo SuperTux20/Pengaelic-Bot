@@ -176,8 +176,7 @@ class NonCommands(commands.Cog):
                     await message.attachments[0].save("config.json")
                     await message.channel.send("Downloaded new config file.")
                 if message.attachments[0].filename == "env":
-                    await message.attachments[0].save("env")
-                    cmd("mv env .env")
+                    await message.attachments[0].save(".env")
                     await message.channel.send("Downloaded new dotenv file.")
 
 
