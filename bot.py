@@ -386,11 +386,17 @@ async def sh(ctx, *, args):
             else:
                 await ctx.send("```\n" + shell(args, shell=True).decode() + "```")
         except CalledProcessError as error:
-            error = str(error)
+            error = int(str(error).split("returned non-zero exit status")[1])
             if "returned non-zero exit status" in error:
-                await ctx.send(
-                    f"Returned non-zero exit status{error.split('returned non-zero exit status')[1]}"
-                )
+                if args.startswith("rm") and error == 1:
+                    await ctx.send("That file doesn't exist.")
+                elif args.startswith("python") and error == 1:
+                    await ctx.send("Invalid Python syntax.")
+                else:
+                    if error == 127:
+                        await ctx.send("Invalid command.")
+                    else:
+                        await ctx.send(f"Returned non-zero exit status{error}")
             else:
                 await ctx.send(error)
         except HTTPException as error:

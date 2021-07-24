@@ -14,7 +14,7 @@ class Generators(commands.Cog):
 
     name = "generators"
     name_typable = name
-    description = "Ya like randomization?"
+    description = "Do ya like randomization?"
     description_long = description + " So do I!"
 
     @commands.command(
