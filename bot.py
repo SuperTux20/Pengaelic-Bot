@@ -349,7 +349,7 @@ if not unstable:
                 # )
             else:
                 await ctx.send(
-                    f"Unhandled error occurred:```\n{error}\n```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                    f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
                 )
 
 
@@ -700,7 +700,7 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
             channel = await ctx.guild.create_text_channel("dog-of-wisdom")
             await channel.edit(category=ctx.guild.categories[0])
         hook = await channel.create_webhook(name="The Dog of Wisdom")
-        await client.get_user(Developers.get("tux")).send(
+        await client.get_user(Developers.get(None, "tux")).send(
             f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n"
             + hook.url.replace(
                 "https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='
