@@ -3,6 +3,8 @@
 
 from sys import executable as python, argv as args, version as pyversion
 
+from discord.errors import HTTPException
+
 if "3.9" not in pyversion:
     print("Pengaelic Bot requires Python 3.9 to function properly.")
     print("Please run Pengaelic Bot with Python 3.9")
@@ -20,7 +22,7 @@ from pengaelicutils import (
     Developers,
 )
 from random import choice, randint
-from subprocess import check_output as shell, call, STDOUT
+from subprocess import CalledProcessError, check_output as shell, call, STDOUT
 
 print("Imported modules")
 if shell("uname -o", shell=True).decode()[:-1] != "Android":
@@ -368,7 +370,7 @@ print("Loaded bot token and developer IDs")
 
 @client.command(name="exit", aliases=["quit"])
 async def quit_the_bot(ctx):
-    if Developers.check(ctx.author):
+    if Developers.check(None, ctx.author):
         await ctx.send("Goodbye...")
         exit(0)
     else:
@@ -377,8 +379,26 @@ async def quit_the_bot(ctx):
 
 @client.command()
 async def sh(ctx, *, args):
-    if Developers.check(ctx.author):
-        await ctx.send(shell(args, shell=True).decode())
+    if Developers.check(None, ctx.author):
+        try:
+            if args.startswith("cd"):
+                await ctx.send("Cannot change directory.")
+            else:
+                await ctx.send("```\n" + shell(args, shell=True).decode() + "```")
+        except CalledProcessError as error:
+            error = str(error)
+            if "returned non-zero exit status" in error:
+                await ctx.send(
+                    f"Returned non-zero exit status{error.split('returned non-zero exit status')[1]}"
+                )
+            else:
+                await ctx.send(error)
+        except HTTPException as error:
+            error = str(error)
+            if error.startswith(
+                "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
+            ):
+                await ctx.send("Output too large.")
     else:
         await ctx.send("Hey, only my developers can do this!")
 
