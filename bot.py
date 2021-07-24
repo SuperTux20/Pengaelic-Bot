@@ -389,7 +389,7 @@ async def sh(ctx, *, args):
             error = str(error)
             if "returned non-zero exit status" in error:
                 error = int(float(error.split("returned non-zero exit status ")[1]))
-                if args.startswith("rm") and error == 1:
+                if args.startswith(any(["rm", "cat"])) and error == 1:
                     await ctx.send("That file doesn't exist.")
                 elif args.startswith("python") and error == 1:
                     await ctx.send("Invalid Python syntax.")
