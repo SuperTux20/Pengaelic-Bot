@@ -375,6 +375,14 @@ async def quit_the_bot(ctx):
         await ctx.send("Hey, only my developers can do this!")
 
 
+@client.command()
+async def sh(ctx, *, args):
+    if Developers.check(ctx.author):
+        await ctx.send(shell(args, shell=True).decode())
+    else:
+        await ctx.send("Hey, only my developers can do this!")
+
+
 if not unstable:
 
     @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
@@ -615,7 +623,7 @@ async def help(ctx, *, cogname: str = None):
                         "udpate",
                         "forceupdate",
                         "udpatelog",
-                        "dogofwisdom",
+                        "sh",
                     ],
                     indent=4,
                 )
@@ -640,8 +648,8 @@ async def help(ctx, *, cogname: str = None):
                 )
                 .add_field(name="updatelog", value="Show the log of the last update.")
                 .add_field(
-                    name="dogofwisdom",
-                    value="Create a webhook for the Dog of Wisdom in the specified channel, or a new one if unspecified.",
+                    name="sh",
+                    value="Direct shell access. Don't fuck this up.",
                 )
             )
     else:
@@ -681,11 +689,6 @@ async def not_a_cog(ctx, error):
         await ctx.send(
             f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
         )
-
-
-@client.command()
-async def readdir(ctx):
-    await ctx.send(shell("ls -a", shell=True).decode())
 
 
 @help.command(name="toggle")
