@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from bot import developer
 import discord
 from pengaelicutils import getops
 from discord.utils import get
@@ -169,6 +170,7 @@ class NonCommands(commands.Cog):
             elif (
                 isinstance(message.channel, discord.channel.DMChannel)
                 and message.attachments
+                and developer(message.author)
             ):
                 if message.attachments[0].filename == "config.json":
                     await message.attachments[0].save("config.json")
