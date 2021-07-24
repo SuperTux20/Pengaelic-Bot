@@ -349,7 +349,7 @@ if not unstable:
                 # )
             else:
                 await ctx.send(
-                    f"Unhandled error occurred:```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                    f"Unhandled error occurred:```\n{error}\n```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
                 )
 
 
@@ -539,7 +539,7 @@ if not unstable:
     @update.error
     async def update_error(ctx, error):
         await ctx.send(
-            f"An error occured while updating...```{error}```Attempting force-update."
+            f"An error occured while updating...```\n{error}\n```Attempting force-update."
         )
         await update(ctx, True)
 
@@ -586,7 +586,7 @@ async def help(ctx, *, cogname: str = None):
                     value=client.get_cog("Options").description,
                     inline=False,
                 )
-            if Developers.check(ctx.author):
+            if Developers.check(None, ctx.author):
                 menu.add_field(
                     name="Control",
                     value="Update, restart, that sort of thing.",
