@@ -170,7 +170,7 @@ class NonCommands(commands.Cog):
             elif (
                 isinstance(message.channel, discord.channel.DMChannel)
                 and message.attachments
-                and Developers.check(message.author)
+                and Developers.check(None, message.author)
             ):
                 if message.attachments[0].filename == "config.json":
                     await message.attachments[0].save("config.json")
