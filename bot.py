@@ -110,7 +110,7 @@ else:
         help_command=None,
         intents=discord.Intents.all(),
     )
-cmd(f"toilet -w 1000 -f standard -F border -F gay {client.description}")
+cmd(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
 print(info)
 print("Defined client")
 db = TinyDB("config.json")
@@ -260,15 +260,19 @@ async def on_ready():
             db.insert({"guildName": guild.name, "guildID": guild.id} | newops())
             for guild in client.guilds
         ]
-    newconfigs = [
-        {"guildName": guild.name, "guildID": guild.id} | newops()
-        for guild in client.guilds
-    ]
+    newconfigs = [{"guildID": guild.id} for guild in client.guilds]
+    configgedservers = [{"guildID": guild["guildID"]} for guild in db.all()]
     # try to make configs for a server that the bot was added to while it was offline
     for server in range(len(client.guilds)):
-        if newconfigs[server] not in db.all():
-            db.insert(newconfigs[server])
-            print(f"Configs created for {newconfigs[server]['guildName']}")
+        if newconfigs[server] not in configgedservers:
+            db.insert(
+                {"guildName": client.get_guild(newconfigs[server]["guildID"]).name}
+                | {"guildID": newconfigs[server]["guildID"]}
+                | newops()
+            )
+            print(
+                f"Configs created for {client.get_guild(newconfigs[server]['guildID']).name}"
+            )
     # add any options that may have been created since the option dicts' creation, and account for a server's name changing
     for guild in client.guilds:
         ops = db.all()[client.guilds.index(guild)]
