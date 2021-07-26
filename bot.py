@@ -693,7 +693,10 @@ async def help(ctx, *, cogname: str = None):
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
 @client.command(name="dogofwisdom")
 async def dog(ctx, *, channel: discord.TextChannel = None):
-    if getops(ctx.guild.id, "roles", "modRole") in ctx.author.roles:
+    if (
+        get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "modRole"))
+        in ctx.author.roles
+    ):
         if not channel:
             channel = await ctx.guild.create_text_channel("dog-of-wisdom")
             await channel.edit(category=ctx.guild.categories[0])
@@ -703,6 +706,10 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
             + hook.url.replace(
                 "https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='
             )
+        )
+    else:
+        await ctx.send(
+            f"You don't have the {getops(ctx.guild.id, 'roles', 'modRole')} role."
         )
 
 
