@@ -168,12 +168,12 @@ class Tools(commands.Cog):
                     color=self.teal, title=title, description=arg
                 ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             )
-            await the_poll.add_reaction("✅")
-            await the_poll.add_reaction("❌")
             try:
                 await ctx.message.delete()
             except:
                 pass
+            await the_poll.add_reaction("✅")
+            await the_poll.add_reaction("❌")
 
     @commands.command(
         name="clear",

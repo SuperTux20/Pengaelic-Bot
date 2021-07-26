@@ -693,7 +693,7 @@ async def help(ctx, *, cogname: str = None):
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
 @client.command(name="dogofwisdom")
 async def dog(ctx, *, channel: discord.TextChannel = None):
-    if getops(ctx.guild.id, "modRole") in ctx.author.roles:
+    if getops(ctx.guild.id, "roles", "modRole") in ctx.author.roles:
         if not channel:
             channel = await ctx.guild.create_text_channel("dog-of-wisdom")
             await channel.edit(category=ctx.guild.categories[0])
