@@ -326,22 +326,21 @@ class Games(commands.Cog):
     @bubblewrap.error
     @hangman.error
     async def error(self, ctx, error):
-        if (
-            str(error)
-            == """Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be 2000 or fewer in length."""
+        error = str(error)
+        if error.startswith(
+            "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
         ):
             await ctx.send(
-                "Sorry, you specified numbers that were too large. Sending all that would put me over the 2000-character limit!"
+                "<:critical_error:869760946816553020>Sending all that would put me over the character limit!"
             )
         elif (
-            str(error)
+            error
             == "Command raised an exception: HTTPException: 400 Bad Request (error code: 50006): Cannot send an empty message"
         ):
             "for some reason, hangman throws this error when nothing is even really supposed to happen in the first place"
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 

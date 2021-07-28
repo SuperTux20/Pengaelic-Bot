@@ -27,9 +27,9 @@ class Options(commands.Cog):
         status = getops(ctx.guild.id, "toggles", option)
         updop(ctx.guild.id, "toggles", option, not status)
         if status:
-            await ctx.send(disable_message)
+            await ctx.send("<:information:869760946808180747>"+disable_message)
         else:
-            await ctx.send(enable_message)
+            await ctx.send("<:information:869760946808180747>"+enable_message)
 
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
@@ -62,7 +62,7 @@ class Options(commands.Cog):
             )
             header = discord.Embed(
                 title="Options",
-                description=f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"`',
+                description='All of the options.\n'+f'To set an option, type `{p}options set <option> <value>`\n'+f'To toggle a toggle option, type `{p}options toggle <option>`\n'+f'To add to the censor list, type `{p}options censor add "<word or phrase>"`',
                 color=self.teal,
             )
             channels = discord.Embed(
@@ -120,28 +120,28 @@ class Options(commands.Cog):
     async def reset_options(self, ctx):
         if not self.reset_options_confirm:
             await ctx.send(
-                "Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
+                "<:question:869760946904645643>Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
             )
             self.reset_options_confirm = True
             await sleep(10)
             if self.reset_options_confirm:
                 self.reset_options_confirm = False
-                await ctx.send("Pending reset expired.")
+                await ctx.send("<:information:869760946808180747>Pending reset expired.")
         elif self.reset_options_confirm:
             self.db.update({str(ctx.guild.id): newops()})
-            await ctx.send("Options reset to defaults.")
+            await ctx.send("<:information:869760946808180747>Options reset to defaults.")
             await self.read_options(ctx)
             self.reset_options_confirm = False
 
     @read_options.group(name="toggle", help="Toggle an option.")
     async def optoggle(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("You didn't specify a valid option to toggle!")
+            await ctx.send("<:warning:869760947114348604>You didn't specify a valid option to toggle!")
 
     @read_options.group(name="set", help="Set an option.")
     async def opset(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.send("You didn't specify a valid option to set!")
+            await ctx.send("<:warning:869760947114348604>You didn't specify a valid option to set!")
 
     @optoggle.command(
         name="atSomeone",
@@ -261,19 +261,19 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def change_required_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "customRoleLock", role.id)
-        await ctx.send(f"Role {role} is now required for custom roles.")
+        await ctx.send(f"<:information:869760946808180747>Role {role} is now required for custom roles.")
 
     @opset.command(name="modRole", help="Set what role the moderators are.")
     @commands.has_permissions(manage_roles=True)
     async def change_mod_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "modRole", role.id)
-        await ctx.send(f"Role {role} is now set as the mod role.")
+        await ctx.send(f"<:information:869760946808180747>Role {role} is now set as the mod role.")
 
     @opset.command(name="muteRole", help="Set the muted role.")
     @commands.has_permissions(manage_roles=True)
     async def change_mute_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "muteRole", role.id)
-        await ctx.send(f"Role {role} is now set as the muted role.")
+        await ctx.send(f"<:information:869760946808180747>Role {role} is now set as the muted role.")
 
     @opset.command(
         name="suggestionsChannel",
@@ -282,7 +282,7 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
         updop(ctx.guild.id, "channels", "suggestionsChannel", channel.id)
-        await ctx.send(f"Channel {channel} is now the suggestions channel.")
+        await ctx.send(f"<:information:869760946808180747>Channel {channel} is now the suggestions channel.")
 
     @opset.command(
         name="welcomeChannel",
@@ -291,7 +291,7 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
         updop(ctx.guild.id, "channels", "welcomeChannel", channel.id)
-        await ctx.send(f"Channel {channel} is now the welcome channel.")
+        await ctx.send(f"<:information:869760946808180747>Channel {channel} is now the welcome channel.")
 
     @opset.command(
         name="welcomeMessage",
@@ -300,7 +300,7 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def change_welcome_message(self, ctx, *, message: str):
         updop(ctx.guild.id, "messages", "welcomeMessage", message)
-        await ctx.send(f'Welcome message set to "{message}".')
+        await ctx.send(f'<:information:869760946808180747>Welcome message set to "{message}".')
 
     @opset.command(
         name="goodbyeMessage",
@@ -309,13 +309,13 @@ class Options(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def change_goodbye_message(self, ctx, *, message: str):
         updop(ctx.guild.id, "messages", "goodbyeMessage", message)
-        await ctx.send(f'Goodbye message set to "{message}".')
+        await ctx.send(f'<:information:869760946808180747>Goodbye message set to "{message}".')
 
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
-                "Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`"
+                "<:information:869760946808180747>Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`"
             )
 
     @censor.command(
@@ -343,12 +343,12 @@ class Options(commands.Cog):
         all_bads = getops(ctx.guild.id, "lists", "censorList")
         word = word.lower()
         if word in all_bads:
-            await ctx.send("That word is already in the filter.")
+            await ctx.send("<:information:869760946808180747>That word is already in the filter.")
         else:
             all_bads.append(word)
             all_bads.sort()
             updop(ctx.guild.id, "lists", "censorList", all_bads)
-            await ctx.send("Word added to the filter.")
+            await ctx.send("<:information:869760946808180747>Word added to the filter.")
 
     @censor.command(
         name="delete",
@@ -361,28 +361,28 @@ class Options(commands.Cog):
         all_bads = getops(ctx.guild.id, "lists", "censorList")
         word = word.lower()
         if word not in all_bads:
-            await ctx.send("That word is not in the filter.")
+            await ctx.send("<:information:869760946808180747>That word is not in the filter.")
         else:
             all_bads.remove(word)
             all_bads.sort()
             updop(ctx.guild.id, "lists", "censorList", all_bads)
-            await ctx.send("Word removed from the filter.")
+            await ctx.send("<:information:869760946808180747>Word removed from the filter.")
 
     @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
     async def wipe_censor(self, ctx):
         if not self.wipe_censor_confirm:
             await ctx.send(
-                "Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds."
+                "<:question:869760946904645643>Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds."
             )
             self.wipe_censor_confirm = True
             await sleep(10)
             if self.wipe_censor_confirm:
                 self.wipe_censor_confirm = False
-                await ctx.send("Pending wipe expired.")
+                await ctx.send("<:information:869760946808180747>Pending wipe expired.")
         elif self.wipe_censor_confirm:
             updop(ctx.guild.id, "lists", "censorList", [])
-            await ctx.send("Filter wiped.")
+            await ctx.send("<:information:869760946808180747>Filter wiped.")
             self.wipe_censor_confirm = False
 
     @read_options.error
@@ -410,21 +410,26 @@ class Options(commands.Cog):
     @del_censor.error
     @wipe_censor.error
     async def messageError(self, ctx, error):
+        error = str(error)
         if (
-            str(error)
+            error
             == "You are missing Manage Messages permission(s) to run this command."
         ):
             await ctx.send(
-                f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
+                f"<:information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
             )
-        if str(error).endswith('" not found.'):
-            if str(error).startswith('Channel "'):
-                await ctx.send(f"{ctx.author.mention}, that isn't a valid channel.")
-            if str(error).startswith('Role "'):
-                await ctx.send(f"{ctx.author.mention}, that isn't a valid role.")
+        if error.endswith('" not found.'):
+            if error.startswith('Channel "'):
+                await ctx.send(
+                    f"<:warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel."
+                )
+            if error.startswith('Role "'):
+                await ctx.send(
+                    f"<:warning:869760947114348604>{ctx.author.mention}, that isn't a valid role."
+                )
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 
