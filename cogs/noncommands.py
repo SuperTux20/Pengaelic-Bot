@@ -118,7 +118,11 @@ class NonCommands(commands.Cog):
                     )
 
                 # this section makes automatic suggestion polls
-                if getops(message.guild.id, "toggles", "suggestions") and message.channel.id == getops(message.guild.id, "channels", "suggestionsChannel"):
+                if getops(
+                    message.guild.id, "toggles", "suggestions"
+                ) and message.channel.id == getops(
+                    message.guild.id, "channels", "suggestionsChannel"
+                ):
                     thepoll = await message.channel.send(
                         embed=discord.Embed(
                             title="Suggestion",
@@ -164,17 +168,17 @@ class NonCommands(commands.Cog):
                         choice(message.guild.members).mention
                         + ", you have been randomly selected by a @someone ping!"
                     )
-                elif (
-                    isinstance(message.channel, discord.channel.DMChannel)
-                    and message.attachments
-                    and Developers.check(None, message.author)
-                ):
-                    if message.attachments[0].filename == "config.json":
-                        await message.attachments[0].save("config.json")
-                        await message.channel.send("Downloaded new config file.")
-                    if message.attachments[0].filename == "env":
-                        await message.attachments[0].save(".env")
-                        await message.channel.send("Downloaded new dotenv file.")
+            elif (
+                isinstance(message.channel, discord.channel.DMChannel)
+                and message.attachments
+                and Developers.check(None, message.author)
+            ):
+                if message.attachments[0].filename == "config.json":
+                    await message.attachments[0].save("config.json")
+                    await message.channel.send("Downloaded new config file.")
+                if message.attachments[0].filename == "env":
+                    await message.attachments[0].save(".env")
+                    await message.channel.send("Downloaded new dotenv file.")
 
 
 def setup(client):
