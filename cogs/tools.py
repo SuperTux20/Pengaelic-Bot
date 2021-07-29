@@ -161,8 +161,8 @@ class Tools(commands.Cog):
                 ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             )
             await the_poll.add_reaction("✅")
-            await the_poll.add_reaction("❌")
             await the_poll.add_reaction("🤷")
+            await the_poll.add_reaction("❌")
             try:
                 await ctx.message.delete()
             except:
@@ -425,7 +425,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
             )
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
     @nuke.error
@@ -439,7 +439,7 @@ Upload: {round(float((results["upload"])/1000000), 2)} Mbps
             )
         else:
             await ctx.send(
-                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
     @get_avatar.error

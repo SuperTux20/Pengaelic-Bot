@@ -129,8 +129,8 @@ class NonCommands(commands.Cog):
                 try:
                     await message.delete()
                     await thepoll.add_reaction("✅")
-                    await thepoll.add_reaction("❌")
                     await thepoll.add_reaction("🤷")
+                    await thepoll.add_reaction("❌")
                 except:
                     pass
                 return
