@@ -59,12 +59,12 @@ class Games(commands.Cog):
             total = sum(roll_results)
             if dice > 1:
                 if len(str(roll_results[:-1])[1:-1]) < 2000:
-                    response = f"{str(roll_results[:-1])[1:-1]}, and {roll_results[-1]}, totalling {total}"
+                    response = f"You rolled {str(roll_results[:-1])[1:-1]}, and {roll_results[-1]}, totalling {total}"
                 else:
-                    response = f"a total of {total}"
+                    response = f"You rolled a total of {total}"
             else:
-                response = str(total)
-        await ctx.send(":game_die:You rolled " + response)
+                response = "You rolled " + str(total)
+        await ctx.send(":game_die:" + response)
 
     @commands.command(
         name="flip",
