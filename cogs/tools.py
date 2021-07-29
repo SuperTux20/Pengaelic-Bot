@@ -176,6 +176,12 @@ class Tools(commands.Cog):
                     color=self.teal, title=title, description=arg
                 ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             )
+<<<<<<< Updated upstream
+=======
+            await the_poll.add_reaction("✅")
+            await the_poll.add_reaction("❌")
+            await the_poll.add_reaction("🤷")
+>>>>>>> Stashed changes
             try:
                 await ctx.message.delete()
             except:

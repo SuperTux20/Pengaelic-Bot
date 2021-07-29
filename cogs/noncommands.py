@@ -131,6 +131,7 @@ class NonCommands(commands.Cog):
                             name=message.author.name, icon_url=message.author.avatar_url
                         )
                     )
+<<<<<<< Updated upstream
                     try:
                         await message.delete()
                         await thepoll.add_reaction("✅")
@@ -138,6 +139,17 @@ class NonCommands(commands.Cog):
                     except:
                         pass
                     return
+=======
+                )
+                try:
+                    await message.delete()
+                    await thepoll.add_reaction("✅")
+                    await thepoll.add_reaction("❌")
+                    await thepoll.add_reaction("🤷")
+                except:
+                    pass
+                return
+>>>>>>> Stashed changes
 
                 # a rickroll-themed game of russian roulette, except the barrel is reset every time
                 if "you know the rules" == messagetext and getops(

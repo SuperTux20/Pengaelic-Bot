@@ -60,8 +60,10 @@ class Generators(commands.Cog):
             "dog",
             "cat",
             "car",
+            "house",
             "alligator",
             "chicken nugget",
+            "hospital bed",
             "penguin",
             "burger",
             "car salesman",
@@ -75,6 +77,7 @@ class Generators(commands.Cog):
             "stabbed",
             "run over",
             "slapped",
+            "arrested",
         ]
         poss2 = ["", "by"]
         timing = ["after", "when"]

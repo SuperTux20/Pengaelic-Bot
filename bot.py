@@ -253,8 +253,10 @@ def help_menu(guild, cog, client):
 
 @client.event
 async def on_ready():
+    global db
     # create a server's configs
     if db.all() == []:
+<<<<<<< Updated upstream
         [
             db.insert({"guildName": guild.name, "guildID": guild.id} | newops())
             for guild in client.guilds
@@ -282,19 +284,22 @@ async def on_ready():
             if opts != newops().keys():
                 for key in ops[opts]:
                     try:
+=======
+        for server in [{"guildID": guild.id} | newops() for guild in client.guilds]:
+            db.insert(server)
+    else:
+        for server in range(len(db.all())):
+            ops = db.all()[server]
+            ops.pop("guildID")
+            nops = newops()
+            for opts in ops.keys():
+                if opts != newops().keys():
+                    for key in ops[opts]:
+>>>>>>> Stashed changes
                         nops[opts].pop(key)
-                    except KeyError:
-                        pass
-                ops[opts] |= nops[opts]
-                db.update({"guildName": guild.name}, Query().guildID == guild.id)
-                db.update({"channels": ops["channels"]}, Query().guildID == guild.id)
-                db.update({"lists": ops["lists"]}, Query().guildID == guild.id)
-                db.update({"messages": ops["messages"]}, Query().guildID == guild.id)
-                db.update({"roles": ops["roles"]}, Query().guildID == guild.id)
-                db.update({"toggles": ops["toggles"]}, Query().guildID == guild.id)
-    await statuses()
+                    ops[opts] |= nops[opts]
+                    db.update(ops)
     print(f"{client.description} connected to Discord")
-    print(f"Currently on {len(client.guilds)} servers")
 
 
 @client.event
@@ -320,10 +325,15 @@ async def on_guild_join(guild, auto=True):
                 continue
         if auto:
             # create fresh options row for new server
+<<<<<<< Updated upstream
             newconfigs = {"guildName": guild.name, "guildID": guild.id} | newops()
             if newconfigs not in db.all():
                 db.insert(newconfigs)
             print(f"Configs created for {guild.name}")
+=======
+            db.update({guild.id: newops()})
+            print(f"Options set created for {guild.name}")
+>>>>>>> Stashed changes
 
 
 if not unstable:
