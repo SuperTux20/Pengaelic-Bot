@@ -128,11 +128,11 @@ class NonCommands(commands.Cog):
                 )
                 try:
                     await message.delete()
-                    await thepoll.add_reaction("✅")
-                    await thepoll.add_reaction("🤷")
-                    await thepoll.add_reaction("❌")
                 except:
                     pass
+                await thepoll.add_reaction("✅")
+                await thepoll.add_reaction("🤷")
+                await thepoll.add_reaction("❌")
                 return
 
             # a rickroll-themed game of russian roulette, except the barrel is reset every time
