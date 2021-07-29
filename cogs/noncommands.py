@@ -118,10 +118,7 @@ class NonCommands(commands.Cog):
                     )
 
                 # this section makes automatic suggestion polls
-                if getops(message.guild.id, "toggles", "suggestions") and (
-                    message.channel.id
-                    == getops(message.guild.id, "channels", "suggestionsChannel")
-                ):
+                if getops(message.guild.id, "toggles", "suggestions") and message.channel.id == getops(message.guild.id, "channels", "suggestionsChannel"):
                     thepoll = await message.channel.send(
                         embed=discord.Embed(
                             title="Suggestion",
@@ -131,13 +128,13 @@ class NonCommands(commands.Cog):
                             name=message.author.name, icon_url=message.author.avatar_url
                         )
                     )
-                try:
-                    await message.delete()
-                except:
-                    pass
-                await thepoll.add_reaction("✅")
-                await thepoll.add_reaction("🤷")
-                await thepoll.add_reaction("❌")
+                    try:
+                        await message.delete()
+                    except:
+                        pass
+                    await thepoll.add_reaction("✅")
+                    await thepoll.add_reaction("🤷")
+                    await thepoll.add_reaction("❌")
 
                 # a rickroll-themed game of russian roulette, except the barrel is reset every time
                 if "you know the rules" == messagetext and getops(
