@@ -48,12 +48,7 @@ class Tools(commands.Cog):
         results = s.results.dict()
         return results
 
-    @commands.command(
-        name="os",
-        help="Read what OS I'm running on!",
-        aliases=["getos"],
-        usage="no args",
-    )
+    @commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
     async def showOS(self, ctx):
         async with ctx.typing():
             system = (
@@ -83,11 +78,9 @@ class Tools(commands.Cog):
                     emoji = "<:windows:855493279797084200>"
             except KeyError:
                 emoji = "<:linux:855493980267479080>"
-        await ctx.send(
-            f"<:information:869760946808180747>I'm running on {system}, kernel version {kernel} {emoji}"
-        )
+        await ctx.send(f"I'm running on {system}, kernel version {kernel} {emoji}")
 
-    @commands.command(name="test", help="Am I online? I'm not sure.", usage="no args")
+    @commands.command(name="test", help="Am I online? I'm not sure.")
     async def test(self, ctx):
         await ctx.send("Yep, I'm alive :sunglasses:")
 
@@ -112,10 +105,7 @@ class Tools(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(
-        name="icon",
-        help="Get the icon for the server.",
-        aliases=["servericon"],
-        usage="no args",
+        name="icon", help="Get the icon for the server.", aliases=["servericon"]
     )
     async def get_icon(self, ctx):
         try:
@@ -125,9 +115,7 @@ class Tools(commands.Cog):
                 ).set_image(url=ctx.guild.icon_url)
             )
         except:
-            await ctx.send(
-                "<:information:869760946808180747>This server doesn't have an icon... :pensive:"
-            )
+            await ctx.send("This server doesn't have an icon... :pensive:")
 
     @commands.command(
         name="emoji",
@@ -142,7 +130,7 @@ class Tools(commands.Cog):
         ]
         if emoji == None:
             await ctx.send(
-                "<:information:869760946808180747>Here's all the emojis on this server.\n"
+                "Here's all the emojis on this server.\n"
                 + str(emojis)[1:-1].replace("'", "").replace(", ", "")
             )
         else:
@@ -153,41 +141,32 @@ class Tools(commands.Cog):
                     ).set_image(url=emojiurls[emojis.index(emoji)])
                 )
             else:
-                await ctx.send("<:warning:869760947114348604>Invalid emoji specified!")
+                await ctx.send("Invalid emoji specified!")
 
     @commands.command(
         name="poll",
         help="Send a poll!",
         aliases=["suggest"],
-        usage="'<poll name>' <poll content>",
+        usage='"<poll name>" <poll content>',
     )
     async def poll(self, ctx, title=None, *, arg=None):
         if title == None:
-            await ctx.send(
-                "<:warning:869760947114348604>You didn't specify a name for the poll!"
-            )
+            await ctx.send("You didn't specify a name for the poll!")
         if arg == None:
-            await ctx.send(
-                "<:warning:869760947114348604>You didn't specify anything to make a poll for!"
-            )
+            await ctx.send("You didn't specify anything to make a poll for!")
         else:
             the_poll = await ctx.send(
                 embed=discord.Embed(
                     color=self.teal, title=title, description=arg
                 ).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             )
-<<<<<<< Updated upstream
-=======
             await the_poll.add_reaction("✅")
             await the_poll.add_reaction("❌")
             await the_poll.add_reaction("🤷")
->>>>>>> Stashed changes
             try:
                 await ctx.message.delete()
             except:
                 pass
-            await the_poll.add_reaction("✅")
-            await the_poll.add_reaction("❌")
 
     @commands.command(
         name="clear",
@@ -198,9 +177,7 @@ class Tools(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, msgcount: int = 5):
         await ctx.channel.purge(limit=msgcount + 1)
-        report = await ctx.send(
-            f"<:information:869760946808180747>{msgcount} (probably) messages deleted."
-        )
+        report = await ctx.send(f"{msgcount} (probably) messages deleted.")
         await sleep(3)
         try:
             await report.delete()
@@ -211,19 +188,18 @@ class Tools(commands.Cog):
         name="nuke",
         help="Purge a channel of EVERYTHING.",
         aliases=["wipe", "wipechannel"],
-        usage="no args",
     )
     @commands.has_permissions(manage_channels=True)
     async def nuke(self, ctx):
         if not self.nukeconfirm:
             await ctx.send(
-                f"<:question:869760946904645643>Are you **really** sure you want to wipe this channel? Type the command again to confirm. This will expire in 10 seconds."
+                f"Are you **really** sure you want to wipe this channel? Type the command again to confirm. This will expire in 10 seconds."
             )
             self.nukeconfirm = True
             await sleep(10)
             if self.nukeconfirm:
                 self.nukeconfirm = False
-                await ctx.send("<:information:869760946808180747>Pending nuke expired.")
+                await ctx.send("Pending nuke expired.")
         elif self.nukeconfirm:
             newchannel = await ctx.channel.clone(reason=f"Nuking #{ctx.channel.name}")
             await newchannel.edit(
@@ -232,7 +208,7 @@ class Tools(commands.Cog):
             await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
-    @commands.command(name="mute", help="Mute a member.", usage="<member>")
+    @commands.command(name="mute", help="Mute a member.")
     @commands.has_permissions(kick_members=True)
     async def mute(self, ctx, member: discord.Member, *, reason=None):
         try:
@@ -243,30 +219,25 @@ class Tools(commands.Cog):
             await ctx.send(f"Muted {member} for reason `{reason}`.")
         except:
             await ctx.send(
-                f"<:warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`."
+                f"There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`."
             )
 
-    @commands.command(name="kick", help="Kick a member.", usage="<member>")
+    @commands.command(name="kick", help="Kick a member.")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         await member.kick(reason=reason)
-        await ctx.send(
-            f"<:information:869760946808180747>Kicked {member} for reason `{reason}`."
-        )
+        await ctx.send(f"Kicked {member} for reason `{reason}`.")
 
-    @commands.command(name="ban", help="Ban a member.", usage="<member>")
+    @commands.command(name="ban", help="Ban a member.")
     @commands.has_permissions(kick_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason=None):
         await member.ban(reason=reason)
-        await ctx.send(
-            f"<:information:869760946808180747>Banned {member} for reason `{reason}`."
-        )
+        await ctx.send(f"Banned {member} for reason `{reason}`.")
 
     @commands.command(
         name="server",
         help="See a bunch of data about the server at a glance.",
         aliases=["info"],
-        usage="no args",
     )
     @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
@@ -341,7 +312,7 @@ class Tools(commands.Cog):
             await ctx.send(embed=embedinfo)
 
     # Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
-    @commands.command(name="speedtest", aliases=["st", "ping"], usage="no args")
+    @commands.command(name="speedtest", aliases=["st", "ping"])
     async def speedtest(self, ctx):
         if self.testing == False:
             self.testing = True
@@ -352,21 +323,20 @@ class Tools(commands.Cog):
             await ctx.channel.send(
                 embed=discord.Embed(
                     title="Speedtest Results",
-                    description=f'Server: {results["server"]["sponsor"]} {results["server"]["name"]}\n'
-                    + 'Ping: {results["ping"]} ms\n'
-                    + 'Download: {round(float((results["download"])/1000000), 2)} Mbps\n'
-                    + 'Upload: {round(float((results["upload"])/1000000), 2)} Mbps\n\n'
-                    + "*Conducted using Ookla's Speedtest CLI: https://speedtest.net*",
+                    description=f"""Server: {results["server"]["sponsor"]} {results["server"]["name"]}
+Ping: {results["ping"]} ms
+Download: {round(float((results["download"])/1000000), 2)} Mbps
+Upload: {round(float((results["upload"])/1000000), 2)} Mbps
+
+*Conducted using Ookla\'s Speedtest CLI: https://speedtest.net*""",
                     color=0x007F7F,
                 ).set_footer(text=SpeedPerformTime)
             )
             self.testing = False
         else:
-            await ctx.send(
-                "<:information:869760946808180747>A test is already in progress. Please wait..."
-            )
+            await ctx.send("A test is already in progress. Please wait...")
 
-    @commands.command(name="role", usage="<hex code>\n<role name>")
+    @commands.command(name="role")
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
         role_lock = get(
@@ -383,13 +353,9 @@ class Tools(commands.Cog):
                     role = ctx.guild.get_role(int(result))
                     await role.edit(name=role_name, color=discord.Color(int(color, 16)))
                     await member.add_roles(role)
-                    await ctx.send(
-                        f"<:information:869760946808180747>Role {role.mention} edited."
-                    )
+                    await ctx.send(f"Role {role.mention} edited.")
                 else:
-                    await ctx.send(
-                        f"<:critical_error:869760946816553020>Invalid hex code `{color}`."
-                    )
+                    await ctx.send(f"Invalid hex code `{color}`.")
             else:
                 if hex_code_match:
                     role_color = discord.Color(int(color, 16))
@@ -398,19 +364,15 @@ class Tools(commands.Cog):
                     )
                     await member.add_roles(role)
                     updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
-                    await ctx.send(
-                        f"<:information:869760946808180747>Role {role.mention} created and given."
-                    )
+                    await ctx.send(f"Role {role.mention} created and given.")
                 else:
-                    await ctx.send(
-                        f"<:critical_error:869760946816553020>Invalid hex code `{color}`."
-                    )
+                    await ctx.send("Invalid hex code.")
         else:
             await ctx.send(
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.command(name="delrole", usage="no args")
+    @commands.command(name="delrole")
     async def delrole(self, ctx):
         member = ctx.author
         role_lock = get(
@@ -430,9 +392,7 @@ class Tools(commands.Cog):
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.group(
-        name="stopwatch", help="Track how long something goes.", usage="<start, stop>"
-    )
+    @commands.group(name="stopwatch", help="Track how long something goes.")
     async def stopwatch(self, ctx):
         if ctx.invoked_subcommand == None:
             await ctx.send(
@@ -445,52 +405,46 @@ class Tools(commands.Cog):
                 .add_field(name="(stop/end)", value="Stop the stopwatch.")
             )
 
-    @stopwatch.command(
-        name="start", help="Start the stopwatch.", aliases=["begin"], usage="no args"
-    )
+    @stopwatch.command(name="start", help="Start the stopwatch.", aliases=["begin"])
     async def stopwatch_start(self, ctx):
         Stopwatch.start(self)
         await ctx.send("Started the stopwatch.")
 
-    @stopwatch.command(
-        name="stop", help="Stop the stopwatch.", aliases=["end"], usage="no args"
-    )
+    @stopwatch.command(name="stop", help="Stop the stopwatch.", aliases=["end"])
     async def stopwatch_end(self, ctx):
         await ctx.send(Stopwatch.end(self))
 
     @clear.error
     async def clearError(self, ctx, error):
-        error = str(error)
         if (
-            error
+            str(error)
             == "You are missing Manage Messages permission(s) to run this command."
         ):
             await ctx.send(
-                f"<:information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
+                f"{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
             )
         else:
             await ctx.send(
-                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```{error}```If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
     @nuke.error
     async def nukeError(self, ctx, error):
-        error = str(error)
         if (
-            error
+            str(error)
             == "You are missing Manage Channels permission(s) to run this command."
         ):
             await ctx.send(
-                f"<:information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Channels)"
+                f"{ctx.author.mention}, you have insufficient permissions (Manage Channels)"
             )
         else:
             await ctx.send(
-                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
     @get_avatar.error
     async def avatarError(self, ctx, error):
-        await ctx.send("<:warning:869760947114348604>Invalid user specified!")
+        await ctx.send("Invalid user specified!")
 
 
 def setup(client):
