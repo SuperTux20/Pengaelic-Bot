@@ -106,7 +106,7 @@ if unstable:
     client = commands.Bot(
         command_prefix="p@",
         case_insensitive=True,
-        description="Pengaelic Bot (Unstable Dev Version)",
+        description="Pengaelic Beta",
         help_command=None,
         intents=discord.Intents.all(),
     )
@@ -187,16 +187,15 @@ async def status_switcher():
 
 
 async def statuses():
-    if not unstable:
-        if "--casual-status" in args:
-            client.loop.create_task(status_switcher())  # as defined above
-        else:
-            await client.change_presence(
-                activity=discord.Activity(
-                    type=discord.ActivityType.watching,
-                    name=str(len(db.all())) + " servers! | p!help",
-                )
+    if "--casual-status" in args or unstable:
+        client.loop.create_task(status_switcher())  # as defined above
+    else:
+        await client.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.watching,
+                name=str(len(db.all())) + " servers! | p!help",
             )
+        )
 
 
 def help_menu(guild, cog, client):
@@ -274,6 +273,7 @@ async def on_ready():
             )
     # add any options that may have been created since the option dicts' creation, and account for a server's name changing
     for guild in client.guilds:
+        gid = guild.id
         ops = db.all()[client.guilds.index(guild)]
         ops.pop("guildName")
         ops.pop("guildID")
@@ -286,15 +286,16 @@ async def on_ready():
                     except KeyError:
                         pass
                 ops[opts] |= nops[opts]
-                db.update({"guildName": guild.name}, Query().guildID == guild.id)
-                db.update({"channels": ops["channels"]}, Query().guildID == guild.id)
-                db.update({"lists": ops["lists"]}, Query().guildID == guild.id)
-                db.update({"messages": ops["messages"]}, Query().guildID == guild.id)
-                db.update({"roles": ops["roles"]}, Query().guildID == guild.id)
-                db.update({"toggles": ops["toggles"]}, Query().guildID == guild.id)
+                db.update({"guildName": guild.name}, Query().guildID == gid)
+                db.update({"channels": ops["channels"]}, Query().guildID == gid)
+                db.update({"lists": ops["lists"]}, Query().guildID == gid)
+                db.update({"messages": ops["messages"]}, Query().guildID == gid)
+                db.update({"roles": ops["roles"]}, Query().guildID == gid)
+                db.update({"toggles": ops["toggles"]}, Query().guildID == gid)
     await statuses()
     print(f"{client.description} connected to Discord")
-    print(f"Currently on {len(client.guilds)} servers")
+    if not unstable:
+        print(f"Currently on {len(client.guilds)} servers")
 
 
 @client.event
@@ -303,7 +304,7 @@ async def on_guild_join(guild, auto=True):
     if not unstable:
         print(f"Joined {guild.name}")
         welcomeembed = discord.Embed(
-            title="Howdy fellas! I'm the Pengaelic Bot!",
+            title=f"Howdy fellas! I'm {client.description}!",
             description=f"Type `{client.command_prefix}help` for a list of commands.",
             color=0x007F7F,
         ).set_thumbnail(url=client.user.avatar_url)
@@ -363,8 +364,6 @@ async def redo_welcome(ctx):
 
 # load token
 dotenv(".env")
-DISCORD_TOKEN = env("DISCORD_TOKEN")
-
 print("Loaded bot token and developer IDs")
 
 
@@ -424,21 +423,24 @@ async def sh(ctx, *, args):
         )
 
 
-if not unstable:
+@client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
+async def restart(ctx, *, restargs=""):
+    if Developers.check(None, ctx.author):
+        if unstable:
+            restargs = "--unstable"
+        await ctx.send("<:information:869760946808180747>Restarting...")
+        print("Restarting...")
+        await client.change_presence(
+            activity=discord.Game("Restarting..."), status=discord.Status.dnd
+        )
+        execl(python, python, *[args[0]] + restargs.split())
+    else:
+        await ctx.send(
+            "<:warning:869760947114348604>Hey, only my developers can do this!"
+        )
 
-    @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
-    async def restart(ctx, *, restargs=""):
-        if Developers.check(None, ctx.author):
-            await ctx.send("<:information:869760946808180747>Restarting...")
-            print("Restarting...")
-            await client.change_presence(
-                activity=discord.Game("Restarting..."), status=discord.Status.dnd
-            )
-            execl(python, python, *[args[0]] + restargs.split())
-        else:
-            await ctx.send(
-                "<:warning:869760947114348604>Hey, only my developers can do this!"
-            )
+
+if not unstable:
 
     @client.command(name="updatelog", aliases=["ul", "ulog"])
     async def updatelog(ctx, formatted=True, status: discord.Message = None):
@@ -593,7 +595,7 @@ async def help(ctx, *, cogname: str = None):
                 },
                 indent=4,
             )
-            await ctx.send(f'```json\n"pengaelic bot": {menu}```')
+            await ctx.send(f'```json\n"{client.description}": {menu}```')
         else:
             menu = discord.Embed(
                 title=client.description,
@@ -824,7 +826,10 @@ for cog in ls("cogs"):
 
 while True:
     try:
-        client.run(env("DISCORD_TOKEN"))
+        if unstable:
+            client.run(env("UNSTABLE_TOKEN"))
+        else:
+            client.run(env("DISCORD_TOKEN"))
     except KeyboardInterrupt:
         print("Disconnected")
         while True:
