@@ -47,7 +47,7 @@ class Actions(commands.Cog):
         await self.acting(ctx, "cry")
 
     @commands.command(name="glare", usage="no args")
-    async def cry(self, ctx):
+    async def glare(self, ctx):
         await self.acts(ctx, "glare")
 
     @commands.command(name="laugh", usage="no args")
@@ -55,11 +55,11 @@ class Actions(commands.Cog):
         await self.acting(ctx, "laugh", "!")
 
     @commands.command(name="shrug", usage="no args")
-    async def snore(self, ctx):
+    async def shrug(self, ctx):
         await self.acts(ctx, "shrug")
 
     @commands.command(name="sleep", usage="no args")
-    async def snore(self, ctx):
+    async def sleep(self, ctx):
         await self.acting(ctx, "sleep")
 
 
