@@ -18,13 +18,25 @@ class Actions(commands.Cog):
     description = "Emote actions!"
     description_long = description
 
-    async def act(self, ctx, act, acting):
+    async def acting(self, ctx, act, punct="..."):
         actor = ctx.author.display_name.replace("_", r"\_")
         for char in self.formatChars:
             actor = actor.replace(char, "\\" + char)
         await ctx.send(
             embed=discord.Embed(
-                title=f"{actor} is {acting}", color=self.teal
+                title=f"{actor} is {act}ing{punct}", color=self.teal
+            ).set_image(
+                url=f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif"
+            )
+        )
+
+    async def acts(self, ctx, act, punct="."):
+        actor = ctx.author.display_name.replace("_", r"\_")
+        for char in self.formatChars:
+            actor = actor.replace(char, "\\" + char)
+        await ctx.send(
+            embed=discord.Embed(
+                title=f"{actor} {act}s{punct}", color=self.teal
             ).set_image(
                 url=f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif"
             )
@@ -32,15 +44,23 @@ class Actions(commands.Cog):
 
     @commands.command(name="cry", usage="no args")
     async def cry(self, ctx):
-        await self.act(ctx, "cry", "crying...")
+        await self.acting(ctx, "cry")
+
+    @commands.command(name="glare", usage="no args")
+    async def cry(self, ctx):
+        await self.acts(ctx, "glare")
 
     @commands.command(name="laugh", usage="no args")
     async def laugh(self, ctx):
-        await self.act(ctx, "laugh", "laughing!")
+        await self.acting(ctx, "laugh", "!")
+
+    @commands.command(name="shrug", usage="no args")
+    async def snore(self, ctx):
+        await self.acts(ctx, "shrug")
 
     @commands.command(name="sleep", usage="no args")
     async def snore(self, ctx):
-        await self.act(ctx, "sleep", "sleeping...")
+        await self.acting(ctx, "sleep")
 
 
 def setup(client):
