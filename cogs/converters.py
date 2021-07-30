@@ -64,7 +64,7 @@ class Converters(commands.Cog):
             "†": "cross",
         }
         textlist = []
-        for char in arg:
+        for char in arg.lower():
             for letter in alphabet + "".join(list(symbols.keys())):
                 if fnmatch(letter, char):
                     try:
@@ -80,7 +80,7 @@ class Converters(commands.Cog):
                         textlist.append(f":{symbols[char]}:")
                         break
                     else:
-                        textlist.append(f":regional_indicator_{char.lower()}:")
+                        textlist.append(f":regional_indicator_{char}:")
         await ctx.send(" ".join(textlist).replace("\n ", "\n"))
 
     @commands.command(
@@ -184,7 +184,7 @@ class Converters(commands.Cog):
     @commands.command(
         name="stroke",
         help="Shuffle a message",
-        aliases=["shuffle", "mixup"],
+        aliases=["shuffle", "mix"],
         usage="<text to convert>",
     )
     async def shuffle(self, ctx, *, arg=None):
@@ -196,6 +196,7 @@ class Converters(commands.Cog):
     @commands.command(
         name="strokebyword",
         help="Shuffle the individual words instead of the entire message.",
+        aliases=["shufflebyword", "mixbyword"],
         usage="<text to convert>",
     )
     async def shufflebyword(self, ctx, *, arg=None):
