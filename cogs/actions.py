@@ -26,7 +26,7 @@ class Actions(commands.Cog):
             embed=discord.Embed(
                 title=f"{actor} is {act}ing{punct}", color=self.teal
             ).set_image(
-                url=f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif"
+                url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'images/actions/{act}'))-1)}.gif"
             )
         )
 
@@ -38,7 +38,7 @@ class Actions(commands.Cog):
             embed=discord.Embed(
                 title=f"{actor} {act}s{punct}", color=self.teal
             ).set_image(
-                url=f"https://supertux20.github.io/Pengaelic-Bot/images/gifs/actions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/actions/{act}'))-1)}.gif"
+                url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'images/actions/{act}'))-1)}.gif"
             )
         )
 

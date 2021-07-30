@@ -40,7 +40,7 @@ class Interactions(commands.Cog):
                         embed=discord.Embed(
                             title=choice(responses), color=self.teal
                         ).set_image(
-                            url=f"https://supertux20.github.io/Pengaelic-Bot/images/interactions/{act}/{randint(1,len(listdir(f'../Pengaelic-Bot/images/interactions/{act}'))-1)}.gif"
+                            url=f"https://supertux20.github.io/Pengaelic-Bot/images/interactions/{act}/{randint(1,len(listdir(f'images/interactions/{act}'))-1)}.gif"
                         )
                     )
             else:
