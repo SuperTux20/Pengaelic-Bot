@@ -84,7 +84,7 @@ class Tools(commands.Cog):
             except KeyError:
                 emoji = "<:os_linux:855493980267479080>"
         await ctx.send(
-            f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel}{emoji}"
+            f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel} {emoji}"
         )
 
     @commands.command(name="test", help="Am I online? I'm not sure.", usage="no args")
