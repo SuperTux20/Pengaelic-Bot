@@ -27,9 +27,9 @@ class Options(commands.Cog):
         status = getops(ctx.guild.id, "toggles", option)
         updop(ctx.guild.id, "toggles", option, not status)
         if status:
-            await ctx.send("<:information:869760946808180747>" + disable_message)
+            await ctx.send("<:winxp_information:869760946808180747>" + disable_message)
         else:
-            await ctx.send("<:information:869760946808180747>" + enable_message)
+            await ctx.send("<:winxp_information:869760946808180747>" + enable_message)
 
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
@@ -124,14 +124,14 @@ class Options(commands.Cog):
         guild = ctx.guild.id
         if not self.reset_options_confirm:
             await ctx.send(
-                "<:question:869760946904645643>Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
+                "<:winxp_question:869760946904645643>Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
             )
             self.reset_options_confirm = True
             await sleep(10)
             if self.reset_options_confirm:
                 self.reset_options_confirm = False
                 await ctx.send(
-                    "<:information:869760946808180747>Pending reset expired."
+                    "<:winxp_information:869760946808180747>Pending reset expired."
                 )
         elif self.reset_options_confirm:
             ops = newops()
@@ -141,7 +141,7 @@ class Options(commands.Cog):
             self.db.update({"roles": ops["roles"]}, Query().guildID == guild)
             self.db.update({"toggles": ops["toggles"]}, Query().guildID == guild)
             await ctx.send(
-                "<:information:869760946808180747>Options reset to defaults."
+                "<:winxp_information:869760946808180747>Options reset to defaults."
             )
             await self.read_options(ctx)
             self.reset_options_confirm = False
@@ -150,14 +150,14 @@ class Options(commands.Cog):
     async def optoggle(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
-                "<:warning:869760947114348604>You didn't specify a valid option to toggle!"
+                "<:winxp_warning:869760947114348604>You didn't specify a valid option to toggle!"
             )
 
     @read_options.group(name="set", help="Set an option.")
     async def opset(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
-                "<:warning:869760947114348604>You didn't specify a valid option to set!"
+                "<:winxp_warning:869760947114348604>You didn't specify a valid option to set!"
             )
 
     @optoggle.command(
@@ -279,7 +279,7 @@ class Options(commands.Cog):
     async def change_required_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "customRoleLock", role.id)
         await ctx.send(
-            f"<:information:869760946808180747>Role {role} is now required for custom roles."
+            f"<:winxp_information:869760946808180747>Role {role} is now required for custom roles."
         )
 
     @opset.command(name="modRole", help="Set what role the moderators are.")
@@ -287,7 +287,7 @@ class Options(commands.Cog):
     async def change_mod_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "modRole", role.id)
         await ctx.send(
-            f"<:information:869760946808180747>Role {role} is now set as the mod role."
+            f"<:winxp_information:869760946808180747>Role {role} is now set as the mod role."
         )
 
     @opset.command(name="muteRole", help="Set the muted role.")
@@ -295,7 +295,7 @@ class Options(commands.Cog):
     async def change_mute_role(self, ctx, *, role: discord.Role):
         updop(ctx.guild.id, "roles", "muteRole", role.id)
         await ctx.send(
-            f"<:information:869760946808180747>Role {role} is now set as the muted role."
+            f"<:winxp_information:869760946808180747>Role {role} is now set as the muted role."
         )
 
     @opset.command(
@@ -306,7 +306,7 @@ class Options(commands.Cog):
     async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
         updop(ctx.guild.id, "channels", "suggestionsChannel", channel.id)
         await ctx.send(
-            f"<:information:869760946808180747>Channel {channel} is now the suggestions channel."
+            f"<:winxp_information:869760946808180747>Channel {channel} is now the suggestions channel."
         )
 
     @opset.command(
@@ -317,7 +317,7 @@ class Options(commands.Cog):
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
         updop(ctx.guild.id, "channels", "welcomeChannel", channel.id)
         await ctx.send(
-            f"<:information:869760946808180747>Channel {channel} is now the welcome channel."
+            f"<:winxp_information:869760946808180747>Channel {channel} is now the welcome channel."
         )
 
     @opset.command(
@@ -328,7 +328,7 @@ class Options(commands.Cog):
     async def change_welcome_message(self, ctx, *, message: str):
         updop(ctx.guild.id, "messages", "welcomeMessage", message)
         await ctx.send(
-            f'<:information:869760946808180747>Welcome message set to "{message}".'
+            f'<:winxp_information:869760946808180747>Welcome message set to "{message}".'
         )
 
     @opset.command(
@@ -339,14 +339,14 @@ class Options(commands.Cog):
     async def change_goodbye_message(self, ctx, *, message: str):
         updop(ctx.guild.id, "messages", "goodbyeMessage", message)
         await ctx.send(
-            f'<:information:869760946808180747>Goodbye message set to "{message}".'
+            f'<:winxp_information:869760946808180747>Goodbye message set to "{message}".'
         )
 
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
-                "<:information:869760946808180747>Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`"
+                "<:winxp_information:869760946808180747>Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`"
             )
 
     @censor.command(
@@ -375,13 +375,15 @@ class Options(commands.Cog):
         word = word.lower()
         if word in all_bads:
             await ctx.send(
-                "<:information:869760946808180747>That word is already in the filter."
+                "<:winxp_information:869760946808180747>That word is already in the filter."
             )
         else:
             all_bads.append(word)
             all_bads.sort()
             updop(ctx.guild.id, "lists", "censorList", all_bads)
-            await ctx.send("<:information:869760946808180747>Word added to the filter.")
+            await ctx.send(
+                "<:winxp_information:869760946808180747>Word added to the filter."
+            )
 
     @censor.command(
         name="delete",
@@ -395,14 +397,14 @@ class Options(commands.Cog):
         word = word.lower()
         if word not in all_bads:
             await ctx.send(
-                "<:information:869760946808180747>That word is not in the filter."
+                "<:winxp_information:869760946808180747>That word is not in the filter."
             )
         else:
             all_bads.remove(word)
             all_bads.sort()
             updop(ctx.guild.id, "lists", "censorList", all_bads)
             await ctx.send(
-                "<:information:869760946808180747>Word removed from the filter."
+                "<:winxp_information:869760946808180747>Word removed from the filter."
             )
 
     @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
@@ -410,16 +412,18 @@ class Options(commands.Cog):
     async def wipe_censor(self, ctx):
         if not self.wipe_censor_confirm:
             await ctx.send(
-                "<:question:869760946904645643>Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds."
+                "<:winxp_question:869760946904645643>Are you *really* sure you want to wipe the filter? Type the command again to confirm. This will expire in 10 seconds."
             )
             self.wipe_censor_confirm = True
             await sleep(10)
             if self.wipe_censor_confirm:
                 self.wipe_censor_confirm = False
-                await ctx.send("<:information:869760946808180747>Pending wipe expired.")
+                await ctx.send(
+                    "<:winxp_information:869760946808180747>Pending wipe expired."
+                )
         elif self.wipe_censor_confirm:
             updop(ctx.guild.id, "lists", "censorList", [])
-            await ctx.send("<:information:869760946808180747>Filter wiped.")
+            await ctx.send("<:winxp_information:869760946808180747>Filter wiped.")
             self.wipe_censor_confirm = False
 
     @read_options.error
@@ -453,20 +457,20 @@ class Options(commands.Cog):
             == "You are missing Manage Messages permission(s) to run this command."
         ):
             await ctx.send(
-                f"<:information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
+                f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
             )
         if error.endswith('" not found.'):
             if error.startswith('Channel "'):
                 await ctx.send(
-                    f"<:warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel."
+                    f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel."
                 )
             if error.startswith('Role "'):
                 await ctx.send(
-                    f"<:warning:869760947114348604>{ctx.author.mention}, that isn't a valid role."
+                    f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role."
                 )
         else:
             await ctx.send(
-                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 

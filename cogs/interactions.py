@@ -256,10 +256,10 @@ class Interactions(commands.Cog):
     async def error(self, ctx, error):
         error = str(error)
         if "Member" in error and "not found" in error:
-            await ctx.send("<:warning:869760947114348604>Invalid user specified!")
+            await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
         else:
             await ctx.send(
-                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 

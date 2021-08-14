@@ -168,15 +168,15 @@ class Generators(commands.Cog):
             "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
         ):
             await ctx.send(
-                "<:critical_error:869760946816553020>Sending all that would put me over the character limit!"
+                "<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!"
             )
         elif error == 'Unexpected quotation mark (") in non-quoted string':
             await ctx.send(
-                '<:information:869760946808180747>You need to escape your "quotation marks" with backslashes (\\ these things \\\).'
+                '<:winxp_information:869760946808180747>You need to escape your "quotation marks" with backslashes (\\ these things \\\).'
             )
         else:
             await ctx.send(
-                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 

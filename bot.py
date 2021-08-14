@@ -370,11 +370,11 @@ print("Loaded bot token and developer IDs")
 @client.command(name="exit", aliases=["quit"])
 async def quit_the_bot(ctx):
     if Developers.check(None, ctx.author):
-        await ctx.send("<:information:869760946808180747>Shutting down.")
+        await ctx.send("<:winxp_information:869760946808180747>Shutting down.")
         exit(0)
     else:
         await ctx.send(
-            "<:warning:869760947114348604>Hey, only my developers can do this!"
+            "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
         )
 
 
@@ -384,7 +384,7 @@ async def sh(ctx, *, args):
         try:
             if args.startswith("cd"):
                 await ctx.send(
-                    "<:critical_error:869760946816553020>Cannot change directory."
+                    "<:winxp_critical_error:869760946816553020>Cannot change directory."
                 )
             else:
                 await ctx.send("```\n" + shell(args, shell=True).decode() + "```")
@@ -394,20 +394,20 @@ async def sh(ctx, *, args):
                 error = int(float(error.split("returned non-zero exit status ")[1]))
                 if (args.startswith("rm") or args.startswith("cat")) and error == 1:
                     await ctx.send(
-                        "<:critical_error:869760946816553020>That file doesn't exist."
+                        "<:winxp_critical_error:869760946816553020>That file doesn't exist."
                     )
                 elif args.startswith("python") and error == 1:
                     await ctx.send(
-                        "<:critical_error:869760946816553020>Invalid Python syntax."
+                        "<:winxp_critical_error:869760946816553020>Invalid Python syntax."
                     )
                 else:
                     if error == 127:
                         await ctx.send(
-                            "<:critical_error:869760946816553020>Invalid command."
+                            "<:winxp_critical_error:869760946816553020>Invalid command."
                         )
                     else:
                         await ctx.send(
-                            f"<:critical_error:869760946816553020>Returned non-zero exit status{error}"
+                            f"<:winxp_critical_error:869760946816553020>Returned non-zero exit status{error}"
                         )
             else:
                 await ctx.send(error)
@@ -416,10 +416,12 @@ async def sh(ctx, *, args):
             if error.startswith(
                 "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
             ):
-                await ctx.send("<:critical_error:869760946816553020>Output too large.")
+                await ctx.send(
+                    "<:winxp_critical_error:869760946816553020>Output too large."
+                )
     else:
         await ctx.send(
-            "<:warning:869760947114348604>Hey, only my developers can do this!"
+            "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
         )
 
 
@@ -428,7 +430,7 @@ async def restart(ctx, *, restargs=""):
     if Developers.check(None, ctx.author):
         if unstable:
             restargs = "--unstable"
-        await ctx.send("<:information:869760946808180747>Restarting...")
+        await ctx.send("<:winxp_information:869760946808180747>Restarting...")
         print("Restarting...")
         await client.change_presence(
             activity=discord.Game("Restarting..."), status=discord.Status.dnd
@@ -436,7 +438,7 @@ async def restart(ctx, *, restargs=""):
         execl(python, python, *[args[0]] + restargs.split())
     else:
         await ctx.send(
-            "<:warning:869760947114348604>Hey, only my developers can do this!"
+            "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
         )
 
 
@@ -450,7 +452,7 @@ if not unstable:
                     await status.edit(content="Looking in the logs...")
                 else:
                     status = await ctx.send(
-                        "<:information:869760946808180747>Looking in the logs..."
+                        "<:winxp_information:869760946808180747>Looking in the logs..."
                     )
                 update_log = [
                     line.replace("\n", "") for line in open("update.log", "r")
@@ -530,7 +532,7 @@ if not unstable:
             return True
         else:
             await ctx.send(
-                "<:warning:869760947114348604>Hey, only my developers can do this!"
+                "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
             )
             return False
 
@@ -539,7 +541,7 @@ if not unstable:
         if Developers.check(None, ctx.author):
             if jsoncheck(ctx.guild.id):
                 status = await ctx.send(
-                    "<:information:869760946808180747>Pulling the latest commits from GitHub..."
+                    "<:winxp_information:869760946808180747>Pulling the latest commits from GitHub..."
                 )
             else:
                 status = await ctx.send(
@@ -559,13 +561,13 @@ if not unstable:
                     await restart(ctx)
         else:
             await ctx.send(
-                "<:warning:869760947114348604>Hey, only my developers can do this!"
+                "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
             )
 
     @update.error
     async def update_error(ctx, error):
         await ctx.send(
-            f"<:critical_error:869760946816553020>An error occured while updating...```\n{error}\n```Attempting force-update."
+            f"<:winxp_critical_error:869760946816553020>An error occured while updating...```\n{error}\n```Attempting force-update."
         )
         await update(ctx, True)
 
@@ -728,7 +730,7 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
             await channel.edit(category=ctx.guild.categories[0])
         hook = await channel.create_webhook(name="The Dog of Wisdom")
         await ctx.send(
-            f"<:information:869760946808180747>Webhook created in {channel}."
+            f"<:winxp_information:869760946808180747>Webhook created in {channel}."
         )
         await client.get_user(Developers.get(None, "tux")).send(
             f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n"
@@ -737,21 +739,23 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
             )
         )
         await ctx.send(
-            "<:information:869760946808180747>My developer has received the webhook URL and will be adding it to the Dog's code shortly."
+            "<:winxp_information:869760946808180747>My developer has received the webhook URL and will be adding it to the Dog's code shortly."
         )
     else:
         await ctx.send(
-            f"<:information:869760946808180747>You don't have the {getops(ctx.guild.id, 'roles', 'modRole')} role."
+            f"<:winxp_information:869760946808180747>You don't have the {getops(ctx.guild.id, 'roles', 'modRole')} role."
         )
 
 
 @help.error
 async def not_a_cog(ctx, error):
     if str(error) == "AttributeError: 'NoneType' object has no attribute 'name'":
-        await ctx.send("<:warning:869760947114348604>There isn't a help menu for that.")
+        await ctx.send(
+            "<:winxp_warning:869760947114348604>There isn't a help menu for that."
+        )
     else:
         await ctx.send(
-            f"<:critical_error:869760946816553020>Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+            f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
         )
 
 

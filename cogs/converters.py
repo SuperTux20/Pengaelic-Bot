@@ -316,15 +316,15 @@ class Converters(commands.Cog):
             "Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
         ):
             await ctx.send(
-                "<:critical_error:869760946816553020>Sending all that would put me over the character limit!"
+                "<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!"
             )
         elif error == "arg is a required argument that is missing.":
             await ctx.send(
-                "<:warning:869760947114348604>You didn't specify any text to convert!"
+                "<:winxp_warning:869760947114348604>You didn't specify any text to convert!"
             )
         else:
             await ctx.send(
-                f"<:critical_error:869760946816553020>Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
 
