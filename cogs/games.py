@@ -37,7 +37,7 @@ class Games(commands.Cog):
     )
     async def roll_dice(self, ctx, ds: str = "1d6"):
         ds = ds.split("d")
-        if len(ds) ==2:
+        if len(ds) == 2:
             try:
                 ds = list(map(int, ds))
             except ValueError:
