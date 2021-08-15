@@ -35,46 +35,52 @@ class Games(commands.Cog):
         aliases=["dice"],
         usage="[number of dice (1)]\n[number of sides (6)]",
     )
-    async def roll_dice(self, ctx, ds: str = "1d6"):
-        ds = ds.split("d")
-        if len(ds) == 2:
-            try:
-                ds = list(map(int, ds))
-            except ValueError:
-                ds=[1,int(ds[1])]
-            dice, sides = ds
-        else:
-            dice, sides = [int(ds[0]),6]
-        if dice == 0:
-            response = "You didn't roll any dice."
-        elif sides == 0:
-            response = "You rolled thin air."
-        elif dice < 0:
-            response = "You rolled NaN dice and got [REDACTED]"
-        elif dice > 1000000:
-            response = f"{dice} dice? That's just silly."
-        elif sides < 0:
-            if dice == 1:
-                response = "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
-            if dice > 1:
-                response = f"You rolled {dice} `err`-sided dice and got [NULL]"
-        elif any([sides > 1000000, sides == 1]):
-            response = f"{sides}-sided dice? That's just silly."
-        else:
-            sides+=1 # because counting starts at zero, we want it to start at one
-            side_list = [side for side in range(1, sides)]
-            roll_results = [
-                side_list[randint(0, side_list[-1]) - 1] for _ in range(dice)
-            ]
-            total = sum(roll_results)
-            if dice > 1:
-                if len(str(roll_results[:-1])[1:-1]) < 2000:
-                    response = f"You rolled {str(roll_results[:-1])[1:-1]}, and {roll_results[-1]}, totalling {total}"
-                else:
-                    response = f"You rolled a total of {total}"
+    async def roll_dice(self, ctx, *, ds: str = "1d6"):
+        try:
+            ds = ds.split("d")
+            if len(ds) == 2:
+                try:
+                    ds = list(map(int, ds))
+                except ValueError:
+                    ds=[1, int(ds[1])]
+                dice, sides = ds
+            elif len(ds) == 1:
+                dice, sides = [int(ds[0]), 6]
             else:
-                response = "You rolled " + str(total)
-        await ctx.send(":game_die:" + response)
+                raise ValueError("Too many 'd's")
+            if dice == 0:
+                response = "You didn't roll any dice."
+            elif sides == 0:
+                response = "You rolled thin air."
+            elif dice < 0:
+                response = "You rolled NaN dice and got [REDACTED]"
+            elif dice > 1000000:
+                response = f"{dice} dice? That's just silly."
+            elif sides < 0:
+                if dice == 1:
+                    response = "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
+                if dice > 1:
+                    response = f"You rolled {dice} `err`-sided dice and got [NULL]"
+            elif any([sides > 1000000, sides == 1]):
+                response = f"{sides}-sided dice? That's just silly."
+            else:
+                sides+=1 # because counting starts at zero, we want it to start at one
+                side_list = [side for side in range(1, sides)]
+                roll_results = [
+                    side_list[randint(0, side_list[-1]) - 1] for _ in range(dice)
+                ]
+                total = sum(roll_results)
+                if dice > 1:
+                    if len(str(roll_results[:-1])[1:-1]) < 2000:
+                        response = f"You rolled {str(roll_results[:-1])[1:-1]}, and {roll_results[-1]}, totalling {total}"
+                    else:
+                        response = f"You rolled a total of {total}"
+                else:
+                    response = "You rolled " + str(total)
+        except ValueError:
+            response="Invalid dice syntax. Please use (count)d(sides), like D&D."
+        finally:
+            await ctx.send(":game_die:" + response)
 
     @commands.command(
         name="flip",
