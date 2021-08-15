@@ -36,7 +36,7 @@ class Games(commands.Cog):
         usage="[number of dice (1)]\n[number of sides (6)]",
     )
     async def roll_dice(self, ctx, ds: str = "1d6"):
-        dice, sides = ds.split("d")
+        dice, sides = map(int, ds.split("d"))
         if dice == 0:
             response = "You didn't roll any dice."
         elif sides == 0:
