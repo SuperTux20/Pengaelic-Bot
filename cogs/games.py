@@ -36,7 +36,15 @@ class Games(commands.Cog):
         usage="[number of dice (1)]\n[number of sides (6)]",
     )
     async def roll_dice(self, ctx, ds: str = "1d6"):
-        dice, sides = map(int, ds.split("d"))
+        ds = ds.split("d")
+        if len(ds) ==2:
+            try:
+                ds = list(map(int, ds))
+            except ValueError:
+                ds=[1,int(ds[1])]
+            dice, sides = ds
+        else:
+            dice, sides = [int(ds[0]),6]
         if dice == 0:
             response = "You didn't roll any dice."
         elif sides == 0:
@@ -50,9 +58,10 @@ class Games(commands.Cog):
                 response = "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
             if dice > 1:
                 response = f"You rolled {dice} `err`-sided dice and got [NULL]"
-        elif sides > 1000000:
+        elif any([sides > 1000000, sides == 1]):
             response = f"{sides}-sided dice? That's just silly."
         else:
+            sides+=1 # because counting starts at zero, we want it to start at one
             side_list = [side for side in range(1, sides)]
             roll_results = [
                 side_list[randint(0, side_list[-1]) - 1] for _ in range(dice)
