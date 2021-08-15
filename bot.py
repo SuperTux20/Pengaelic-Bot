@@ -74,7 +74,8 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB, Query
 
-if "--unstable" in args:
+# check if --unstable or --beta are in the args
+if any(arg in args for arg in ["--unstable", "--beta"]):
     unstable = True
 else:
     unstable = False
