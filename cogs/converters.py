@@ -5,6 +5,7 @@ from num2words import num2words
 from fnmatch import fnmatch
 from discord.ext import commands
 from random import choice, shuffle
+from pengaelicutils import unhandling
 
 
 class Converters(commands.Cog):
@@ -323,9 +324,7 @@ class Converters(commands.Cog):
                 "<:winxp_warning:869760947114348604>You didn't specify any text to convert!"
             )
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
 
 def setup(client):

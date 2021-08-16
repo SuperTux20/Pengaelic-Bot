@@ -19,6 +19,7 @@ from pengaelicutils import (
     remove_duplicates,
     list2str,
     jsoncheck,
+    unhandling,
     Developers,
 )
 from random import choice, randint
@@ -350,9 +351,7 @@ if not unstable:
                 #     )
                 # )
             else:
-                await ctx.send(
-                    f"Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-                )
+                await ctx.send(unhandling(error))
 
 
 @client.command(

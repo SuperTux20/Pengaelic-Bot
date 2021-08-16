@@ -5,7 +5,7 @@ import discord
 from asyncio import sleep
 from discord.ext import commands
 from json import dumps
-from pengaelicutils import newops, getops, updop, jsoncheck
+from pengaelicutils import newops, getops, updop, jsoncheck, unhandling
 from random import choice
 from tinydb import TinyDB, Query
 
@@ -469,9 +469,7 @@ class Options(commands.Cog):
                     f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role."
                 )
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
 
 def setup(client):

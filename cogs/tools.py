@@ -11,7 +11,7 @@ from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import environ
-from pengaelicutils import getops, updop, list2str, Stopwatch
+from pengaelicutils import getops, updop, list2str, unhandling, Stopwatch
 from re import search
 from subprocess import check_output as shell
 from tinydb import TinyDB
@@ -516,9 +516,7 @@ class Tools(commands.Cog):
                 f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
             )
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
     @nuke.error
     async def nukeError(self, ctx, error):
@@ -531,9 +529,7 @@ class Tools(commands.Cog):
                 f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Channels)"
             )
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
     @get_user_info.error
     async def getUserError(self, ctx, error):

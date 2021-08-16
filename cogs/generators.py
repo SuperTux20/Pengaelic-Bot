@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
-from pengaelicutils import list2str, Stopwatch, syllables
+from pengaelicutils import list2str, unhandling, Stopwatch, syllables
 from random import choice, randint
 from subprocess import check_output as bash
 from time import time
@@ -175,9 +175,7 @@ class Generators(commands.Cog):
                 '<:winxp_information:869760946808180747>You need to escape your "quotation marks" with backslashes (\\ these things \\\).'
             )
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
 
 def setup(client):

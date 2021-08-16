@@ -41,11 +41,9 @@ class Messages(commands.Cog):
         if jsoncheck(ctx.guild.id):
             bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
             await ctx.send(
-                f"""
-```json
-"credits": {str(dumps(bot_credits, indent=4))}
-```
-"""
+                "```json"
+                + f'\n"credits": {str(dumps(bot_credits, indent=4))}\n'
+                + "```"
             )
         else:
             embed = discord.Embed(

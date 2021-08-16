@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from os import listdir
+from pengaelicutils import unhandling
 
 
 class Interactions(commands.Cog):
@@ -258,9 +259,7 @@ class Interactions(commands.Cog):
         if "Member" in error and "not found" in error:
             await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
 
 def setup(client):

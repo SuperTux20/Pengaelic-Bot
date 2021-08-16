@@ -78,7 +78,7 @@ class Developers:
             return Developers.everyone[dev]
 
 
-def list2str(inlist: list, mode: int = 0, add_and: bool = False):
+def list2str(inlist: list, mode: int = 0, _and: bool = False):
     # if mode == 0: proper sentence formatting (minus period)
     # if mode == 1: remove all separation
     # if mode == 2: remove commas, leaving spaces behind
@@ -86,7 +86,7 @@ def list2str(inlist: list, mode: int = 0, add_and: bool = False):
     if mode == 1:
         outstr = "".join(inlist)
     else:
-        if add_and and len(inlist) > 1:
+        if _and and len(inlist) > 1:
             inlist.append(inlist[-1])
             inlist[-2] = "and"
         outstr = (
@@ -94,7 +94,7 @@ def list2str(inlist: list, mode: int = 0, add_and: bool = False):
             .replace("'", "")
             .replace("\\n", "")  # remove single quotes and newlines
         )
-        if add_and:
+        if _and:
             if len(inlist) == 3:
                 outstr = "".join(outstr.split(","))  # remove all commas
             else:
@@ -108,6 +108,16 @@ def list2str(inlist: list, mode: int = 0, add_and: bool = False):
 
 def remove_duplicates(inlist: list):
     return list(dict.fromkeys(inlist))
+
+
+def unhandling(error):
+    return (
+        "<:winxp_critical_error:869760946816553020>Unhandled error occurred:"
+        + "\n```\n"
+        + error
+        + "\n```\n"
+        + "If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+    )
 
 
 def newops():

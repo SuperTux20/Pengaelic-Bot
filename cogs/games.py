@@ -5,7 +5,12 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from collections import Counter
-from pengaelicutils import hangman_words, regional_indicators, magic_responses
+from pengaelicutils import (
+    hangman_words,
+    regional_indicators,
+    magic_responses,
+    unhandling,
+)
 
 
 class Games(commands.Cog):
@@ -42,7 +47,7 @@ class Games(commands.Cog):
                 try:
                     ds = list(map(int, ds))
                 except ValueError:
-                    ds=[1, int(ds[1])]
+                    ds = [1, int(ds[1])]
                 dice, sides = ds
             elif len(ds) == 1:
                 dice, sides = [int(ds[0]), 6]
@@ -58,13 +63,17 @@ class Games(commands.Cog):
                 response = f"{dice} dice? That's just silly."
             elif sides < 0:
                 if dice == 1:
-                    response = "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
+                    response = (
+                        "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
+                    )
                 if dice > 1:
                     response = f"You rolled {dice} `err`-sided dice and got [NULL]"
             elif any([sides > 1000000, sides == 1]):
                 response = f"{sides}-sided dice? That's just silly."
             else:
-                sides+=1 # because counting starts at zero, we want it to start at one
+                sides += (
+                    1  # because counting starts at zero, we want it to start at one
+                )
                 side_list = [side for side in range(1, sides)]
                 roll_results = [
                     side_list[randint(0, side_list[-1]) - 1] for _ in range(dice)
@@ -78,7 +87,7 @@ class Games(commands.Cog):
                 else:
                     response = "You rolled " + str(total)
         except ValueError:
-            response="Invalid dice syntax. Please use `[count]d[sides]`, like D&D (e.g. `1d6`, `2d20`)."
+            response = "Invalid dice syntax. Please use `[count]d[sides]`, like D&D (e.g. `1d6`, `2d20`)."
         finally:
             await ctx.send(":game_die:" + response)
 
@@ -355,9 +364,7 @@ class Games(commands.Cog):
         ):
             "for some reason, hangman throws this error when nothing is even really supposed to happen in the first place"
         else:
-            await ctx.send(
-                f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
-            )
+            await ctx.send(unhandling(error))
 
 
 def setup(client):
