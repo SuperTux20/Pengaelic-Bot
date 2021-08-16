@@ -78,7 +78,7 @@ class Games(commands.Cog):
                 else:
                     response = "You rolled " + str(total)
         except ValueError:
-            response="Invalid dice syntax. Please use (count)d(sides), like D&D."
+            response="Invalid dice syntax. Please use `[count]d[sides]`, like D&D (e.g. `1d6`, `2d20`)."
         finally:
             await ctx.send(":game_die:" + response)
 
