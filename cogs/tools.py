@@ -11,7 +11,7 @@ from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import environ
-from pengaelicutils import getops, updop, Stopwatch
+from pengaelicutils import getops, updop, list2str, Stopwatch
 from re import search
 from subprocess import check_output as shell
 from tinydb import TinyDB
@@ -90,72 +90,6 @@ class Tools(commands.Cog):
     @commands.command(name="test", help="Am I online? I'm not sure.", usage="no args")
     async def test(self, ctx):
         await ctx.send("Yep, I'm alive :sunglasses:")
-
-    @commands.command(
-        name="avatar",
-        help="Get someone's avatar.",
-        usage="[username or nickname or @mention]",
-        aliases=["pfp", "profilepic"],
-    )
-    async def get_avatar(self, ctx, *, member: discord.Member = None):
-        avatar2get = ctx.author
-        embed = discord.Embed(title="Here's your avatar!", color=self.teal)
-        if member:
-            avatar2get = member
-            if member.id == 736720500285505596:
-                embed = discord.Embed(title="Here's my avatar!", color=self.teal)
-            else:
-                embed = discord.Embed(
-                    title=f"Here's {member.display_name}'s avatar!", color=self.teal
-                )
-        embed.set_image(url=avatar2get.avatar_url)
-        await ctx.send(embed=embed)
-
-    @commands.command(
-        name="icon",
-        help="Get the icon for the server.",
-        aliases=["servericon"],
-        usage="no args",
-    )
-    async def get_icon(self, ctx):
-        try:
-            await ctx.send(
-                embed=discord.Embed(
-                    title="Here's the server icon!", color=self.teal
-                ).set_image(url=ctx.guild.icon_url)
-            )
-        except:
-            await ctx.send(
-                "<:winxp_information:869760946808180747>This server doesn't have an icon... :pensive:"
-            )
-
-    @commands.command(
-        name="emoji",
-        help="Get the specified (server-specific) emoji.",
-        usage="[:emoji:]",
-        aliases=["emote"],
-    )
-    async def get_emoji(self, ctx, emoji=None):
-        emojis = [f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis]
-        emojiurls = [
-            f"https://cdn.discordapp.com/emojis/{em.id}.png" for em in ctx.guild.emojis
-        ]
-        if emoji == None:
-            await ctx.send(
-                "<:winxp_information:869760946808180747>Here's all the emojis on this server.\n"
-                + str(emojis)[1:-1].replace("'", "").replace(", ", "")
-            )
-        else:
-            if emoji in emojis:
-                await ctx.send(
-                    embed=discord.Embed(
-                        title="Here's your emoji!", color=self.teal
-                    ).set_image(url=emojiurls[emojis.index(emoji)])
-                )
-            else:
-                await ctx.send(
-                    "<:winxp_warning:869760947114348604>Invalid emoji specified!"
-                )
 
     @commands.command(
         name="poll",
@@ -261,17 +195,78 @@ class Tools(commands.Cog):
             f"<:winxp_information:869760946808180747>Banned {member} for reason `{reason}`."
         )
 
-    @commands.command(
+    @commands.group(name="info", help="See a bunch of data!")
+    async def info(self, ctx):
+        if ctx.invoked_subcommand == None:
+            await ctx.send(
+                embed=discord.Embed(
+                    title="Information",
+                    description="See a bunch of data!",
+                    color=self.teal,
+                )
+                .add_field(
+                    name="emoji", value="Fetch the specified (server-specific) emoji."
+                )
+                .add_field(
+                    name="server", value="See information about the server at a glance."
+                )
+                .add_field(name="user", value="Get info for the specified user.")
+            )
+
+    @info.command(
+        name="emoji",
+        help="Fetch the specified (server-specific) emoji.",
+        aliases=["emote"],
+        usage="[:emoji:]",
+    )
+    async def get_emoji(self, ctx, emoji=None):
+        emojis = [f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis if not em.animated]
+        animojis = [f"<a:{em.name}:{em.id}>" for em in ctx.guild.emojis if em.animated]
+        emojiurls = [
+            f"https://cdn.discordapp.com/emojis/{em.id}.png"
+            for em in ctx.guild.emojis
+            if not em.animated
+        ] + [
+            f"https://cdn.discordapp.com/emojis/{em.id}.gif"
+            for em in ctx.guild.emojis
+            if em.animated
+        ]
+        if emoji == None:
+            await ctx.send(
+                "<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID."
+                + "\n__Normal__\n"
+                + str(emojis)[1:-1].replace("'", "").replace(", ", "")
+                + "\n__Animated__\n"
+                + str(animojis)[1:-1].replace("'", "").replace(", ", "")
+            )
+        else:
+            emojis += animojis
+            if emoji in emojis:
+                emname = emoji.split(":")[:-1]
+                if emname[0] == "<a":
+                    emname = emname[1] + ".gif"
+                else:
+                    emname = emname[1] + ".png"
+                await ctx.send(
+                    embed=discord.Embed(
+                        title=emname,
+                        color=self.teal,
+                    ).set_image(url=emojiurls[emojis.index(emoji)])
+                )
+            else:
+                await ctx.send(
+                    "<:winxp_warning:869760947114348604>Invalid emoji specified!"
+                )
+
+    @info.command(
         name="server",
-        help="See a bunch of data about the server at a glance.",
-        aliases=["info"],
+        help="See information about the server at a glance.",
         usage="no args",
     )
-    @commands.has_permissions(manage_messages=True)
     async def get_server_info(self, ctx):
         guild = ctx.guild
         owner = guild.owner
-        if guild.owner.nick == None:
+        if owner.nick == None:
             owner.nick = owner.name
         creation = guild.created_at
         jsoninfo = str(
@@ -279,8 +274,9 @@ class Tools(commands.Cog):
                 {
                     "basic info": {
                         "server name": guild.name,
-                        "server owner": f"{owner.nick} ({owner.name}#{owner.discriminator})",
+                        "server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
                         "server id": guild.id,
+                        "server icon": str(guild.icon_url).split("?")[0],
                         "two-factor authentication": bool(guild.mfa_level),
                         "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
                     },
@@ -296,6 +292,7 @@ class Tools(commands.Cog):
                         "voice channels": len(guild.voice_channels),
                         "channel categories": len(guild.categories),
                         "emojis": len(guild.emojis),
+                        "roles": len(guild.roles),
                     },
                 },
                 indent=4,
@@ -306,7 +303,7 @@ class Tools(commands.Cog):
             .add_field(
                 name="Basic Info",
                 value=f"""Server Name: {guild.name}
-                Server Owner: "{owner.nick}" (`{owner.name}#{owner.discriminator}`)
+                Server Owner: {owner.mention}
                 Server ID: `{guild.id}`
                 Two-Factor Authentication: {bool(guild.mfa_level)}
                 Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""".replace(
@@ -330,17 +327,68 @@ class Tools(commands.Cog):
                 Text Channels: {len(guild.text_channels)}
                 Voice Channels: {len(guild.voice_channels)}
                 Channel Categories: {len(guild.categories)}
-                Emojis: {len(guild.emojis)}""",
+                Emojis: {len(guild.emojis)}
+                Roles: {len(guild.roles)}""",
                 inline=False,
             )
+            .set_thumbnail(url=guild.icon_url)
         )
-        if getops(guild.id, "jsonMenus"):
+        if getops(guild.id, "toggles", "jsonMenus"):
             await ctx.send(f'```json\n"server information": {jsoninfo}```')
         else:
             await ctx.send(embed=embedinfo)
 
+    @info.command(
+        name="user",
+        help="Get info for the specified user.",
+        aliases=["member"],
+        usage="no args",
+    )
+    async def get_user_info(self, ctx, *, user: discord.Member = None):
+        if user == None:
+            user = ctx.author
+        roles = user.roles[1:]
+        roles.reverse()
+        creation = user.created_at
+        jsoninfo = str(
+            dumps(
+                {
+                    "user name": f"{user.display_name} ({user.name}#{user.discriminator})",
+                    "user id": user.id,
+                    "avatar": str(user.avatar_url).split("?")[0],
+                    "account creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
+                    "animated avatar": user.is_avatar_animated(),
+                    "bot": user.bot,
+                    "roles": [role.name for role in roles],
+                },
+                indent=4,
+            )
+        )
+        embedinfo = (
+            discord.Embed(title="Server Details", color=self.teal)
+            .add_field(
+                name="Basic Info",
+                value=f"""User: {user.mention}
+                User ID: `{user.id}`
+                Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`
+                Animated Avatar: {user.is_avatar_animated()}
+                Bot: {user.bot}
+                Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}""".replace(
+                    "True", "Yes"
+                ).replace(
+                    "False", "No"
+                ),
+                inline=False,
+            )
+            .set_thumbnail(url=user.avatar_url)
+        )
+        if getops(ctx.guild.id, "toggles", "jsonMenus"):
+            await ctx.send(f'```json\n"user information": {jsoninfo}```')
+        else:
+            await ctx.send(embed=embedinfo)
+
     # Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
-    @commands.command(name="speedtest", aliases=["st", "ping"], usage="no args")
+    @commands.command(name="speedtest", aliases=["st", "ping", "ng"], usage="no args")
     async def speedtest(self, ctx):
         if self.testing == False:
             self.testing = True
@@ -438,7 +486,7 @@ class Tools(commands.Cog):
                 embed=discord.Embed(
                     title="Stopwatch",
                     description="Track how long something goes.",
-                    color=self.yellow,
+                    color=self.teal,
                 )
                 .add_field(name="(start/begin)", value="Start the stopwatch.")
                 .add_field(name="(stop/end)", value="Stop the stopwatch.")
@@ -487,8 +535,8 @@ class Tools(commands.Cog):
                 f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{error}\n```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
             )
 
-    @get_avatar.error
-    async def avatarError(self, ctx, error):
+    @get_user_info.error
+    async def getUserError(self, ctx, error):
         await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
 
 
