@@ -39,25 +39,23 @@ class Options(commands.Cog):
             options = getops(ctx.guild.id)
             options.pop("lists")
             options.pop("customRoles")
+            for option, value in options["channels"].items():
+                try:
+                    options["channels"][option] = (
+                        "#" + ctx.guild.get_channel(int(value)).name
+                    )
+                except AttributeError:
+                    options["channels"][option] = "#invalid-channel"
+                except TypeError:
+                    pass
+            for option, value in options["roles"].items():
+                try:
+                    options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
+                except AttributeError:
+                    options["roles"][option] = "@deleted-role"
+                except TypeError:
+                    pass
             if jsoncheck(ctx.guild.id):
-                for option, value in options["channels"].items():
-                    try:
-                        options["channels"][option] = (
-                            "#" + ctx.guild.get_channel(int(value)).name
-                        )
-                    except AttributeError:
-                        options["channels"][option] = "#invalid-channel"
-                    except TypeError:
-                        pass
-                for option, value in options["roles"].items():
-                    try:
-                        options["roles"][option] = (
-                            "@" + ctx.guild.get_role(int(value)).name
-                        )
-                    except AttributeError:
-                        options["roles"][option] = "@deleted-role"
-                    except TypeError:
-                        pass
                 jsoninfo = str(
                     dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
                         "\n    ", "\n"
