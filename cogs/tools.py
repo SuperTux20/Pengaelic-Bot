@@ -362,7 +362,7 @@ class Tools(commands.Cog):
         embedinfo = discord.Embed(
             title=user.display_name,
             color=self.teal,
-            description=f"Discriminator: {user.discriminator}\n"
+            description=f"Discriminator: `{user.discriminator}`\n"
             + f"ID: `{user.id}`\n"
             + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`\n"
             + f"Animated Avatar: {user.is_avatar_animated()}\n"
@@ -373,7 +373,9 @@ class Tools(commands.Cog):
             inline=False,
         ).set_thumbnail(url=user.avatar_url)
         if user.nick == user.display_name:
-            embedinfo.description = f"Real Name: {user.name}\n" + embedinfo.description
+            embedinfo.description = (
+                f'Real Name: "{user.name}"\n' + embedinfo.description
+            )
         if getops(ctx.guild.id, "toggles", "jsonMenus"):
             await ctx.send(f'```json\n"user information": {jsoninfo}```')
         else:
