@@ -39,82 +39,68 @@ class Options(commands.Cog):
             options = getops(ctx.guild.id)
             options.pop("lists")
             options.pop("customRoles")
-            for option, value in options["channels"].items():
-                try:
-                    options["channels"][option] = (
-                        "#" + ctx.guild.get_channel(int(value)).name
-                    )
-                except AttributeError:
-                    options["channels"][option] = "#invalid-channel"
-                except TypeError:
-                    pass
-            for option, value in options["roles"].items():
-                try:
-                    options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
-                except AttributeError:
-                    options["roles"][option] = "@deleted-role"
-                except TypeError:
-                    pass
-            jsoninfo = str(
-                dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
-                    "\n    ", "\n"
-                )
-            )
-            header = discord.Embed(
-                title="Options",
-                description="All of the options.\n"
-                + f"To set an option, type `{p}options set <option> <value>`\n"
-                + f"To toggle a toggle option, type `{p}options toggle <option>`\n"
-                + f'To add to the censor list, type `{p}options censor add "<word or phrase>"`',
-                color=self.teal,
-            )
-            channels = discord.Embed(
-                title="Channels",
-                description="Channels for specific functions.",
-                color=self.teal,
-            )
-            messages = discord.Embed(
-                title="Messages",
-                description="Custom messages for joining/leaving, and whatever else may be added. The all-caps keywords should be pretty self-explanatory.",
-                color=self.teal,
-            )
-            roles = discord.Embed(
-                title="Roles",
-                description="Roles for specific functions.",
-                color=self.teal,
-            )
-            toggles = discord.Embed(
-                title="Toggles", description="Toggleable options.", color=self.teal
-            )
-            for category in options.items():
-                if category[0] == "channels":
-                    for option in category[1].items():
-                        channels.add_field(
-                            name=option[0],
-                            value=f"{option[1]}".replace("None", "No Channel Set"),
-                        )
-                elif category[0] == "messages":
-                    for option in category[1].items():
-                        messages.add_field(name=option[0], value=str(option[1]))
-                elif category[0] == "roles":
-                    for option in category[1].items():
-                        roles.add_field(
-                            name=option[0],
-                            value=f"{option[1]}".replace("None", "No Role Set"),
-                        )
-                elif category[0] == "toggles":
-                    for option in category[1].items():
-                        toggles.add_field(
-                            name=option[0],
-                            value=str(option[1])
-                            .replace("False", "Disabled")
-                            .replace("True", "Enabled"),
-                        )
             if jsoncheck(ctx.guild.id):
+                for option, value in options["channels"].items():
+                    try:
+                        options["channels"][option] = (
+                            "#" + ctx.guild.get_channel(int(value)).name
+                        )
+                    except AttributeError:
+                        options["channels"][option] = "#invalid-channel"
+                    except TypeError:
+                        pass
+                for option, value in options["roles"].items():
+                    try:
+                        options["roles"][option] = (
+                            "@" + ctx.guild.get_role(int(value)).name
+                        )
+                    except AttributeError:
+                        options["roles"][option] = "@deleted-role"
+                    except TypeError:
+                        pass
+                jsoninfo = str(
+                    dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
+                        "\n    ", "\n"
+                    )
+                )
                 await ctx.send(f"```json\n{jsoninfo}\n```")
             else:
-                for embed in [header, channels, messages, roles, toggles]:
-                    await ctx.send(embed=embed)
+                embedinfo = discord.Embed(
+                    title="Options",
+                    description="All of the options.\n"
+                    + f"To set an option, type `{p}options set <option> <value>`\n"
+                    + f"To toggle a toggle option, type `{p}options toggle <option>`\n"
+                    + f'To add to the censor list, type `{p}options censor add "<word or phrase>"\n`'
+                    + "\n",
+                    color=self.teal,
+                )
+                for category in options.items():
+                    embedinfo.description += f"\n**{category[0].capitalize()}**\n"
+                    if category[0] == "channels":
+                        for option in category[1].items():
+                            embedinfo.description += (
+                                f"{option[0]}: {option[1]}\n".replace(
+                                    "None", "No Channel Set"
+                                )
+                            )
+                    elif category[0] == "messages":
+                        for option in category[1].items():
+                            embedinfo.description += f"{option[0]}: {option[1]}\n"
+                    elif category[0] == "roles":
+                        for option in category[1].items():
+                            embedinfo.description += (
+                                f"{option[0]}: {option[1]}\n".replace(
+                                    "None", "No Role Set"
+                                )
+                            )
+                    elif category[0] == "toggles":
+                        for option in category[1].items():
+                            embedinfo.description += (
+                                f"{option[0]}: {option[1]}\n".replace(
+                                    "False", "Disabled"
+                                ).replace("True", "Enabled")
+                            )
+                await ctx.send(embed=embedinfo)
 
     @read_options.command(
         name="reset", help="Reset to the default options.", aliases=["defaults"]
