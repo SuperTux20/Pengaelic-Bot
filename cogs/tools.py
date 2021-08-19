@@ -523,9 +523,9 @@ class Tools(commands.Cog):
 
     @get_user_info.error
     async def getUserError(self, ctx, error):
-        await ctx.send(
-            unhandling(error)
-        )  # await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+        error = str(error)
+        await ctx.send(unhandling(error))
+        # await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
 
 
 def setup(client):
