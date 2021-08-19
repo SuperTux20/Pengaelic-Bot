@@ -372,7 +372,7 @@ class Tools(commands.Cog):
             ).replace("False", "No"),
             inline=False,
         ).set_thumbnail(url=user.avatar_url)
-        if user.nickname == user.display_name:
+        if user.nick == user.display_name:
             embedinfo.description = f"Real Name: {user.name}\n" + embedinfo.description
         if getops(ctx.guild.id, "toggles", "jsonMenus"):
             await ctx.send(f'```json\n"user information": {jsoninfo}```')
@@ -524,8 +524,10 @@ class Tools(commands.Cog):
     @get_user_info.error
     async def getUserError(self, ctx, error):
         error = str(error)
-        await ctx.send(unhandling(error))
-        # await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+        if "Member" in error and "not found" in error:
+            await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+        else:
+            await ctx.send(unhandling(error))
 
 
 def setup(client):
