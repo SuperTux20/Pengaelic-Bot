@@ -15,6 +15,7 @@ from pengaelicutils import getops, updop, list2str, unhandling, Stopwatch
 from re import search
 from subprocess import check_output as shell
 from tinydb import TinyDB
+from dotenv import load_dotenv as dotenv
 
 
 class Tools(commands.Cog):
@@ -55,6 +56,9 @@ class Tools(commands.Cog):
         usage="no args",
     )
     async def showOS(self, ctx):
+        def uname(item):
+            return shell(f"uname -{item}", shell=True).decode()[:-1]
+
         async with ctx.typing():
             system = (
                 shell(
@@ -65,16 +69,8 @@ class Tools(commands.Cog):
                 .split(":")[1][1:-2]
                 .split("x86")[0][:-1]
             )
-            kernel = (
-                shell(
-                    'neofetch | grep Kernel | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
-                    shell=True,
-                )
-                .decode()
-                .split(":")[1][1:-2]
-            )
-        os = shell("uname -o", shell=True).decode()[:-1]
-        emoji = ""
+            kernel = uname("r")
+            os = uname("o")
         if os == "Android":
             emoji = "<:os_android:855493322591830016>"
         elif os == "GNU/Linux":
@@ -302,11 +298,11 @@ class Tools(commands.Cog):
             discord.Embed(title="Server Details", color=self.teal)
             .add_field(
                 name="Basic Info",
-                value=f"""Server Name: {guild.name}
-                Server Owner: {owner.mention}
-                Server ID: `{guild.id}`
-                Two-Factor Authentication: {bool(guild.mfa_level)}
-                Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`""".replace(
+                value=f"Server Name: {guild.name}\n"
+                + f"Server Owner: {owner.mention}\n"
+                + f"Server ID: `{guild.id}`\n"
+                + f"Two-Factor Authentication: {bool(guild.mfa_level)}\n"
+                + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`".replace(
                     "True", "Enabled"
                 ).replace(
                     "False", "Disabled"
@@ -315,20 +311,20 @@ class Tools(commands.Cog):
             )
             .add_field(
                 name="Levels",
-                value=f"""Verification Level: {guild.verification_level[0]} (level {guild.verification_level[1]+1}),
-                Notification Level: {guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1}),
-                Content Filter: {guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})""",
+                value=f"Verification Level: {guild.verification_level[0]} (level {guild.verification_level[1]+1})\n"
+                + f"Notification Level: {guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1})\n"
+                + f"Content Filter: {guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1}",
                 inline=False,
             )
             .add_field(
                 name="Counts",
-                value=f"""Members: {guild.member_count}
-                Boosters: {guild.premium_subscription_count}
-                Text Channels: {len(guild.text_channels)}
-                Voice Channels: {len(guild.voice_channels)}
-                Channel Categories: {len(guild.categories)}
-                Emojis: {len(guild.emojis)}
-                Roles: {len(guild.roles)}""",
+                value=f"Members: {guild.member_count}\n"
+                + f"Boosters: {guild.premium_subscription_count}\n"
+                + f"Text Channels: {len(guild.text_channels)}\n"
+                + f"Voice Channels: {len(guild.voice_channels)}\n"
+                + f"Channel Categories: {len(guild.categories)}\n"
+                + f"Emojis: {len(guild.emojis)}\n"
+                + f"Roles: {len(guild.roles)}",
                 inline=False,
             )
             .set_thumbnail(url=guild.icon_url)
@@ -368,16 +364,14 @@ class Tools(commands.Cog):
             discord.Embed(title="Server Details", color=self.teal)
             .add_field(
                 name="Basic Info",
-                value=f"""User: {user.mention}
-                User ID: `{user.id}`
-                Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`
-                Animated Avatar: {user.is_avatar_animated()}
-                Bot: {user.bot}
-                Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}""".replace(
+                value=f"User: {user.mention}\n"
+                + f"User ID: `{user.id}`\n"
+                + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`\n"
+                + f"Animated Avatar: {user.is_avatar_animated()}\n"
+                + f"Bot: {user.bot}\n"
+                + f'Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}'.replace(
                     "True", "Yes"
-                ).replace(
-                    "False", "No"
-                ),
+                ).replace("False", "No"),
                 inline=False,
             )
             .set_thumbnail(url=user.avatar_url)
@@ -440,9 +434,7 @@ class Tools(commands.Cog):
             else:
                 if hex_code_match:
                     role_color = discord.Color(int(color, 16))
-                    role = await ctx.guild.create_role(
-                        name=role_name, colour=role_color
-                    )
+                    role = await ctx.guild.create_role(name=role_name, color=role_color)
                     await member.add_roles(role)
                     updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
                     await ctx.send(
