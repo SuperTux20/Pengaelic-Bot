@@ -360,7 +360,7 @@ class Tools(commands.Cog):
             )
         )
         embedinfo = discord.Embed(
-            title=user.mention,
+            title=user,
             color=self.teal,
             description=f"ID: `{user.id}`\n"
             + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`\n"
