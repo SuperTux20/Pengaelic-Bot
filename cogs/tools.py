@@ -288,19 +288,18 @@ class Tools(commands.Cog):
                         "voice channels": len(guild.voice_channels),
                         "channel categories": len(guild.categories),
                         "emojis": len(guild.emojis),
-                        "roles": len(guild.roles),
+                        "roles": len(guild.roles) - 1,
                     },
                 },
                 indent=4,
             )
         )
         embedinfo = (
-            discord.Embed(title="Server Details", color=self.teal)
+            discord.Embed(title=guild.name, color=self.teal)
             .add_field(
                 name="Basic Info",
-                value=f"Server Name: {guild.name}\n"
-                + f"Server Owner: {owner.mention}\n"
-                + f"Server ID: `{guild.id}`\n"
+                value=f"Owner: {owner.mention}\n"
+                + f"ID: `{guild.id}`\n"
                 + f"Two-Factor Authentication: {bool(guild.mfa_level)}\n"
                 + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`".replace(
                     "True", "Enabled"
@@ -324,7 +323,7 @@ class Tools(commands.Cog):
                 + f"Voice Channels: {len(guild.voice_channels)}\n"
                 + f"Channel Categories: {len(guild.categories)}\n"
                 + f"Emojis: {len(guild.emojis)}\n"
-                + f"Roles: {len(guild.roles)}",
+                + f"Roles: {len(guild.roles)-1}",
                 inline=False,
             )
             .set_thumbnail(url=guild.icon_url)
@@ -349,8 +348,8 @@ class Tools(commands.Cog):
         jsoninfo = str(
             dumps(
                 {
-                    "user name": f"{user.display_name} ({user.name}#{user.discriminator})",
-                    "user id": user.id,
+                    "name": f"{user.display_name} ({user.name}#{user.discriminator})",
+                    "id": user.id,
                     "avatar": str(user.avatar_url).split("?")[0],
                     "account creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
                     "animated avatar": user.is_avatar_animated(),
@@ -360,22 +359,18 @@ class Tools(commands.Cog):
                 indent=4,
             )
         )
-        embedinfo = (
-            discord.Embed(title="Server Details", color=self.teal)
-            .add_field(
-                name="Basic Info",
-                value=f"User: {user.mention}\n"
-                + f"User ID: `{user.id}`\n"
-                + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`\n"
-                + f"Animated Avatar: {user.is_avatar_animated()}\n"
-                + f"Bot: {user.bot}\n"
-                + f'Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}'.replace(
-                    "True", "Yes"
-                ).replace("False", "No"),
-                inline=False,
-            )
-            .set_thumbnail(url=user.avatar_url)
-        )
+        embedinfo = discord.Embed(
+            title=user.mention,
+            color=self.teal,
+            description=f"ID: `{user.id}`\n"
+            + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`\n"
+            + f"Animated Avatar: {user.is_avatar_animated()}\n"
+            + f"Bot: {user.bot}\n"
+            + f'Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}'.replace(
+                "True", "Yes"
+            ).replace("False", "No"),
+            inline=False,
+        ).set_thumbnail(url=user.avatar_url)
         if getops(ctx.guild.id, "toggles", "jsonMenus"):
             await ctx.send(f'```json\n"user information": {jsoninfo}```')
         else:
