@@ -5,7 +5,7 @@ import discord
 from asyncio import sleep
 from discord.ext import commands
 from json import dumps
-from pengaelicutils import newops, getops, updop, jsoncheck, unhandling
+from pengaelicutils import newops, getops, updop, jsoncheck, unhandling, Developers
 from random import choice
 from tinydb import TinyDB, Query
 
@@ -465,7 +465,16 @@ class Options(commands.Cog):
                     f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role."
                 )
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
 
 def setup(client):

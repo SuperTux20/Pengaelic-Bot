@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from discord.ext import commands
-from pengaelicutils import list2str, unhandling, Stopwatch, syllables
+from pengaelicutils import list2str, unhandling, Stopwatch, Developers, syllables
 from random import choice, randint
 from subprocess import check_output as bash
 from time import time
@@ -175,7 +175,16 @@ class Generators(commands.Cog):
                 '<:winxp_information:869760946808180747>You need to escape your "quotation marks" with backslashes (\\ these things \\\).'
             )
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
 
 def setup(client):

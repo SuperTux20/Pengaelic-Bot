@@ -1,7 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import discord
 from discord.ext import commands
 from random import choice, randint
 from collections import Counter
@@ -10,6 +9,7 @@ from pengaelicutils import (
     regional_indicators,
     magic_responses,
     unhandling,
+    Developers,
 )
 
 
@@ -364,7 +364,16 @@ class Games(commands.Cog):
         ):
             "for some reason, hangman throws this error when nothing is even really supposed to happen in the first place"
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
 
 def setup(client):

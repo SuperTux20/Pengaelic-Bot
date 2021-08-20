@@ -110,14 +110,18 @@ def remove_duplicates(inlist: list):
     return list(dict.fromkeys(inlist))
 
 
-def unhandling(error):
-    return (
+def unhandling(error, tuxInServer):
+    output = (
         "<:winxp_critical_error:869760946816553020>Unhandled error occurred:"
         + "\n```\n"
         + error
         + "\n```\n"
-        + "If my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
     )
+    if tuxInServer:
+        output += (
+            "Pinging <@!686984544930365440> (my developer) so he can see this error."
+        )
+    return output
 
 
 def newops():

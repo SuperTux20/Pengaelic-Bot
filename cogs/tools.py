@@ -11,7 +11,7 @@ from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import environ
-from pengaelicutils import getops, updop, list2str, unhandling, Stopwatch
+from pengaelicutils import getops, updop, list2str, unhandling, Stopwatch, Developers
 from re import search
 from subprocess import check_output as shell
 from tinydb import TinyDB
@@ -508,7 +508,16 @@ class Tools(commands.Cog):
                 f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
             )
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
     @nuke.error
     async def nukeError(self, ctx, error):
@@ -521,7 +530,16 @@ class Tools(commands.Cog):
                 f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Channels)"
             )
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
     @get_user_info.error
     async def getUserError(self, ctx, error):
@@ -529,7 +547,16 @@ class Tools(commands.Cog):
         if "Member" in error and "not found" in error:
             await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
 
 def setup(client):

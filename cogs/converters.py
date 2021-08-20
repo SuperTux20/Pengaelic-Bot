@@ -5,7 +5,7 @@ from num2words import num2words
 from fnmatch import fnmatch
 from discord.ext import commands
 from random import choice, shuffle
-from pengaelicutils import unhandling
+from pengaelicutils import unhandling, Developers
 
 
 class Converters(commands.Cog):
@@ -324,7 +324,16 @@ class Converters(commands.Cog):
                 "<:winxp_warning:869760947114348604>You didn't specify any text to convert!"
             )
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
 
 def setup(client):

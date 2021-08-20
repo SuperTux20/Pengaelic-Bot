@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from os import listdir
-from pengaelicutils import unhandling
+from pengaelicutils import unhandling, Developers
 
 
 class Interactions(commands.Cog):
@@ -259,7 +259,16 @@ class Interactions(commands.Cog):
         if "Member" in error and "not found" in error:
             await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
         else:
-            await ctx.send(unhandling(error))
+            await ctx.send(
+                unhandling(
+                    error,
+                    bool(
+                        ctx.guild.get_member(
+                            self.client.get_user(Developers.get(None, "tux")).id
+                        )
+                    ),
+                )
+            )
 
 
 def setup(client):
