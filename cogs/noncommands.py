@@ -13,6 +13,7 @@ class NonCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
+    devs = Developers()
     name = "non-commands"
     name_typable = "noncommands"
     description = "Automatic message responses that aren't commands."

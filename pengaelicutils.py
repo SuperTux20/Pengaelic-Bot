@@ -498,3 +498,13 @@ magic_responses = [
 
 def jsoncheck(guild: str):
     return getops(guild, "toggles", "jsonMenus")
+
+
+def tux_in_guild(ctx, client):
+    return bool(
+        ctx.guild.get_member(
+            client.get_user(
+                Developers.get(None, "tux")
+            ).id
+        )
+    )

@@ -5,7 +5,9 @@ import discord
 from discord.ext import commands
 from random import choice, randint
 from os import listdir
-from pengaelicutils import unhandling, Developers
+from pengaelicutils import unhandling, tux_in_guild, Developers
+
+devs = Developers()
 
 
 class Interactions(commands.Cog):
@@ -201,7 +203,7 @@ class Interactions(commands.Cog):
 
     @commands.command(
         name="nom",
-        help="Sqweesh someone's face >3<",
+        help="**C O N S U M E**",
         usage="<username, nickname, or @mention>",
     )
     async def nom(self, ctx, *, nom: discord.Member = None):
@@ -262,11 +264,7 @@ class Interactions(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 

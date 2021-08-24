@@ -9,8 +9,11 @@ from pengaelicutils import (
     regional_indicators,
     magic_responses,
     unhandling,
+    tux_in_guild,
     Developers,
 )
+
+devs = Developers()
 
 
 class Games(commands.Cog):
@@ -367,11 +370,7 @@ class Games(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 

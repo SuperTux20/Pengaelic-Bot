@@ -1,11 +1,22 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from asyncio.events import get_event_loop
+from concurrent.futures import ThreadPoolExecutor
 from discord.ext import commands
-from pengaelicutils import list2str, unhandling, Stopwatch, Developers, syllables
+from pengaelicutils import (
+    list2str,
+    unhandling,
+    tux_in_guild,
+    Developers,
+    Stopwatch,
+    syllables,
+)
 from random import choice, randint
 from subprocess import check_output as bash
 from time import time
+
+devs = Developers()
 
 
 class Generators(commands.Cog):
@@ -16,6 +27,36 @@ class Generators(commands.Cog):
     name_typable = name
     description = "Do ya like randomization?"
     description_long = description + " So do I!"
+
+    def MonkeyBusiness(
+        self,
+        word: str,
+        alphabet: str,
+        starttime: float,
+        success: bool = True,
+        timer: Stopwatch = Stopwatch(),
+        text: str = "",
+    ):
+        while text.find(word) == -1:
+            letter = choice(alphabet)
+            text = text + letter
+            if timer.monkeywatch(starttime) == "01:00":
+                success = False
+                break
+        cutoff = ""
+        textlen = len(text)
+        if len(text) > 1000:
+            text = f"...{text[-1000:]}"
+            cutoff = " (last 1000 shown)"
+        text = (
+            text.replace("\\", "\\\\")
+            .replace("*", "\*")
+            .replace("_", "\_")
+            .replace("`", "\`")
+            .replace("~", "\~")
+            .replace("|", "\|")
+        )
+        return text, cutoff, textlen, success, timer.monkeywatch(starttime)
 
     @commands.command(
         name="name",
@@ -98,57 +139,50 @@ class Generators(commands.Cog):
         headline.append(choice(objects))
         await ctx.send(" ".join(headline))
 
-    # @commands.command(
-    #     name="img",
-    #     help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)",
-    #     aliases=["monkeys", "infinitemonkey", "monkeygen"],
-    #     usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]",
-    # )
-    # async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
-    #     alphabet = list(alphabet)
-    #     if word == None:
-    #         await ctx.send("You didn't specify a keyword to search for!")
-    #     else:
-    #         invalid = False
-    #         for character in word:
-    #             if character not in alphabet:
-    #                 invalid = True
-    #         if invalid:
-    #             await ctx.send(
-    #                 f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})"
-    #             )
-    #         else:
-    #             status = await ctx.send("Generating...")
-    #             starttime = time()
-    #             text = ""
-    #             success = True
-    #             while text.find(word) == -1:
-    #                 letter = alphabet[randint(0, len(alphabet) - 1)]
-    #                 text = text + letter
-    #                 if Stopwatch.monkeywatch(starttime) == "01:00":
-    #                     success = False
-    #                     break
-    #             cutoff = ""
-    #             textlen = len(text)
-    #             if len(text) > 1000:
-    #                 text = f"...{text[-1000:]}"
-    #                 cutoff = " (last 1000 shown)"
-    #             text = (
-    #                 text.replace("\\", "\\\\")
-    #                 .replace("*", "\*")
-    #                 .replace("_", "\_")
-    #                 .replace("`", "\`")
-    #                 .replace("~", "\~")
-    #                 .replace("|", "\|")
-    #             )
-    #             if success:
-    #                 await status.edit(
-    #                     content=f'{text}\nKeyword "{word}" found after {textlen} characters{cutoff} in {Stopwatch.mokneywatch(self, starttime)}'
-    #                 )
-    #             else:
-    #                 await status.edit(
-    #                     content=f'Could not find keyword "{word}" within one minute. :frowning:'
-    #                 )
+    @commands.command(
+        name="img",
+        help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)",
+        aliases=["monkeys", "infinitemonkey", "monkeygen"],
+        usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]",
+    )
+    async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
+        alphabet = list(alphabet)
+        if word == None:
+            await ctx.send("You didn't specify a keyword to search for!")
+        else:
+            invalid = False
+            for character in word:
+                if character not in alphabet:
+                    invalid = True
+            if invalid:
+                await ctx.send(
+                    f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})"
+                )
+            else:
+                status = await ctx.send("Generating...")
+                async with ctx.typing():
+                    (
+                        text,
+                        cutoff,
+                        textlen,
+                        success,
+                        elapsed,
+                    ) = await get_event_loop().run_in_executor(
+                        ThreadPoolExecutor(),
+                        self.MonkeyBusiness,
+                        word,
+                        alphabet,
+                        time(),
+                    )
+                if success:
+                    await status.edit(content=text)
+                    await ctx.send(
+                        f'Keyword "{word}" found after {textlen} characters{cutoff} in {elapsed}'
+                    )
+                else:
+                    await ctx.send(
+                        content=f'Could not find keyword "{word}" within one minute. :frowning:'
+                    )
 
     @commands.command(
         name="fortune",
@@ -178,11 +212,7 @@ class Generators(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 

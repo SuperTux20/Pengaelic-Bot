@@ -5,7 +5,9 @@ from num2words import num2words
 from fnmatch import fnmatch
 from discord.ext import commands
 from random import choice, shuffle
-from pengaelicutils import unhandling, Developers
+from pengaelicutils import unhandling, tux_in_guild, Developers
+
+devs = Developers()
 
 
 class Converters(commands.Cog):
@@ -327,11 +329,7 @@ class Converters(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 

@@ -11,11 +11,21 @@ from discord.utils import get
 from concurrent.futures import ThreadPoolExecutor
 from json import dumps
 from os import environ
-from pengaelicutils import getops, updop, list2str, unhandling, Stopwatch, Developers
+from pengaelicutils import (
+    getops,
+    updop,
+    list2str,
+    unhandling,
+    tux_in_guild,
+    Stopwatch,
+    Developers,
+)
 from re import search
 from subprocess import check_output as shell
 from tinydb import TinyDB
 from dotenv import load_dotenv as dotenv
+
+devs = Developers()
 
 
 class Tools(commands.Cog):
@@ -191,7 +201,11 @@ class Tools(commands.Cog):
             f"<:winxp_information:869760946808180747>Banned {member} for reason `{reason}`."
         )
 
-    @commands.group(name="info", help="See a bunch of data!")
+    @commands.group(
+        name="info",
+        help="See a bunch of data!",
+        usage="no args",
+    )
     async def info(self, ctx):
         if ctx.invoked_subcommand == None:
             await ctx.send(
@@ -382,7 +396,12 @@ class Tools(commands.Cog):
             await ctx.send(embed=embedinfo)
 
     # Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
-    @commands.command(name="speedtest", aliases=["st", "ping", "ng"], usage="no args")
+    @commands.command(
+        name="speedtest",
+        aliases=["st", "ping", "ng"],
+        usage="no args",
+        help="See how good my internet is.",
+    )
     async def speedtest(self, ctx):
         if self.testing == False:
             self.testing = True
@@ -393,13 +412,26 @@ class Tools(commands.Cog):
             await ctx.channel.send(
                 embed=discord.Embed(
                     title="Speedtest Results",
-                    description=f'Server: {results["server"]["sponsor"]} {results["server"]["name"]}\n'
-                    + 'Ping: {results["ping"]} ms\n'
-                    + 'Download: {round(float((results["download"])/1000000), 2)} Mbps\n'
-                    + 'Upload: {round(float((results["upload"])/1000000), 2)} Mbps\n\n'
-                    + "*Conducted using Ookla's Speedtest CLI: https://speedtest.net*",
+                    description="*Conducted using [Ookla's Speedtest CLI](https://speedtest.net)*",
                     color=0x007F7F,
-                ).set_footer(text=SpeedPerformTime)
+                )
+                .add_field(
+                    name="Server",
+                    value=f'{results["server"]["sponsor"]} {results["server"]["name"]}',
+                    inline=False,
+                )
+                .add_field(name="Ping", value=f'{results["ping"]} ms', inline=False)
+                .add_field(
+                    name="Download Speed",
+                    value=f'{round(float((results["download"])/1000000), 2)} Mbps',
+                    inline=False,
+                )
+                .add_field(
+                    name="Upload Speed",
+                    value=f'{round(float((results["upload"])/1000000), 2)} Mbps',
+                    inline=False,
+                )
+                .set_footer(text=SpeedPerformTime)
             )
             self.testing = False
         else:
@@ -407,7 +439,11 @@ class Tools(commands.Cog):
                 "<:winxp_information:869760946808180747>A test is already in progress. Please wait..."
             )
 
-    @commands.command(name="role", usage="<hex code>\n<role name>")
+    @commands.command(
+        name="role",
+        usage="<hex code>\n<role name>",
+        help="Create a custom color role for yourself!",
+    )
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
         role_lock = get(
@@ -449,7 +485,7 @@ class Tools(commands.Cog):
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.command(name="delrole", usage="no args")
+    @commands.command(name="delrole", usage="no args", help="Delete your custom role.")
     async def delrole(self, ctx):
         member = ctx.author
         role_lock = get(
@@ -511,11 +547,7 @@ class Tools(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 
@@ -533,11 +565,7 @@ class Tools(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 
@@ -550,11 +578,7 @@ class Tools(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 

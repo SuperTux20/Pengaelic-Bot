@@ -5,9 +5,19 @@ import discord
 from asyncio import sleep
 from discord.ext import commands
 from json import dumps
-from pengaelicutils import newops, getops, updop, jsoncheck, unhandling, Developers
+from pengaelicutils import (
+    newops,
+    getops,
+    updop,
+    jsoncheck,
+    unhandling,
+    tux_in_guild,
+    Developers,
+)
 from random import choice
 from tinydb import TinyDB, Query
+
+devs = Developers()
 
 
 class Options(commands.Cog):
@@ -468,11 +478,7 @@ class Options(commands.Cog):
             await ctx.send(
                 unhandling(
                     error,
-                    bool(
-                        ctx.guild.get_member(
-                            self.client.get_user(Developers.get(None, "tux")).id
-                        )
-                    ),
+                    tux_in_guild(ctx, self.client),
                 )
             )
 

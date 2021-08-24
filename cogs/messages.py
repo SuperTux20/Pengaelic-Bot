@@ -6,6 +6,8 @@ from discord.ext import commands
 from pengaelicutils import jsoncheck, Developers
 from json import dumps
 
+devs = Developers()
+
 
 class Messages(commands.Cog):
     def __init__(self, client):
@@ -34,9 +36,9 @@ class Messages(commands.Cog):
     )
     async def credits(self, ctx):
         bot_credits = {
-            "Main Developer and Creator": f"Tux Penguin ({self.client.get_user(Developers.get(None, 'tux'))})",
-            "Current Host": f"Hy Asencion ({self.client.get_user(Developers.get(None, 'hy'))} or {self.client.get_user(Developers.get(None, 'ly'))})",
-            "Side Developer and Backup Host": f"Cherry Rain ({self.client.get_user(Developers.get(None, 'cherry'))})",
+            "Main Developer and Creator": f"Tux Penguin ({self.client.get_user(devs.get('tux'))})",
+            "Current Host": f"Hy Asencion ({self.client.get_user(devs.get('hy'))} or {self.client.get_user(devs.get('ly'))})",
+            "Side Developer and Backup Host": f"Cherry Rain ({self.client.get_user(devs.get('cherry'))})",
         }
         if jsoncheck(ctx.guild.id):
             bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}

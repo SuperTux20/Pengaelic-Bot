@@ -20,10 +20,13 @@ from pengaelicutils import (
     list2str,
     jsoncheck,
     unhandling,
+    tux_in_guild,
     Developers,
 )
 from random import choice, randint
 from subprocess import CalledProcessError, check_output as shell, call, STDOUT
+
+devs = Developers()
 
 print("Imported modules")
 if shell("uname -o", shell=True).decode()[:-1] != "Android":
@@ -230,23 +233,18 @@ def help_menu(guild, cog, client):
             text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
         )
         for command in cog.get_commands():
-            if command.usage == "no args":
-                menu.add_field(
-                    name="({})".format(
-                        str([command.name] + command.aliases)[1:-1]
-                        .replace("'", "")
-                        .replace(", ", "/")
-                    ),
-                    value=command.help,
-                )
+            names = "({})".format(
+                str([command.name] + command.aliases)[1:-1]
+                .replace("'", "")
+                .replace(", ", "/")
+            )
+            if command.usage != "no args":
+                names += "\n" + command.usage
+            if command.help == None:
+                menu.add_field(name=names, value="_ _")
             else:
                 menu.add_field(
-                    name="({})\n{}".format(
-                        str([command.name] + command.aliases)[1:-1]
-                        .replace("'", "")
-                        .replace(", ", "/"),
-                        command.usage,
-                    ),
+                    name=names,
                     value=command.help,
                 )
     return menu
@@ -351,7 +349,12 @@ if not unstable:
                 #     )
                 # )
             else:
-                await ctx.send(unhandling(error))
+                await ctx.send(
+                    unhandling(
+                        error,
+                        tux_in_guild(ctx, client),
+                    )
+                )
 
 
 @client.command(
@@ -732,7 +735,7 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
         await ctx.send(
             f"<:winxp_information:869760946808180747>Webhook created in {channel}."
         )
-        await client.get_user(Developers.get(None, "tux")).send(
+        await client.get_user(devs.get("tux")).send(
             f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n"
             + hook.url.replace(
                 "https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='
@@ -749,13 +752,17 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
 
 @help.error
 async def not_a_cog(ctx, error):
-    if str(error) == "AttributeError: 'NoneType' object has no attribute 'name'":
+    error = str(error)
+    if error.endswith("AttributeError: 'NoneType' object has no attribute 'name'"):
         await ctx.send(
             "<:winxp_warning:869760947114348604>There isn't a help menu for that."
         )
     else:
         await ctx.send(
-            f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```{error}```\nIf my developer (<@!686984544930365440>) is not here, please tell him what the error is so that he can add handling or fix the issue!"
+            unhandling(
+                error,
+                tux_in_guild(ctx, client),
+            )
         )
 
 
