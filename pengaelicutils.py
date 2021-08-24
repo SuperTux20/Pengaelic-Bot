@@ -118,10 +118,12 @@ def unhandling(error, tuxInServer):
         + "\n```\n"
     )
     if tuxInServer:
-        output += (
+        tux_msg = (
             "Pinging <@!686984544930365440> (my developer) so he can see this error."
         )
-    return output
+    else:
+        tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
+    return output + tux_msg
 
 
 def newops():
@@ -501,10 +503,4 @@ def jsoncheck(guild: str):
 
 
 def tux_in_guild(ctx, client):
-    return bool(
-        ctx.guild.get_member(
-            client.get_user(
-                Developers.get(None, "tux")
-            ).id
-        )
-    )
+    return bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id))

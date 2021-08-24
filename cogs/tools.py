@@ -533,6 +533,16 @@ class Tools(commands.Cog):
     async def stopwatch_end(self, ctx):
         await ctx.send(Stopwatch.end(self))
 
+    @commands.command(name="bugreport", help="Send a bug report to my developer.")
+    async def bugreport(self, ctx, *, bug):
+        await self.client.get_user(devs.get("tux")).send(
+            f"@{ctx.author} has sent a bug report from {ctx.guild}.\n```\n{bug}\n```"
+        )
+
+    @commands.command(name="dummy", help="See a dummy error message.")
+    async def dummy(self, ctx):
+        await ctx.send(unhandling("DummyError", tux_in_guild(ctx, self.client)))
+
     @clear.error
     async def clearError(self, ctx, error):
         error = str(error)
