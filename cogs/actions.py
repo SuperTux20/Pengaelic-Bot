@@ -18,7 +18,7 @@ class Actions(commands.Cog):
     description = "Emote actions!"
     description_long = description
 
-    async def acting(self, ctx, act, punct="..."):
+    async def act(self, ctx, act, punct="..."):
         actor = ctx.author.display_name.replace("_", r"\_")
         for char in self.formatChars:
             actor = actor.replace(char, "\\" + char)
@@ -30,37 +30,25 @@ class Actions(commands.Cog):
             )
         )
 
-    async def acts(self, ctx, act, punct="."):
-        actor = ctx.author.display_name.replace("_", r"\_")
-        for char in self.formatChars:
-            actor = actor.replace(char, "\\" + char)
-        await ctx.send(
-            embed=discord.Embed(
-                title=f"{actor} {act}s{punct}", color=self.teal
-            ).set_image(
-                url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'images/actions/{act}'))-1)}.gif"
-            )
-        )
-
     @commands.command(name="cry", usage="no args")
     async def cry(self, ctx):
-        await self.acting(ctx, "cry")
+        await self.act(ctx, "cry")
 
     @commands.command(name="glare", usage="no args")
     async def glare(self, ctx):
-        await self.acts(ctx, "glare")
+        await self.act(ctx, "glar")
 
     @commands.command(name="laugh", usage="no args")
     async def laugh(self, ctx):
-        await self.acting(ctx, "laugh", "!")
+        await self.act(ctx, "laugh", "!")
 
     @commands.command(name="shrug", usage="no args")
     async def shrug(self, ctx):
-        await self.acts(ctx, "shrug")
+        await self.act(ctx, "shrugg", ".")
 
     @commands.command(name="sleep", usage="no args")
     async def sleep(self, ctx):
-        await self.acting(ctx, "sleep")
+        await self.act(ctx, "sleep")
 
 
 def setup(client):
