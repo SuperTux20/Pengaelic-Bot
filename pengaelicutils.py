@@ -14,7 +14,7 @@ class Stopwatch:
     def start(self):
         self.start_time = time()
 
-    def end(self):
+    def end(self) -> str:
         try:
             elapsed = time() - self.start_time
             m = elapsed / 60
@@ -35,7 +35,8 @@ class Stopwatch:
         except AttributeError:
             return "The stopwatch was never started."
 
-    def monkeywatch(self, start: time):  # specific to the infinite monkey generator
+    # specific to the infinite monkey generator
+    def monkeywatch(self, start: time) -> str:
         elapsed = time() - start
         m = elapsed / 60
         minutes = int(m)
@@ -59,7 +60,7 @@ class Developers:
     dotenv(".env")
     everyone = loads(env("DEVELOPER_IDS"))
 
-    def check(self, user, dev=None):
+    def check(self, user, dev=None) -> bool:
         if dev == None:
             if user.id in list(Developers.everyone.values()):
                 return True
@@ -71,14 +72,14 @@ class Developers:
             else:
                 return False
 
-    def get(self, dev=None):
+    def get(self, dev=None) -> dict:
         if dev == None:
             return Developers.everyone
         else:
             return Developers.everyone[dev]
 
 
-def list2str(inlist: list, mode: int = 0, _and: bool = False):
+def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
     # if mode == 0: proper sentence formatting (minus period)
     # if mode == 1: remove all separation
     # if mode == 2: remove commas, leaving spaces behind
@@ -106,18 +107,14 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False):
     return outstr
 
 
-def remove_duplicates(inlist: list):
-    return list(dict.fromkeys(inlist))
-
-
-def unhandling(error, tuxInServer):
+def unhandling(error, tux_in_server) -> str:
     output = (
         "<:winxp_critical_error:869760946816553020>Unhandled error occurred:"
         + "\n```\n"
         + error
         + "\n```\n"
     )
-    if tuxInServer:
+    if tux_in_server:
         tux_msg = (
             "Pinging <@!686984544930365440> (my developer) so he can see this error."
         )
@@ -126,7 +123,7 @@ def unhandling(error, tuxInServer):
     return output + tux_msg
 
 
-def newops():
+def newops() -> dict:
     return {
         "channels": {
             channel_id: None for channel_id in ["suggestionsChannel", "welcomeChannel"]
@@ -162,7 +159,7 @@ def newops():
     }
 
 
-def getops(guild: str, category: str = None, option: str = None):
+def getops(guild: str, category: str = None, option: str = None) -> dict:
     db = TinyDB("config.json")
     server = Query()
     if option == None:
@@ -184,6 +181,35 @@ def updop(guild: str, category: str, option: str, value):
     options = db.search(server.guildID == guild)[0][category]
     options[option] = value
     db.update({category: options}, server.guildID == guild)
+
+
+def eldritch_syllables() -> list:
+    vowels = list("aeiouy")
+    consonants = list("bcdfghjklmnpqrstvwxz")
+    syllables = []
+    for v in vowels:
+        syllables.append(v)
+        for c in consonants:
+            syllables.append(c)
+            for v2 in vowels:
+                for c2 in consonants:
+                    syllables.append(c + v)
+                    syllables.append(v + c)
+                    syllables.append(c + v + v)
+                    syllables.append(v + c + v)
+                    syllables.append(v + v + c)
+                    syllables.append(v + c + c)
+                    syllables.append(c + v + c)
+                    syllables.append(c + c + v)
+                    syllables.append(c + v + v2)
+                    syllables.append(v2 + c + v)
+                    syllables.append(v + v2 + c)
+                    syllables.append(v + c + c2)
+                    syllables.append(c2 + v + c)
+                    syllables.append(c + c2 + v)
+        syllables.append(v2 + v)
+        syllables.append(v + v2)
+    return list(set(syllables))
 
 
 syllables = [
@@ -218,15 +244,32 @@ syllables = [
     "co",
     "cu",
     "da",
+    "dal",
     "dam",
     "dan",
+    "dap",
+    "dar",
+    "das",
     "del",
+    "dem",
+    "den",
+    "dep",
     "der",
     "des",
     "di",
     "dil",
+    "dim",
+    "din",
+    "dip",
+    "dir",
+    "dis",
     "do",
+    "dol",
+    "dom",
     "don",
+    "dop",
+    "dor",
+    "dos",
     "dy",
     "dyl",
     "e",

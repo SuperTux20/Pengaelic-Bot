@@ -48,12 +48,13 @@ class NonCommands(commands.Cog):
             await message.channel.send(f"My prefix is `{self.client.command_prefix}`")
         # lowercase everything to make my life easier
         messagetext = message.content.lower()
+        server = message.guild.id
         # check if the message it's reading belongs to a bot
         # then make sure it's not a DM, in which case, don't test options (because there are none)
         if not message.author.bot:
             if not isinstance(message.channel, discord.channel.DMChannel):
                 # this section is for Dad Bot-like responses
-                if getops(message.guild.id, "toggles", "dadJokes"):
+                if getops(server, "toggles", "dadJokes"):
                     dad_prefixes = ["i'm", "i`m", "i‘m", "i’m", "im", "i am"]
                     for dad in dad_prefixes:
                         if dad + " " == messagetext[0 : len(dad) + 1]:
@@ -95,8 +96,8 @@ class NonCommands(commands.Cog):
                                     )
 
                 # this section is to auto-delete messages containing a keyphrase in the censor text file
-                if getops(message.guild.id, "toggles", "censor"):
-                    all_bads = getops(message.guild.id, "lists", "censorList")
+                if getops(server, "toggles", "censor"):
+                    all_bads = getops(server, "lists", "censorList")
                     for bad in all_bads:
                         if bad in messagetext.split():
                             await message.delete()
@@ -110,7 +111,7 @@ class NonCommands(commands.Cog):
                         "dead" in messagetext
                         and ("chat" in messagetext or "server" in messagetext)
                     )
-                    and getops(message.guild.id, "toggles", "deadChat")
+                    and getops(server, "toggles", "deadChat")
                     and list(await message.channel.history(limit=2).flatten())[0].author
                     != self.client.user
                 ):
@@ -120,9 +121,9 @@ class NonCommands(commands.Cog):
 
                 # this section makes automatic suggestion polls
                 if getops(
-                    message.guild.id, "toggles", "suggestions"
+                    server, "toggles", "suggestions"
                 ) and message.channel.id == getops(
-                    message.guild.id, "channels", "suggestionsChannel"
+                    server, "channels", "suggestionsChannel"
                 ):
                     thepoll = await message.channel.send(
                         embed=discord.Embed(
@@ -143,28 +144,14 @@ class NonCommands(commands.Cog):
 
                 # a rickroll-themed game of russian roulette, except the barrel is reset every time
                 if "you know the rules" == messagetext and getops(
-                    message.guild.id, "toggles", "rickRoulette"
+                    server, "toggles", "rickRoulette"
                 ):
                     responses = ["And so do I :pensive:" for _ in range(5)]
-                    threats = [
-                        "It's time to die",
-                        "Say goodbye <:delet_this:828693389712949269>",
-                    ]
-                    responses.append(
-                        choice(
-                            [
-                                threats[0] + "<:delet_this:828693389712949269>",
-                                responses[0] + "\n" + threats[1],
-                                threats[0] + "\n" + threats[1],
-                            ]
-                        )
-                    )
+                    responses.append("Say goodbye <:delet_this:828693389712949269>")
                     await message.channel.send(choice(responses))
 
                 # bring back @someone from an april fools update
-                if "@someone" == messagetext and getops(
-                    message.guild.id, "toggles", "atSomeone"
-                ):
+                if "@someone" == messagetext and getops(server, "toggles", "atSomeone"):
                     await message.channel.send(
                         choice(message.guild.members).mention
                         + ", you have been randomly selected by a @someone ping!"
