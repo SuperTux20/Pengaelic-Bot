@@ -48,7 +48,7 @@ class Tools(commands.Cog):
         if speed:  # record this as the time the speedtest was done
             SpeedPerformTime = CurrentTime
 
-    def TestSpeed(self):
+    def TestSpeed(self) -> dict:
         global results
         self.UpdateTime(True)
         s = speedtest.Speedtest()
@@ -66,7 +66,7 @@ class Tools(commands.Cog):
         usage="no args",
     )
     async def showOS(self, ctx):
-        def uname(item):
+        def uname(item) -> str:
             return shell(f"uname -{item}", shell=True).decode()[:-1]
 
         async with ctx.typing():

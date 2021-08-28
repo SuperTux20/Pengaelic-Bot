@@ -20,7 +20,7 @@ class Converters(commands.Cog):
     description = "Run some text through a converter to make it look funny!"
     description_long = description
 
-    async def test_for_content(self, ctx, arg):
+    async def test_for_content(self, ctx, arg) -> str:
         if not arg:
             return list(await ctx.channel.history(limit=2).flatten())[1].content
         else:

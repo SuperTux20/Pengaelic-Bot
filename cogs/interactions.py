@@ -25,17 +25,14 @@ class Interactions(commands.Cog):
         for actee in actees:
             acted.append(actee.mention)
         acted = list2str(acted, 0, True)
-        responses = [
-            f"{acted} just got {pastact} by {ctx.author}",
-            f"{ctx.author} {pastact} {acted}",
-        ]
         image = f"https://supertux20.github.io/Pengaelic-Bot/images/interactions/{act}"
         if violence:
             image += ".jpg"
         else:
             image += f"/{randint(1,len(listdir(f'images/interactions/{act}'))-1)}.gif"
         return discord.Embed(
-            description=f"**{choice(responses)}**", color=self.teal
+            description=f'**{choice([f"{acted} just got {pastact} by {ctx.author}",f"{ctx.author} {pastact} {acted}",])}**',
+            color=self.teal,
         ).set_image(url=image)
 
     async def nact(self, ctx, act, pastact, actees, selfresponses):

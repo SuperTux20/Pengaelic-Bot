@@ -291,7 +291,7 @@ class Games(commands.Cog):
             chances != 0
         ) and flag == False:  # flag is updated when the word is correctly guessed
 
-            def check(reaction, user):
+            def check(reaction, user) -> bool:
                 return user == ctx.author and reaction.emoji in list(
                     regional_indicators.keys()
                 )
