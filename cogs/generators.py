@@ -11,6 +11,7 @@ from pengaelicutils import (
     Developers,
     Stopwatch,
     syllables,
+    eldritch_syllables,
 )
 from random import choice, randint
 from subprocess import check_output as bash
@@ -36,7 +37,7 @@ class Generators(commands.Cog):
         success: bool = True,
         timer: Stopwatch = Stopwatch(),
         text: str = "",
-    ):
+    ) -> tuple:
         while text.find(word) == -1:
             letter = choice(alphabet)
             text = text + letter
@@ -58,6 +59,36 @@ class Generators(commands.Cog):
         )
         return text, cutoff, textlen, success, timer.monkeywatch(starttime)
 
+    def gen(
+        self,
+        amount: int = 1,
+        upper_limit: int = 3,
+        lower_limit: int = 2,
+        eldritch: bool = False,
+    ) -> str:
+        if eldritch:
+            syls = eldritch_syllables()
+        else:
+            syls = syllables
+        if amount > 0 and upper_limit > 0 and lower_limit > 0:
+            if not lower_limit > upper_limit:
+                return list2str(
+                    [
+                        "".join(
+                            [
+                                choice(syls)
+                                for _ in range(randint(lower_limit, upper_limit))
+                            ]
+                        ).capitalize()
+                        for _ in range(amount)
+                    ],
+                    3,
+                )
+            else:
+                return "The lower limit cannot be higher than the upper limit."
+        else:
+            return "Values can't be zero."
+
     @commands.command(
         name="name",
         help="Generate a random name! They tend to be mystic-sounding :eyes:",
@@ -67,26 +98,18 @@ class Generators(commands.Cog):
     async def name_generator(
         self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2
     ):
-        if amount > 0 and upper_limit > 0 and lower_limit > 0:
-            if not lower_limit > upper_limit:
-                await ctx.send(
-                    list2str(
-                        [
-                            "".join(
-                                [
-                                    choice(syllables)
-                                    for _ in range(randint(lower_limit, upper_limit))
-                                ]
-                            ).capitalize()
-                            for _ in range(amount)
-                        ],
-                        3,
-                    )
-                )
-            else:
-                await ctx.send("The lower limit cannot be higher than the upper limit.")
-        else:
-            await ctx.send("Values can't be zero.")
+        await ctx.send(self.gen(amount, upper_limit, lower_limit))
+
+    @commands.command(
+        name="ename",
+        help="Generate an eldritch name that sounds straight out of an H. P. Lovecraft novel.",
+        aliases=["eldritchname"],
+        usage="[names to generate (1)]\n[max syllables (3)]\n[min syllables (2)]",
+    )
+    async def eldritch_name_generator(
+        self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2
+    ):
+        await ctx.send(self.gen(amount, upper_limit, lower_limit, True))
 
     @commands.command(
         name="floridaman",
@@ -194,7 +217,7 @@ class Generators(commands.Cog):
 
     @name_generator.error
     @florida_man.error
-    # @img.error
+    @img.error
     @fortune.error
     async def error(self, ctx, error):
         error = str(error)
