@@ -16,7 +16,6 @@ from os import system as cmd, getenv as env, listdir as ls, execl, devnull
 from pengaelicutils import (
     newops,
     getops,
-    remove_duplicates,
     list2str,
     jsoncheck,
     unhandling,
@@ -774,7 +773,7 @@ async def h_toggle(ctx):
     ).set_footer(
         text=f"Command prefix is {client.command_prefix}toggle\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
     )
-    for command in remove_duplicates(group.walk_commands()):
+    for command in list(set(group.walk_commands())):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
@@ -805,7 +804,7 @@ async def h_censor(ctx):
     ).set_footer(
         text=f"Command prefix is {client.command_prefix}censor or {client.command_prefix}filter\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with"
     )
-    for command in remove_duplicates(group.walk_commands()):
+    for command in list(set(group.walk_commands())):
         if command.usage:
             help_menu.add_field(
                 name="({})\n{}".format(
