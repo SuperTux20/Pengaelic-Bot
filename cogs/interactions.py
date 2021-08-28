@@ -20,7 +20,7 @@ class Interactions(commands.Cog):
     description = "Interact with other server members!"
     description_long = description
 
-    async def act(self, ctx, act, pastact, actees, violence):
+    def act(self, ctx, act, pastact, actees, violence) -> discord.Embed:
         acted = []
         for actee in actees:
             acted.append(actee.mention)
@@ -34,17 +34,15 @@ class Interactions(commands.Cog):
             image += ".jpg"
         else:
             image += f"/{randint(1,len(listdir(f'images/interactions/{act}'))-1)}.gif"
-        await ctx.send(
-            embed=discord.Embed(
-                description=f"**{choice(responses)}**", color=self.teal
-            ).set_image(url=image)
-        )
+        return discord.Embed(
+            description=f"**{choice(responses)}**", color=self.teal
+        ).set_image(url=image)
 
     async def nact(self, ctx, act, pastact, actees, selfresponses):
         if len(actees) == 1 and actees[0] == ctx.author:
             await ctx.send(choice(selfresponses))
         else:
-            await self.act(ctx, act, pastact, actees, False)
+            await ctx.send(embed=self.act(ctx, act, pastact, actees, False))
 
     async def vact(self, ctx, act, pastact, actees):
         if len(actees) == 1 and actees[0] == ctx.author:
@@ -52,7 +50,7 @@ class Interactions(commands.Cog):
         elif len(actees) == 1 and actees[0] == self.client.user:
             await ctx.send(f"Hey, you can't {act} me!")
         else:
-            await self.act(ctx, act, pastact, actees, True)
+            await ctx.send(embed=self.act(ctx, act, pastact, actees, True))
 
     @commands.command(
         name="hug",
@@ -77,7 +75,7 @@ class Interactions(commands.Cog):
         help="Boop someone's nose :3",
         usage="<username, nickname, or @mention>",
     )
-    async def boop(self, ctx, *, boop: discord.Member = None):
+    async def boop(self, ctx, *boop: discord.Member):
         await self.nact(
             ctx,
             "boop",
@@ -95,7 +93,7 @@ class Interactions(commands.Cog):
         help="Pat someone on the head!",
         usage="<username, nickname, or @mention>",
     )
-    async def pat(self, ctx, *, pat: discord.Member = None):
+    async def pat(self, ctx, *pat: discord.Member):
         await self.nact(
             ctx,
             "pat",
@@ -113,7 +111,7 @@ class Interactions(commands.Cog):
         help="Tickle tickle tickle... >:D",
         usage="<username, nickname, or @mention>",
     )
-    async def tickle(self, ctx, *, tickle: discord.Member = None):
+    async def tickle(self, ctx, *tickle: discord.Member):
         await self.nact(
             ctx,
             "tickle",
@@ -131,7 +129,7 @@ class Interactions(commands.Cog):
         help="Give somebody a kiss~ :kissing_heart:",
         usage="<username, nickname, or @mention>",
     )
-    async def kiss(self, ctx, *, kiss: discord.Member = None):
+    async def kiss(self, ctx, *kiss: discord.Member):
         await self.nact(
             ctx,
             "kiss",
@@ -149,7 +147,7 @@ class Interactions(commands.Cog):
         help="Sqweesh someone's face >3<",
         usage="<username, nickname, or @mention>",
     )
-    async def squish(self, ctx, *, squish: discord.Member = None):
+    async def squish(self, ctx, *squish: discord.Member):
         await self.nact(
             ctx,
             "squish",
@@ -167,7 +165,7 @@ class Interactions(commands.Cog):
         help="**C O N S U M E**",
         usage="<username, nickname, or @mention>",
     )
-    async def nom(self, ctx, *, nom: discord.Member = None):
+    async def nom(self, ctx, *nom: discord.Member):
         await self.nact(
             ctx,
             "nom",
@@ -183,19 +181,19 @@ class Interactions(commands.Cog):
     @commands.command(
         name="slap", help="Slap someone!", usage="<username, nickname, or @mention>"
     )
-    async def slap(self, ctx, *, slap: discord.Member = None):
+    async def slap(self, ctx, *slap: discord.Member):
         await self.vact(ctx, "slap", "slapped", slap)
 
     @commands.command(
         name="stab", help="Stab someone!", usage="<username, nickname, or @mention>"
     )
-    async def stab(self, ctx, *, stab: discord.Member = None):
+    async def stab(self, ctx, *stab: discord.Member):
         await self.vact(ctx, "stab", "stabbed", stab)
 
     @commands.command(
         name="shoot", help="Shoot someone!", usage="<username, nickname, or @mention>"
     )
-    async def shoot(self, ctx, *, shoot: discord.Member = None):
+    async def shoot(self, ctx, *shoot: discord.Member):
         await self.vact(ctx, "shoot", "shot", shoot)
 
     @commands.command(
@@ -203,7 +201,7 @@ class Interactions(commands.Cog):
         help="Bonk someone on the head!",
         usage="<username, nickname, or @mention>",
     )
-    async def bonk(self, ctx, *, bonk: discord.Member = None):
+    async def bonk(self, ctx, *bonk: discord.Member):
         await self.vact(ctx, "bonk", "bonked", bonk)
 
     @bonk.error
