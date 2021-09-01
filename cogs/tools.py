@@ -336,7 +336,7 @@ class Tools(commands.Cog):
                 name="Levels",
                 value=f"Verification Level: {guild.verification_level[0]} (level {guild.verification_level[1]+1})\n"
                 + f"Notification Level: {guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1})\n"
-                + f"Content Filter: {guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1}",
+                + f"Content Filter: {guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})",
                 inline=False,
             )
             .add_field(
