@@ -229,7 +229,7 @@ class Tools(commands.Cog):
         aliases=["emote"],
         usage="[:emoji:]",
     )
-    async def get_emoji(self, ctx, emoji=None):
+    async def emoji(self, ctx, emoji=None):
         emojis = [f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis if not em.animated]
         animojis = [f"<a:{em.name}:{em.id}>" for em in ctx.guild.emojis if em.animated]
         emojiurls = [
@@ -273,12 +273,16 @@ class Tools(commands.Cog):
         help="See information about the server at a glance.",
         usage="no args",
     )
-    async def get_server_info(self, ctx):
+    async def server_info(self, ctx):
         guild = ctx.guild
         owner = guild.owner
         if owner.nick == None:
             owner.nick = owner.name
         creation = guild.created_at
+        region = str(guild.region).split("-")
+        region[0] = region[0].upper()
+        region[1] = region[1].capitalize()
+        region = " ".join(region)
         jsoninfo = str(
             dumps(
                 {
@@ -286,6 +290,8 @@ class Tools(commands.Cog):
                         "server name": guild.name,
                         "server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
                         "server id": guild.id,
+                        "region": guild.region,
+                        "server description": guild.description,
                         "server icon": str(guild.icon_url).split("?")[0],
                         "two-factor authentication": bool(guild.mfa_level),
                         "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
@@ -297,10 +303,12 @@ class Tools(commands.Cog):
                     },
                     "counts": {
                         "members": guild.member_count,
-                        "boosters": guild.premium_subscription_count,
+                        "boosts": guild.premium_subscription_count,
+                        "boosters": len(guild.premium_subscribers),
                         "text channels": len(guild.text_channels),
                         "voice channels": len(guild.voice_channels),
                         "channel categories": len(guild.categories),
+                        "bans": len(await guild.bans()),
                         "emojis": len(guild.emojis),
                         "roles": len(guild.roles) - 1,
                     },
@@ -314,12 +322,14 @@ class Tools(commands.Cog):
                 name="Basic Info",
                 value=f"Owner: {owner.mention}\n"
                 + f"ID: `{guild.id}`\n"
-                + f"Two-Factor Authentication: {bool(guild.mfa_level)}\n"
-                + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`".replace(
+                + f"Region: {region}\n"
+                + f'Description: "{guild.description}"\n'
+                + f"Two-Factor Authentication: {bool(guild.mfa_level)}\n".replace(
                     "True", "Enabled"
-                ).replace(
-                    "False", "Disabled"
-                ),
+                ).replace("False", "Disabled")
+                + f"Animated icon: {bool(guild.is_icon_animated())}\n".replace(
+                    "True", "Yes"
+                ).replace("False", "No"),
                 inline=False,
             )
             .add_field(
@@ -332,15 +342,21 @@ class Tools(commands.Cog):
             .add_field(
                 name="Counts",
                 value=f"Members: {guild.member_count}\n"
-                + f"Boosters: {guild.premium_subscription_count}\n"
+                + f"Boosts: {guild.premium_subscription_count}\n"
+                + f"Boosters: {len(guild.premium_subscribers)}\n"
                 + f"Text Channels: {len(guild.text_channels)}\n"
                 + f"Voice Channels: {len(guild.voice_channels)}\n"
                 + f"Channel Categories: {len(guild.categories)}\n"
+                + f"Bans: {len(await guild.bans())}\n"
                 + f"Emojis: {len(guild.emojis)}\n"
                 + f"Roles: {len(guild.roles)-1}",
                 inline=False,
             )
-            .set_thumbnail(url=guild.icon_url)
+            .set_image(url=guild.icon_url)
+            .set_thumbnail(url=owner.avatar_url)
+            .set_footer(
+                text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
+            )
         )
         if getops(guild.id, "toggles", "jsonMenus"):
             await ctx.send(f'```json\n"server information": {jsoninfo}```')
@@ -351,9 +367,9 @@ class Tools(commands.Cog):
         name="user",
         help="Get info for the specified user.",
         aliases=["member"],
-        usage="no args",
+        usage="[@member]",
     )
-    async def get_user_info(self, ctx, *, user: discord.Member = None):
+    async def user_info(self, ctx, *, user: discord.Member = None):
         if user == None:
             user = ctx.author
         roles = user.roles[1:]
@@ -365,7 +381,7 @@ class Tools(commands.Cog):
                     "name": f"{user.display_name} ({user.name}#{user.discriminator})",
                     "id": user.id,
                     "avatar": str(user.avatar_url).split("?")[0],
-                    "account creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
+                    "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
                     "animated avatar": user.is_avatar_animated(),
                     "bot": user.bot,
                     "roles": [role.name for role in roles],
@@ -373,25 +389,74 @@ class Tools(commands.Cog):
                 indent=4,
             )
         )
-        embedinfo = discord.Embed(
-            title=user.display_name,
-            color=self.teal,
-            description=f"Discriminator: `{user.discriminator}`\n"
-            + f"ID: `{user.id}`\n"
-            + f"Creation Date: `{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT`\n"
-            + f"Animated Avatar: {user.is_avatar_animated()}\n"
-            + f"Bot: {user.bot}\n"
-            + f'Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}'.replace(
-                "True", "Yes"
-            ).replace("False", "No"),
-            inline=False,
-        ).set_thumbnail(url=user.avatar_url)
+        embedinfo = (
+            discord.Embed(
+                title=user.display_name,
+                color=self.teal,
+                description=(
+                    f"Discriminator: `{user.discriminator}`\n"
+                    + f"Ping: {user.mention}\n"
+                    + f"ID: `{user.id}`\n"
+                    + f"Animated Avatar: {user.is_avatar_animated()}\n"
+                    + f"Bot: {user.bot}\n"
+                    + f'Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}'
+                )
+                .replace("True", "Yes")
+                .replace("False", "No"),
+                inline=False,
+            )
+            .set_image(url=user.avatar_url)
+            .set_footer(
+                text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
+            )
+        )
         if user.nick == user.display_name:
             embedinfo.description = (
                 f'Real Name: "{user.name}"\n' + embedinfo.description
             )
         if getops(ctx.guild.id, "toggles", "jsonMenus"):
             await ctx.send(f'```json\n"user information": {jsoninfo}```')
+        else:
+            await ctx.send(embed=embedinfo)
+
+    @info.command(
+        name="channel",
+        help="Get info for the specified channel.",
+        usage="[#channel]",
+    )
+    async def channel_info(self, ctx, *, channel: discord.TextChannel = None):
+        if channel == None:
+            channel = ctx.channel
+        creation = channel.created_at
+        jsoninfo = {
+            "name": channel.name,
+            "id": channel.id,
+            "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
+            "description": channel.topic,
+            "nsfw": channel.is_nsfw(),
+        }
+        embedinfo = discord.Embed(
+            title=channel.name.replace("-", " ").title(),
+            color=self.teal,
+            description=(
+                f"Ping: {channel.mention}\n"
+                + f"ID: `{channel.id}`\n"
+                + f"Description: {channel.topic}\n"
+                + f"NSFW: {channel.is_nsfw()}\n"
+            )
+            .replace("True", "Yes")
+            .replace("False", "No"),
+            inline=False,
+        ).set_footer(
+            text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
+        )
+        if channel.slowmode_delay:
+            jsoninfo["slowmode"] = channel.slowmode_delay
+            embedinfo.description += f"Slowmode: {channel.slowmode_delay}\n"
+        if getops(ctx.guild.id, "toggles", "jsonMenus"):
+            await ctx.send(
+                f'```json\n"channel information": {dumps(jsoninfo,indent=4)}```'
+            )
         else:
             await ctx.send(embed=embedinfo)
 
@@ -579,11 +644,19 @@ class Tools(commands.Cog):
                 )
             )
 
-    @get_user_info.error
-    async def getUserError(self, ctx, error):
+    @user_info.error
+    @channel_info.error
+    async def getError(self, ctx, error):
         error = str(error)
-        if "Member" in error and "not found" in error:
-            await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+        if error.endswith("not found"):
+            if error.startswith("Member"):
+                await ctx.send(
+                    "<:winxp_warning:869760947114348604>Invalid user specified!"
+                )
+            elif error.startswith("Channel"):
+                await ctx.send(
+                    "<:winxp_warning:869760947114348604>Invalid channel specified!"
+                )
         else:
             await ctx.send(
                 unhandling(
