@@ -675,9 +675,9 @@ async def help(ctx, *, cogname: str = None):
                     [
                         "exit",
                         "restart",
-                        "udpate",
+                        "update",
                         "forceupdate",
-                        "udpatelog",
+                        "updatelog",
                         "sh",
                     ],
                     indent=4,
