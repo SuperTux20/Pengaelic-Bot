@@ -323,7 +323,7 @@ class Tools(commands.Cog):
                 value=f"Owner: {owner.mention}\n"
                 + f"ID: `{guild.id}`\n"
                 + f"Region: {region}\n"
-                + f'Description: "{guild.description}"\n'
+                + f"Description: {guild.description}\n"
                 + f"Two-Factor Authentication: {bool(guild.mfa_level)}\n".replace(
                     "True", "Enabled"
                 ).replace("False", "Disabled")
