@@ -433,6 +433,7 @@ class Tools(commands.Cog):
             "id": channel.id,
             "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
             "description": channel.topic,
+            "category": channel.category,
             "nsfw": channel.is_nsfw(),
         }
         embedinfo = discord.Embed(
@@ -442,6 +443,7 @@ class Tools(commands.Cog):
                 f"Ping: {channel.mention}\n"
                 + f"ID: `{channel.id}`\n"
                 + f"Description: {channel.topic}\n"
+                + f"Category: {channel.category}\n"
                 + f"NSFW: {channel.is_nsfw()}\n"
             )
             .replace("True", "Yes")
