@@ -215,6 +215,9 @@ class Tools(commands.Cog):
                     color=self.teal,
                 )
                 .add_field(
+                    name="channel", value="See details about the specified channel."
+                )
+                .add_field(
                     name="emoji", value="Fetch the specified (server-specific) emoji."
                 )
                 .add_field(
@@ -611,33 +614,17 @@ class Tools(commands.Cog):
         await ctx.send(unhandling("DummyError", tux_in_guild(ctx, self.client)))
 
     @clear.error
+    @nuke.error
     async def clearError(self, ctx, error):
         error = str(error)
-        if (
-            error
-            == "You are missing Manage Messages permission(s) to run this command."
+        if error.startswith("You are missing Manage") and error.endswith(
+            "permission(s) to run this command."
         ):
-            await ctx.send(
-                f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
-            )
-        else:
-            await ctx.send(
-                unhandling(
-                    error,
-                    tux_in_guild(ctx, self.client),
-                )
-            )
-
-    @nuke.error
-    async def nukeError(self, ctx, error):
-        error = str(error)
-        if (
-            error
-            == "You are missing Manage Channels permission(s) to run this command."
-        ):
-            await ctx.send(
-                f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Channels)"
-            )
+            permmsg = f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage "
+            if "Messages" in error:
+                await ctx.send(permmsg + "Messages)")
+            if "Channels" in error:
+                await ctx.send(permmsg + "Channels)")
         else:
             await ctx.send(
                 unhandling(
@@ -666,6 +653,25 @@ class Tools(commands.Cog):
                     tux_in_guild(ctx, self.client),
                 )
             )
+
+    @server_info.error
+    @stopwatch_start.error
+    @stopwatch_end.error
+    @stopwatch.error
+    @bugreport.error
+    @speedtest.error
+    @role.error
+    @delrole.error
+    @emoji.error
+    @info.error
+    async def generalError(self, ctx, error):
+        error = str(error)
+        await ctx.send(
+            unhandling(
+                error,
+                tux_in_guild(ctx, self.client),
+            )
+        )
 
 
 def setup(client):
