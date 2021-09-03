@@ -108,6 +108,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 
 
 def unhandling(error, tux_in_server) -> str:
+    error = str(error)
     output = (
         "<:winxp_critical_error:869760946816553020>Unhandled error occurred:"
         + "\n```\n"
