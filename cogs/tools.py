@@ -288,7 +288,7 @@ class Tools(commands.Cog):
             region[1] = region[1].capitalize()
             region = " ".join(region)
         except:
-            region = region.capitalize()
+            region = region[0].capitalize()
         jsoninfo = str(
             dumps(
                 {
