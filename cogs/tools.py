@@ -282,14 +282,13 @@ class Tools(commands.Cog):
         if owner.nick == None:
             owner.nick = owner.name
         creation = guild.created_at
-        region = str(guild.region)
         try:
-            region = region.split("-")
+            region = str(guild.region).split("-")
             region[0] = region[0].upper()
             region[1] = region[1].capitalize()
             region = " ".join(region)
         except:
-            region = region.capitalize()
+            region = region[0].capitalize()
         jsoninfo = str(
             dumps(
                 {
