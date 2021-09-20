@@ -3,7 +3,6 @@
 
 from sys import executable as python, argv as args, version as pyversion
 
-from discord.errors import HTTPException
 
 if "3.9" not in pyversion:
     print("Pengaelic Bot requires Python 3.9 to function properly.")
@@ -72,6 +71,7 @@ if missing_dependencies:
 print("Passed module test")
 
 import discord
+from discord.errors import HTTPException
 from discord.ext import commands
 from discord.utils import get
 from dotenv import load_dotenv as dotenv
