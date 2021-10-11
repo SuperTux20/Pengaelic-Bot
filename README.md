@@ -1,19 +1,17 @@
-# Pengaelic Legacy
+# Pengaelic Bot
 
-## An archived version of a simple multi-purpose Discord bot
-
-### Goodbye, [discord.py](https://gist.github.com/Rapptz/4a2f62751b9600a31a0d3c78100287f1)...
+## A simple multi-purpose Discord bot
 
 ## About
 
 - Language used: `Python`
-- Libraries used: `discord.py`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
+- Libraries used: `py-cord`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
 
 ---
 
 *Pengaelic Bot - the custom-built Discord bot, coded in Python.*
 
-*Copyright (C) 2020-2021 Tux Penguin | <https://github.com/SuperTux20/Pengaelic-Legacy/>*
+*Copyright (C) 2020-2021 Tux Penguin | <https://github.com/SuperTux20/Pengaelic-Bot/>*
 
 *This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.*
 

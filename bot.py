@@ -53,7 +53,7 @@ if shell("uname -o", shell=True).decode()[:-1] != "Android":
 else:
     print("Ignored package test")
 
-requirements = ["discord.py", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
+requirements = ["py-cord", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 needed = []
 modules = [
     r.decode().split("==")[0] for r in shell([python, "-m", "pip", "freeze"]).split()
