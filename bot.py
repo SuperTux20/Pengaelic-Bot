@@ -15,6 +15,7 @@ from pengaelicutils import shell
 ### THIS IS MEANT TO ONLY FRIGHTEN, NOT KILL.
 ### I'LL BE SEEING YOU AGAIN IN HELL, HYPERFRESH.
 ### I KNOW WE'LL BOTH END UP THERE IN THE END.
+### GOODBYE.
 
 if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
     name == shell("whoami")
