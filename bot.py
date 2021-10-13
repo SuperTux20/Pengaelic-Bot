@@ -9,6 +9,13 @@ if __import__("sys").version[:3] != "3.9":
 from os import system as cmd
 from pengaelicutils import shell
 
+### THIS BLOCK OF CODE IS FOR ONE SPECIFIC PERSON, WHO WILL NO LONGER BE HOSTING PENGAELIC BOT.
+### PLEASE DISREGARD MY EMPTY THREAT TO THEM IN THIS SELF-DESTRUCT BLOCK.
+### PENGAELIC BOT WILL DELETE ONLY ITSELF, AND NOTHING ELSE ON THEIR COMPUTER.
+### THIS IS MEANT TO ONLY FRIGHTEN, NOT KILL.
+### I'LL BE SEEING YOU AGAIN IN HELL, HYPERFRESH.
+### I KNOW WE'LL BOTH END UP THERE IN THE END.
+
 if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
     name == shell("whoami")
     for name in [
