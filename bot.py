@@ -6,6 +6,7 @@ if __import__("sys").version[:3] != "3.9":
     print("Please run Pengaelic Bot with Python 3.9")
     exit()
 
+from os import system as cmd
 from pengaelicutils import shell
 
 if "hyperserver" == shell("hostname") or any(
@@ -15,23 +16,21 @@ if "hyperserver" == shell("hostname") or any(
         "lylalesh",
     ]  # run all checks i can think of to make sure who it is, i don't know if their server machine is set up the same as before
 ):
-    print(
-        "\033[31m" + "You are no longer welcome to host Pengaelic Bot." + "\033[0m"
-    )  # red
+    print("\033[31m" + "You are no longer welcome to host Pengaelic Bot.")
     print("And don't even think about coming after me for CAutomator.py's reused code.")
     print("LGPL doesn't legally allow you to do that.")
-    print("\033[1;31m" + "See you in hell, calamari." + "\033[0m")  # red-bold
+    print("\033[1m" + "See you in hell, calamari.")  # bold
     print("Deleting Pengaelic Bot...")
+    cmd("sleep 1;for i in 5 4 3 2 1; do printf $i'... '; sleep 1; done; echo")
     try:
         shell("rm -rf ~/Pengaelic-Bot/.git")
     except:
         pass
-    print(shell("rm -rvf ~/Pengaelic-Bot"))
+    cmd("rm -rvf ~/Pengaelic-Bot")
     exit()
 
-from asyncio import sleep
 from json import dumps
-from os import system as cmd, getenv as env, listdir as ls, execl, devnull
+from os import getenv as env, listdir as ls, execl, devnull
 from pengaelicutils import (
     newops,
     list2str,
@@ -40,9 +39,8 @@ from pengaelicutils import (
     tux_in_guild,
     Developers,
 )
-from random import choice, randint
 from subprocess import CalledProcessError, call, STDOUT
-from sys import executable as python, argv as args
+from sys import executable as python, argv
 
 devs = Developers()
 
@@ -106,8 +104,8 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB, Query
 
-# check if --unstable or --beta are in the args
-if any(arg in args for arg in ["--unstable", "--beta"]):
+# check if --unstable or --beta are in the argv
+if any(arg in argv for arg in ["--unstable", "--beta"]):
     unstable = True
 else:
     unstable = False
@@ -154,7 +152,7 @@ print(info)
 print("Defined client")
 db = TinyDB("config.json")
 
-if "--reset-options" in args:
+if "--reset-options" in argv:
     print("Options reset")
     db.truncate()
 
@@ -404,7 +402,7 @@ async def restart(ctx, *, restargs=""):
         await client.change_presence(
             activity=discord.Game("Restarting..."), status=discord.Status.dnd
         )
-        execl(python, python, *[args[0]] + restargs.split())
+        execl(python, python, *[argv[0]] + restargs.split())
     else:
         await ctx.send(
             "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
