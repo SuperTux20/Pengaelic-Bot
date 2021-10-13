@@ -35,8 +35,8 @@ class Messages(commands.Cog):
     async def credits(self, ctx):
         bot_credits = {
             "Main Developer and Creator": f"Tux Penguin ({self.client.get_user(devs.get('tux'))})",
-            "Current Host": f"Hy Asencion ({self.client.get_user(devs.get('hy'))})",
-            "Side Developer and Backup Host": f"Cherry Rain ({self.client.get_user(devs.get('cherry'))})",
+            "Side Developer and Host": f"Cherry Rain ({self.client.get_user(devs.get('cherry'))})",
+            "Minor Contributor": f"Hy Asencion ({self.client.get_user(devs.get('hy'))})",
         }
         if jsoncheck(ctx.guild.id):
             bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}

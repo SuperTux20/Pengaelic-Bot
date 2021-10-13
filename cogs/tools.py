@@ -460,7 +460,6 @@ class Tools(commands.Cog):
         else:
             await ctx.send(embed=embedinfo)
 
-    # Thanks to https://github.com/iwa for helping Hy out with the custom roles, and thanks to Hy for letting me reuse and adapt their code to Pengaelic Bot's systems
     @commands.command(
         name="speedtest",
         aliases=["st", "ping", "ng"],

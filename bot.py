@@ -9,24 +9,85 @@ if __import__("sys").version[:3] != "3.9":
 from os import system as cmd
 from pengaelicutils import shell
 
-if "hyperserver" == shell("hostname") or any(
+if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
     name == shell("whoami")
     for name in [
         "hyperfresh",
         "lylalesh",
     ]  # run all checks i can think of to make sure who it is, i don't know if their server machine is set up the same as before
 ):
-    print("\033[31m" + "You are no longer welcome to host Pengaelic Bot.")
-    print("And don't even think about coming after me for CAutomator.py's reused code.")
-    print("LGPL doesn't legally allow you to do that.")
-    print("\033[1m" + "See you in hell, calamari.")  # bold
-    print("Deleting Pengaelic Bot...")
-    cmd("sleep 1;for i in 5 4 3 2 1; do printf $i'... '; sleep 1; done; echo")
+    cmd(
+        ";".join(
+            [
+                """ echo "\033[0;31mYou are no longer welcome to host Pengaelic Bot."              """,
+                """ echo                                                                           """,
+                """ echo "And don't even think about coming back for CAutomator.py's reused code." """,
+                """ echo                                                                           """,
+                """ echo "LGPL doesn't cover personal grudges as long as I keep credit."           """,
+                """ echo                                                                           """,
+                """ echo "If you want to talk about anything, https://discord.gg/DHHpA7k"          """,
+                """ echo "You can come back to the support server any time."                       """,
+                """ echo                                                                           """,
+                """ echo "You will only see this message once."                                    """,
+                """ echo                                                                           """,
+                """ echo "Press ENTER to quit."                                                    """,
+                """ read null                                                                      """,
+                """ for letter in D e l e t i n g                                                  """,
+                """ do printf "$letter"                                                            """,
+                """ sleep 0.05                                                                     """,
+                """ done                                                                           """,
+                """ printf " "                                                                     """,
+                """ for letter in a l l                                                            """,
+                """ do printf "$letter"                                                            """,
+                """ sleep 0.05                                                                     """,
+                """ done                                                                           """,
+                """ printf " "                                                                     """,
+                """ for letter in f i l e s                                                        """,
+                """ do printf "$letter"                                                            """,
+                """ sleep 0.05                                                                     """,
+                """ done                                                                           """,
+                """ sleep 0.2                                                                      """,
+                """ printf "\b\b\b\b\b\b\b\b\b"                                                    """,
+                """ for letter in P e n g a e l i c                                                """,
+                """ do printf "$letter"                                                            """,
+                """ sleep 0.05                                                                     """,
+                """ done                                                                           """,
+                """ printf " "                                                                     """,
+                """ for letter in B o t . . .                                                      """,
+                """ do printf "$letter"                                                            """,
+                """ sleep 0.05                                                                     """,
+                """ done                                                                           """,
+                """ sleep 1                                                                        """,
+            ]
+        )
+    )
     try:
-        shell("rm -rf ~/Pengaelic-Bot/.git")
+        shell(""" rm -rf ~/Pengaelic-Bot/.git """)
     except:
         pass
-    cmd("rm -rvf ~/Pengaelic-Bot")
+    try:
+        shell(
+            ";".join(
+                [
+                    """ rm -rf ~/Pengaelic-Bot/__pycache__      """,
+                    """ rm -rf ~/Pengaelic-Bot/cogs/__pycache__ """,
+                ]
+            )
+        )
+    except:
+        pass
+    cmd(
+        ";".join(
+            [
+                """ echo                                       """,
+                """ rm -rvf ~/Pengaelic-Bot                    """,
+                """ cd                                         """,
+                """ echo "Pengaelic Bot deleted successfully." """,
+                """ echo "\033[1mSee you in hell, calamari."   """,
+                """ read null                                  """,
+            ]
+        )
+    )
     exit()
 
 from json import dumps
