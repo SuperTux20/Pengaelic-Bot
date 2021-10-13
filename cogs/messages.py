@@ -31,9 +31,7 @@ class Messages(commands.Cog):
         if not isinstance(ctx.channel, discord.channel.DMChannel):
             await ctx.message.delete()
 
-    @commands.command(
-        name="credits", help="See who helped me come to exist!", usage="no args"
-    )
+    @commands.command(name="credits", help="See who helped me come to exist!")
     async def credits(self, ctx):
         bot_credits = {
             "Main Developer and Creator": f"Tux Penguin ({self.client.get_user(devs.get('tux'))})",

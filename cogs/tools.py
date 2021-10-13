@@ -17,11 +17,11 @@ from pengaelicutils import (
     list2str,
     unhandling,
     tux_in_guild,
+    shell,
     Stopwatch,
     Developers,
 )
 from re import search
-from subprocess import check_output as shell
 from tinydb import TinyDB
 from dotenv import load_dotenv as dotenv
 
@@ -63,19 +63,14 @@ class Tools(commands.Cog):
         name="os",
         help="Read what OS I'm running on!",
         aliases=["getos"],
-        usage="no args",
     )
     async def showOS(self, ctx):
         def uname(item) -> str:
-            return shell(f"uname -{item}", shell=True).decode()[:-1]
+            return shell(f"uname -{item}")[:-1]
 
         async with ctx.typing():
             system = (
-                shell(
-                    'neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"',
-                    shell=True,
-                )
-                .decode()
+                shell('neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"')
                 .split(":")[1][1:-2]
                 .split("x86")[0][:-1]
             )
@@ -93,7 +88,7 @@ class Tools(commands.Cog):
             f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel}{emoji}"
         )
 
-    @commands.command(name="test", help="Am I online? I'm not sure.", usage="no args")
+    @commands.command(name="test", help="Am I online? I'm not sure.")
     async def test(self, ctx):
         await ctx.send("Yep, I'm alive :sunglasses:")
 
@@ -148,7 +143,6 @@ class Tools(commands.Cog):
         name="nuke",
         help="Purge a channel of EVERYTHING.",
         aliases=["wipe", "wipechannel"],
-        usage="no args",
     )
     @commands.has_permissions(manage_channels=True)
     async def nuke(self, ctx):
@@ -204,7 +198,6 @@ class Tools(commands.Cog):
     @commands.group(
         name="info",
         help="See a bunch of data!",
-        usage="no args",
     )
     async def info(self, ctx):
         if ctx.invoked_subcommand == None:
@@ -274,7 +267,6 @@ class Tools(commands.Cog):
     @info.command(
         name="server",
         help="See information about the server at a glance.",
-        usage="no args",
     )
     async def server_info(self, ctx):
         guild = ctx.guild
@@ -472,7 +464,6 @@ class Tools(commands.Cog):
     @commands.command(
         name="speedtest",
         aliases=["st", "ping", "ng"],
-        usage="no args",
         help="See how good my internet is.",
     )
     async def speedtest(self, ctx):
@@ -514,8 +505,8 @@ class Tools(commands.Cog):
 
     @commands.command(
         name="role",
-        usage="<hex code>\n<role name>",
         help="Create a custom color role for yourself!",
+        usage="<hex code>\n<role name>",
     )
     async def role(self, ctx, color, *, role_name):
         member = ctx.author
@@ -558,7 +549,10 @@ class Tools(commands.Cog):
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.command(name="delrole", usage="no args", help="Delete your custom role.")
+    @commands.command(
+        name="delrole",
+        help="Delete your custom role.",
+    )
     async def delrole(self, ctx):
         member = ctx.author
         role_lock = get(
@@ -593,26 +587,28 @@ class Tools(commands.Cog):
                 .add_field(name="(stop/end)", value="Stop the stopwatch.")
             )
 
-    @stopwatch.command(
-        name="start", help="Start the stopwatch.", aliases=["begin"], usage="no args"
-    )
+    @stopwatch.command(name="start", help="Start the stopwatch.", aliases=["begin"])
     async def stopwatch_start(self, ctx):
         Stopwatch.start(self)
         await ctx.send("Started the stopwatch.")
 
-    @stopwatch.command(
-        name="stop", help="Stop the stopwatch.", aliases=["end"], usage="no args"
-    )
+    @stopwatch.command(name="stop", help="Stop the stopwatch.", aliases=["end"])
     async def stopwatch_end(self, ctx):
         await ctx.send(Stopwatch.end(self))
 
-    @commands.command(name="bugreport", help="Send a bug report to my developer.")
+    @commands.command(
+        name="bugreport",
+        help="Send a bug report to my developer.",
+    )
     async def bugreport(self, ctx, *, bug):
         await self.client.get_user(devs.get("tux")).send(
             f"@{ctx.author} has sent a bug report from {ctx.guild}.\n```\n{bug}\n```"
         )
 
-    @commands.command(name="dummy", help="See a dummy error message.")
+    @commands.command(
+        name="dummy",
+        help="See a dummy error message.",
+    )
     async def dummy(self, ctx):
         await ctx.send(unhandling("DummyError", tux_in_guild(ctx, self.client)))
 

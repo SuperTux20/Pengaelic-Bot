@@ -4,6 +4,7 @@
 from dotenv import load_dotenv as dotenv
 from json import loads
 from os import getenv as env
+from subprocess import check_output
 from time import time
 from tinydb import TinyDB, Query
 
@@ -138,7 +139,7 @@ def newops() -> dict:
             role_id: None
             for role_id in [
                 "customRoleLock",
-                "modRole",
+                "botCommander",
                 "muteRole",
             ]
         },
@@ -548,3 +549,7 @@ def jsoncheck(guild: str) -> bool:
 
 def tux_in_guild(ctx, client) -> bool:
     return bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id))
+
+
+def shell(command) -> str:
+    return check_output(command, shell=True).decode()[:-1]

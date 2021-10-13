@@ -46,18 +46,19 @@ class NonCommands(commands.Cog):
         # for when someone doesn't know what the prefix is
         if "<@!" + str(self.client.user.id) + ">" == message.content:
             await message.channel.send(f"My prefix is `{self.client.command_prefix}`")
-        # send everything to variables to make my life easier
-        messagetext = message.content.lower()
-        server = message.guild.id
         # check if the message it's reading belongs to a bot
         # then make sure it's not a DM, in which case, don't test options (because there are none)
         if not message.author.bot:
             if not isinstance(message.channel, discord.channel.DMChannel):
+                # send everything to variables to make my life easier
+                messagetext = message.content.lower()
+                server = message.guild.id
                 # this section is for Dad Bot-like responses
                 if getops(server, "toggles", "dadJokes"):
-                    dad_prefixes = ["i'm", "i`m", "i‘m", "i’m", "im", "i am"]
+                    # four types of apostrophes/ticks plus allowance for "im"
+                    dad_prefixes = ["'", "`", "‘", "’", ""]
                     for dad in dad_prefixes:
-                        if dad + " " == messagetext[0 : len(dad) + 1]:
+                        if messagetext.startswith(f"i{dad}m "):
                             if "pengaelic bot" in messagetext:
                                 if "not" in messagetext:
                                     await message.channel.send(
@@ -70,8 +71,13 @@ class NonCommands(commands.Cog):
                             elif (
                                 "chickenmeister" in messagetext or "tux" in messagetext
                             ):
-                                if message.author.id == 686984544930365440:
-                                    await message.channel.send("Yes you are! Hiya!")
+                                if Developers.check(self, message.author, "tux"):
+                                    if "not" in messagetext:
+                                        await message.channel.send(
+                                            "What? Of course you are!"
+                                        )
+                                    else:
+                                        await message.channel.send("Yes you are! Hiya!")
                                 else:
                                     if "not" in messagetext:
                                         await message.channel.send(
@@ -79,21 +85,18 @@ class NonCommands(commands.Cog):
                                         )
                                     else:
                                         await message.channel.send(
-                                            "You dare to impersonate my creator?! **You shall be punished.**"
+                                            "You dare to impersonate my creator?! **You shall be punished.** /j"
                                         )
                             else:
-                                if dad + "a " == messagetext[0 : len(dad) + 2]:
-                                    await message.channel.send(
-                                        f"Hi{messagetext[len(dad)+2:]}, I'm the Pengaelic Bot!"
-                                    )
-                                elif dad + "an " == messagetext[0 : len(dad) + 3]:
-                                    await message.channel.send(
-                                        f"Hi{messagetext[len(dad)+3:]}, I'm the Pengaelic Bot!"
-                                    )
+                                if messagetext.startswith(f"i{dad}m an"):
+                                    slicer = 5
+                                elif messagetext.startswith(f"i{dad}m a"):
+                                    slicer = 4
                                 else:
-                                    await message.channel.send(
-                                        f"Hi{messagetext[len(dad):]}, I'm the Pengaelic Bot!"
-                                    )
+                                    slicer = 2
+                                await message.channel.send(
+                                    f"Hi{messagetext[len(dad)+slicer:]}, I'm the Pengaelic Bot!"
+                                )
 
                 # this section is to auto-delete messages containing a keyphrase in the censor text file
                 if getops(server, "toggles", "censor"):
@@ -146,9 +149,12 @@ class NonCommands(commands.Cog):
                 if "you know the rules" == messagetext and getops(
                     server, "toggles", "rickRoulette"
                 ):
-                    responses = ["And so do I :pensive:" for _ in range(5)]
-                    responses.append("Say goodbye <:delet_this:828693389712949269>")
-                    await message.channel.send(choice(responses))
+                    await message.channel.send(
+                        choice(
+                            ["And so do I :pensive:" for _ in range(5)]
+                            + ["Say goodbye <:delet_this:828693389712949269>"]
+                        )
+                    )
 
                 # bring back @someone from an april fools update
                 if "@someone" == messagetext and getops(server, "toggles", "atSomeone"):
@@ -156,17 +162,14 @@ class NonCommands(commands.Cog):
                         choice(message.guild.members).mention
                         + ", you have been randomly selected by a @someone ping!"
                     )
-            elif (
-                isinstance(message.channel, discord.channel.DMChannel)
-                and message.attachments
-                and Developers.check(None, message.author)
-            ):
-                if message.attachments[0].filename == "config.json":
-                    await message.attachments[0].save("config.json")
-                    await message.channel.send("Downloaded new config file.")
-                if message.attachments[0].filename == "env":
-                    await message.attachments[0].save(".env")
-                    await message.channel.send("Downloaded new dotenv file.")
+            elif isinstance(message.channel, discord.channel.DMChannel):
+                if message.attachments and Developers.check(self, message.author):
+                    if message.attachments[0].filename == "config.json":
+                        await message.attachments[0].save("config.json")
+                        await message.channel.send("Downloaded new config file.")
+                    if message.attachments[0].filename == "env":
+                        await message.attachments[0].save(".env")
+                        await message.channel.send("Downloaded new dotenv file.")
 
 
 def setup(client):

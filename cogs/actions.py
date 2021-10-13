@@ -30,23 +30,23 @@ class Actions(commands.Cog):
             )
         )
 
-    @commands.command(name="cry", usage="no args")
+    @commands.command(name="cry")
     async def cry(self, ctx):
         await self.act(ctx, "cry")
 
-    @commands.command(name="glare", usage="no args")
+    @commands.command(name="glare")
     async def glare(self, ctx):
         await self.act(ctx, "glar")
 
-    @commands.command(name="laugh", usage="no args")
+    @commands.command(name="laugh")
     async def laugh(self, ctx):
         await self.act(ctx, "laugh", "!")
 
-    @commands.command(name="shrug", usage="no args")
+    @commands.command(name="shrug")
     async def shrug(self, ctx):
         await self.act(ctx, "shrugg", ".")
 
-    @commands.command(name="sleep", usage="no args")
+    @commands.command(name="sleep")
     async def sleep(self, ctx):
         await self.act(ctx, "sleep")
 

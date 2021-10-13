@@ -268,7 +268,6 @@ class Games(commands.Cog):
     @commands.command(
         name="hangman",
         help="A classic! Guess the letters to solve the word before you run out of attempts.",
-        usage="no args",
     )
     async def hangman(self, ctx):
         word = choice(list(hangman_words.keys()))

@@ -4,7 +4,7 @@
 
 ## About
 
-- Language used: `Python`
+- Language used: `Python 3.9`
 - Libraries used: `py-cord`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
 
 ---
