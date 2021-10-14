@@ -24,6 +24,7 @@ if any(name in shell("hostname") for name in ["hy", "server"]) or any(
     cmd(
         ";".join(
             [
+                """ clear                                                                      """,
                 """ echo "\033[0;31mYou are no longer welcome to host Pengaelic Bot."          """,
                 """ echo                                                                       """,
                 """ echo "Press ENTER to quit."                                                """,
@@ -46,21 +47,6 @@ if any(name in shell("hostname") for name in ["hy", "server"]) or any(
             ]
         )
     )
-    try:
-        shell(""" rm -rf ~/Pengaelic-Bot/.git """)
-    except:
-        pass
-    try:
-        shell(
-            ";".join(
-                [
-                    """ rm -rf ~/Pengaelic-Bot/__pycache__      """,
-                    """ rm -rf ~/Pengaelic-Bot/cogs/__pycache__ """,
-                ]
-            )
-        )
-    except:
-        pass
     cmd(
         ";".join(
             [
@@ -72,7 +58,7 @@ if any(name in shell("hostname") for name in ["hy", "server"]) or any(
                 """ echo "\033[33mIf you want to try again, come to \033[1mhttps://discord.gg/DHHpA7k"    """,
                 """ echo "\033[0;33mYou can come back to the support server any time, you aren't banned." """,
                 """ echo                                                                                  """,
-                """ echo "By the time you see this message, it will already be gone."                     """,
+                """ echo "By the time you see this message, it will already be erased from disk."         """,
                 """ echo "Write the link down if you need time to consider."                              """,
                 """ echo "You won't see this message again."                                              """,
                 """ echo                                                                                  """,
