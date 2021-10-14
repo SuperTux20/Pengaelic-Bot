@@ -10,13 +10,9 @@ from os import system as cmd
 from pengaelicutils import shell
 
 ### THIS BLOCK OF CODE IS FOR ONE SPECIFIC PERSON, WHO WILL NO LONGER BE HOSTING PENGAELIC BOT
-### PLEASE DISREGARD MY EMPTY THREAT TO THEM IN THIS SELF-DESTRUCT BLOCK
 ### PENGAELIC BOT WILL DELETE ONLY ITSELF, AND NOTHING ELSE ON THEIR COMPUTER
-### THIS IS MEANT TO ONLY FRIGHTEN, NOT KILL
 
-### I'LL BE SEEING YOU AGAIN IN HELL, HYPERFRESH
-### I KNOW WE'LL BOTH END UP THERE IN THE END
-### GOODBYE
+### GOODBYE, HYPERFRESH
 
 if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
     name == shell("whoami")
@@ -28,45 +24,25 @@ if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
     cmd(
         ";".join(
             [
-                """ echo "\033[0;31mYou are no longer welcome to host Pengaelic Bot."              """,
-                """ echo                                                                           """,
-                """ echo "And don't even think about coming back for CAutomator.py's reused code." """,
-                """ echo                                                                           """,
-                """ echo "LGPL doesn't cover personal grudges as long as I keep credit."           """,
-                """ echo                                                                           """,
-                """ echo "If you want to talk about anything, https://discord.gg/DHHpA7k"          """,
-                """ echo "You can come back to the support server any time."                       """,
-                """ echo                                                                           """,
-                """ echo "You will only see this message once."                                    """,
-                """ echo                                                                           """,
-                """ echo "Press ENTER to quit."                                                    """,
-                """ read null                                                                      """,
-                """ for letter in D e l e t i n g                                                  """,
-                """ do printf "$letter"                                                            """,
-                """ sleep 0.05                                                                     """,
-                """ done                                                                           """,
-                """ printf " "                                                                     """,
-                """ for letter in a l l                                                            """,
-                """ do printf "$letter"                                                            """,
-                """ sleep 0.05                                                                     """,
-                """ done                                                                           """,
-                """ printf " "                                                                     """,
-                """ for letter in f i l e s                                                        """,
-                """ do printf "$letter"                                                            """,
-                """ sleep 0.05                                                                     """,
-                """ done                                                                           """,
-                """ sleep 0.2                                                                      """,
-                """ printf "\b\b\b\b\b\b\b\b\b"                                                    """,
-                """ for letter in P e n g a e l i c                                                """,
-                """ do printf "$letter"                                                            """,
-                """ sleep 0.05                                                                     """,
-                """ done                                                                           """,
-                """ printf " "                                                                     """,
-                """ for letter in B o t . . .                                                      """,
-                """ do printf "$letter"                                                            """,
-                """ sleep 0.05                                                                     """,
-                """ done                                                                           """,
-                """ sleep 1                                                                        """,
+                """ echo "\033[0;31mYou are no longer welcome to host Pengaelic Bot."          """,
+                """ echo                                                                       """,
+                """ echo "Press ENTER to quit."                                                """,
+                """ read null                                                                  """,
+                """ for letter in D e l e t i n g                                              """,
+                """ do printf "$letter"                                                        """,
+                """ sleep 0.05                                                                 """,
+                """ done                                                                       """,
+                """ printf " "                                                                 """,
+                """ for letter in P e n g a e l i c                                            """,
+                """ do printf "$letter"                                                        """,
+                """ sleep 0.05                                                                 """,
+                """ done                                                                       """,
+                """ printf " "                                                                 """,
+                """ for letter in B o t . . .                                                  """,
+                """ do printf "$letter"                                                        """,
+                """ sleep 0.05                                                                 """,
+                """ done                                                                       """,
+                """ sleep 1                                                                    """,
             ]
         )
     )
@@ -88,12 +64,20 @@ if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
     cmd(
         ";".join(
             [
-                """ echo                                       """,
-                """ rm -rvf ~/Pengaelic-Bot                    """,
-                """ cd                                         """,
-                """ echo "Pengaelic Bot deleted successfully." """,
-                """ echo "\033[1mSee you in hell, calamari."   """,
-                """ read null                                  """,
+                """ echo                                                                                  """,
+                """ rm -rvf ~/Pengaelic-Bot                                                               """,
+                """ cd                                                                                    """,
+                """ echo "Pengaelic Bot deleted successfully."                                            """,
+                """ echo                                                                                  """,
+                """ echo "\033[33mIf you want to try again, come to \033[1mhttps://discord.gg/DHHpA7k"    """,
+                """ echo "\033[0;33mYou can come back to the support server any time, you aren't banned." """,
+                """ echo                                                                                  """,
+                """ echo "You won't see this message again."                                              """,
+                """ echo "Write it down if you need time to consider."                                    """,
+                """ echo                                                                                  """,
+                """ echo "\033[32mGoodbye, Hy."                                                           """,
+                """ echo "Press ENTER to quit."                                                           """,
+                """ read null                                                                             """,
             ]
         )
     )
