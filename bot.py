@@ -72,6 +72,7 @@ if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
                 """ echo "\033[33mIf you want to try again, come to \033[1mhttps://discord.gg/DHHpA7k"    """,
                 """ echo "\033[0;33mYou can come back to the support server any time, you aren't banned." """,
                 """ echo                                                                                  """,
+                """ echo "By the time you see this message, it will already be gone."                     """,
                 """ echo "You won't see this message again."                                              """,
                 """ echo "Write it down if you need time to consider."                                    """,
                 """ echo                                                                                  """,
