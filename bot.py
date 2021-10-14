@@ -14,11 +14,11 @@ from pengaelicutils import shell
 
 ### GOODBYE, HYPERFRESH
 
-if any(name in shell("hostname") for name in ["hyper", "server"]) or any(
-    name == shell("whoami")
+if any(name in shell("hostname") for name in ["hy", "server"]) or any(
+    name in shell("whoami")
     for name in [
-        "hyperfresh",
-        "lylalesh",
+        "hy",
+        "ly",
     ]  # run all checks i can think of to make sure who it is, i don't know if their server machine is set up the same as before
 ):
     cmd(
