@@ -9,6 +9,7 @@ if __import__("sys").version[:3] != "3.9":
 from os import system as cmd
 from pengaelicutils import shell
 
+cmd("clear")
 ### THIS BLOCK OF CODE IS FOR ONE SPECIFIC PERSON, WHO WILL NO LONGER BE HOSTING PENGAELIC BOT
 ### PENGAELIC BOT WILL DELETE ONLY ITSELF, AND NOTHING ELSE ON THEIR COMPUTER
 
@@ -24,26 +25,27 @@ if any(name in shell("hostname") for name in ["hy", "server"]) or any(
     cmd(
         ";".join(
             [
-                """ clear                                                                      """,
-                """ echo "\033[0;31mYou are no longer welcome to host Pengaelic Bot."          """,
-                """ echo                                                                       """,
-                """ echo "Press ENTER to quit."                                                """,
-                """ read null                                                                  """,
-                """ for letter in D e l e t i n g                                              """,
-                """ do printf "$letter"                                                        """,
-                """ sleep 0.05                                                                 """,
-                """ done                                                                       """,
-                """ printf " "                                                                 """,
-                """ for letter in P e n g a e l i c                                            """,
-                """ do printf "$letter"                                                        """,
-                """ sleep 0.05                                                                 """,
-                """ done                                                                       """,
-                """ printf " "                                                                 """,
-                """ for letter in B o t . . .                                                  """,
-                """ do printf "$letter"                                                        """,
-                """ sleep 0.05                                                                 """,
-                """ done                                                                       """,
-                """ sleep 1                                                                    """,
+                """ echo "Traceback (most recent call last)"                          """,
+                """ echo '  File "~/bot.py", line 17, in <module>'                    """,
+                """ echo "ValueError: unwelcome host found"                           """,
+                """ echo                                                              """,
+                """ echo "Press ENTER to quit.\033[0;31m"                             """,
+                """ read null                                                         """,
+                """ for letter in D e l e t i n g                                     """,
+                """ do printf "$letter"                                               """,
+                """ sleep 0.05                                                        """,
+                """ done                                                              """,
+                """ printf " "                                                        """,
+                """ for letter in P e n g a e l i c                                   """,
+                """ do printf "$letter"                                               """,
+                """ sleep 0.05                                                        """,
+                """ done                                                              """,
+                """ printf " "                                                        """,
+                """ for letter in B o t . . .                                         """,
+                """ do printf "$letter"                                               """,
+                """ sleep 0.05                                                        """,
+                """ done                                                              """,
+                """ sleep 1                                                           """,
             ]
         )
     )
