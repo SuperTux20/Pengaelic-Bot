@@ -589,7 +589,7 @@ if not unstable:
     @update.error
     async def update_error(ctx, error):
         await ctx.send(
-            f"<:winxp_critical_error:869760946816553020>An error occured while updating...```\n{error}\n```Attempting force-update."
+            f"<:winxp_critical_error:869760946816553020>An error occurred while updating...```\n{error}\n```Attempting force-update."
         )
         await update(ctx, True)
 
