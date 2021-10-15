@@ -284,27 +284,21 @@ async def on_ready():
             print(
                 f"Configs created for {client.get_guild(newconfigs[server]['guildID']).name}"
             )
-    # add any options that may have been created since the option dicts' creation, and account for a server's name changing
+    # add any options that may have been created since the option dicts' creation
     for guild in client.guilds:
         gid = guild.id
         ops = db.all()[client.guilds.index(guild)]
         ops.pop("guildName")
         ops.pop("guildID")
         nops = newops()
-        for opts in ops.keys():
-            if opts != newops().keys():
-                for key in ops[opts]:
-                    try:
-                        nops[opts].pop(key)
-                    except KeyError:
-                        pass
-                ops[opts] |= nops[opts]
-                db.update({"guildName": guild.name}, Query().guildID == gid)
-                db.update({"channels": ops["channels"]}, Query().guildID == gid)
-                db.update({"lists": ops["lists"]}, Query().guildID == gid)
-                db.update({"messages": ops["messages"]}, Query().guildID == gid)
-                db.update({"roles": ops["roles"]}, Query().guildID == gid)
-                db.update({"toggles": ops["toggles"]}, Query().guildID == gid)
+        # exit()
+        for op in ["channels", "lists", "messages", "roles", "toggles"]:
+            ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
+            db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == gid)
+        db.update(
+            {"guildName": guild.name}, Query().guildID == gid
+        )  # did the server's name change?
+        print(f"Loaded options for {guild.name}")
     await set_status()
     print(f"{client.description} connected to Discord")
     if not unstable:
@@ -341,20 +335,13 @@ if not unstable:
         # this checks if the individual commands have their own error handling. if not...
         if not hasattr(ctx.command, "on_error"):
             # ...send the global error
-            if "is not found" in str(error):
+            if str(error).startswith("Command") and str(error).endswith("is not found"):
                 await ctx.send(
                     f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages."
                 )
-                # print(
-                #     "Invalid command {}{} sent in {} in #{} by {}#{}".format(
-                #         client.command_prefix,
-                #         str(error).split('"')[1],
-                #         ctx.guild,
-                #         ctx.channel,
-                #         ctx.message.author.name,
-                #         ctx.message.author.discriminator,
-                #     )
-                # )
+                print(
+                    f"""Invalid command {client.command_prefix}{str(error).split('"')[1]} sent in {ctx.guild} in #{ctx.channel} by {ctx.author.name}#{ctx.author.discriminator}"""
+                )
             else:
                 await ctx.send(
                     unhandling(
@@ -844,7 +831,7 @@ while True:
         print("Disconnected")
         while True:
             exit(0)
-    except:
+    except Exception:
         print("Unable to connect to Discord")
         while True:
             exit(1)

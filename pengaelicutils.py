@@ -63,21 +63,21 @@ class Developers:
 
     def check(self, user, dev=None) -> bool:
         if dev == None:
-            if user.id in list(Developers.everyone.values()):
+            if user.id in list(Developers.everyone.values()):  # check if user is a dev
                 return True
             else:
                 return False
         else:
-            if user.id == Developers.everyone[dev]:
+            if user.id == Developers.everyone[dev]:  # check if user is specific dev
                 return True
             else:
                 return False
 
-    def get(self, dev=None) -> dict:
+    def get(self, dev=None):
         if dev == None:
-            return Developers.everyone
+            return Developers.everyone  # get all devs
         else:
-            return Developers.everyone[dev]
+            return Developers.everyone[dev.lower()]  # get specific dev
 
 
 def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
@@ -92,7 +92,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
             inlist.append(inlist[-1])
             inlist[-2] = "and"
         outstr = (
-            str(inlist)[1:-1]
+            str(inlist)[1:-1]  # cut off opening and closing brackets
             .replace("'", "")
             .replace("\\n", "")  # remove single quotes and newlines
         )
@@ -110,16 +110,18 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 
 def unhandling(error, tux_in_server) -> str:
     error = str(error)
+    author = tux_in_server[1]
+    tux_in_server = tux_in_server[0]
     output = (
-        "<:winxp_critical_error:869760946816553020>Unhandled error occurred:"
-        + "\n```\n"
-        + error
-        + "\n```\n"
+        "<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n"
+        + f"> {error}\n"
     )
     if tux_in_server:
-        tux_msg = (
-            "Pinging <@!686984544930365440> (my developer) so he can see this error."
-        )
+        if author == Developers.get(None, "tux"):
+            output = "<:winxp_critical_error:869760946816553020>"
+            tux_msg = error
+        else:
+            tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
     else:
         tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
     return output + tux_msg
@@ -138,8 +140,9 @@ def newops() -> dict:
         "roles": {
             role_id: None
             for role_id in [
-                "customRoleLock",
                 "botCommander",
+                "customRoleLock",
+                "dramaRole",
                 "muteRole",
             ]
         },
@@ -171,7 +174,7 @@ def getops(guild: str, category: str = None, option: str = None) -> dict:
         if options["lists"]["censorList"] == []:
             options["lists"]["censorList"] = None
         else:
-            options["lists"]["censorList"] = list2str(options["lists"]["censorList"])
+            options["lists"]["censorList"] = options["lists"]["censorList"].tostr()
     else:
         options = db.search(server.guildID == guild)[0][category][option]
     return options
@@ -547,8 +550,11 @@ def jsoncheck(guild: str) -> bool:
     return getops(guild, "toggles", "jsonMenus")
 
 
-def tux_in_guild(ctx, client) -> bool:
-    return bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id))
+def tux_in_guild(ctx, client) -> list:
+    return [
+        bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)),
+        ctx.author.id,
+    ]
 
 
 def shell(command) -> str:
