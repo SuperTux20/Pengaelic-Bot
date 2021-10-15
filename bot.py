@@ -84,7 +84,9 @@ from pengaelicutils import (
 )
 from subprocess import CalledProcessError, call, STDOUT
 from sys import executable as python, argv
+from time import localtime
 
+launchtime = localtime().tm_sec
 devs = Developers()
 
 print("Imported modules")
@@ -265,6 +267,7 @@ def help_menu(guild, cog, client):
 
 @client.event
 async def on_ready():
+    global launchtime
     # create a server's configs
     if db.all() == []:
         [
@@ -301,17 +304,21 @@ async def on_ready():
         print(f"Loaded options for {guild.name}")
     await set_status()
     print(f"{client.description} connected to Discord")
+    if localtime().tm_sec - launchtime < 0:
+        launchtime += 60
+    elif localtime().tm_sec - launchtime > 60:
+        launchtime -= 60
+    print(f"Launched in {localtime().tm_sec-launchtime} seconds")
     if not unstable:
         print(f"Currently on {len(client.guilds)} servers")
 
 
 @client.event
 async def on_guild_join(guild, auto=True):
-    global unstable
     if not unstable:
         print(f"Joined {guild.name}")
         for channel in guild.text_channels:
-            if "general" in channel.name:
+            if any(name in channel.name for name in ["bot", "command", "general"]):
                 await channel.send(
                     embed=discord.Embed(
                         title=f"Howdy fellas! I'm {client.description}!",
