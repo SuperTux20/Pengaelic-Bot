@@ -571,29 +571,29 @@ class Tools(commands.Cog):
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
-    @commands.group(
-        name="stopwatch", help="Track how long something goes.", usage="<start, stop>"
-    )
-    async def stopwatch(self, ctx):
-        if ctx.invoked_subcommand == None:
-            await ctx.send(
-                embed=discord.Embed(
-                    title="Stopwatch",
-                    description="Track how long something goes.",
-                    color=self.teal,
-                )
-                .add_field(name="(start/begin)", value="Start the stopwatch.")
-                .add_field(name="(stop/end)", value="Stop the stopwatch.")
-            )
+    # @commands.group(
+    #     name="stopwatch", help="Track how long something goes.", usage="<start, stop>"
+    # )
+    # async def stopwatch(self, ctx):
+    #     if ctx.invoked_subcommand == None:
+    #         await ctx.send(
+    #             embed=discord.Embed(
+    #                 title="Stopwatch",
+    #                 description="Track how long something goes.",
+    #                 color=self.teal,
+    #             )
+    #             .add_field(name="(start/begin)", value="Start the stopwatch.")
+    #             .add_field(name="(stop/end)", value="Stop the stopwatch.")
+    #         )
 
-    @stopwatch.command(name="start", help="Start the stopwatch.", aliases=["begin"])
-    async def stopwatch_start(self, ctx):
-        Stopwatch.start(self)
-        await ctx.send("Started the stopwatch.")
+    # @stopwatch.command(name="start", help="Start the stopwatch.", aliases=["begin"])
+    # async def stopwatch_start(self, ctx):
+    #     Stopwatch.start(self)
+    #     await ctx.send("Started the stopwatch.")
 
-    @stopwatch.command(name="stop", help="Stop the stopwatch.", aliases=["end"])
-    async def stopwatch_end(self, ctx):
-        await ctx.send(Stopwatch.end(self))
+    # @stopwatch.command(name="stop", help="Stop the stopwatch.", aliases=["end"])
+    # async def stopwatch_end(self, ctx):
+    #     await ctx.send(Stopwatch.end(self))
 
     @commands.command(
         name="bugreport",
