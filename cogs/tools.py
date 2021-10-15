@@ -653,9 +653,9 @@ class Tools(commands.Cog):
             )
 
     @server_info.error
-    @stopwatch_start.error
-    @stopwatch_end.error
-    @stopwatch.error
+    # @stopwatch_start.error
+    # @stopwatch_end.error
+    # @stopwatch.error
     @bugreport.error
     @speedtest.error
     @role.error
