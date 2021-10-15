@@ -81,12 +81,13 @@ from pengaelicutils import (
     unhandling,
     tux_in_guild,
     Developers,
+    Stopwatch,
 )
 from subprocess import CalledProcessError, call, STDOUT
 from sys import executable as python, argv
-from time import localtime
 
-launchtime = localtime().tm_sec
+launchtime = Stopwatch()
+launchtime.start()
 devs = Developers()
 
 print("Imported modules")
@@ -267,7 +268,6 @@ def help_menu(guild, cog, client):
 
 @client.event
 async def on_ready():
-    global launchtime
     # create a server's configs
     if db.all() == []:
         [
@@ -304,11 +304,7 @@ async def on_ready():
         print(f"Loaded options for {guild.name}")
     await set_status()
     print(f"{client.description} connected to Discord")
-    if localtime().tm_sec - launchtime < 0:
-        launchtime += 60
-    elif localtime().tm_sec - launchtime > 60:
-        launchtime -= 60
-    print(f"Launched in {localtime().tm_sec-launchtime} seconds")
+    print(f"Launched in {launchtime.end()}")
     if not unstable:
         print(f"Currently on {len(client.guilds)} servers")
 
