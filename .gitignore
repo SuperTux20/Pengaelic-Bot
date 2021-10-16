@@ -129,5 +129,8 @@ dmypy.json
 # Configs
 config.*
 
-# VS Code configs
-.vscode/
+# VS/Code configs
+.vs*/
+
+# deleted files
+.fuse_hidden*
