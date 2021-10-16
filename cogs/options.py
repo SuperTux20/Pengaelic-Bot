@@ -15,6 +15,7 @@ from pengaelicutils import (
     Developers,
 )
 from random import choice
+from re import sub
 from tinydb import TinyDB, Query
 
 devs = Developers()
@@ -40,6 +41,31 @@ class Options(commands.Cog):
             await ctx.send("<:winxp_information:869760946808180747>" + disable_message)
         else:
             await ctx.send("<:winxp_information:869760946808180747>" + enable_message)
+
+    async def setop(self, ctx, option, value, optype, message):
+        if ctx.author.guild_permissions.manage_roles or getops(
+            ctx.guild.id, "roles", "botCommanderRole"
+        ):
+            updop(ctx.guild.id, optype + "s", option + optype.capitalize(), value.id)
+            await ctx.send(
+                "<:winxp_information:869760946808180747>{} {} {} {} {}.".format(
+                    optype.capitalize(),
+                    value.mention,
+                    message,
+                    sub(r"([A-Z])", r" \1", option).lower(),
+                    optype,
+                )  # i would use an fstring here but they don't allow backslashes
+            )
+        else:
+            await ctx.send(
+                "<:winxp_critical_error:869760946816553020>You do not have permission to use that command."
+            )
+
+    async def set_channel(self, ctx, option, value, message="is now set as the"):
+        await self.setop(ctx, option, value, "channel", message)
+
+    async def set_role(self, ctx, option, value, message="is now set as the"):
+        await self.setop(ctx, option, value, "role", message)
 
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
@@ -127,7 +153,7 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_messages=True)
     async def reset_options(self, ctx):
-        guild = ctx.guild.id
+        gid = ctx.guild.id
         if not self.reset_options_confirm:
             await ctx.send(
                 "<:winxp_question:869760946904645643>Are you *really* sure you want to reset the options? Type the command again to confirm. This will expire in 10 seconds."
@@ -141,11 +167,8 @@ class Options(commands.Cog):
                 )
         elif self.reset_options_confirm:
             ops = newops()
-            self.db.update({"channels": ops["channels"]}, Query().guildID == guild)
-            self.db.update({"lists": ops["lists"]}, Query().guildID == guild)
-            self.db.update({"messages": ops["messages"]}, Query().guildID == guild)
-            self.db.update({"roles": ops["roles"]}, Query().guildID == guild)
-            self.db.update({"toggles": ops["toggles"]}, Query().guildID == guild)
+            for op in ["channels", "lists", "messages", "roles", "toggles"]:
+                self.db.update({op: ops[op]}, Query().guildID == gid)
             await ctx.send(
                 "<:winxp_information:869760946808180747>Options reset to defaults."
             )
@@ -156,15 +179,24 @@ class Options(commands.Cog):
     async def optoggle(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
-                "<:winxp_warning:869760947114348604>You didn't specify a valid option to toggle!"
+                "<:winxp_warning:869760947114348604>You didn't specify an option to toggle!"
             )
 
     @read_options.group(name="set", help="Set an option.")
     async def opset(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send(
-                "<:winxp_warning:869760947114348604>You didn't specify a valid option to set!"
+                "<:winxp_warning:869760947114348604>You didn't specify an option to set!"
             )
+
+    """
+     _____                 _
+    |_   _|__   __ _  __ _| | ___  ___
+      | |/ _ \ / _` |/ _` | |/ _ \/ __|
+      | | (_) | (_| | (_| | |  __/\__ \
+      |_|\___/ \__, |\__, |_|\___||___/
+               |___/ |___/
+    """
 
     @optoggle.command(
         name="atSomeone",
@@ -235,11 +267,14 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_roles=True)
     async def toggle_role_lock(self, ctx):
+        message = ""
+        if getops(ctx.guild.id, "roles", "customLockRole") == None:
+            message = f" Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind."
         await self.toggle_option(
             ctx,
             "lockCustomRoles",
             "Custom roles are now available to everyone.",
-            f"Custom roles are now locked. Use `{self.client.command_prefix}options set customRoleLock <role name>` to set what role they should be locked behind.",
+            "Custom roles are now locked." + message,
         )
 
     @optoggle.command(
@@ -277,32 +312,55 @@ class Options(commands.Cog):
             "Welcome messages turned on.",
         )
 
+    """
+     ____       _
+    |  _ \ ___ | | ___  ___
+    | |_) / _ \| |/ _ \/ __|
+    |  _ < (_) | |  __/\__ \
+    |_| \_\___/|_|\___||___/
+    """
+
     @opset.command(
-        name="customRoleLock",
-        help="Set what role is required to use custom roles (if they're locked in the first place)",
+        name="botCommanderRole",
+        help="Set the bot commander role (required for a lot of commands).",
+    )
+    @commands.has_permissions(manage_roles=True)
+    async def change_cmdr_role(self, ctx, *, role: discord.Role):
+        await self.set_role(ctx, "botCommander", role)
+
+    @opset.command(
+        name="customRoleLockRole",
+        help="Set what role is required to use custom roles.",
     )
     @commands.has_permissions(manage_roles=True)
     async def change_required_role(self, ctx, *, role: discord.Role):
-        updop(ctx.guild.id, "roles", "customRoleLock", role.id)
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>Role {role} is now required for custom roles."
-        )
+        await self.set_role(ctx, "customRoleLock", role)
 
-    @opset.command(name="modRole", help="Set what role the moderators are.")
+    @opset.command(name="dramaRole", help="Set the drama role.")
     @commands.has_permissions(manage_roles=True)
-    async def change_mod_role(self, ctx, *, role: discord.Role):
-        updop(ctx.guild.id, "roles", "modRole", role.id)
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>Role {role} is now set as the mod role."
-        )
+    async def change_drama_role(self, ctx, *, role: discord.Role):
+        await self.set_role(ctx, "drama", role)
 
     @opset.command(name="muteRole", help="Set the muted role.")
     @commands.has_permissions(manage_roles=True)
     async def change_mute_role(self, ctx, *, role: discord.Role):
-        updop(ctx.guild.id, "roles", "muteRole", role.id)
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>Role {role} is now set as the muted role."
-        )
+        await self.set_role(ctx, "mute", role)
+
+    """
+      ____ _                            _
+     / ___| |__   __ _ _ __  _ __   ___| |___
+    | |   | '_ \ / _` | '_ \| '_ \ / _ \ / __|
+    | |___| | | | (_| | | | | | | |  __/ \__ \
+     \____|_| |_|\__,_|_| |_|_| |_|\___|_|___/
+    """
+
+    @opset.command(
+        name="dramaChannel",
+        help="Set what channel auto-suggestions should be converted in.",
+    )
+    @commands.has_permissions(manage_roles=True)
+    async def change_drama_channel(self, ctx, *, channel: discord.TextChannel):
+        await self.set_channel(ctx, "drama", channel)
 
     @opset.command(
         name="suggestionsChannel",
@@ -310,10 +368,7 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_roles=True)
     async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
-        updop(ctx.guild.id, "channels", "suggestionsChannel", channel.id)
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>Channel {channel} is now the suggestions channel."
-        )
+        await self.set_channel(ctx, "suggestions", channel)
 
     @opset.command(
         name="welcomeChannel",
@@ -321,10 +376,16 @@ class Options(commands.Cog):
     )
     @commands.has_permissions(manage_roles=True)
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
-        updop(ctx.guild.id, "channels", "welcomeChannel", channel.id)
-        await ctx.send(
-            f"<:winxp_information:869760946808180747>Channel {channel} is now the welcome channel."
-        )
+        await self.set_channel(ctx, "welcome", channel)
+
+    """
+     __  __
+    |  \/  | ___  ___ ___  __ _  __ _  ___  ___
+    | |\/| |/ _ \/ __/ __|/ _` |/ _` |/ _ \/ __|
+    | |  | |  __/\__ \__ \ (_| | (_| |  __/\__ \
+    |_|  |_|\___||___/___/\__,_|\__, |\___||___/
+                                |___/
+    """
 
     @opset.command(
         name="welcomeMessage",
@@ -347,6 +408,14 @@ class Options(commands.Cog):
         await ctx.send(
             f'<:winxp_information:869760946808180747>Goodbye message set to "{message}".'
         )
+
+    """
+      ____
+     / ___|___ _ __  ___  ___  _ __
+    | |   / _ \ '_ \/ __|/ _ \| '__|
+    | |__|  __/ | | \__ \ (_) | |
+     \____\___|_| |_|___/\___/|_|
+    """
 
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
@@ -434,6 +503,9 @@ class Options(commands.Cog):
 
     @read_options.error
     @reset_options.error
+    @setop.error
+    @set_channel.error
+    @set_role.error
     @optoggle.error
     @opset.error
     @toggle_censor.error
@@ -444,9 +516,11 @@ class Options(commands.Cog):
     @toggle_rick_roulette.error
     @toggle_suggestions.error
     @toggle_welcome.error
-    @change_mod_role.error
+    @change_cmdr_role.error
+    @change_drama_role.error
     @change_mute_role.error
     @change_required_role.error
+    @change_drama_channel.error
     @change_suggestions_channel.error
     @change_welcome_channel.error
     @change_welcome_message.error
@@ -458,12 +532,11 @@ class Options(commands.Cog):
     @wipe_censor.error
     async def messageError(self, ctx, error):
         error = str(error)
-        if (
-            error
-            == "You are missing Manage Messages permission(s) to run this command."
+        if error.startswith("You are missing") and error.endswith(
+            "permission(s) to run this command."
         ):
             await ctx.send(
-                f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage Messages)"
+                "<:winxp_critical_error:869760946816553020>You do not have permission to use that command."
             )
         if error.endswith('" not found.'):
             if error.startswith('Channel "'):
