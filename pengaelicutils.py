@@ -130,7 +130,8 @@ def unhandling(error, tux_in_server) -> str:
 def newops() -> dict:
     return {
         "channels": {
-            channel_id: None for channel_id in ["suggestionsChannel", "welcomeChannel"]
+            channel_id + "Channel": None
+            for channel_id in ["drama", "suggestions", "welcome"]
         },
         "lists": {"censorList": []},
         "messages": {
@@ -138,17 +139,17 @@ def newops() -> dict:
             "goodbyeMessage": "See you later, USER.",
         },
         "roles": {
-            role_id: None
+            role_id + "Role": None
             for role_id in [
                 "botCommander",
                 "customRoleLock",
-                "dramaRole",
-                "muteRole",
+                "drama",
+                "mute",
             ]
         },
         "toggles": {
-            toggle_bool: False
-            for toggle_bool in [
+            toggle: False
+            for toggle in [
                 "atSomeone",
                 "censor",
                 "dadJokes",
