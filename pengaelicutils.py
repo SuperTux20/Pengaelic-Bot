@@ -119,6 +119,8 @@ def unhandling(error, tux_in_server) -> str:
     if tux_in_server:
         if author == Developers.get(None, "tux"):
             output = "<:winxp_critical_error:869760946816553020>"
+            if error.startswith("Command raised an exception: "):
+                error = error[29:]
             tux_msg = error
         else:
             tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
