@@ -1,9 +1,12 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-if __import__("sys").version[:3] != "3.9":
-    print("Pengaelic Bot requires Python 3.9 to function properly.")
-    print("Please run Pengaelic Bot with Python 3.9")
+from sys import version
+
+major, minor = [int(num) for num in version.split(".")[:2]]
+if major < 3 or minor < 9:
+    print("Pengaelic Bot requires Python 3.9 or newer to function properly.")
+    print("Please run Pengaelic Bot with Python >= 3.9")
     exit()
 
 from os import system as cmd
@@ -290,11 +293,17 @@ async def on_ready():
     # add any options that may have been created since the option dicts' creation
     for guild in client.guilds:
         gid = guild.id
-        ops = db.all()[client.guilds.index(guild)]
+        if unstable:  # Pengaelic Beta is only on Pengaelic Bot Support
+            ops = db.search(Query().guildName == "Pengaelic Bot Support")[0]
+        else:
+            ops = db.all()[client.guilds.index(guild)]
         ops.pop("guildName")
         ops.pop("guildID")
         nops = newops()
-        # exit()
+        for op in ["channels", "lists", "messages", "roles", "toggles"]:
+            for opt in list(ops[op].keys()):
+                if opt not in nops[op]:
+                    ops[op].pop(opt)
         for op in ["channels", "lists", "messages", "roles", "toggles"]:
             ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
             db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == gid)
@@ -830,8 +839,8 @@ while True:
             client.run(env("UNSTABLE_TOKEN"))
         else:
             client.run(env("DISCORD_TOKEN"))
-    except KeyboardInterrupt:
-        print("Disconnected")
+    except (KeyboardInterrupt, RuntimeError):
+        print("\b\bDisconnected")
         while True:
             exit(0)
     except Exception:
