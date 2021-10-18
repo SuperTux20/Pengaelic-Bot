@@ -165,6 +165,20 @@ class Tools(commands.Cog):
             await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
+    @commands.command(name="drama", help="Assign a member the drama role.", usage="<member>")
+    @commands.has_permissions(kick_members=True)
+    async def drama(self, ctx, member: discord.Member, *, reason=None):
+        try:
+            await member.add_roles(
+                get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "dramaRole")),
+                reason=reason,
+            )
+            await ctx.send(f"Sent {member} to the drama channel for reason `{reason}`.")
+        except:
+            await ctx.send(
+                f"<:winxp_warning:869760947114348604>There is no set drama role. To set a drama role, type `{self.client.command_prefix}options set dramaRole <drama role>`."
+            )
+
     @commands.command(name="mute", help="Mute a member.", usage="<member>")
     @commands.has_permissions(kick_members=True)
     async def mute(self, ctx, member: discord.Member, *, reason=None):
