@@ -34,7 +34,7 @@ class Options(commands.Cog):
     description = "My settings."
     description_long = "You need permissions to use these settings."
 
-# ANCHOR FUNCTIONS
+    # ANCHOR: FUNCTIONS
 
     async def toggle_option(self, ctx, option, disable_message, enable_message):
         status = getops(ctx.guild.id, "toggles", option)
@@ -69,9 +69,9 @@ class Options(commands.Cog):
     async def set_role(self, ctx, option, value, message="is now set as the"):
         await self.setop(ctx, option, value, "role", message)
 
-# SECTION OPTIONS
+    # SECTION: OPTIONS
 
-# ANCHOR BASE COMMANDS
+    # ANCHOR: BASE COMMANDS
 
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
@@ -195,7 +195,7 @@ class Options(commands.Cog):
                 "<:winxp_warning:869760947114348604>You didn't specify an option to set!"
             )
 
-    # ANCHOR TOGGLES
+    # ANCHOR: TOGGLES
 
     @optoggle.command(
         name="atSomeone",
@@ -311,7 +311,7 @@ class Options(commands.Cog):
             "Welcome messages turned on.",
         )
 
-    # ANCHOR ROLES
+    # ANCHOR: ROLES
 
     @opset.command(
         name="botCommanderRole",
@@ -339,7 +339,7 @@ class Options(commands.Cog):
     async def change_mute_role(self, ctx, *, role: discord.Role):
         await self.set_role(ctx, "mute", role)
 
-    # ANCHOR CHANNELS
+    # ANCHOR: CHANNELS
 
     @opset.command(
         name="dramaChannel",
@@ -365,7 +365,7 @@ class Options(commands.Cog):
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
         await self.set_channel(ctx, "welcome", channel)
 
-    # ANCHOR MESSAGES
+    # ANCHOR: MESSAGES
 
     @opset.command(
         name="welcomeMessage",
@@ -389,7 +389,7 @@ class Options(commands.Cog):
             f'<:winxp_information:869760946808180747>Goodbye message set to "{message}".'
         )
 
-    # ANCHOR CENSOR
+    # ANCHOR: CENSOR
 
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
@@ -475,7 +475,7 @@ class Options(commands.Cog):
             await ctx.send("<:winxp_information:869760946808180747>Filter wiped.")
             self.wipe_censor_confirm = False
 
-# END SECTION
+    # END SECTION
 
     @read_options.error
     @reset_options.error

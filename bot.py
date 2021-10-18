@@ -3,6 +3,8 @@
 
 from sys import version
 
+# ANCHOR: version checker
+
 major, minor = [int(num) for num in version.split(".")[:2]]
 if major < 3 or minor < 9:
     print("Pengaelic Bot requires Python 3.9 or newer to function properly.")
@@ -93,6 +95,8 @@ launchtime = Stopwatch()
 launchtime.start()
 devs = Developers()
 
+# ANCHOR: package test
+
 print("Imported modules")
 if shell("uname -o") != "Android":
     devnull = open(devnull, "w")
@@ -119,6 +123,8 @@ if shell("uname -o") != "Android":
     print("Passed package test")
 else:
     print("Ignored package test")
+
+# ANCHOR: module test
 
 requirements = ["py-cord", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 needed = []
@@ -153,11 +159,12 @@ from discord.utils import get
 from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB, Query
 
-# check if --unstable or --beta are in the argv
+# ANCHOR: unstable flagger
 if any(arg in argv for arg in ["--unstable", "--beta"]):
     unstable = True
 else:
     unstable = False
+# ANCHOR: boot message
 info = r"""
  ____________
 | ___| | | | |
@@ -181,6 +188,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 """
+
+# ANCHOR: defining client
+
 client = commands.Bot(
     command_prefix="p",
     description="Pengaelic B",
@@ -205,6 +215,8 @@ if "--reset-options" in argv:
     print("Options reset")
     db.truncate()
 
+# ANCHOR: status setter
+
 
 async def set_status():
     if unstable:
@@ -221,6 +233,9 @@ async def set_status():
                 name=str(len(db.all())) + " servers! | p!help",
             )
         )
+
+
+# ANCHOR: help menu template
 
 
 def help_menu(guild, cog, client):
@@ -267,6 +282,9 @@ def help_menu(guild, cog, client):
                 value=command.help,
             )
     return menu
+
+
+# ANCHOR: ON READY
 
 
 @client.event
@@ -318,6 +336,9 @@ async def on_ready():
         print(f"Currently on {len(client.guilds)} servers")
 
 
+# ANCHOR: GUILD JOIN EVENT
+
+
 @client.event
 async def on_guild_join(guild, auto=True):
     if not unstable:
@@ -341,6 +362,8 @@ async def on_guild_join(guild, auto=True):
 
 
 if not unstable:
+
+    # ANCHOR: ERROR HANDLING
 
     @client.event
     async def on_command_error(ctx, error):
@@ -371,9 +394,11 @@ async def redo_welcome(ctx):
     await ctx.message.delete()
 
 
-# load token
+# ANCHOR: load token
 dotenv(".env")
 print("Loaded bot token and developer IDs")
+
+# ANCHOR: EXIT
 
 
 @client.command(name="exit", aliases=["quit"])
@@ -385,6 +410,9 @@ async def quit_the_bot(ctx):
         await ctx.send(
             "<:winxp_warning:869760947114348604>Hey, only my developers can do this!"
         )
+
+
+# ANCHOR: SH
 
 
 @client.command()
@@ -434,6 +462,9 @@ async def sh(ctx, *, args):
         )
 
 
+# ANCHOR: RESTART
+
+
 @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
 async def restart(ctx, *, restargs=""):
     if Developers.check(None, ctx.author):
@@ -452,6 +483,8 @@ async def restart(ctx, *, restargs=""):
 
 
 if not unstable:
+
+    # ANCHOR: UPDATE LOG
 
     @client.command(name="updatelog", aliases=["ul", "ulog"])
     async def updatelog(ctx, formatted=True, status: discord.Message = None):
@@ -545,6 +578,8 @@ if not unstable:
             )
             return False
 
+    # ANCHOR: UPDATE COMMAND
+
     @client.command(name="update", aliases=["ud"])
     async def update(ctx, force=False):
         if Developers.check(None, ctx.author):
@@ -579,6 +614,9 @@ if not unstable:
             f"<:winxp_critical_error:869760946816553020>An error occurred while updating...```\n{error}\n```Attempting force-update."
         )
         await update(ctx, True)
+
+
+# ANCHOR: HELP MENU
 
 
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
@@ -727,7 +765,9 @@ async def help(ctx, *, cogname: str = None):
             )
 
 
-# so that people can set up the Dog in their own servers without having to ask me about it first :>
+# ANCHOR: DOG OF WISDOM
+
+
 @client.command(name="dogofwisdom")
 async def dog(ctx, *, channel: discord.TextChannel = None):
     if not channel:
@@ -748,6 +788,9 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
     )
 
 
+# ANCHOR: NOT A COG ERROR
+
+
 @help.error
 async def not_a_cog(ctx, error):
     error = str(error)
@@ -762,6 +805,9 @@ async def not_a_cog(ctx, error):
                 tux_in_guild(ctx, client),
             )
         )
+
+
+# ANCHOR: TOGGLE MENU
 
 
 @help.command(name="toggle")
@@ -795,6 +841,9 @@ async def h_toggle(ctx):
     await ctx.send(embed=help_menu)
 
 
+# ANCHOR: CENSOR MENU
+
+
 @help.command(name="censor", aliases=["filter"])
 async def h_censor(ctx):
     group = client.get_command("censor")
@@ -826,12 +875,14 @@ async def h_censor(ctx):
     await ctx.send(embed=help_menu)
 
 
-# load all the cogs
+# ANCHOR: cog loader
+
 for cog in ls("cogs"):
     if cog.endswith(".py"):
         client.load_extension(f"cogs.{cog[:-3]}")
         print(f"Loaded cog {cog[:-3]}")
 
+# ANCHOR: login
 
 while True:
     try:
