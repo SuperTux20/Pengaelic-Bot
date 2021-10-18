@@ -6,6 +6,7 @@ from random import choice, randint
 from collections import Counter
 from pengaelicutils import (
     hangman_words,
+    pengaelic_words,
     regional_indicators,
     magic_responses,
     unhandling,
@@ -267,10 +268,14 @@ class Games(commands.Cog):
 
     @commands.command(
         name="hangman",
-        help="A classic! Guess the letters to solve the word before you run out of attempts.",
-    )
-    async def hangman(self, ctx):
-        word = choice(list(hangman_words.keys()))
+        help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',
+        usage='["pengaelic"]',
+    ) # TODO make more word sets for different topic modes
+    async def hangman(self, ctx, pengaelic=False):
+        words = hangman_words
+        if pengaelic == "pengaelic":
+            words = list(pengaelic_words.keys())
+        word = choice(words)
         vowels = 0
         for i in word:
             if i in ["a", "e", "i", "o", "u", "y"]:
@@ -279,7 +284,7 @@ class Games(commands.Cog):
             f"React to this message and guess the word.\nHINT: The word has {vowels} vowels."
         )
         the_word = await ctx.send(" ".join(list("_" * len(word))).replace("_", "\_"))
-        # list for storing the letters guessed by the player
+        # list for storing letters guessed by the player
         past_guesses = ""
         letter_guessed = ""
         chances = 6
@@ -288,7 +293,7 @@ class Games(commands.Cog):
         chance_counter = await ctx.send(f"{chances} chances remaining.")
         while (
             chances != 0
-        ) and flag == False:  # flag is updated when the word is correctly guessed
+        ) and flag == False:  # flag is updated when word is correctly guessed
 
             def check(reaction, user) -> bool:
                 return user == ctx.author and reaction.emoji in list(
@@ -298,26 +303,24 @@ class Games(commands.Cog):
             reaction, user = await self.client.wait_for("reaction_add", check=check)
             if user:
                 guess = regional_indicators[reaction.emoji]
-            # Validation of the guess
+            # validation of guess
             if not guess.isalpha():
                 await ctx.send("Enter only a letter!")
             elif len(guess) > 1:
                 await ctx.send("Enter only a SINGLE letter")
             elif guess in letter_guessed or guess in past_guesses:
                 await ctx.send("You have already guessed that letter")
-            elif guess in word:  # If letter is guessed correctly
-                k = word.count(
-                    guess
-                )  # k stores the number of times the guessed letter occurs in the word
+            elif guess in word:  # if letter is guessed correctly
+                # k stores number of times guessed letter occurs in word
+                k = word.count(guess)
+                # guess letter is added as many times as it occurs
                 for _ in range(k):
-                    letter_guessed += (
-                        guess  # The guess letter is added as many times as it occurs
-                    )
+                    letter_guessed += guess
             else:  # if letter is guessed incorrectly
                 chances -= 1
                 past_guesses += guess
                 await chance_counter.edit(content=f"{chances} chances remaining.")
-            # Print the word
+            # print word
             word_to_print = ""
             for char in word:
                 if char in letter_guessed and (
@@ -325,14 +328,14 @@ class Games(commands.Cog):
                 ):
                     word_to_print += char
                     correct += 1
-                # If user has guessed all the letters
-                elif Counter(letter_guessed) == Counter(
-                    word
-                ):  # Once the correct word is guessed fully,
+                # if player has guessed all the letters
+                elif Counter(letter_guessed) == Counter(word):
+                    # once the correct word is guessed fully,
                     # the game ends, even if chances remain
-                    await chance_counter.edit(
-                        content="Congratulations, you won!\n" + hangman_words[word]
-                    )
+                    finish = "Congratulations, you won!"
+                    if pengaelic == "pengaelic":
+                        finish += "\n" + pengaelic_words[word]
+                    await chance_counter.edit(content=finish)
                     await the_word.edit(content=" ".join(list(word)))
                     flag = True
                     break
@@ -342,7 +345,7 @@ class Games(commands.Cog):
                 content=" ".join(list(word_to_print)).replace("_", "\_")
             )
 
-        # If user has used all of his chances
+        # if player has used all of their chances
         if chances <= 0 and (Counter(letter_guessed) != Counter(word)):
             await chance_counter.edit(content=f'You lost!\nThe word was "{word}".')
 
