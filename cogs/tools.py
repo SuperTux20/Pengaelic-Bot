@@ -17,13 +17,13 @@ from pengaelicutils import (
     list2str,
     unhandling,
     tux_in_guild,
+    jsoncheck,
     shell,
     Stopwatch,
     Developers,
 )
 from re import search
 from tinydb import TinyDB
-from dotenv import load_dotenv as dotenv
 
 devs = Developers()
 
@@ -58,6 +58,42 @@ class Tools(commands.Cog):
         s.results.share()
         results = s.results.dict()
         return results
+
+    @commands.command(
+        name="say",
+        help="I'll repeat whatever you tell me.",
+        pass_context=True,
+        aliases=["repeat", "parrot"],
+        usage="<message>",
+    )
+    async def say_back(self, ctx, *, arg):
+        await ctx.send(arg)
+        if not isinstance(ctx.channel, discord.channel.DMChannel):
+            await ctx.message.delete()
+
+    @commands.command(name="credits", help="See who helped me come to exist!")
+    async def credits(self, ctx):
+        bot_credits = {
+            "Main Developer and Creator": f"Tux Penguin ({self.client.get_user(devs.get('tux'))})",
+            "Side Developer and Host": f"Cherry Rain ({self.client.get_user(devs.get('cherry'))})",
+            "Minor Contributor": f"Hy Asencion ({self.client.get_user(devs.get('hy'))})",
+        }
+        if jsoncheck(ctx.guild.id):
+            bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
+            await ctx.send(
+                "```json"
+                + f'\n"credits": {str(dumps(bot_credits, indent=4))}\n'
+                + "```"
+            )
+        else:
+            embed = discord.Embed(
+                color=self.teal,
+                title="Credits",
+                description="All the people on Discord who helped me become what I am today.",
+            )
+            for cred in bot_credits:
+                embed.add_field(name=cred, value=bot_credits[cred])
+            await ctx.send(embed=embed)
 
     @commands.command(
         name="os",
@@ -121,6 +157,8 @@ class Tools(commands.Cog):
             await the_poll.add_reaction("🤷")
             await the_poll.add_reaction("❌")
 
+    # ANCHOR: MODERATION
+
     @commands.command(
         name="clear",
         help="Clear some messages away.",
@@ -165,7 +203,9 @@ class Tools(commands.Cog):
             await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
-    @commands.command(name="drama", help="Assign a member the drama role.", usage="<member>")
+    @commands.command(
+        name="drama", help="Assign a member the drama role.", usage="<member>"
+    )
     @commands.has_permissions(kick_members=True)
     async def drama(self, ctx, member: discord.Member, *, reason=None):
         try:
@@ -208,6 +248,8 @@ class Tools(commands.Cog):
         await ctx.send(
             f"<:winxp_information:869760946808180747>Banned {member} for reason `{reason}`."
         )
+
+    # ANCHOR: INFO COMMANDS
 
     @commands.group(
         name="info",
@@ -295,83 +337,87 @@ class Tools(commands.Cog):
             region = " ".join(region)
         except:
             region = region[0].capitalize()
-        jsoninfo = str(
-            dumps(
-                {
-                    "basic info": {
-                        "server name": guild.name,
-                        "server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
-                        "server id": guild.id,
-                        "region": guild.region,
-                        "server description": guild.description,
-                        "server icon": str(guild.icon_url).split("?")[0],
-                        "two-factor authentication": bool(guild.mfa_level),
-                        "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
-                    },
-                    "levels": {
-                        "verification level": f"{guild.verification_level[0]} (level {guild.verification_level[1]+1})",
-                        "notification level": f"{guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1})",
-                        "content filter": f"{guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})",
-                    },
-                    "counts": {
-                        "members": guild.member_count,
-                        "boosts": guild.premium_subscription_count,
-                        "boosters": len(guild.premium_subscribers),
-                        "text channels": len(guild.text_channels),
-                        "voice channels": len(guild.voice_channels),
-                        "channel categories": len(guild.categories),
-                        "bans": len(await guild.bans()),
-                        "emojis": len(guild.emojis),
-                        "roles": len(guild.roles) - 1,
-                    },
-                },
-                indent=4,
-            )
-        )
+        jsoninfo = {
+            "server name": guild.name,
+            "server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
+            "server id": guild.id,
+            "region": guild.region,
+        }
         embedinfo = (
-            discord.Embed(title=guild.name, color=self.teal)
-            .add_field(
-                name="Basic Info",
-                value=f"Owner: {owner.mention}\n"
-                + f"ID: `{guild.id}`\n"
-                + f"Region: {region}\n"
-                + f"Description: {guild.description}\n"
-                + f"Two-Factor Authentication: {bool(guild.mfa_level)}\n".replace(
-                    "True", "Enabled"
-                ).replace("False", "Disabled")
-                + f"Animated icon: {bool(guild.is_icon_animated())}\n".replace(
-                    "True", "Yes"
-                ).replace("False", "No"),
-                inline=False,
-            )
-            .add_field(
-                name="Levels",
-                value=f"Verification Level: {guild.verification_level[0]} (level {guild.verification_level[1]+1})\n"
-                + f"Notification Level: {guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1})\n"
-                + f"Content Filter: {guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})",
-                inline=False,
-            )
-            .add_field(
-                name="Counts",
-                value=f"Members: {guild.member_count}\n"
-                + f"Boosts: {guild.premium_subscription_count}\n"
-                + f"Boosters: {len(guild.premium_subscribers)}\n"
-                + f"Text Channels: {len(guild.text_channels)}\n"
-                + f"Voice Channels: {len(guild.voice_channels)}\n"
-                + f"Channel Categories: {len(guild.categories)}\n"
-                + f"Bans: {len(await guild.bans())}\n"
-                + f"Emojis: {len(guild.emojis)}\n"
-                + f"Roles: {len(guild.roles)-1}",
-                inline=False,
-            )
-            .set_image(url=guild.icon_url)
-            .set_thumbnail(url=owner.avatar_url)
+            discord.Embed(title=guild.name, color=self.teal, inline=False)
+            .set_thumbnail(url=guild.icon_url)
+            .set_author(name="Server Info", icon_url=owner.avatar_url)
             .set_footer(
                 text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
             )
         )
+        embedinfofields = {
+            "Server Name": guild.name,
+            "Server Owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
+            "Server ID": guild.id,
+            "Region": str(guild.region).replace("-", " ").title().replace("Us", "US"),
+        }
+        if guild.description:
+            jsoninfo |= {
+                "server description": guild.description,
+            }
+            embedinfofields |= {
+                "Server Description": guild.description,
+            }
+        jsoninfo |= {
+            "server icon": str(guild.icon_url).split("?")[0],
+            "two-factor authentication": bool(guild.mfa_level),
+            "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
+            "verification level": f"{guild.verification_level[0]} (level {guild.verification_level[1]+1})",
+            "notification level": f"{guild.default_notifications[0].replace('_',' ')} (level {guild.default_notifications[1]+1})",
+            "content filter": f"{guild.explicit_content_filter[0].replace('_',' ')} (level {guild.explicit_content_filter[1]+1})",
+            "members": guild.member_count,
+            "text channels": len(guild.text_channels),
+            "voice channels": len(guild.voice_channels),
+            "channel categories": len(guild.categories),
+            "emojis": len(guild.emojis),
+            "roles": len(guild.roles) - 1,
+        }
+        embedinfofields |= {
+            "Two-Factor Authentication": bool(guild.mfa_level),
+            "Verification Level": f"{guild.verification_level[0].title()} (Level {guild.verification_level[1]+1})",
+            "Notification Level": f"{guild.default_notifications[0].replace('_',' ').title()} (Level {guild.default_notifications[1]+1})",
+            "Content Filter": f"{guild.explicit_content_filter[0].replace('_',' ').title()} (Level {guild.explicit_content_filter[1]+1})",
+            "Members": guild.member_count,
+            "Text Channels": len(guild.text_channels),
+            "Voice Channels": len(guild.voice_channels),
+            "Channel Categories": len(guild.categories),
+            "Emojis": len(guild.emojis),
+            "Roles": len(guild.roles) - 1,
+        }
+        if len(await guild.bans()) > 0:
+            jsoninfo |= {
+                "bans": len(await guild.bans()),
+            }
+            embedinfofields |= {
+                "Bans": len(await guild.bans()),
+            }
+        if guild.premium_subscription_count > 0:
+            jsoninfo |= {
+                "boosts": guild.premium_subscription_count,
+                "boosters": len(guild.premium_subscribers),
+            }
+            embedinfofields |= {
+                "Boosts": guild.premium_subscription_count,
+                "Boosters": len(guild.premium_subscribers),
+            }
+        for info in embedinfofields:
+            embedinfofields[info] = str(embedinfofields[info])
+            embedinfo.add_field(
+                name=info,
+                value=embedinfofields[info]
+                .replace("True", "Enabled")
+                .replace("False", "Disabled"),
+            )
         if getops(guild.id, "toggles", "jsonMenus"):
-            await ctx.send(f'```json\n"server information": {jsoninfo}```')
+            await ctx.send(
+                f'```json\n"server information": {dumps(jsoninfo,indent=4)}```'
+            )
         else:
             await ctx.send(embed=embedinfo)
 
@@ -386,48 +432,50 @@ class Tools(commands.Cog):
             user = ctx.author
         roles = user.roles[1:]
         roles.reverse()
+        roles = roles[:5]
         creation = user.created_at
-        jsoninfo = str(
-            dumps(
-                {
-                    "name": f"{user.display_name} ({user.name}#{user.discriminator})",
-                    "id": user.id,
-                    "avatar": str(user.avatar_url).split("?")[0],
-                    "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
-                    "animated avatar": user.is_avatar_animated(),
-                    "bot": user.bot,
-                    "roles": [role.name for role in roles],
-                },
-                indent=4,
-            )
-        )
+        jsoninfo = {
+            "name": f"{user.display_name} ({user.name}#{user.discriminator})",
+            "id": user.id,
+            "avatar": str(user.avatar_url).split("?")[0],
+            "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
+            "animated avatar": user.is_avatar_animated(),
+            "bot": user.bot,
+            "top 5 roles": [role.name for role in roles],
+        }
         embedinfo = (
             discord.Embed(
                 title=user.display_name,
                 color=self.teal,
-                description=(
-                    f"Discriminator: `{user.discriminator}`\n"
-                    + f"Ping: {user.mention}\n"
-                    + f"ID: `{user.id}`\n"
-                    + f"Animated Avatar: {user.is_avatar_animated()}\n"
-                    + f"Bot: {user.bot}\n"
-                    + f'Roles: {list2str([f"<@&{role.id}>" for role in roles], 2)}'
-                )
-                .replace("True", "Yes")
-                .replace("False", "No"),
                 inline=False,
             )
-            .set_image(url=user.avatar_url)
+            .set_thumbnail(url=user.avatar_url)
             .set_footer(
                 text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
             )
         )
+        embedinfofields = {
+            "Discriminator": user.discriminator,
+            "Ping": user.mention,
+            "ID": user.id,
+            "Animated Avatar": user.is_avatar_animated(),
+            "Bot": user.bot,
+            "Top 5 Roles": list2str([f"<@&{role.id}>" for role in roles], 2),
+        }
         if user.nick == user.display_name:
-            embedinfo.description = (
-                f'Real Name: "{user.name}"\n' + embedinfo.description
+            embedinfo.add_field(name="Real Name", value=user.name)
+        for info in embedinfofields:
+            embedinfofields[info] = str(embedinfofields[info])
+            embedinfo.add_field(
+                name=info,
+                value=embedinfofields[info]
+                .replace("True", "Yes")
+                .replace("False", "No"),
             )
         if getops(ctx.guild.id, "toggles", "jsonMenus"):
-            await ctx.send(f'```json\n"user information": {jsoninfo}```')
+            await ctx.send(
+                f'```json\n"user information": {dumps(jsoninfo,indent=4)}```'
+            )
         else:
             await ctx.send(embed=embedinfo)
 
@@ -443,36 +491,49 @@ class Tools(commands.Cog):
         jsoninfo = {
             "name": channel.name,
             "id": channel.id,
-            "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
-            "description": channel.topic,
-            "category": channel.category,
-            "nsfw": channel.is_nsfw(),
         }
         embedinfo = discord.Embed(
             title=channel.name.replace("-", " ").title(),
             color=self.teal,
-            description=(
-                f"Ping: {channel.mention}\n"
-                + f"ID: `{channel.id}`\n"
-                + f"Description: {channel.topic}\n"
-                + f"Category: {channel.category}\n"
-                + f"NSFW: {channel.is_nsfw()}\n"
-            )
-            .replace("True", "Yes")
-            .replace("False", "No"),
             inline=False,
         ).set_footer(
             text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT"
         )
+        embedinfofields = {
+            "Ping": channel.mention,
+            "ID": channel.id,
+        }
+        if channel.topic:
+            jsoninfo |= {"description": channel.topic}
+            embedinfofields |= {"Description": channel.topic}
+        jsoninfo |= {
+            "creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
+            "category": channel.category,
+            "nsfw": channel.is_nsfw(),
+        }
+        embedinfofields |= {
+            "Category": channel.category,
+            "NSFW": channel.is_nsfw(),
+        }
         if channel.slowmode_delay:
-            jsoninfo["slowmode"] = channel.slowmode_delay
-            embedinfo.description += f"Slowmode: {channel.slowmode_delay}\n"
+            jsoninfo |= {"slowmode": channel.slowmode_delay}
+            embedinfofields |= {"Slowmode": channel.slowmode_delay}
+        for info in embedinfofields:
+            embedinfofields[info] = str(embedinfofields[info])
+            embedinfo.add_field(
+                name=info,
+                value=embedinfofields[info]
+                .replace("True", "Yes")
+                .replace("False", "No"),
+            )
         if getops(ctx.guild.id, "toggles", "jsonMenus"):
             await ctx.send(
                 f'```json\n"channel information": {dumps(jsoninfo,indent=4)}```'
             )
         else:
             await ctx.send(embed=embedinfo)
+
+    # ANCHOR: SPEEDTEST
 
     @commands.command(
         name="speedtest",
@@ -515,6 +576,8 @@ class Tools(commands.Cog):
             await ctx.send(
                 "<:winxp_information:869760946808180747>A test is already in progress. Please wait..."
             )
+
+    # ANCHOR: CUSTOM ROLES
 
     @commands.command(
         name="role",
@@ -585,6 +648,7 @@ class Tools(commands.Cog):
                 f"{member.mention}, this is only for users with the {role_lock} role."
             )
 
+    # FIXME: There's only one stopwatch across the entire bot
     # @commands.group(
     #     name="stopwatch", help="Track how long something goes.", usage="<start, stop>"
     # )
