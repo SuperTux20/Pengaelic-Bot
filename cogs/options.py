@@ -34,6 +34,8 @@ class Options(commands.Cog):
     description = "My settings."
     description_long = "You need permissions to use these settings."
 
+# ANCHOR FUNCTIONS
+
     async def toggle_option(self, ctx, option, disable_message, enable_message):
         status = getops(ctx.guild.id, "toggles", option)
         updop(ctx.guild.id, "toggles", option, not status)
@@ -66,6 +68,10 @@ class Options(commands.Cog):
 
     async def set_role(self, ctx, option, value, message="is now set as the"):
         await self.setop(ctx, option, value, "role", message)
+
+# SECTION OPTIONS
+
+# ANCHOR BASE COMMANDS
 
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
@@ -189,14 +195,7 @@ class Options(commands.Cog):
                 "<:winxp_warning:869760947114348604>You didn't specify an option to set!"
             )
 
-    """
-     _____                 _
-    |_   _|__   __ _  __ _| | ___  ___
-      | |/ _ \ / _` |/ _` | |/ _ \/ __|
-      | | (_) | (_| | (_| | |  __/\__ \
-      |_|\___/ \__, |\__, |_|\___||___/
-               |___/ |___/
-    """
+    # ANCHOR TOGGLES
 
     @optoggle.command(
         name="atSomeone",
@@ -312,13 +311,7 @@ class Options(commands.Cog):
             "Welcome messages turned on.",
         )
 
-    """
-     ____       _
-    |  _ \ ___ | | ___  ___
-    | |_) / _ \| |/ _ \/ __|
-    |  _ < (_) | |  __/\__ \
-    |_| \_\___/|_|\___||___/
-    """
+    # ANCHOR ROLES
 
     @opset.command(
         name="botCommanderRole",
@@ -346,13 +339,7 @@ class Options(commands.Cog):
     async def change_mute_role(self, ctx, *, role: discord.Role):
         await self.set_role(ctx, "mute", role)
 
-    """
-      ____ _                            _
-     / ___| |__   __ _ _ __  _ __   ___| |___
-    | |   | '_ \ / _` | '_ \| '_ \ / _ \ / __|
-    | |___| | | | (_| | | | | | | |  __/ \__ \
-     \____|_| |_|\__,_|_| |_|_| |_|\___|_|___/
-    """
+    # ANCHOR CHANNELS
 
     @opset.command(
         name="dramaChannel",
@@ -378,14 +365,7 @@ class Options(commands.Cog):
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
         await self.set_channel(ctx, "welcome", channel)
 
-    """
-     __  __
-    |  \/  | ___  ___ ___  __ _  __ _  ___  ___
-    | |\/| |/ _ \/ __/ __|/ _` |/ _` |/ _ \/ __|
-    | |  | |  __/\__ \__ \ (_| | (_| |  __/\__ \
-    |_|  |_|\___||___/___/\__,_|\__, |\___||___/
-                                |___/
-    """
+    # ANCHOR MESSAGES
 
     @opset.command(
         name="welcomeMessage",
@@ -409,13 +389,7 @@ class Options(commands.Cog):
             f'<:winxp_information:869760946808180747>Goodbye message set to "{message}".'
         )
 
-    """
-      ____
-     / ___|___ _ __  ___  ___  _ __
-    | |   / _ \ '_ \/ __|/ _ \| '__|
-    | |__|  __/ | | \__ \ (_) | |
-     \____\___|_| |_|___/\___/|_|
-    """
+    # ANCHOR CENSOR
 
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
@@ -500,6 +474,8 @@ class Options(commands.Cog):
             updop(ctx.guild.id, "lists", "censorList", [])
             await ctx.send("<:winxp_information:869760946808180747>Filter wiped.")
             self.wipe_censor_confirm = False
+
+# END SECTION
 
     @read_options.error
     @reset_options.error
