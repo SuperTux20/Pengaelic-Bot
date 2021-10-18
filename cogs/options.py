@@ -503,9 +503,6 @@ class Options(commands.Cog):
 
     @read_options.error
     @reset_options.error
-    @setop.error
-    @set_channel.error
-    @set_role.error
     @optoggle.error
     @opset.error
     @toggle_censor.error
