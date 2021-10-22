@@ -18,7 +18,7 @@ class NonCommands(commands.Cog):
     name_typable = "noncommands"
     description = "Automatic message responses that aren't commands."
     description_long = description
-
+    # ANCHOR: ON MEMBER JOIN
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         if getops(member.guild.id, "toggles", "welcome"):
@@ -30,6 +30,7 @@ class NonCommands(commands.Cog):
                     .replace("USER", member.name)
                 )
 
+    # ANCHOR: ON MEMBER LEAVE
     @commands.Cog.listener()
     async def on_member_leave(self, member: discord.Member):
         if getops(member.guild.id, "toggles", "welcome"):
@@ -43,7 +44,7 @@ class NonCommands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        # for when someone doesn't know what the prefix is
+        # ANCHOR: RETURN HELP NOTE
         if "<@!" + str(self.client.user.id) + ">" == message.content:
             await message.channel.send(f"My prefix is `{self.client.command_prefix}`")
         # check if the message it's reading belongs to a bot
@@ -53,7 +54,7 @@ class NonCommands(commands.Cog):
                 # send everything to variables to make my life easier
                 messagetext = message.content.lower()
                 server = message.guild.id
-                # this section is for Dad Bot-like responses
+                # ANCHOR: DAD JOKES
                 if getops(server, "toggles", "dadJokes"):
                     # four types of apostrophes/ticks plus allowance for "im"
                     dad_prefixes = ["'", "`", "‘", "’", ""]
@@ -98,7 +99,7 @@ class NonCommands(commands.Cog):
                                     f"Hi{messagetext[len(dad)+slicer:]}, I'm the Pengaelic Bot!"
                                 )
 
-                # this section is to auto-delete messages containing a keyphrase in the censor text file
+                # ANCHOR: CENSOR
                 if getops(server, "toggles", "censor"):
                     all_bads = getops(server, "lists", "censorList")
                     for bad in all_bads:
@@ -108,7 +109,7 @@ class NonCommands(commands.Cog):
                                 f"Hey, that word `{bad}` isn't allowed here!"
                             )
 
-                # bro, did someone seriously say the chat was dead?
+                # ANCHOR: DEAD CHAT
                 if (
                     (
                         "dead" in messagetext
@@ -122,7 +123,7 @@ class NonCommands(commands.Cog):
                         f"{choice(['N', 'n'])}o {choice(['U', 'u'])}"
                     )
 
-                # this section makes automatic suggestion polls
+                # ANCHOR: AUTO POLLS
                 if getops(
                     server, "toggles", "suggestions"
                 ) and message.channel.id == getops(
@@ -145,7 +146,7 @@ class NonCommands(commands.Cog):
                     await thepoll.add_reaction("🤷")
                     await thepoll.add_reaction("❌")
 
-                # a rickroll-themed game of russian roulette, except the barrel is reset every time
+                # ANCHOR: RICK ROULETTE
                 if "you know the rules" == messagetext and getops(
                     server, "toggles", "rickRoulette"
                 ):
@@ -156,12 +157,13 @@ class NonCommands(commands.Cog):
                         )
                     )
 
-                # bring back @someone from an april fools update
+                # ANCHOR: @SOMEONE
                 if "@someone" == messagetext and getops(server, "toggles", "atSomeone"):
                     await message.channel.send(
                         choice(message.guild.members).mention
                         + ", you have been randomly selected by a @someone ping!"
                     )
+            # ANCHOR: ADMIN DM INTERACTION
             elif isinstance(message.channel, discord.channel.DMChannel):
                 if message.attachments and Developers.check(self, message.author):
                     if message.attachments[0].filename == "config.json":

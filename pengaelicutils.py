@@ -8,13 +8,15 @@ from subprocess import check_output
 from time import time
 from tinydb import TinyDB, Query
 
-
+# SECTION: CLASSES
+# SECTION: STOPWATCH
 class Stopwatch:
     start_time = 0
-
+    # ANCHOR: START
     def start(self):
         self.start_time = time()
 
+    # ANCHOR: END
     def end(self) -> str:
         try:
             elapsed = time() - self.start_time
@@ -36,6 +38,7 @@ class Stopwatch:
         except AttributeError:
             return "The stopwatch was never started."
 
+    # ANCHOR: MONKEY WATCH
     # specific to the infinite monkey generator
     def monkeywatch(self, start: time) -> str:
         elapsed = time() - start
@@ -56,11 +59,21 @@ class Stopwatch:
             return f"{minutes}:{seconds}"
 
 
+# END SECTION
+
+# SECTION: DEVELOPERS
 # load all developer user IDs
 class Developers:
     dotenv(".env")
     everyone = loads(env("DEVELOPER_IDS"))
+    # ANCHOR: GET
+    def get(self, dev=None):
+        if dev == None:
+            return Developers.everyone  # get all devs
+        else:
+            return Developers.everyone[dev.lower()]  # get specific dev
 
+    # ANCHOR: CHECK
     def check(self, user, dev=None) -> bool:
         if dev == None:
             if user.id in list(Developers.everyone.values()):  # check if user is a dev
@@ -68,18 +81,16 @@ class Developers:
             else:
                 return False
         else:
-            if user.id == Developers.everyone[dev]:  # check if user is specific dev
+            if user.id == self.get(dev):  # check if user is specific dev
                 return True
             else:
                 return False
 
-    def get(self, dev=None):
-        if dev == None:
-            return Developers.everyone  # get all devs
-        else:
-            return Developers.everyone[dev.lower()]  # get specific dev
 
+# END SECTION
+# END SECTION
 
+# ANCHOR: LIST TO STRING
 def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
     # if mode == 0: proper sentence formatting (minus period)
     # if mode == 1: remove all separation
@@ -108,6 +119,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
     return outstr
 
 
+# ANCHOR: ERROR UNHANDLING
 def unhandling(error, tux_in_server) -> str:
     error = str(error)
     author = tux_in_server[1]
@@ -129,6 +141,8 @@ def unhandling(error, tux_in_server) -> str:
     return output + tux_msg
 
 
+# SECTION OPTIONS
+# ANCHOR: GENERATE NEW OPTIONS
 def newops() -> dict:
     return {
         "channels": {
@@ -167,6 +181,7 @@ def newops() -> dict:
     }
 
 
+# ANCHOR: GET OPTIONS
 def getops(guild: str, category: str = None, option: str = None) -> dict:
     db = TinyDB("config.json")
     server = Query()
@@ -183,6 +198,7 @@ def getops(guild: str, category: str = None, option: str = None) -> dict:
     return options
 
 
+# ANCHOR: UPDATE OPTIONS
 def updop(guild: str, category: str, option: str, value):
     db = TinyDB("config.json")
     server = Query()
@@ -191,6 +207,9 @@ def updop(guild: str, category: str, option: str, value):
     db.update({category: options}, server.guildID == guild)
 
 
+# END SECTION
+
+# ANCHOR: ELDRITCH SYLLABLES
 def eldritch_syllables() -> list:
     vowels = list("aeiouy")
     consonants = list("bcdfghjklmnpqrstvwxz")
@@ -220,6 +239,7 @@ def eldritch_syllables() -> list:
     return list(set(syllables))
 
 
+# ANCHOR: SYLLABLES
 syllables = [
     "a","ae","ag","ah","al","am","an","art","as","au","av","ayn","az","be","bi","bo","bor","burn",
     "by","ca","cai","car","cat","ce","cei","cer","cha","ci","co","cu","da","dal","dam","dan",
@@ -234,6 +254,7 @@ syllables = [
     "um","un","ur","va","vac","van","ve","vi","wa","wyn","yu","za","zal","ze","zi","zil","zo","zu",
 ]
 
+# ANCHOR: HANGMAN WORDS
 hangman_words = [
     "awesome",
     "cat",
@@ -253,6 +274,7 @@ hangman_words = [
     "wonderful",
 ]
 
+# ANCHOR: PENGAELIC HANGMAN WORDS
 pengaelic_words = {
     "pengaelic": "The Pengaelics are a humanoid species that live in the Caretaker's Garden. They're doomed to go extinct, even more so after their planet was destroyed, but that won't stop them from trying to live the best lives they can.",
     "endron": "The Endrons are a curious humanoid species, they can perform extraordinary feats of magic, and it is said that they are descended from long-lost gods. Their magic is directly tied to the amount of mass on their bodies, converting the mass into magic energy like a sort of fuel.",
@@ -278,6 +300,7 @@ pengaelic_words = {
     "resonant": "The Resonant is a young goddess, influencing the thoughts and emotions of all who hear her music. She almost constantly emanates music from her body, which changes depending on her state of mind.",
 }
 
+# ANCHOR: REGIONAL INDICATORS
 regional_indicators = {
     "🇦": "a",
     "🇧": "b",
@@ -307,6 +330,7 @@ regional_indicators = {
     "🇿": "z",
 }
 
+# ANCHOR: MAGIC 8 BALL RESPONSES
 magic_responses = [
     [
         r"¯\\\_(ツ)\_/¯",
@@ -398,7 +422,7 @@ magic_responses = [
     ],
 ]
 
-
+# SECTION: LITTLE EASE-OF-USE FUNCTIONS
 def jsoncheck(guild: str) -> bool:
     return getops(guild, "toggles", "jsonMenus")
 
@@ -412,3 +436,6 @@ def tux_in_guild(ctx, client) -> list:
 
 def shell(command) -> str:
     return check_output(command, shell=True).decode()[:-1]
+
+
+# END SECTION

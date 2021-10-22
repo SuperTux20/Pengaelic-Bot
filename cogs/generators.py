@@ -29,6 +29,7 @@ class Generators(commands.Cog):
     description = "Do ya like randomization?"
     description_long = description + " So do I!"
 
+    # SECTION: FUNCTIONS
     def MonkeyBusiness(
         self,
         word: str,
@@ -88,6 +89,8 @@ class Generators(commands.Cog):
                 return "The lower limit cannot be higher than the upper limit."
         else:
             return "Values can't be zero."
+
+    # END SECTION
 
     @commands.command(
         name="name",

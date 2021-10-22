@@ -19,7 +19,7 @@ class Interactions(commands.Cog):
     name_typable = name
     description = "Interact with other server members!"
     description_long = description
-
+    # SECTION: FUNCTIONS
     def act(self, ctx, act, pastact, actees, violence) -> discord.Embed:
         acted = []
         for actee in actees:
@@ -49,6 +49,9 @@ class Interactions(commands.Cog):
         else:
             await ctx.send(embed=self.act(ctx, act, pastact, actees, True))
 
+    # END SECTION
+
+    # SECTION: INTERACTIONS
     @commands.command(
         name="hug",
         help="Give somebody a hug!",
@@ -175,6 +178,9 @@ class Interactions(commands.Cog):
             ],
         )
 
+    # END SECTION
+
+    # SECTION: ACTS OF VIOLENCE
     @commands.command(
         name="slap", help="Slap someone!", usage="<username, nickname, or @mention>"
     )
@@ -201,9 +207,11 @@ class Interactions(commands.Cog):
     async def bonk(self, ctx, *bonk: discord.Member):
         await self.vact(ctx, "bonk", "bonked", bonk)
 
+    # END SECTION
+
     @bonk.error
     @boop.error
-    # @hug.error
+    @hug.error
     @kiss.error
     @nom.error
     @pat.error

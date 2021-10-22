@@ -34,8 +34,8 @@ class Options(commands.Cog):
     description = "My settings."
     description_long = "You need permissions to use these settings."
 
-    # ANCHOR: FUNCTIONS
-
+    # SECTION: FUNCTIONS
+    # ANCHOR: TOGGLE
     async def toggle_option(self, ctx, option, disable_message, enable_message):
         status = getops(ctx.guild.id, "toggles", option)
         updop(ctx.guild.id, "toggles", option, not status)
@@ -44,6 +44,8 @@ class Options(commands.Cog):
         else:
             await ctx.send("<:winxp_information:869760946808180747>" + enable_message)
 
+    # SECTION: SET
+    # ANCHOR: GENERAL
     async def setop(self, ctx, option, value, optype, message):
         if ctx.author.guild_permissions.manage_roles or getops(
             ctx.guild.id, "roles", "botCommanderRole"
@@ -63,16 +65,20 @@ class Options(commands.Cog):
                 "<:winxp_critical_error:869760946816553020>You do not have permission to use that command."
             )
 
+    # ANCHOR: CHANNEL
     async def set_channel(self, ctx, option, value, message="is now set as the"):
         await self.setop(ctx, option, value, "channel", message)
 
+    # ANCHOR: ROLE
     async def set_role(self, ctx, option, value, message="is now set as the"):
         await self.setop(ctx, option, value, "role", message)
 
+    # END SECTION
+    # END SECTION
+
     # SECTION: OPTIONS
-
-    # ANCHOR: BASE COMMANDS
-
+    # SECTION: BASE COMMANDS
+    # ANCHOR: MENU
     @commands.group(name="options", help="Show the current values of all options")
     @commands.has_permissions(manage_messages=True)
     async def read_options(self, ctx):
@@ -154,6 +160,7 @@ class Options(commands.Cog):
                             )
                 await ctx.send(embed=embedinfo)
 
+    # ANCHOR: RESET
     @read_options.command(
         name="reset", help="Reset to the default options.", aliases=["defaults"]
     )
@@ -168,9 +175,6 @@ class Options(commands.Cog):
             await sleep(10)
             if self.reset_options_confirm:
                 self.reset_options_confirm = False
-                await ctx.send(
-                    "<:winxp_information:869760946808180747>Pending reset expired."
-                )
         elif self.reset_options_confirm:
             ops = newops()
             for op in ["channels", "lists", "messages", "roles", "toggles"]:
@@ -181,6 +185,7 @@ class Options(commands.Cog):
             await self.read_options(ctx)
             self.reset_options_confirm = False
 
+    # ANCHOR: TOGGLE
     @read_options.group(name="toggle", help="Toggle an option.")
     async def optoggle(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -188,6 +193,7 @@ class Options(commands.Cog):
                 "<:winxp_warning:869760947114348604>You didn't specify an option to toggle!"
             )
 
+    # ANCHOR: SET
     @read_options.group(name="set", help="Set an option.")
     async def opset(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -195,8 +201,10 @@ class Options(commands.Cog):
                 "<:winxp_warning:869760947114348604>You didn't specify an option to set!"
             )
 
-    # ANCHOR: TOGGLES
+    # END SECTION
 
+    # SECTION: TOGGLES
+    # ANCHOR[id=@toggle]: @SOMEONE
     @optoggle.command(
         name="atSomeone",
         help="Change whether custom roles should be locked to members with only a specific role.",
@@ -210,6 +218,7 @@ class Options(commands.Cog):
             "Server members can now ping @someone.",
         )
 
+    # ANCHOR[id=censortoggle]: CENSOR
     @optoggle.command(
         name="censor",
         help="Toggle the automatic deletion of messages containing specific keywords.",
@@ -221,6 +230,7 @@ class Options(commands.Cog):
             ctx, "censor", "Censorship turned off.", "Censorship turned on."
         )
 
+    # ANCHOR[id=dadtoggle]: DAD JOKES
     @optoggle.command(
         name="dadJokes",
         help='Toggle the automatic Dad Bot-like responses to messages starting with "I\'m".',
@@ -234,6 +244,7 @@ class Options(commands.Cog):
             "Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)",
         )
 
+    # ANCHOR[id=dedtoggle]: DEAD CHAT
     @optoggle.command(
         name="deadChat",
         help='Toggle the automatic "no u" response to someone saying "dead chat".',
@@ -247,6 +258,7 @@ class Options(commands.Cog):
             f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)",
         )
 
+    # ANCHOR[id=jsontoggle]: JSON MENUS
     @optoggle.command(
         name="jsonMenus",
         help="Change whether menus should be shown in embed or JSON format.",
@@ -260,6 +272,7 @@ class Options(commands.Cog):
             "Menus will be shown in JSON format.",
         )
 
+    # ANCHOR[id=locktoggle]: LOCK CUSTOM ROLES
     @optoggle.command(
         name="lockCustomRoles",
         help="Change whether custom roles should be locked to members with only a specific role.",
@@ -276,6 +289,7 @@ class Options(commands.Cog):
             "Custom roles are now locked." + message,
         )
 
+    # ANCHOR[id=ricktoggle]: RICK ROULETTE
     @optoggle.command(
         name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off."
     )
@@ -288,6 +302,7 @@ class Options(commands.Cog):
             "You know the rules, it's time to die. (Rick Roulette turned on)",
         )
 
+    # ANCHOR[id=suggtoggle]: AUTO SUGGESTIONS
     @optoggle.command(
         name="suggestions",
         help="Turn automatic poll-making on or off. This does not effect the p!suggest command.",
@@ -301,6 +316,7 @@ class Options(commands.Cog):
             "Auto-suggestions turned on.",
         )
 
+    # ANCHOR[id=welcometoggle]: WELCOME MESSAGES
     @optoggle.command(name="welcome", help="Toggle the automatic welcome messages.")
     @commands.has_permissions(manage_messages=True)
     async def toggle_welcome(self, ctx):
@@ -311,8 +327,10 @@ class Options(commands.Cog):
             "Welcome messages turned on.",
         )
 
-    # ANCHOR: ROLES
+    # END SECTION
 
+    # SECTION: ROLES
+    # ANCHOR[id=cmdr]: BOT COMMANDER
     @opset.command(
         name="botCommanderRole",
         help="Set the bot commander role (required for a lot of commands).",
@@ -321,6 +339,7 @@ class Options(commands.Cog):
     async def change_cmdr_role(self, ctx, *, role: discord.Role):
         await self.set_role(ctx, "botCommander", role)
 
+    # ANCHOR[id=customlock]: CUSTOM ROLE LOCK
     @opset.command(
         name="customRoleLockRole",
         help="Set what role is required to use custom roles.",
@@ -329,18 +348,22 @@ class Options(commands.Cog):
     async def change_required_role(self, ctx, *, role: discord.Role):
         await self.set_role(ctx, "customRoleLock", role)
 
+    # ANCHOR[id=dramarole]: DRAMA ROLE
     @opset.command(name="dramaRole", help="Set the drama role.")
     @commands.has_permissions(manage_roles=True)
     async def change_drama_role(self, ctx, *, role: discord.Role):
         await self.set_role(ctx, "drama", role)
 
+    # ANCHOR[id=muterole]: MUTE ROLE
     @opset.command(name="muteRole", help="Set the muted role.")
     @commands.has_permissions(manage_roles=True)
     async def change_mute_role(self, ctx, *, role: discord.Role):
         await self.set_role(ctx, "mute", role)
 
-    # ANCHOR: CHANNELS
+    # END SECTION
 
+    # SECTION: CHANNELS
+    # ANCHOR[id=dramachan]: DRAMA CHANNEL
     @opset.command(
         name="dramaChannel",
         help="Set what channel auto-suggestions should be converted in.",
@@ -349,6 +372,7 @@ class Options(commands.Cog):
     async def change_drama_channel(self, ctx, *, channel: discord.TextChannel):
         await self.set_channel(ctx, "drama", channel)
 
+    # ANCHOR[id=suggchan]: SUGGESTIONS
     @opset.command(
         name="suggestionsChannel",
         help="Set what channel auto-suggestions should be converted in.",
@@ -357,6 +381,7 @@ class Options(commands.Cog):
     async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):
         await self.set_channel(ctx, "suggestions", channel)
 
+    # ANCHOR[id=welcomechan]: WELCOME CHANNEL
     @opset.command(
         name="welcomeChannel",
         help="Set what channel welcome messages should be sent in.",
@@ -365,8 +390,10 @@ class Options(commands.Cog):
     async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):
         await self.set_channel(ctx, "welcome", channel)
 
-    # ANCHOR: MESSAGES
+    # END SECTION
 
+    # SECTION: MESSAGES
+    # ANCHOR[id=welcome]: WELCOME
     @opset.command(
         name="welcomeMessage",
         help="Set what message should be sent in the welcome channel when someone joins.",
@@ -378,6 +405,7 @@ class Options(commands.Cog):
             f'<:winxp_information:869760946808180747>Welcome message set to "{message}".'
         )
 
+    # ANCHOR[id=goodbye]: GOODBYE
     @opset.command(
         name="goodbyeMessage",
         help="Set what message should be sent in the welcome channel when someone leaves.",
@@ -389,8 +417,10 @@ class Options(commands.Cog):
             f'<:winxp_information:869760946808180747>Goodbye message set to "{message}".'
         )
 
-    # ANCHOR: CENSOR
+    # END SECTION
 
+    # SECTION: CENSOR
+    # ANCHOR: CENSOR INFO
     @read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
     async def censor(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -398,6 +428,7 @@ class Options(commands.Cog):
                 "<:winxp_information:869760946808180747>Available options: `(show/list/get), add, (delete/remove), (wipe/clear)`"
             )
 
+    # ANCHOR: SHOW CENSOR
     @censor.command(
         name="show",
         help="Display the contents of the censorship filter.",
@@ -413,6 +444,7 @@ class Options(commands.Cog):
                 f'```json\n"censor list": {dumps(all_bads, indent=4, sort_keys=True)}\n```'
             )
 
+    # ANCHOR: ADD TO CENSOR
     @censor.command(
         name="add",
         help="Add a word to the censorship filter.",
@@ -434,6 +466,7 @@ class Options(commands.Cog):
                 "<:winxp_information:869760946808180747>Word added to the filter."
             )
 
+    # ANCHOR: REMOVE FROM CENSOR
     @censor.command(
         name="delete",
         help="Remove a word from the censorship filter.",
@@ -456,6 +489,7 @@ class Options(commands.Cog):
                 "<:winxp_information:869760946808180747>Word removed from the filter."
             )
 
+    # ANCHOR: WIPE CENSOR
     @censor.command(name="wipe", help="Clear the censor file.", aliases=["clear"])
     @commands.has_permissions(manage_messages=True)
     async def wipe_censor(self, ctx):
@@ -467,14 +501,12 @@ class Options(commands.Cog):
             await sleep(10)
             if self.wipe_censor_confirm:
                 self.wipe_censor_confirm = False
-                await ctx.send(
-                    "<:winxp_information:869760946808180747>Pending wipe expired."
-                )
         elif self.wipe_censor_confirm:
             updop(ctx.guild.id, "lists", "censorList", [])
             await ctx.send("<:winxp_information:869760946808180747>Filter wiped.")
             self.wipe_censor_confirm = False
 
+    # END SECTION
     # END SECTION
 
     @read_options.error

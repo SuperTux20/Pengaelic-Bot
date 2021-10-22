@@ -26,6 +26,7 @@ class Games(commands.Cog):
     description = "All sorts of fun stuff!"
     description_long = description
 
+    # ANCHOR: 8 BALL
     @commands.command(
         name="8ball",
         help="Ask the ball and receive wisdom... :crystal_ball:",
@@ -38,6 +39,7 @@ class Games(commands.Cog):
         else:
             await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
+    # ANCHOR: DICE ROLL
     @commands.command(
         name="roll",
         help="Roll some dice!",
@@ -95,6 +97,7 @@ class Games(commands.Cog):
         finally:
             await ctx.send(":game_die:" + response)
 
+    # ANCHOR: COIN FLIP
     @commands.command(
         name="flip",
         help="Flip some coins!",
@@ -132,6 +135,7 @@ class Games(commands.Cog):
                 response = f"You flipped {results.count(0)} heads and {results.count(1)} tails{response}"
         await ctx.send(":moneybag:" + response)
 
+    # ANCHOR: CARD DRAW
     @commands.command(
         name="draw",
         help="Draw some cards!",
@@ -222,6 +226,7 @@ class Games(commands.Cog):
                 )
             )
 
+    # ANCHOR: BUBBLEWRAP!
     @commands.command(
         name="pop",
         help="Get a sheet of bubble wrap! Click to pop.",
@@ -266,6 +271,7 @@ class Games(commands.Cog):
             )
         await ctx.send(sheet)
 
+    # ANCHOR: HANGMAN
     @commands.command(
         name="hangman",
         help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',

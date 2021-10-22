@@ -158,7 +158,6 @@ class Tools(commands.Cog):
             await the_poll.add_reaction("❌")
 
     # ANCHOR: MODERATION
-
     @commands.command(
         name="clear",
         help="Clear some messages away.",
@@ -169,7 +168,7 @@ class Tools(commands.Cog):
     async def clear(self, ctx, msgcount: int = 5):
         await ctx.channel.purge(limit=msgcount + 1)
         report = await ctx.send(
-            f"<:winxp_information:869760946808180747>{msgcount} (probably) messages deleted."
+            f"<:winxp_information:869760946808180747>{msgcount} messages deleted."
         )
         await sleep(3)
         try:
@@ -192,9 +191,6 @@ class Tools(commands.Cog):
             await sleep(10)
             if self.nukeconfirm:
                 self.nukeconfirm = False
-                await ctx.send(
-                    "<:winxp_information:869760946808180747>Pending nuke expired."
-                )
         elif self.nukeconfirm:
             newchannel = await ctx.channel.clone(reason=f"Nuking #{ctx.channel.name}")
             await newchannel.edit(
@@ -203,22 +199,32 @@ class Tools(commands.Cog):
             await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
             self.nukeconfirm = False
 
+    # LINK cogs/options.py#dramarole
+    # LINK cogs/options.py#dramachannel
     @commands.command(
         name="drama", help="Assign a member the drama role.", usage="<member>"
     )
     @commands.has_permissions(kick_members=True)
     async def drama(self, ctx, member: discord.Member, *, reason=None):
         try:
-            await member.add_roles(
-                get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "dramaRole")),
-                reason=reason,
-            )
-            await ctx.send(f"Sent {member} to the drama channel for reason `{reason}`.")
+            if getops(ctx.guild.id, "channels", "dramaChannel"):
+                await member.add_roles(
+                    get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "dramaRole")),
+                    reason=reason,
+                )
+                await ctx.send(
+                    f"Sent {member} to the drama channel for reason `{reason}`."
+                )
+            else:
+                await ctx.send(
+                    f"<:winxp_warning:869760947114348604>There is no set drama channel. To set a drama channel, type `{self.client.command_prefix}options set dramaChannel <drama channel>`."
+                )
         except:
             await ctx.send(
                 f"<:winxp_warning:869760947114348604>There is no set drama role. To set a drama role, type `{self.client.command_prefix}options set dramaRole <drama role>`."
             )
 
+    # LINK cogs/options.py#muterole
     @commands.command(name="mute", help="Mute a member.", usage="<member>")
     @commands.has_permissions(kick_members=True)
     async def mute(self, ctx, member: discord.Member, *, reason=None):
