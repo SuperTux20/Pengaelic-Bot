@@ -113,13 +113,13 @@ class Tools(commands.Cog):
             kernel = uname("r")
             os = uname("o")
         if os == "Android":
-            emoji = "<:os_android:855493322591830016>"
+            emoji = "<:os_android:901137017860136961>"
         elif os == "GNU/Linux":
             try:
                 if environ["WSL_DISTRO_NAME"]:
-                    emoji = "<:os_windows:855493279797084200>"
+                    emoji = "<:os_windows:901137018405400576>"
             except KeyError:
-                emoji = "<:os_linux:855493980267479080>"
+                emoji = "<:os_linux:901137017860136961>"
         await ctx.send(
             f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel}{emoji}"
         )
