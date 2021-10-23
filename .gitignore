@@ -134,3 +134,6 @@ config.*
 
 # deleted files
 .fuse_hidden*
+
+# nohup output from when i start the bot from ssh
+nohup.out
