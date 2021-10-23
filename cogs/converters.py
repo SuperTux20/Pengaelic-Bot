@@ -1,4 +1,4 @@
-#!/usr/bin/python3.9
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from num2words import num2words

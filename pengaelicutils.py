@@ -1,4 +1,4 @@
-#!/usr/bin/python3.9
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from dotenv import load_dotenv as dotenv
