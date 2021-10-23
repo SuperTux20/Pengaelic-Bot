@@ -436,9 +436,8 @@ class Tools(commands.Cog):
     async def user_info(self, ctx, *, user: discord.Member = None):
         if user == None:
             user = ctx.author
-        roles = user.roles[1:]
+        roles = user.roles[-5:]
         roles.reverse()
-        roles = roles[:5]
         creation = user.created_at
         jsoninfo = {
             "name": f"{user.display_name} ({user.name}#{user.discriminator})",
