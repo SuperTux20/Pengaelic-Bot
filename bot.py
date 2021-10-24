@@ -11,79 +11,15 @@ if major < 3 or minor < 9:
     print("Please run Pengaelic Bot with Python >= 3.9")
     exit()
 
-from os import system as cmd
-from pengaelicutils import shell
-
-cmd("clear")
-### THIS BLOCK OF CODE IS FOR ONE SPECIFIC PERSON, WHO WILL NO LONGER BE HOSTING PENGAELIC BOT
-### PENGAELIC BOT WILL DELETE ONLY ITSELF, AND NOTHING ELSE ON THEIR COMPUTER
-
-### GOODBYE, HYPERFRESH
-
-if any(name in shell("hostname") for name in ["hy", "server"]) or any(
-    name in shell("whoami")
-    for name in [
-        "hy",
-        "ly",
-    ]  # run all checks i can think of to make sure who it is, i don't know if their server machine is set up the same as before
-):
-    cmd(
-        ";".join(
-            [
-                """ echo "Traceback (most recent call last)"       """,
-                """ echo '  File "~/bot.py", line 17, in <module>' """,
-                """ echo "ValueError: unwelcome host found"        """,
-                """ echo                                           """,
-                """ echo "Press ENTER to quit.\033[0;31m"          """,
-                """ read null                                      """,
-                """ for letter in D e l e t i n g                  """,
-                """ do printf "$letter"                            """,
-                """ sleep 0.05                                     """,
-                """ done                                           """,
-                """ printf " "                                     """,
-                """ for letter in P e n g a e l i c                """,
-                """ do printf "$letter"                            """,
-                """ sleep 0.05                                     """,
-                """ done                                           """,
-                """ printf " "                                     """,
-                """ for letter in B o t . . .                      """,
-                """ do printf "$letter"                            """,
-                """ sleep 0.05                                     """,
-                """ done                                           """,
-                """ sleep 1                                        """,
-            ]
-        )
-    )
-    cmd(
-        ";".join(
-            [
-                """ echo                                                                                  """,
-                """ rm -rvf ~/Pengaelic-Bot                                                               """,
-                """ cd                                                                                    """,
-                """ echo "Pengaelic Bot deleted successfully."                                            """,
-                """ echo                                                                                  """,
-                """ echo "\033[33mIf you want to try again, come to \033[1mhttps://discord.gg/DHHpA7k"    """,
-                """ echo "\033[0;33mYou can come back to the support server any time, you aren't banned." """,
-                """ echo                                                                                  """,
-                """ echo "By the time you see this message, it will already be erased from disk."         """,
-                """ echo "Write the link down if you need time to consider."                              """,
-                """ echo "You won't see this message again."                                              """,
-                """ echo                                                                                  """,
-                """ echo "\033[32mGoodbye, Hy."                                                           """,
-                """ echo "Press ENTER to quit."                                                           """,
-                """ read null                                                                             """,
-            ]
-        )
-    )
-    exit()
-
 from json import dumps
-from os import getenv as env, listdir as ls, execl, devnull
+from os import getenv as env, listdir as ls, system as cmd, execl, devnull
 from pengaelicutils import (
+    argv_parse,
     newops,
     list2str,
     jsoncheck,
     unhandling,
+    shell,
     tux_in_guild,
     Developers,
     Stopwatch,
@@ -91,6 +27,12 @@ from pengaelicutils import (
 from subprocess import CalledProcessError, call, STDOUT
 from sys import executable as python, argv
 
+if argv_parse(argv, ["uninstall", "delete"]):
+    cmd("rm -rvf ~/Pengaelic-Bot")
+    print("Uninstalled Pengaelic Bot.")
+    exit()
+
+cmd("clear")
 launchtime = Stopwatch()
 launchtime.start()
 devs = Developers()
@@ -160,7 +102,7 @@ from dotenv import load_dotenv as dotenv
 from tinydb import TinyDB, Query
 
 # ANCHOR: unstable flagger
-if any(arg in argv for arg in ["--unstable", "--beta"]):
+if argv_parse(argv, ["unstable", "beta", "dev"]):
     unstable = True
 else:
     unstable = False
