@@ -102,7 +102,7 @@ class Tools(commands.Cog):
     )
     async def showOS(self, ctx):
         def uname(item) -> str:
-            return shell(f"uname -{item}")[:-1]
+            return shell(f"uname -{item}")
 
         async with ctx.typing():
             system = (
@@ -112,6 +112,7 @@ class Tools(commands.Cog):
             )
             kernel = uname("r")
             os = uname("o")
+        emoji = "<:os_linux:901137018153754684>"
         if os == "Android":
             emoji = "<:os_android:901137017860136961>"
         elif os == "GNU/Linux":
@@ -119,7 +120,7 @@ class Tools(commands.Cog):
                 if environ["WSL_DISTRO_NAME"]:
                     emoji = "<:os_windows:901137018405400576>"
             except KeyError:
-                emoji = "<:os_linux:901137017860136961>"
+                pass
         await ctx.send(
             f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel}{emoji}"
         )
