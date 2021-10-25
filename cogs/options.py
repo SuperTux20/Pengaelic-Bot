@@ -118,7 +118,7 @@ class Options(commands.Cog):
 			if jsoncheck(ctx.guild.id):
 				jsoninfo = str(
 					dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace(
-						"\n	", "\n"
+						"\n    ", "\n"
 					)
 				)
 				await ctx.send(f"```json\n{jsoninfo}\n```")
