@@ -77,7 +77,7 @@ class Generators(commands.Cog):
 					[
 						"".join(
 							[
-								choice(syls)
+								choice(choice(syls))
 								for _ in range(randint(lower_limit, upper_limit))
 							]
 						).capitalize()
