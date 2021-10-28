@@ -13,8 +13,7 @@ from tinydb import TinyDB, Query
 class Stopwatch:
 	start_time = 0
 	# ANCHOR: START
-	def start(self):
-		self.start_time = time()
+	def start(self):	self.start_time = time()
 
 	# ANCHOR: END
 	def end(self) -> str:
@@ -25,18 +24,15 @@ class Stopwatch:
 			s = (m - minutes) * 60
 			seconds = int(s)
 			ms = int(round(s - seconds, 3) * 1000)
-			if len(str(minutes)) == 1:
-				minutes = f"0{minutes}"
-			if len(str(seconds)) == 1:
-				seconds = f"0{seconds}"
+			if len(str(minutes)) == 1: minutes = f"0{minutes}"
+			if len(str(seconds)) == 1: seconds = f"0{seconds}"
 			if minutes == "00":
-				if seconds == "00":
-					return f"{ms}ms"
+				if seconds == "00":	return f"{ms}ms"
 				return f"{int(seconds)}.{ms} seconds"
-			else:
-				return f"{minutes}:{seconds}"
-		except AttributeError:
-			return "The stopwatch was never started."
+
+			else:	return f"{minutes}:{seconds}"
+   
+		except AttributeError:	return "The stopwatch was never started."
 
 	# ANCHOR: MONKEY WATCH
 	# specific to the infinite monkey generator
@@ -47,16 +43,13 @@ class Stopwatch:
 		s = (m - minutes) * 60
 		seconds = int(s)
 		ms = int(round(s - seconds, 3) * 1000)
-		if len(str(minutes)) == 1:
-			minutes = f"0{minutes}"
-		if len(str(seconds)) == 1:
-			seconds = f"0{seconds}"
+		if len(str(minutes)) == 1:	minutes = f"0{minutes}"
+		if len(str(seconds)) == 1:	seconds = f"0{seconds}"
 		if minutes == "00":
-			if seconds == "00":
-				return f"{ms}ms"
+			if seconds == "00":	return f"{ms}ms"
 			return f"{int(seconds)}.{ms} seconds"
-		else:
-			return f"{minutes}:{seconds}"
+
+		else:	return f"{minutes}:{seconds}"
 
 
 # END SECTION
@@ -68,23 +61,17 @@ class Developers:
 	everyone = loads(env("DEVELOPER_IDS"))
 	# ANCHOR: GET
 	def get(self, dev=None):
-		if dev == None:
-			return Developers.everyone  # get all devs
-		else:
-			return Developers.everyone[dev.lower()]  # get specific dev
+		if dev == None:	return Developers.everyone  # get all devs
+		else:	return Developers.everyone[dev.lower()]  # get specific dev
 
 	# ANCHOR: CHECK
 	def check(self, user, dev=None) -> bool:
 		if dev == None:
-			if user.id in list(Developers.everyone.values()):  # check if user is a dev
-				return True
-			else:
-				return False
+			if user.id in list(Developers.everyone.values()):	return True  # check if user is a dev
+			else:	return False
 		else:
-			if user.id == self.get(dev):  # check if user is specific dev
-				return True
-			else:
-				return False
+			if user.id == self.get(dev):	return True  # check if user is specific dev
+			else:	return False
 
 
 # END SECTION
@@ -96,8 +83,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 	# if mode == 1: remove all separation
 	# if mode == 2: remove commas, leaving spaces behind
 	# if mode == 3: replace commas and spaces with newlines
-	if mode == 1:
-		outstr = "".join(inlist)
+	if mode == 1:	outstr = "".join(inlist)
 	else:
 		if _and and len(inlist) > 1:
 			inlist.append(inlist[-1])
@@ -108,14 +94,11 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 			.replace("\\n", "")  # remove single quotes and newlines
 		)
 		if _and:
-			if len(inlist) == 3:
-				outstr = "".join(outstr.split(","))  # remove all commas
-			else:
-				outstr = "".join(outstr.rsplit(",", 1))  # remove the last comma
-		if mode == 2:
-			outstr = outstr.replace(", ", " ")
-		elif mode == 3:
-			outstr = outstr.replace(", ", "\n")
+			if len(inlist) == 3:	outstr = "".join(outstr.split(","))  # remove all commas
+			else:	outstr = "".join(outstr.rsplit(",", 1))  # remove the last comma
+   
+		if mode == 2:	outstr = outstr.replace(", ", " ")
+		elif mode == 3:	outstr = outstr.replace(", ", "\n")
 	return outstr
 
 
@@ -124,20 +107,16 @@ def unhandling(error, tux_in_server) -> str:
 	error = str(error)
 	author = tux_in_server[1]
 	tux_in_server = tux_in_server[0]
-	output = (
-		"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n"
-		+ f"> {error}\n"
-	)
+	output = "<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n" f"> {error}\n"
 	if tux_in_server:
 		if author == Developers.get(None, "tux"):
 			output = "<:winxp_critical_error:869760946816553020>"
-			if error.startswith("Command raised an exception: "):
-				error = error[29:]
+			if error.startswith("Command raised an exception: "):	error = error[29:]
 			tux_msg = error
-		else:
-			tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
-	else:
-		tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
+   
+		else:	tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
+  
+	else:	tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
 	return output + tux_msg
 
 
@@ -189,12 +168,10 @@ def getops(guild: str, category: str = None, option: str = None) -> dict:
 		options = dict(sorted(db.search(server.guildID == guild)[0].items()))
 		options.pop("guildName")
 		options.pop("guildID")
-		if options["lists"]["censorList"] == []:
-			options["lists"]["censorList"] = None
-		else:
-			options["lists"]["censorList"] = options["lists"]["censorList"].tostr()
-	else:
-		options = db.search(server.guildID == guild)[0][category][option]
+		if options["lists"]["censorList"] == []:	options["lists"]["censorList"] = None
+		else:	options["lists"]["censorList"] = options["lists"]["censorList"].tostr()
+   
+	else:	options = db.search(server.guildID == guild)[0][category][option]
 	return options
 
 
@@ -240,8 +217,7 @@ def eldritch_syllables() -> list:
 		syllables.append(v + v2)
 	for syl in set(syllables):
 		for l in range(len(alphabet)):
-			if syl.startswith(alphabet[l]):
-				sylmat[l].append(syl)
+			if syl.startswith(alphabet[l]):	sylmat[l].append(syl)
 	return sylmat
 
 
@@ -441,8 +417,8 @@ magic_responses = [
 ]
 
 # SECTION: LITTLE EASE-OF-USE LAMBDA FUNCTIONS
-jsoncheck = lambda guild: getops(guild, "toggles", "jsonMenus")
-tux_in_guild = lambda ctx, client: [bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)), ctx.author.id]
-shell = lambda command: check_output(command, shell=True).decode()[:-1]
-argv_parse = lambda argv, args: any("--" + arg in argv for arg in args)
+jsoncheck	= lambda guild:	getops(guild, "toggles", "jsonMenus")
+tux_in_guild	= lambda ctx, client:	[bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)), ctx.author.id]
+shell	= lambda command:	check_output(command, shell=True).decode()[:-1]
+argv_parse	= lambda argv, args:	any("--" + arg in argv for arg in args)
 # END SECTION

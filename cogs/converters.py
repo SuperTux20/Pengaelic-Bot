@@ -11,20 +11,23 @@ devs = Developers()
 
 
 class Converters(commands.Cog):
-	def __init__(self, client):
-		self.client = client
+	def __init__(self, client):	self.client = client
 
-	teal = 0x007F7F
-	name = "converters"
-	name_typable = name
-	description = "Run some text through a converter to make it look funny!"
-	description_long = description
+	teal	= 0x007F7F
+	name	= "converters"
+	name_typable	= name
+	description	= "Run some text through a converter to make it look funny!"
+	description_long	= description
 
 	async def test_for_content(self, ctx, arg) -> str:
-		if not arg:
-			return list(await ctx.channel.history(limit=2).flatten())[1].content
-		else:
-			return arg
+		if arg:	return arg
+		else:	return list(await ctx.channel.history(limit=2).flatten())[1].content
+
+	async def substitutor(self, ctx, arg, alphabet, upper=False):
+		arg = await self.test_for_content(ctx, arg)
+		if upper:	arg = arg.upper()
+		for letter in alphabet:	arg = arg.replace(letter, alphabet[letter])
+		await ctx.send(arg)
 
 	@commands.command(
 		name="owo",
@@ -133,13 +136,8 @@ class Converters(commands.Cog):
 			"Y": "Υ",
 			"Z": "Ζ",
 		}
-		lower_alphabet = {
-			letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet
-		}
-		alphabet = {**upper_alphabet, **lower_alphabet}
-		for letter in alphabet:
-			arg = arg.replace(letter, alphabet[letter])
-		await ctx.send(arg)
+		lower_alphabet = {letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet}
+		self.substitutor(ctx, arg, {**upper_alphabet, **lower_alphabet})
 
 	@commands.command(
 		name="japanize",
@@ -178,10 +176,8 @@ class Converters(commands.Cog):
 			"z": "zi",
 		}
 		for letter in range(len(arg)):
-			try:
-				output += alphabet[arg[letter].lower()]
-			except KeyError:
-				output += arg[letter]
+			try:	output += alphabet[arg[letter].lower()]
+			except KeyError:	output += arg[letter]
 		await ctx.send(output.capitalize())
 
 	@commands.command(
@@ -228,8 +224,7 @@ class Converters(commands.Cog):
 		usage="<text to convert>",
 	)
 	async def dings(self, ctx, *, arg=None):
-		arg = await self.test_for_content(ctx, arg)
-		alphabet = {
+		self.substitutor(ctx, arg, {
 			"A": ":v:",
 			"B": ":ok_hand:",
 			"C": ":thumbsup:",
@@ -257,11 +252,7 @@ class Converters(commands.Cog):
 			"Y": ":star_of_david:",
 			"Z": ":star_and_crescent:",
 			" ": "<:empty:903321647874994208>",
-		}
-		to_convert = arg.upper()
-		for letter in alphabet:
-			to_convert = to_convert.replace(letter, alphabet[letter])
-		await ctx.send(to_convert)
+		}, True)
 
 	@commands.command(
 		name="sga",
@@ -270,8 +261,7 @@ class Converters(commands.Cog):
 		usage="<text to convert>",
 	)
 	async def sga(self, ctx, *, arg=None):
-		arg = await self.test_for_content(ctx, arg)
-		alphabet = {
+		self.substitutor(ctx, arg, {
 			"A": "ᔑ",
 			"B": "ʖ",
 			"C": "ᓵ",
@@ -298,11 +288,7 @@ class Converters(commands.Cog):
 			"X": " ̇/",
 			"Y": "\|\|",
 			"Z": "ᓭ",
-		}
-		to_convert = arg.upper()
-		for letter in alphabet:
-			to_convert = to_convert.replace(letter, alphabet[letter])
-		await ctx.send(to_convert)
+		}, True)
 
 	@owoConverter.error
 	@big_text.error
@@ -315,24 +301,11 @@ class Converters(commands.Cog):
 	@japanize.error
 	async def overcharlimit(self, ctx, error):
 		error = str(error)
-		if error.startswith(
-			"Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"
-		):
-			await ctx.send(
-				"<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!"
-			)
-		elif error == "arg is a required argument that is missing.":
-			await ctx.send(
-				"<:winxp_warning:869760947114348604>You didn't specify any text to convert!"
-			)
-		else:
-			await ctx.send(
-				unhandling(
-					error,
-					tux_in_guild(ctx, self.client),
-				)
-			)
+		if error.startswith("Command raised an exception: "):	error=error[29:]
+
+		if error.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
+		elif error == "arg is a required argument that is missing.":	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify any text to convert!")
+		else:	await ctx.send(unhandling(error,tux_in_guild(ctx, self.client)))
 
 
-def setup(client):
-	client.add_cog(Converters(client))
+def setup(client):	client.add_cog(Converters(client))
