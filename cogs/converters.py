@@ -256,7 +256,7 @@ class Converters(commands.Cog):
 			"X": ":diamond_shape_with_a_dot_inside:",
 			"Y": ":star_of_david:",
 			"Z": ":star_and_crescent:",
-			" ": "<:empty:829895556217569290>",
+			" ": "<:empty:903321647874994208>",
 		}
 		to_convert = arg.upper()
 		for letter in alphabet:
