@@ -189,7 +189,7 @@ class Games(commands.Cog):
 		word = choice(words)
 		vowels = 0
 		for i in word:
-			if i in ["a", "e", "i", "o", "u", "y"]:	vowels += 1
+			if i in "aeiouy":	vowels += 1
 		await ctx.send(f"React to this message and guess the word.\nHINT: The word has {vowels} vowels.")
 		the_word = await ctx.send(" ".join(list("_" * len(word))).replace("_", "\_"))
 		# list for storing letters guessed by the player
