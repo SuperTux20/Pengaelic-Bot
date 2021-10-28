@@ -27,23 +27,13 @@ class Games(commands.Cog):
 	description_long	= description
 
 	# ANCHOR: 8 BALL
-	@commands.command(
-		name="8ball",
-		help="Ask the ball and receive wisdom... :crystal_ball:",
-		aliases=["magic8ball", "8"],
-		usage="<question>",
-	)
+	@commands.command(name="8ball", help="Ask the ball and receive wisdom... :crystal_ball:", aliases=["magic8ball", "8"], usage="<question>")
 	async def magic_8_ball(self, ctx, *, question=None):
 		if question:	await ctx.send(":8ball:" + choice(choice(magic_responses)))
 		else:	await ctx.send(":8ball:You didn't ask the 8-ball anything.")
 
 	# ANCHOR: DICE ROLL
-	@commands.command(
-		name="roll",
-		help="Roll some dice!",
-		aliases=["dice"],
-		usage="[number of dice (1)]\n[number of sides (6)]",
-	)
+	@commands.command(name="roll", help="Roll some dice!", aliases=["dice"], usage="[number of dice (1)]\n[number of sides (6)]")
 	async def roll_dice(self, ctx, *, ds: str = "1d6"):
 		try:
 			ds = ds.split("d")
@@ -79,12 +69,7 @@ class Games(commands.Cog):
 		finally:	await ctx.send(":game_die:" + response)
 
 	# ANCHOR: COIN FLIP
-	@commands.command(
-		name="flip",
-		help="Flip some coins!",
-		aliases=["coin", "coinflip"],
-		usage="[number of coins (1)]",
-	)
+	@commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip"], usage="[number of coins (1)]")
 	async def flip_coins(self, ctx, coins: int = 1):
 		if coins == 1:	response = f"You flipped a {choice(['head', 'tail'])}"
 		elif coins == 0:	response = "You flicked your thumb in the air."
@@ -108,12 +93,7 @@ class Games(commands.Cog):
 		await ctx.send(":moneybag:" + response)
 
 	# ANCHOR: CARD DRAW
-	@commands.command(
-		name="draw",
-		help="Draw some cards!",
-		aliases=["card"],
-		usage="[number of cards (1)]\n[replace cards in deck (False)]",
-	)
+	@commands.command(name="draw", help="Draw some cards!", aliases=["card"], usage="[number of cards (1)]\n[replace cards in deck (False)]")
 	async def draw_cards(self, ctx, cards: int = 1, replace_cards: bool = False):
 		suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
 		values = {
@@ -167,16 +147,11 @@ class Games(commands.Cog):
 		if cards == 1:
 			while "  " in drawn[0]:	drawn[0] = drawn[0].replace("  ", " ")
 			await ctx.send(f":black_joker:You drew {drawn[0]}")
-		else:
-			await ctx.send(":black_joker:You drew...```{}```".format(str(drawn)[1:-1].replace("'", "").replace(", ", "\n")))
+
+		else:	await ctx.send(":black_joker:You drew...```{}```".format(str(drawn)[1:-1].replace("'", "").replace(", ", "\n")))
 
 	# ANCHOR: BUBBLEWRAP!
-	@commands.command(
-		name="pop",
-		help="Get a sheet of bubble wrap! Click to pop.",
-		aliases=["bubblewrap", "bubbles"],
-		usage="[size of sheet (5x5 or 5)]",
-	)
+	@commands.command(name="pop",help="Get a sheet of bubble wrap! Click to pop.",aliases=["bubblewrap", "bubbles"],usage="[size of sheet (5x5 or 5)]")
 	async def bubblewrap(self, ctx, size: str = "5"):
 		try:
 			if len(size) == 5:
@@ -203,26 +178,14 @@ class Games(commands.Cog):
 			await ctx.send("Invalid size parameter. Use just a single number or two numbers with an `x` in between (e.g. `3x5`), and no larger than `10x10`")
 			return
 		sheet = ""
-		for _ in range(height):
-			sheet = (
-				sheet
-				+ str(["||pop||" for _ in range(width)])[1:-1]
-				.replace("'", "")
-				.replace(", ", "")
-				+ "\n"
-			)
+		for _ in range(height):	sheet = (sheet + str(["||pop||" for _ in range(width)])[1:-1].replace("'", "").replace(", ", "") + "\n")
 		await ctx.send(sheet)
 
 	# ANCHOR: HANGMAN
-	@commands.command(
-		name="hangman",
-		help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',
-		usage='["pengaelic"]',
-	)  # TODO: make more word sets for different topic modes
+	@commands.command(name="hangman",help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',usage='["pengaelic"]')  # TODO: make more word sets for different topic modes
 	async def hangman(self, ctx, pengaelic=False):
 		words = hangman_words
-		if pengaelic == "pengaelic":
-			words = list(pengaelic_words.keys())
+		if pengaelic == "pengaelic":	words = list(pengaelic_words.keys())
 		word = choice(words)
 		vowels = 0
 		for i in word:
