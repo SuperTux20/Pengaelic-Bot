@@ -212,10 +212,10 @@ class Generators(commands.Cog):
 
 	@commands.command(
 		name="fortune",
-		help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))\nNote: I am not responsible for any offensive output it may generate.",
+		help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))\nNote: My developer and I are **not** responsible for any offensive output it may generate.",
 	)
 	async def fortune(self, ctx):
-		await ctx.send(f"```{bash('fortune')}```")
+		await ctx.send(f"```{bash('fortune').decode()[:-1]}```")
 
 	@name_generator.error
 	@florida_man.error
