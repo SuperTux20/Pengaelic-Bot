@@ -440,24 +440,9 @@ magic_responses = [
 	],
 ]
 
-# SECTION: LITTLE EASE-OF-USE FUNCTIONS
-def jsoncheck(guild: str) -> bool:
-	return getops(guild, "toggles", "jsonMenus")
-
-
-def tux_in_guild(ctx, client) -> list:
-	return [
-		bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)),
-		ctx.author.id,
-	]
-
-
-def shell(command) -> str:
-	return check_output(command, shell=True).decode()[:-1]
-
-
-def argv_parse(argv, args) -> bool:
-	return any("--" + arg in argv for arg in args)
-
-
+# SECTION: LITTLE EASE-OF-USE LAMBDA FUNCTIONS
+jsoncheck = lambda guild: getops(guild, "toggles", "jsonMenus")
+tux_in_guild = lambda ctx, client: [bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)), ctx.author.id]
+shell = lambda command: check_output(command, shell=True).decode()[:-1]
+argv_parse = lambda argv, args: any("--" + arg in argv for arg in args)
 # END SECTION
