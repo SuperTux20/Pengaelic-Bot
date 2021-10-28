@@ -11,6 +11,7 @@ from pengaelicutils import (
 	magic_responses,
 	unhandling,
 	tux_in_guild,
+	list2str,
 	Developers,
 )
 
@@ -87,13 +88,13 @@ class Games(commands.Cog):
 				total = sum(roll_results)
 				if dice > 1:
 					if len(str(roll_results[:-1])[1:-1]) < 2000:
-						response = f"You rolled {str(roll_results[:-1])[1:-1]}, and {roll_results[-1]}, totalling {total}"
+						response = f"You rolled {list2str(roll_results, 0, True)}, totalling {total}"
 					else:
 						response = f"You rolled a total of {total}"
 				else:
 					response = "You rolled " + str(total)
 		except ValueError:
-			response = "Invalid dice syntax. Please use `[count]d[sides]`, like D&D (e.g. `1d6`, `2d20`)."
+			response = "Invalid dice syntax. Please use `[count]d[sides]`, like D&D (e.g. `2d6`, `1d20`)."
 		finally:
 			await ctx.send(":game_die:" + response)
 
