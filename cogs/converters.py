@@ -29,30 +29,12 @@ class Converters(commands.Cog):
 		for letter in alphabet:	arg = arg.replace(letter, alphabet[letter])
 		await ctx.send(arg)
 
-	@commands.command(
-		name="owo",
-		help="Convert whatever text into owo-speak... oh god why did i make this",
-		aliases=["uwu", "furry"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="owo",help="Convert whatever text into owo-speak... oh god why did i make this",aliases=["uwu", "furry"],usage="<text to convert>",)
 	async def owoConverter(self, ctx, *, arg=None):
 		arg = await self.test_for_content(ctx, arg)
-		await ctx.send(
-			arg.replace("l", "w")
-			.replace("r", "w")
-			.replace("t", "tw")
-			.replace("twh", "thw")
-			.replace("n", "ny")
-			+ " "
-			+ choice(["OwO", "UwU", "owo", "uwu", "^w^"])
-		)
+		await ctx.send(arg.replace("l", "w").replace("r", "w").replace("t", "tw").replace("twh", "thw").replace("n", "ny") + " " + choice(["OwO", "UwU", "owo", "uwu", "^w^"]))
 
-	@commands.command(
-		name="blockify",
-		help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.",
-		aliases=["bigtext", "big"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="blockify",help="Convert text into\n:regional_indicator_b: :regional_indicator_i: :regional_indicator_g: text.",aliases=["bigtext", "big"],usage="<text to convert>",)
 	async def big_text(self, ctx, *, arg=None):
 		arg = await self.test_for_content(ctx, arg)
 		alphabet = "qwertyuiopasdfghjklzxcvbnm 1234567890"
@@ -76,26 +58,19 @@ class Converters(commands.Cog):
 					try:
 						_ = int(char)
 						number = True
-					except ValueError:
-						number = False
-					if number:
-						textlist.append(f":{num2words(char)}:")
-					elif char == " ":
-						textlist.append("\n")
+
+					except ValueError:	number = False
+					if number:	textlist.append(f":{num2words(char)}:")
+					elif char == " ":	textlist.append("\n")
 					elif char in list(symbols.keys()):
 						textlist.append(f":{symbols[char]}:")
 						break
-					else:
-						textlist.append(f":regional_indicator_{char}:")
+
+					else:	textlist.append(f":regional_indicator_{char}:")
 		await ctx.send(" ".join(textlist).replace("\n ", "\n"))
 
-	@commands.command(
-		name="greekify",
-		help="Make words *look* Greek, but the pronunciation is still almost the same as in English.",
-		usage="<text to convert>",
-	)
+	@commands.command(name="greekify",help="Make words *look* Greek, but the pronunciation is still roughly similar to English.",usage="<text to convert>",)
 	async def greekify(self, ctx, *, arg=None):
-		arg = await self.test_for_content(ctx, arg)
 		upper_alphabet = {
 			"CH": "Χ",
 			"PS": "Ψ",
@@ -136,14 +111,9 @@ class Converters(commands.Cog):
 			"Y": "Υ",
 			"Z": "Ζ",
 		}
-		lower_alphabet = {letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet}
-		self.substitutor(ctx, arg, {**upper_alphabet, **lower_alphabet})
+		await self.substitutor(ctx, arg, {**upper_alphabet, **{letter.lower(): upper_alphabet[letter].lower() for letter in upper_alphabet}})
 
-	@commands.command(
-		name="japanize",
-		help="Make text look and sound Japanese according to [this image](https://imgur.com/a/qEiCfhG). (Disclaimer: this is not Japanese at all)",
-		usage="<text to convert>",
-	)
+	@commands.command(name="japanize",help="Make text look and sound Japanese according to [this image](https://imgur.com/a/qEiCfhG). (Disclaimer: this is not Japanese at all)",usage="<text to convert>",)
 	async def japanize(self, ctx, *, arg=None):
 		arg = await self.test_for_content(ctx, arg)
 		output = ""
@@ -180,24 +150,14 @@ class Converters(commands.Cog):
 			except KeyError:	output += arg[letter]
 		await ctx.send(output.capitalize())
 
-	@commands.command(
-		name="stroke",
-		help="Shuffle a message",
-		aliases=["shuffle", "mix"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="stroke",help="Shuffle a message",aliases=["shuffle", "mix"],usage="<text to convert>",)
 	async def shuffle(self, ctx, *, arg=None):
 		arg = await self.test_for_content(ctx, arg)
 		to_shuffle = list(arg)
 		shuffle(to_shuffle)
 		await ctx.send("".join(to_shuffle))
 
-	@commands.command(
-		name="strokebyword",
-		help="Shuffle the individual words instead of the entire message.",
-		aliases=["shufflebyword", "mixbyword"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="strokebyword",help="Shuffle the individual words instead of the entire message.",aliases=["shufflebyword", "mixbyword"],usage="<text to convert>",)
 	async def shufflebyword(self, ctx, *, arg=None):
 		arg = await self.test_for_content(ctx, arg)
 		words_to_shuffle = arg.split()
@@ -207,24 +167,14 @@ class Converters(commands.Cog):
 			words_to_shuffle[to_shuffle] = "".join(words_to_shuffle[to_shuffle])
 		await ctx.send(" ".join(words_to_shuffle))
 
-	@commands.command(
-		name="spacer",
-		help="Insert spaces between every character",
-		aliases=["space", "gaps"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="spacer",help="Insert spaces between every character",aliases=["space", "gaps"],usage="<text to convert>",)
 	async def spacer(self, ctx, *, arg=None):
 		arg = await self.test_for_content(ctx, arg)
 		await ctx.send(" ".join(arg[i : i + 1] for i in range(0, len(arg), 1)))
 
-	@commands.command(
-		name="wingdings",
-		help="You heard what the River Person said.",
-		aliases=["dings", "gaster", "wd"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="wingdings",help="You heard what the River Person said.",aliases=["dings", "gaster", "wd"],usage="<text to convert>",)
 	async def dings(self, ctx, *, arg=None):
-		self.substitutor(ctx, arg, {
+		await self.substitutor(ctx, arg, {
 			"A": ":v:",
 			"B": ":ok_hand:",
 			"C": ":thumbsup:",
@@ -254,14 +204,9 @@ class Converters(commands.Cog):
 			" ": "<:empty:903321647874994208>",
 		}, True)
 
-	@commands.command(
-		name="sga",
-		help="Ever wanted to speak Enchanting Table?",
-		aliases=["enchant", "enchantingtable"],
-		usage="<text to convert>",
-	)
+	@commands.command(name="sga",help="Ever wanted to speak Enchanting Table?",aliases=["enchant", "enchantingtable"],usage="<text to convert>",)
 	async def sga(self, ctx, *, arg=None):
-		self.substitutor(ctx, arg, {
+		await self.substitutor(ctx, arg, {
 			"A": "ᔑ",
 			"B": "ʖ",
 			"C": "ᓵ",
