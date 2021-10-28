@@ -31,7 +31,7 @@ class Stopwatch:
 				return f"{int(seconds)}.{ms} seconds"
 
 			else:	return f"{minutes}:{seconds}"
-   
+
 		except AttributeError:	return "The stopwatch was never started."
 
 	# ANCHOR: MONKEY WATCH
@@ -96,7 +96,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 		if _and:
 			if len(inlist) == 3:	outstr = "".join(outstr.split(","))  # remove all commas
 			else:	outstr = "".join(outstr.rsplit(",", 1))  # remove the last comma
-   
+
 		if mode == 2:	outstr = outstr.replace(", ", " ")
 		elif mode == 3:	outstr = outstr.replace(", ", "\n")
 	return outstr
@@ -113,9 +113,9 @@ def unhandling(error, tux_in_server) -> str:
 			output = "<:winxp_critical_error:869760946816553020>"
 			if error.startswith("Command raised an exception: "):	error = error[29:]
 			tux_msg = error
-   
+
 		else:	tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
-  
+
 	else:	tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
 	return output + tux_msg
 
@@ -170,7 +170,7 @@ def getops(guild: str, category: str = None, option: str = None) -> dict:
 		options.pop("guildID")
 		if options["lists"]["censorList"] == []:	options["lists"]["censorList"] = None
 		else:	options["lists"]["censorList"] = options["lists"]["censorList"].tostr()
-   
+
 	else:	options = db.search(server.guildID == guild)[0][category][option]
 	return options
 
