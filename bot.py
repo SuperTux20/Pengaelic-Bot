@@ -4,7 +4,6 @@
 from sys import version
 
 # ANCHOR: version checker
-
 major, minor = [int(num) for num in version.split(".")[:2]]
 if major < 3 or minor < 9:
 	print("Pengaelic Bot requires Python 3.9 or newer to function properly.")
@@ -38,7 +37,6 @@ launchtime.start()
 devs = Developers()
 
 # ANCHOR: package test
-
 print("Imported modules")
 if shell("uname -o") != "Android":
 	devnull = open(devnull, "w")
@@ -128,7 +126,6 @@ GNU General Public License for more details.
 """
 
 # ANCHOR: client
-
 client = commands.Bot(
 	command_prefix	= "p",
 	description	= "Pengaelic B",
@@ -155,16 +152,12 @@ if "--reset-options" in argv:
 	db.truncate()
 
 # ANCHOR: status setter
-
-
 async def set_status():
 	if unstable:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Tux's unending screaming"))
 	else:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=str(len(db.all())) + " servers! | p!help"))
 
 
 # ANCHOR: help menu template
-
-
 def help_menu(guild, cog, client):
 	if jsoncheck(guild):
 		info = {"description": cog.description_long.lower()} | {"commands": {list2str([command.name] + command.aliases, 0).replace(", ", "/"): command.usage.split("\n") for command in cog.get_commands()}}
@@ -233,8 +226,6 @@ async def on_ready():
 
 
 # ANCHOR: ON GUILD JOIN
-
-
 @client.event
 async def on_guild_join(guild, auto=True):
 	if not unstable:
@@ -256,14 +247,11 @@ async def on_guild_join(guild, auto=True):
 
 
 # ANCHOR: ON GUILD LEAVE
-
-
 @client.event
 async def on_guild_remove(guild):	print(f"Was removed from {guild.name}")
 
 
 if not unstable:
-
 	# ANCHOR: ERROR HANDLING
 	@client.event
 	async def on_command_error(ctx, error):
