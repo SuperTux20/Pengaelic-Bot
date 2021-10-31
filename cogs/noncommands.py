@@ -50,19 +50,19 @@ class NonCommands(commands.Cog):
 					for dad in dad_prefixes:
 						if messagetext.startswith(f"i{dad}m "):
 							if "pengaelic bot" in messagetext:
-								if "not" in messagetext:	await message.channel.send("Darn right, you're not!")
-								else:	await message.channel.send("You're not the Pengaelic Bot, I am!")
+								if	"not" in messagetext:	await message.channel.send("Darn right, you're not!")
+								else:		await message.channel.send("You're not the Pengaelic Bot, I am!")
 							elif "chickenmeister" in messagetext or "tux" in messagetext:
 								if Developers.check(self, message.author, "tux"):
-									if "not" in messagetext:	await message.channel.send("What? Of course you are!")
-									else:	await message.channel.send("Yes you are! Hiya!")
+									if	"not" in messagetext:	await message.channel.send("What? Of course you are!")
+									else:		await message.channel.send("Yes you are! Hiya!")
 								else:
-									if "not" in messagetext:	await message.channel.send("Darn right, you're not!")
-									else:	await message.channel.send("You dare to impersonate my creator?! **You shall be punished.** /j")
+									if	"not" in messagetext:	await message.channel.send("Darn right, you're not!")
+									else:		await message.channel.send("You dare to impersonate my creator?! **You shall be punished.** /j")
 							else:
-								if messagetext.startswith(f"i{dad}m an"):	slicer = 5
-								elif messagetext.startswith(f"i{dad}m a"):	slicer = 4
-								else:	slicer = 2
+								if	messagetext.startswith(f"i{dad}m an"):	slicer = 5
+								elif	messagetext.startswith(f"i{dad}m a"):	slicer = 4
+								else:		slicer = 2
 								await message.channel.send(f"Hi{messagetext[len(dad)+slicer:]}, I'm the Pengaelic Bot!")
 
 				# ANCHOR: CENSOR
@@ -80,10 +80,13 @@ class NonCommands(commands.Cog):
 				if getops(server, "toggles", "suggestions") and message.channel.id == getops(server, "channels", "suggestionsChannel"):
 					thepoll = await message.channel.send(
 						embed=discord.Embed(
-							title="Suggestion",
-							description=message.content,
-							color=0x007F7F,
-						).set_author(name=message.author.name, icon_url=message.author.avatar_url)
+							title	= "Suggestion",
+							description	= message.content,
+							color	= 0x007F7F
+						).set_author(
+							name	= message.author.name,
+							icon_url	= message.author.avatar_url
+						)
 					)
 					try:	await message.delete()
 					except:	pass
@@ -96,6 +99,12 @@ class NonCommands(commands.Cog):
 
 				# ANCHOR: @SOMEONE
 				if "@someone" == messagetext and getops(server, "toggles", "atSomeone"):	await message.channel.send(choice(message.guild.members).mention + ", you have been randomly selected by a @someone ping!")
+
+				# ANCHOR: REACTIONS
+				if any(message in messagetext for message in ["pengaelic", self.client.user.mention, "<@!" + str(self.client.user.id) + ">"]):
+					if	any(message in messagetext.split() for message in ["thank", "thanks"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
+					elif	any(message in messagetext.split() for message in ["fuck", "bad", "die"]):	await message.add_reaction("<:broken_teal_heart:904460939984781363>")
+					elif	any(message in messagetext.split() for message in ["hi", "hey", "hello"]):	await message.add_reaction("👋")
 
 			# ANCHOR: BOT OWNER DM INTERACTION
 			elif isinstance(message.channel, discord.channel.DMChannel):
