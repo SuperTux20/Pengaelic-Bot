@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import discord
-from discord.utils import get
-from discord.ext import commands
-from pengaelicutils import getops, Developers
-from os import system as cmd
-from random import choice
+import 	discord
+from discord.utils import	get
+from discord.ext import	commands
+from pengaelicutils import	getops,	Developers
+from random import	choice
+from re import	sub
 
 
 class NonCommands(commands.Cog):
@@ -16,6 +16,10 @@ class NonCommands(commands.Cog):
 	name_typable	= "noncommands"
 	description	= "Automatic message responses that aren't commands."
 	description_long	= description
+
+	async def not_test(self, messagetext, _is, _not):
+		if	"not" in messagetext:	return _not
+		else:		return _is
 
 	# ANCHOR: ON MEMBER JOIN
 	@commands.Cog.listener()
@@ -40,30 +44,25 @@ class NonCommands(commands.Cog):
 		if not message.author.bot:
 			if not isinstance(message.channel, discord.channel.DMChannel):
 				# send everything to variables to make my life easier
-				messagetext = message.content.lower()
+				messagetext = sub(r"[^a-z0-9 ]", "", message.content.lower())	# remove all non-alphanumeric characters (except for spaces) and convert to lowercase
 				server = message.guild.id
 
 				# ANCHOR: DAD JOKES
 				if getops(server, "toggles", "dadJokes"):
-					# four types of apostrophes/ticks plus allowance for "im"
-					dad_prefixes = ["'", "`", "‘", "’", ""]
-					for dad in dad_prefixes:
-						if messagetext.startswith(f"i{dad}m "):
-							if "pengaelic bot" in messagetext:
-								if	"not" in messagetext:	await message.channel.send("Darn right, you're not!")
-								else:		await message.channel.send("You're not the Pengaelic Bot, I am!")
-							elif "chickenmeister" in messagetext or "tux" in messagetext:
-								if Developers.check(self, message.author, "tux"):
-									if	"not" in messagetext:	await message.channel.send("What? Of course you are!")
-									else:		await message.channel.send("Yes you are! Hiya!")
-								else:
-									if	"not" in messagetext:	await message.channel.send("Darn right, you're not!")
-									else:		await message.channel.send("You dare to impersonate my creator?! **You shall be punished.** /j")
-							else:
-								if	messagetext.startswith(f"i{dad}m an"):	slicer = 5
-								elif	messagetext.startswith(f"i{dad}m a"):	slicer = 4
-								else:		slicer = 2
-								await message.channel.send(f"Hi{messagetext[len(dad)+slicer:]}, I'm the Pengaelic Bot!")
+					if messagetext.startswith("im ") or messagetext.startswith("i am "):
+						if	"pengaelic" in messagetext:	await message.channel.send(await self.not_test(messagetext, "Darn right, you're not!", "You're not the Pengaelic Bot, I am!"))
+						elif	"chickenmeister" in messagetext or "tux" in messagetext:
+
+							if	Developers.check(Developers, message.author, "tux"):	await message.channel.send(await self.not_test(messagetext, "What? Of course you are!", "Yes you are! Hiya!"))
+							else:		await message.channel.send(await self.not_test(messagetext, "Darn right, you're not!", "You dare to impersonate my creator?! **You shall be punished.** /j"))
+						else:
+							if	messagetext.startswith("i am an"):	slicer = 7
+							elif	messagetext.startswith("i am a"):	slicer = 6
+							elif	messagetext.startswith("im an"):	slicer = 5
+							elif	messagetext.startswith("im a"):	slicer = 4
+							elif	messagetext.startswith("i am"):	slicer = 4
+							else:		slicer = 2
+							await message.channel.send(f"Hi{messagetext[slicer:]}, I'm the Pengaelic Bot!")
 
 				# ANCHOR: CENSOR
 				if getops(server, "toggles", "censor"):
@@ -101,9 +100,9 @@ class NonCommands(commands.Cog):
 				if "@someone" == messagetext and getops(server, "toggles", "atSomeone"):	await message.channel.send(choice(message.guild.members).mention + ", you have been randomly selected by a @someone ping!")
 
 				# ANCHOR: REACTIONS
-				if any(message in messagetext for message in ["pengaelic", self.client.user.mention, "<@!" + str(self.client.user.id) + ">"]):
-					if	any(message in messagetext.split() for message in ["thank", "thanks"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
-					elif	any(message in messagetext.split() for message in ["fuck", "bad", "die"]):	await message.add_reaction("<:broken_teal_heart:904460939984781363>")
+				if "pengaelic" in messagetext:
+					if	any(message in messagetext.split() for message in ["thank", "thanks", "good"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
+					elif	any(message in messagetext.split() for message in ["fuck", "bad", "die"]):	await message.add_reaction("<:teal_heart_broken:904460939984781363>")
 					elif	any(message in messagetext.split() for message in ["hi", "hey", "hello"]):	await message.add_reaction("👋")
 
 			# ANCHOR: BOT OWNER DM INTERACTION

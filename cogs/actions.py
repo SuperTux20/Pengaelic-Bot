@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import discord
-from discord.ext import commands
-from random import randint
-from os import listdir
+import 	discord
+from discord.ext import	commands
+from random import	randint
+from os import	listdir
 
 
 class Actions(commands.Cog):

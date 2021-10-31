@@ -1,17 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import discord
-from asyncio import sleep
-from discord.ext import commands
-from discord.utils import get
-from pengaelicutils import (
-	getops,
-	unhandling,
-	tux_in_guild,
-	Developers,
-)
-from tinydb import TinyDB
+import	discord
+from asyncio import	sleep
+from discord.ext import	commands
+from discord.utils import	get
+from tinydb import	TinyDB
+from pengaelicutils import	getops,	unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
 
@@ -90,8 +85,8 @@ class Moderation(commands.Cog):
 		error = str(error)
 		if error.startswith("You are missing Manage") and error.endswith("permission(s) to run this command."):
 			permmsg = f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage "
-			if "Messages" in error:	await ctx.send(permmsg + "Messages)")
-			if "Channels" in error:	await ctx.send(permmsg + "Channels)")
+			if	"Messages" in error:	await ctx.send(permmsg + "Messages)")
+			if	"Channels" in error:	await ctx.send(permmsg + "Channels)")
 
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 

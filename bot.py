@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from sys import version
+from sys import	version
 
 # ANCHOR: version checker
 major, minor = [int(num) for num in version.split(".")[:2]]
@@ -10,28 +10,18 @@ if major < 3 or minor < 9:
 	print("Please run Pengaelic Bot with Python >= 3.9")
 	exit()
 
-from json import dumps
-from os import getenv as env, listdir as ls, system as cmd, execl, devnull
-from pengaelicutils import (
-	argv_parse,
-	newops,
-	list2str,
-	jsoncheck,
-	unhandling,
-	shell,
-	tux_in_guild,
-	Developers,
-	Stopwatch,
-)
-from subprocess import CalledProcessError, call, STDOUT
-from sys import executable as python, argv
+from json import	dumps
+from subprocess import	CalledProcessError,	call,	STDOUT
+from sys import	argv,	executable				as	python
+from os import	getenv,	system,	execl,	devnull,	listdir	as	ls
+from pengaelicutils import	argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 
 if argv_parse(argv, ["uninstall", "delete"]):
-	cmd("rm -rvf ~/Pengaelic-Bot")
+	system("rm -rvf ~/Pengaelic-Bot")
 	print("Uninstalled Pengaelic Bot.")
 	exit()
 
-cmd("clear")
+system("clear")
 launchtime = Stopwatch()
 launchtime.start()
 devs = Developers()
@@ -90,15 +80,15 @@ if missing_dependencies:
 print("Passed module test")
 
 import discord
-from discord.errors import HTTPException
-from discord.ext import commands
-from discord.utils import get
-from dotenv import load_dotenv as dotenv
-from tinydb import TinyDB, Query
+from discord.errors import	HTTPException
+from discord.ext import	commands
+from discord.utils import	get
+from dotenv import	load_dotenv as	dotenv
+from tinydb import	TinyDB,	Query
 
 # ANCHOR: unstable flagger
+unstable = False
 if argv_parse(argv, ["unstable", "beta", "dev"]):	unstable = True
-else:	unstable = False
 
 # ANCHOR: boot message
 info = r"""
@@ -132,7 +122,7 @@ client = commands.Bot(
 	help_command	= None,
 	case_insensitive	= True,
 	strip_after_prefix	= True,
-	intents	= discord.Intents.all(),
+	intents	= discord.Intents.all()
 )
 
 if unstable:
@@ -142,7 +132,7 @@ else:
 	client.command_prefix	+= "!"
 	client.description	+= "ot"
 
-cmd(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
+system(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
 print(info)
 print("Defined client")
 db = TinyDB("config.json")
@@ -172,9 +162,12 @@ def help_menu(guild, cog, client):
 		).set_footer(text=f"Command prefix is {client.command_prefix}\n<arg> = required parameter\n[arg] = optional parameter\n[arg (value)] = default value for optional parameter\n(command/command/command) = all aliases you can run the command with")
 		for command in cog.get_commands():
 			names = "({})".format(str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/"))
-			if command.usage:	names += "\n" + command.usage
-			else:	names += "\nno args"
-			menu.add_field(name=names, value=command.help)
+			if	command.usage:	names += "\n" + command.usage
+			else:		names += "\nno args"
+			menu.add_field(
+				name	= names,
+				value	= command.help
+			)
 	return menu
 
 # SECTION: EVENTS
@@ -206,7 +199,7 @@ async def on_ready():
 	# add any options that may have been created since the option dicts' creation
 	for guild in client.guilds:
 		gid = guild.id
-		if unstable:	ops = db.search(Query().guildName == "Pengaelic Bot Support")[0]  # Pengaelic Beta is only on Pengaelic Bot Support
+		if unstable:	ops = db.search(Query().guildName == "Pengaelic Bot Support")[0]	# Pengaelic Beta is only on Pengaelic Bot Support
 		else:	ops = db.all()[client.guilds.index(guild)]
 		ops.pop("guildName")
 		ops.pop("guildID")
@@ -217,12 +210,12 @@ async def on_ready():
 		for op in ["channels", "lists", "messages", "roles", "toggles"]:
 			ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
 			db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == gid)
-		db.update({"guildName": guild.name}, Query().guildID == gid)  # did the server's name change?
+
+		db.update({"guildName": guild.name}, Query().guildID == gid)	# did the server's name change?
 		print(f"Loaded options for {guild.name}")
 	await set_status()
 	print(f"{client.description} launched in {launchtime.end()}")
-	if not unstable:
-		print(f"Currently on {len(client.guilds)} servers")
+	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
 
 
 # ANCHOR: ON GUILD JOIN
@@ -255,18 +248,11 @@ if not unstable:
 	# ANCHOR: ERROR HANDLING
 	@client.event
 	async def on_command_error(ctx, error):
-		# this checks if the individual commands have their own error handling. if not...
-		if not hasattr(ctx.command, "on_error"):
-			# ...send the global error
+		if not hasattr(ctx.command, "on_error"):	# if the command doesn't have its own error handling...
+
 			if str(error).startswith("Command") and str(error).endswith("is not found"):	await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
-			else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client)))
+			else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client)))	# ...send the global error
 # END SECTION
-
-
-@client.command(name="join", help="Show the join message if it doesn't show up automatically")
-async def redo_welcome(ctx):
-	await on_guild_join(ctx.guild, False)
-	await ctx.message.delete()
 
 
 # ANCHOR: load token
@@ -294,8 +280,8 @@ async def sh(ctx, *, args):
 			error = str(error)
 			if "returned non-zero exit status" in error:
 				error = int(float(error.split("returned non-zero exit status ")[1]))
-				if (args.startswith("rm") or args.startswith("cat")) and error == 1:	await ctx.send("<:winxp_critical_error:869760946816553020>That file doesn't exist.")
-				elif args.startswith("python") and error == 1:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid Python syntax.")
+				if	(args.startswith("rm") or args.startswith("cat")) and error == 1:	await ctx.send("<:winxp_critical_error:869760946816553020>That file doesn't exist.")
+				elif	args.startswith("python") and error == 1:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid Python syntax.")
 				else:
 					if error == 127:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid command.")
 					else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Returned non-zero exit status{error}")
@@ -303,8 +289,7 @@ async def sh(ctx, *, args):
 			else:	await ctx.send(error)
 		except HTTPException as error:
 			error = str(error)
-			if error.startswith("Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):
-				await ctx.send("<:winxp_critical_error:869760946816553020>Output too large.")
+			if error.startswith("Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Output too large.")
 
 	else:	await ctx.send("<:winxp_warning:869760947114348604>Hey, only my creator can do this!")
 
@@ -343,7 +328,7 @@ if not unstable:
 						{
 							"insertions":	int(update_summary[1][:-3].split()[0]),
 							"deletions":	int(update_summary[2][:-3].split()[0]),
-						},
+						}
 					]
 					for item in range(len(update_log)):
 						while "  " in update_log[item]:	update_log[item] = update_log[item].replace("  ", " ")
@@ -363,7 +348,7 @@ if not unstable:
 							embed = discord.Embed(
 								title	= update_log[0],
 								description	= list2str(update_log[2:-1], 3),
-								color	= 0x007F7F,
+								color	= 0x007F7F
 							).set_footer(text=update_log[-1])
 						)
 				else:
@@ -372,7 +357,7 @@ if not unstable:
 						embed = discord.Embed(
 							title	= "Raw log contents",
 							description	= open("update.log", "r").read(),
-							color	= 0xFF0000,
+							color	= 0xFF0000
 						)
 					)
 			return True
@@ -387,7 +372,7 @@ if not unstable:
 			if jsoncheck(ctx.guild.id):	status = await ctx.send("<:winxp_information:869760946808180747>Pulling the latest commits from GitHub...")
 			else:	status = await ctx.send(embed=discord.Embed(title="Pulling the latest commits from GitHub...", color=0x007F7F))
 			await client.change_presence(activity=discord.Game("Updating..."), status=discord.Status.idle)
-			cmd("bash update.sh > update.log")
+			system("bash update.sh > update.log")
 			if force:	await restart(ctx)
 			else:
 				if await updatelog(ctx, True, status):	await restart(ctx)
@@ -412,7 +397,7 @@ async def help(ctx, *, cogname: str = None):
 			links = {
 				"support server":	"<https://discord.gg/DHHpA7k>",
 				"invite me":	"<https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot>",
-				"github":	"<https://github.com/SuperTux20/Pengaelic-Bot>",
+				"github":	"<https://github.com/SuperTux20/Pengaelic-Bot>"
 			}
 			if not isinstance(ctx.channel, discord.channel.DMChannel):	info |= {"options": client.get_cog("Options").description.lower()[:-1]}
 			if Developers.check(None, ctx.author):	info |= {"control": "update, restart, that sort of thing"}
@@ -429,7 +414,7 @@ async def help(ctx, *, cogname: str = None):
 			menu = discord.Embed(
 				title	= client.description,
 				description	= f"Type `{client.command_prefix}help `**`<lowercase category name without spaces or dashes>`** for more info on each category.",
-				color	= 0x007F7F,
+				color	= 0x007F7F
 			)
 			for cog in sorted(cogs):	menu.add_field(name=cogs[cog].name.capitalize(), value=cogs[cog].description)
 			if not isinstance(ctx.channel, discord.channel.DMChannel):	menu.add_field(name="Options", value=client.get_cog("Options").description)
@@ -513,8 +498,8 @@ for cog in ls("cogs"):
 # ANCHOR: login
 while True:
 	try:
-		if unstable:	client.run(env("UNSTABLE_TOKEN"))
-		else:	client.run(env("DISCORD_TOKEN"))
+		if unstable:	client.run(getenv("UNSTABLE_TOKEN"))
+		else:	client.run(getenv("DISCORD_TOKEN"))
 	except (KeyboardInterrupt, RuntimeError):
 		print("\b\bConnection closed")
 		while True:	exit(0)

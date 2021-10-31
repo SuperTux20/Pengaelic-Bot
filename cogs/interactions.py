@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import discord
-from discord.ext import commands
-from random import choice, randint
-from os import listdir
-from pengaelicutils import list2str, unhandling, tux_in_guild, Developers
+import		discord
+from discord.ext	import	commands
+from os	import	listdir
+from random	import	choice,	randint
+from pengaelicutils	import	list2str,	unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
 
@@ -30,14 +30,14 @@ class Interactions(commands.Cog):
 		return discord.Embed(description=f'**{choice([f"{acted} just got {pastact} by {ctx.author.mention}", " ".join([ctx.author.mention, pastact, acted])])}**', color=self.teal).set_image(url=image)
 
 	async def nact(self, ctx, act, pastact, actees, selfresponses):
-		if len(actees) == 1 and actees[0] == ctx.author:	await ctx.send(choice(selfresponses))
-		else:	await ctx.send(embed=self.act(ctx, act, pastact, actees, False))
+		if	len(actees) == 1 and actees[0] == ctx.author:	await ctx.send(choice(selfresponses))
+		else:		await ctx.send(embed=self.act(ctx, act, pastact, actees, False))
 
 	async def vact(self, ctx, act, pastact, actees):
 		message = f"Hey, you can't {act}"
-		if len(actees) == 1 and actees[0] == ctx.author:	await ctx.send(message + "yourself!")
-		elif len(actees) == 1 and actees[0] == self.client.user:	await ctx.send(message + "me!")
-		else:	await ctx.send(embed=self.act(ctx, act, pastact, actees, True))
+		if	len(actees) == 1 and actees[0] == ctx.author:	await ctx.send(message + "yourself!")
+		elif	len(actees) == 1 and actees[0] == self.client.user:	await ctx.send(message + "me!")
+		else:		await ctx.send(embed=self.act(ctx, act, pastact, actees, True))
 
 	# END SECTION
 
@@ -92,9 +92,9 @@ class Interactions(commands.Cog):
 	@squish.error
 	@tickle.error
 	async def error(self, ctx, error):
-		error = str(error)
-		if error.startswith("Member") and error.endswith("not found.") or "IndexError" in error:	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
-		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		error	= str(error)
+		if	error.startswith("Member") and error.endswith("not found.") or "IndexError" in error:	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Interactions(client))

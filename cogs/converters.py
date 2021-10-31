@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from num2words import num2words
-from fnmatch import fnmatch
-from discord.ext import commands
-from random import choice, shuffle
-from pengaelicutils import unhandling, tux_in_guild, Developers
+from num2words import	num2words
+from fnmatch import	fnmatch
+from discord.ext import	commands
+from random import	choice,	shuffle
+from pengaelicutils import	unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
 
@@ -115,35 +115,35 @@ class Converters(commands.Cog):
 
 	@commands.command(name="japanize",help="Make text look and sound Japanese according to [this image](https://imgur.com/a/qEiCfhG). (Disclaimer: this is not Japanese at all)",usage="<text to convert>",)
 	async def japanize(self, ctx, *, arg=None):
-		arg = await self.test_for_content(ctx, arg)
-		output = ""
+		arg	= await self.test_for_content(ctx, arg)
+		output	= ""
 		alphabet = {
-			"a": "ka",
-			"b": "tu",
-			"c": "mi",
-			"d": "te",
-			"e": "ku",
-			"f": "lu",
-			"g": "ji",
-			"h": "ri",
-			"i": "ki",
-			"j": "zu",
-			"k": "me",
-			"l": "ta",
-			"m": "rin",
-			"n": "to",
-			"o": "mo",
-			"p": "no",
-			"q": "ke",
-			"r": "shi",
-			"s": "ari",
-			"t": "chi",
-			"u": "do",
-			"v": "ru",
-			"w": "mei",
-			"x": "na",
-			"y": "fu",
-			"z": "zi",
+			"a":	"ka",
+			"b":	"tu",
+			"c":	"mi",
+			"d":	"te",
+			"e":	"ku",
+			"f":	"lu",
+			"g":	"ji",
+			"h":	"ri",
+			"i":	"ki",
+			"j":	"zu",
+			"k":	"me",
+			"l":	"ta",
+			"m":	"rin",
+			"n":	"to",
+			"o":	"mo",
+			"p":	"no",
+			"q":	"ke",
+			"r":	"shi",
+			"s":	"ari",
+			"t":	"chi",
+			"u":	"do",
+			"v":	"ru",
+			"w":	"mei",
+			"x":	"na",
+			"y":	"fu",
+			"z":	"zi",
 		}
 		for letter in range(len(arg)):
 			try:	output += alphabet[arg[letter].lower()]
@@ -152,15 +152,15 @@ class Converters(commands.Cog):
 
 	@commands.command(name="stroke",help="Shuffle a message",aliases=["shuffle", "mix"],usage="<text to convert>",)
 	async def shuffle(self, ctx, *, arg=None):
-		arg = await self.test_for_content(ctx, arg)
-		to_shuffle = list(arg)
+		arg	= await self.test_for_content(ctx, arg)
+		to_shuffle	= list(arg)
 		shuffle(to_shuffle)
 		await ctx.send("".join(to_shuffle))
 
 	@commands.command(name="strokebyword",help="Shuffle the individual words instead of the entire message.",aliases=["shufflebyword", "mixbyword"],usage="<text to convert>",)
 	async def shufflebyword(self, ctx, *, arg=None):
-		arg = await self.test_for_content(ctx, arg)
-		words_to_shuffle = arg.split()
+		arg	= await self.test_for_content(ctx, arg)
+		words_to_shuffle	= arg.split()
 		for to_shuffle in range(len(words_to_shuffle)):
 			words_to_shuffle[to_shuffle] = list(words_to_shuffle[to_shuffle])
 			shuffle(words_to_shuffle[to_shuffle])
@@ -175,64 +175,64 @@ class Converters(commands.Cog):
 	@commands.command(name="wingdings",help="You heard what the River Person said.",aliases=["dings", "gaster", "wd"],usage="<text to convert>",)
 	async def dings(self, ctx, *, arg=None):
 		await self.substitutor(ctx, arg, {
-			"A": ":v:",
-			"B": ":ok_hand:",
-			"C": ":thumbsup:",
-			"D": ":thumbsdown:",
-			"E": ":point_left:",
-			"F": ":point_right:",
-			"G": ":point_up_2:",
-			"H": ":point_down:",
-			"I": ":raised_hand:",
-			"J": ":slight_smile:",
-			"K": ":neutral_face:",
-			"L": ":frowning:",
-			"M": ":bomb:",
-			"N": ":skull_crossbones:",
-			"O": ":flag_white:",
-			"P": ":triangular_flag_on_post:",
-			"Q": ":airplane:",
-			"R": ":sunny:",
-			"S": ":droplet:",
-			"T": ":snowflake:",
-			"U": ":cross:",
-			"V": ":orthodox_cross:",
-			"W": ":atom:",
-			"X": ":diamond_shape_with_a_dot_inside:",
-			"Y": ":star_of_david:",
-			"Z": ":star_and_crescent:",
-			" ": "<:empty:903321647874994208>",
+			"A":	":v:",
+			"B":	":ok_hand:",
+			"C":	":thumbsup:",
+			"D":	":thumbsdown:",
+			"E":	":point_left:",
+			"F":	":point_right:",
+			"G":	":point_up_2:",
+			"H":	":point_down:",
+			"I":	":raised_hand:",
+			"J":	":slight_smile:",
+			"K":	":neutral_face:",
+			"L":	":frowning:",
+			"M":	":bomb:",
+			"N":	":skull_crossbones:",
+			"O":	":flag_white:",
+			"P":	":triangular_flag_on_post:",
+			"Q":	":airplane:",
+			"R":	":sunny:",
+			"S":	":droplet:",
+			"T":	":snowflake:",
+			"U":	":cross:",
+			"V":	":orthodox_cross:",
+			"W":	":atom:",
+			"X":	":diamond_shape_with_a_dot_inside:",
+			"Y":	":star_of_david:",
+			"Z":	":star_and_crescent:",
+			" ":	"<:empty:903321647874994208>",
 		}, True)
 
 	@commands.command(name="sga",help="Ever wanted to speak Enchanting Table?",aliases=["enchant", "enchantingtable"],usage="<text to convert>",)
 	async def sga(self, ctx, *, arg=None):
 		await self.substitutor(ctx, arg, {
-			"A": "ᔑ",
-			"B": "ʖ",
-			"C": "ᓵ",
-			"D": "↸",
-			"E": "ᒷ",
-			"F": "⎓",
-			"G": "⊣",
-			"H": "⍑",
-			"I": "╎",
-			"J": "⋮",
-			"K": "ꖌ",
-			"L": "ꖎ",
-			"M": "ᒲ",
-			"N": "リ",
-			"O": "𝙹",
-			"P": "!¡",
-			"Q": "ᑑ",
-			"R": "∷",
-			"S": "ᓭ",
-			"T": "ℸ",
-			"U": "⚍",
-			"V": "⍊",
-			"W": "∴",
-			"X": " ̇/",
-			"Y": "\|\|",
-			"Z": "ᓭ",
+			"A":	"ᔑ",
+			"B":	"ʖ",
+			"C":	"ᓵ",
+			"D":	"↸",
+			"E":	"ᒷ",
+			"F":	"⎓",
+			"G":	"⊣",
+			"H":	"⍑",
+			"I":	"╎",
+			"J":	"⋮",
+			"K":	"ꖌ",
+			"L":	"ꖎ",
+			"M":	"ᒲ",
+			"N":	"リ",
+			"O":	"𝙹",
+			"P":	"!¡",
+			"Q":	"ᑑ",
+			"R":	"∷",
+			"S":	"ᓭ",
+			"T":	"ℸ",
+			"U":	"⚍",
+			"V":	"⍊",
+			"W":	"∴",
+			"X":	" ̇/",
+			"Y":	"\|\|",
+			"Z":	"ᓭ",
 		}, True)
 
 	@owoConverter.error
@@ -248,9 +248,9 @@ class Converters(commands.Cog):
 		error = str(error)
 		if error.startswith("Command raised an exception: "):	error=error[29:]
 
-		if error.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
-		elif error == "arg is a required argument that is missing.":	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify any text to convert!")
-		else:	await ctx.send(unhandling(error,tux_in_guild(ctx, self.client)))
+		if	error.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
+		elif	error == "arg is a required argument that is missing.":	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify any text to convert!")
+		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Converters(client))

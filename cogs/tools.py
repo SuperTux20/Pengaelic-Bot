@@ -1,29 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import discord
-import speedtest
-import time
-from asyncio import sleep
-from asyncio.events import get_event_loop
-from discord.ext import commands
-from discord.utils import get
-from concurrent.futures import ThreadPoolExecutor
-from json import dumps
-from os import environ
-from pengaelicutils import (
-	getops,
-	updop,
-	list2str,
-	unhandling,
-	tux_in_guild,
-	jsoncheck,
-	shell,
-	Stopwatch,
-	Developers,
-)
-from re import search
-from tinydb import TinyDB
+import	discord
+import	speedtest
+import	time
+from asyncio import	sleep
+from asyncio.events import	get_event_loop
+from discord.ext import	commands
+from discord.utils import	get
+from concurrent.futures import	ThreadPoolExecutor
+from json import	dumps
+from os import	environ
+from re import	search
+from tinydb import	TinyDB
+from pengaelicutils import	getops,	updop,	list2str,	unhandling,	tux_in_guild,	jsoncheck,	shell,	Stopwatch,	Developers
 
 devs = Developers()
 
@@ -43,7 +33,7 @@ class Tools(commands.Cog):
 		global CurrentTime
 		global SpeedPerformTime
 		CurrentTime = time.strftime("%a/%b %d/%Y %l:%M:%S %p %Z", time.localtime())
-		if speed:	SpeedPerformTime = CurrentTime  # record this as the time the speedtest was done
+		if speed:	SpeedPerformTime = CurrentTime	# record this as the time the speedtest was done
 
 	def TestSpeed(self) -> dict:
 		global results
@@ -57,9 +47,7 @@ class Tools(commands.Cog):
 		return results
 
 	@commands.command(name="say",help="I'll repeat whatever you tell me.",pass_context=True,aliases=["repeat", "parrot"],usage="<message>")
-	async def say_back(self, ctx, *, arg):
-		await ctx.send(arg)
-		if not isinstance(ctx.channel, discord.channel.DMChannel):	await ctx.message.delete()
+	async def say_back(self, ctx, *, arg):	await ctx.send(arg)
 
 	@commands.command(name="credits", help="See who helped me come to exist!")
 	async def credits(self, ctx):
@@ -70,11 +58,7 @@ class Tools(commands.Cog):
 		}
 		if jsoncheck(ctx.guild.id):
 			bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
-			await ctx.send(
-				"```json"
-				+ f'\n"credits": {str(dumps(bot_credits, indent=4))}\n'
-				+ "```"
-			)
+			await ctx.send(f'```json\n"credits": {str(dumps(bot_credits, indent=4))}\n```')
 		else:
 			embed = discord.Embed(color=self.teal, title="Credits", description="All the people on Discord who helped me become what I am today.")
 			for cred in bot_credits:	embed.add_field(name=cred, value=bot_credits[cred])
@@ -89,8 +73,9 @@ class Tools(commands.Cog):
 			kernel	= uname("r")
 			os	= uname("o")
 		emoji = "<:os_linux:901137018153754684>"
-		if os == "Android":	emoji = "<:os_android:901137017860136961>"
-		elif os == "GNU/Linux":
+		if	os == "Android":	emoji = "<:os_android:901137017860136961>"
+		elif	os == "GNU/Linux":
+
 			try:
 				if environ["WSL_DISTRO_NAME"]:	emoji = "<:os_windows:901137018405400576>"
 
@@ -120,22 +105,20 @@ class Tools(commands.Cog):
 
 	@info.command(name="emoji", help="Fetch the specified (server-specific) emoji.", aliases=["emote"], usage="[:emoji:]")
 	async def emoji(self, ctx, emoji=None):
-		emojis = [f"<:{em.name}:{em.id}>" for em in ctx.guild.emojis if not em.animated]
-		animojis = [f"<a:{em.name}:{em.id}>" for em in ctx.guild.emojis if em.animated]
-		emojiurls = [f"https://cdn.discordapp.com/emojis/{em.id}.png" for em in ctx.guild.emojis if not em.animated] + [f"https://cdn.discordapp.com/emojis/{em.id}.gif" for em in ctx.guild.emojis if em.animated]
-		if emoji == None:	await ctx.send(
-				"<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID."
-				+ "\n__Normal__\n"
-				+ str(emojis)[1:-1].replace("'", "").replace(", ", "")
-				+ "\n__Animated__\n"
-				+ str(animojis)[1:-1].replace("'", "").replace(", ", "")
-			)
+		emojis	= [f"<:{em.name}:{em.id}>"	for em in ctx.guild.emojis	if not em.animated]
+		animojis	= [f"<a:{em.name}:{em.id}>"	for em in ctx.guild.emojis	if em.animated]
+		emojiurls	= (
+			[f"https://cdn.discordapp.com/emojis/{em.id}.png"	for em in ctx.guild.emojis	if not em.animated] +
+			[f"https://cdn.discordapp.com/emojis/{em.id}.gif"	for em in ctx.guild.emojis	if em.animated]
+		)
+
+		if emoji == None:	await ctx.send(f"""<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID.\n__Normal__\n"+ {str(emojis)[1:-1].replace("'", "").replace(", ", "")}\n__Animated__\n"{str(animojis)[1:-1].replace("'", "").replace(", ", "")}""")
 		else:
 			emojis += animojis
 			if emoji in emojis:
 				emname = emoji.split(":")[:-1]
-				if emname[0] == "<a":	emname = emname[1] + ".gif"
-				else:	emname = emname[1] + ".png"
+				if	emname[0] == "<a":	emname = emname[1] + ".gif"
+				else:		emname = emname[1] + ".png"
 				await ctx.send(embed=discord.Embed(title=emname, color=self.teal).set_image(url=emojiurls[emojis.index(emoji)]))
 
 			else:	await ctx.send("<:winxp_warning:869760947114348604>Invalid emoji specified!")
@@ -152,8 +135,8 @@ class Tools(commands.Cog):
 			region[0] = region[0].upper()
 			region[1] = region[1].capitalize()
 			region = " ".join(region)
-		except:
-			region = region[0].capitalize()
+
+		except:	region = region[0].capitalize()
 		jsoninfo = {
 			"server name": guild.name,
 			"server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
@@ -238,8 +221,8 @@ class Tools(commands.Cog):
 			embedinfofields[info] = str(embedinfofields[info])
 			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Yes").replace("False", "No"))
 
-		if getops(ctx.guild.id, "toggles", "jsonMenus"):	await ctx.send(f'```json\n"user information": {dumps(jsoninfo,indent=4)}```')
-		else:	await ctx.send(embed=embedinfo)
+		if	getops(ctx.guild.id, "toggles", "jsonMenus"):	await ctx.send(f'```json\n"user information": {dumps(jsoninfo,indent=4)}```')
+		else:		await ctx.send(embed=embedinfo)
 
 	@info.command(name="channel",help="Get info for the specified channel.",usage="[#channel]")
 	async def channel_info(self, ctx, *, channel: discord.TextChannel = None):
@@ -283,12 +266,12 @@ class Tools(commands.Cog):
 		member = ctx.author
 		role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
 		if role_lock in member.roles or role_lock == None:
-			try:	result = getops(ctx.guild.id, "customRoles", str(member.id))
-			except KeyError:	result = None
+			try:	result	= getops(ctx.guild.id, "customRoles", str(member.id))
+			except KeyError:	result	= None
 			hex_code_match = search(r"(?:[0-9a-fA-F]{3}){1,2}$", color)
 			if result and ctx.guild.get_role(int(result)):
 				if hex_code_match:
-					role = ctx.guild.get_role(int(result))
+					role	= ctx.guild.get_role(int(result))
 					await role.edit(name=role_name, color=discord.Color(int(color, 16)))
 					await member.add_roles(role)
 					await ctx.send(f"<:winxp_information:869760946808180747>Role {role.mention} edited.")
@@ -296,8 +279,8 @@ class Tools(commands.Cog):
 				else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Invalid hex code `{color}`.")
 			else:
 				if hex_code_match:
-					role_color = discord.Color(int(color, 16))
-					role = await ctx.guild.create_role(name=role_name, color=role_color)
+					role_color	= discord.Color(int(color, 16))
+					role	= await ctx.guild.create_role(name=role_name, color=role_color)
 					await member.add_roles(role)
 					updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
 					await ctx.send(f"<:winxp_information:869760946808180747>Role {role.mention} created and given.")
@@ -308,8 +291,8 @@ class Tools(commands.Cog):
 
 	@commands.command(name="delrole", help="Delete your custom role.")
 	async def delrole(self, ctx):
-		member = ctx.author
-		role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+		member	= ctx.author
+		role_lock	= get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
 		if role_lock in member.roles or role_lock == None:
 			result = getops(ctx.guild.id, "customRoles", str(member.id))
 			if result:
@@ -363,21 +346,10 @@ class Tools(commands.Cog):
 	async def getError(self, ctx, error):
 		error = str(error)
 		if error.endswith("not found"):
-			if error.startswith("Member"):
-				await ctx.send(
-					"<:winxp_warning:869760947114348604>Invalid user specified!"
-				)
-			elif error.startswith("Channel"):
-				await ctx.send(
-					"<:winxp_warning:869760947114348604>Invalid channel specified!"
-				)
-		else:
-			await ctx.send(
-				unhandling(
-					error,
-					tux_in_guild(ctx, self.client),
-				)
-			)
+			if	error.startswith("Member"):	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+			elif	error.startswith("Channel"):	await ctx.send("<:winxp_warning:869760947114348604>Invalid channel specified!")
+
+		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 	@server_info.error
 	# @stopwatch_start.error
@@ -389,14 +361,7 @@ class Tools(commands.Cog):
 	@delrole.error
 	@emoji.error
 	@info.error
-	async def generalError(self, ctx, error):
-		error = str(error)
-		await ctx.send(
-			unhandling(
-				error,
-				tux_in_guild(ctx, self.client),
-			)
-		)
+	async def generalError(self, ctx, error):	await ctx.send(unhandling(str(error), tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Tools(client))

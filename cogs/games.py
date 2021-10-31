@@ -1,19 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from discord.ext import commands
-from random import choice, randint
-from collections import Counter
-from pengaelicutils import (
-	hangman_words,
-	pengaelic_words,
-	regional_indicators,
-	magic_responses,
-	unhandling,
-	tux_in_guild,
-	list2str,
-	Developers,
-)
+from discord.ext import	commands
+from collections import	Counter
+from random import	choice,	randint
+from pengaelicutils import	hangman_words,	pengaelic_words,	regional_indicators,	magic_responses,	unhandling,	tux_in_guild,	list2str,	Developers
 
 devs = Developers()
 
@@ -42,20 +33,21 @@ class Games(commands.Cog):
 				except ValueError:	ds = [1, int(ds[1])]
 				dice, sides = ds
 
-			elif len(ds) == 1:	dice, sides = [int(ds[0]), 6]
-			else:	raise ValueError("Too many 'd's")
+			elif	len(ds) == 1:	dice, sides = [int(ds[0]), 6]
+			else:		raise ValueError("Too many 'd's")
 
-			if dice == 0:	response = "You didn't roll any dice."
-			elif sides == 0:	response = "You rolled thin air."
-			elif dice < 0:	response = "You rolled NaN dice and got [REDACTED]"
-			elif dice > 1000000:	response = f"{dice} dice? That's just silly."
-			elif sides < 0:
-				if dice == 1:	response = "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
-				if dice > 1:	response = f"You rolled {dice} `err`-sided dice and got [NULL]"
+			if	dice == 0:	response = "You didn't roll any dice."
+			elif	sides == 0:	response = "You rolled thin air."
+			elif	dice < 0:	response = "You rolled NaN dice and got [REDACTED]"
+			elif	dice > 1000000:	response = f"{dice} dice? That's just silly."
+			elif	sides < 0:
+
+				if	dice == 1:	response = "You rolled a [ERROR]-sided die and got `DivideByZeroError`"
+				if	dice > 1:	response = f"You rolled {dice} `err`-sided dice and got [NULL]"
 
 			elif any([sides > 1000000, sides == 1]):	response = f"{sides}-sided dice? That's just silly."
 			else:
-				sides += 1  # because counting starts at zero, we want it to start at one
+				sides += 1	# because counting starts at zero, we want it to start at one
 				side_list = [side for side in range(1, sides)]
 				roll_results = [side_list[randint(0, side_list[-1]) - 1] for _ in range(dice)]
 				total = sum(roll_results)
@@ -71,10 +63,10 @@ class Games(commands.Cog):
 	# ANCHOR: COIN FLIP
 	@commands.command(name="flip", help="Flip some coins!", aliases=["coin", "coinflip"], usage="[number of coins (1)]")
 	async def flip_coins(self, ctx, coins: int = 1):
-		if coins == 1:	response = f"You flipped a {choice(['head', 'tail'])}"
-		elif coins == 0:	response = "You flicked your thumb in the air."
-		elif coins == -1:	response = "You flipped a [REDACTED]"
-		elif coins < -1:	response = "You flipped NaN heads and [ERROR] tails."
+		if	coins == 1:	response = f"You flipped a {choice(['head', 'tail'])}"
+		elif	coins == 0:	response = "You flicked your thumb in the air."
+		elif	coins == -1:	response = "You flipped a [REDACTED]"
+		elif	coins < -1:	response = "You flipped NaN heads and [ERROR] tails."
 		else:
 			if coins > 1000000:	response = f"{coins} coins? That's just silly."
 			else:
@@ -82,8 +74,7 @@ class Games(commands.Cog):
 				for _ in range(10):
 					if 2 in results:
 						for result in range(len(results)):
-							if results[result] == 2:
-								results[result] = randint(0, 2)
+							if results[result] == 2:	results[result] = randint(0, 2)
 				if results.count(2) > 0:
 					if results.count(2) == 1:	response = ", and a coin even landed on its edge."
 					else:	response = f", and {results.count(2)} coins landed on their edges."
@@ -97,30 +88,31 @@ class Games(commands.Cog):
 	async def draw_cards(self, ctx, cards: int = 1, replace_cards: bool = False):
 		suits = ["Diamonds", "Spades", "Hearts", "Clubs"]
 		values = {
-			1: "Ace",
-			2: 2,
-			3: 3,
-			4: 4,
-			5: 5,
-			6: 6,
-			7: 7,
-			8: 8,
-			9: 9,
-			10: 10,
-			11: "Jack",
-			12: "Queen",
-			13: "King",
+			1:	"Ace",
+			2:	2,
+			3:	3,
+			4:	4,
+			5:	5,
+			6:	6,
+			7:	7,
+			8:	8,
+			9:	9,
+			10:	10,
+			11:	"Jack",
+			12:	"Queen",
+			13:	"King"
 		}
-		all_cards = []
-		faces = []
-		numbers = []
-		drawn = []
+		all_cards	= []
+		faces	= []
+		numbers	= []
+		drawn	= []
 		if replace_cards:
 			for _ in range(cards):
-				random_value = str(choice(list(values.values())))
-				card = str(f"{random_value} {(' ' * 6 - len(random_value))} of {choice(suits)}")
-				if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":	faces.append(card)
-				else:	numbers.append(card)
+				random_value	= str(choice(list(values.values())))
+				card	= str(f"{random_value} {(' ' * 6 - len(random_value))} of {choice(suits)}")
+
+				if	card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":	faces.append(card)
+				else:		numbers.append(card)
 			drawn = faces + numbers
 		else:
 			for suit in range(int(len(suits) / 1)):
@@ -140,8 +132,8 @@ class Games(commands.Cog):
 			else:
 				for _ in range(cards):
 					card = choice(all_cards)
-					if card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":	faces.append(card)
-					else:	numbers.append(card)
+					if	card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":	faces.append(card)
+					else:		numbers.append(card)
 					all_cards.remove(card)
 				drawn = faces + numbers
 		if cards == 1:
@@ -155,21 +147,21 @@ class Games(commands.Cog):
 	async def bubblewrap(self, ctx, size: str = "5"):
 		try:
 			if len(size) == 5:
-				width = int(size[0:1])
-				height = int(size[3:4])
+				width	= int(size[0:1])
+				height	= int(size[3:4])
 			elif len(size) == 4:
 				if "x" == size[1]:
-					width = int(size[0])
-					height = int(size[2:3])
+					width	= int(size[0])
+					height	= int(size[2:3])
 				elif "x" == size[2]:
-					width = int(size[0:1])
-					height = int(size[3])
+					width	= int(size[0:1])
+					height	= int(size[3])
 			elif len(size) == 3:
-				width = int(size[0])
-				height = int(size[2])
+				width	= int(size[0])
+				height	= int(size[2])
 			elif len(size) == 2 or len(size) == 1:
-				width = int(size)
-				height = int(size)
+				width	= int(size)
+				height	= int(size)
 			else:
 				raise (SyntaxError)
 			if width > 10 or height > 10:
@@ -182,12 +174,12 @@ class Games(commands.Cog):
 		await ctx.send(sheet)
 
 	# ANCHOR: HANGMAN
-	@commands.command(name="hangman",help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',usage='["pengaelic"]')  # TODO: make more word sets for different topic modes
+	@commands.command(name="hangman",help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',usage='["pengaelic"]')	# TODO: make more word sets for different topic modes
 	async def hangman(self, ctx, pengaelic=False):
-		words = hangman_words
-		if pengaelic == "pengaelic":	words = list(pengaelic_words.keys())
-		word = choice(words)
-		vowels = 0
+		words	= hangman_words
+		if	pengaelic == "pengaelic":	words = list(pengaelic_words.keys())
+		word	= choice(words)
+		vowels	= 0
 		for i in word:
 			if i in "aeiouy":	vowels += 1
 		await ctx.send(f"React to this message and guess the word.\nHINT: The word has {vowels} vowels.")
@@ -199,7 +191,7 @@ class Games(commands.Cog):
 		correct = 0
 		flag = False
 		chance_counter = await ctx.send(f"{chances} chances remaining.")
-		while chances != 0 and flag == False:  # flag is updated when word is correctly guessed
+		while chances != 0 and flag == False:	# flag is updated when word is correctly guessed
 
 			def check(reaction, user) -> bool:
 				return user == ctx.author and reaction.emoji in list(regional_indicators.keys())
@@ -210,13 +202,13 @@ class Games(commands.Cog):
 			if not guess.isalpha():	await ctx.send("Enter only a letter!")
 			elif len(guess) > 1:	await ctx.send("Enter only a SINGLE letter")
 			elif guess in letter_guessed or guess in past_guesses:	await ctx.send("You have already guessed that letter")
-			elif guess in word:  # if letter is guessed correctly
+			elif guess in word:
 				# k stores number of times guessed letter occurs in word
 				k = word.count(guess)
 				# guess letter is added as many times as it occurs
 				for _ in range(k):
 					letter_guessed += guess
-			else:  # if letter is guessed incorrectly
+			else:
 				chances -= 1
 				past_guesses += guess
 				await chance_counter.edit(content=f"{chances} chances remaining.")
