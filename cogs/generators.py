@@ -80,36 +80,35 @@ class Generators(commands.Cog):
 		actions	= ["pushes", "throws", "drops", "burns", "stabs", "runs over", "slaps"]
 		selected_object	= choice(objects)
 		part2	= choice(poss2)
-		headline	.append(choice(people)).append(choice(events))
+		headline.append(choice(people)).append(choice(events))
 
 		if part2 != "":
-			headline	.append(part2).append(selected_object)
-			objects	.remove(selected_object)
-			selected_object	= choice(objects)
+			headline.append(part2).append(selected_object)
+			objects.remove(selected_object)
+			selected_object = choice(objects)
 
-		headline	.append(choice(timing)).append(selected_object)
-		objects	.remove(selected_object)
-		headline	.append(choice(actions)).append(choice(objects))
+		headline.append(choice(timing)).append(selected_object)
+		objects.remove(selected_object)
+		headline.append(choice(actions)).append(choice(objects))
 		await ctx.send(" ".join(headline))
 
 	@commands.command(name="img", help="[Infinite Monkey Generator](https://codepen.io/justinchan/full/enBFA)", aliases=["monkeys", "infinitemonkey", "monkeygen"], usage="<word> [alphabet (abcdefghijklmnopqrstuvwxyz)]")
 	async def img(self, ctx, word=None, alphabet="abcdefghijklmnopqrstuvwxyz"):
-		alphabet	= list(alphabet)
 		if word == None:	await ctx.send("You didn't specify a keyword to search for!")
 		else:
 			invalid = False
 			for character in word:
 				if character not in alphabet:	invalid = True
 
-			if invalid:	await ctx.send(f"Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
+			if invalid:	await ctx.send(f"<:winxp_warning:869760947114348604>Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
 			else:
-				status = await ctx.send("Generating...")
+				status = await ctx.send("<:winxp_information:869760946808180747>Generating...")
 				async with ctx.typing():	text, cutoff, textlen, success, elapsed = await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.MonkeyBusiness, word, alphabet,time())
 				if success:
 					await status.edit(content=text)
-					await ctx.send(f'Keyword "{word}" found after {textlen} characters{cutoff} in {elapsed}')
+					await ctx.send(f'<:winxp_information:869760946808180747>Keyword "{word}" found after {textlen} characters{cutoff} in {elapsed}')
 
-				else:	await ctx.send(content=f'Could not find keyword "{word}" within one minute. :frowning:')
+				else:	await ctx.send(content=f'<:winxp_critical_error:869760946816553020>Could not find keyword "{word}" within one minute. :frowning:')
 
 	@commands.command(name="fortune", help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))\nNote: My developer and I are **not** responsible for any offensive output it may generate.")
 	async def fortune(self, ctx):	await ctx.send(f"```{bash('fortune').decode()[:-1]}```")
@@ -120,10 +119,11 @@ class Generators(commands.Cog):
 	@fortune.error
 	async def error(self, ctx, error):
 		error = str(error)
-		if	error.startswith("Command raised an exception: "):	error=error[29:]
+		if	error.startswith("Command raised an exception: "):	error = error[29:]
 
-		if	error.startswith("Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
-		elif	error == 'Unexpected quotation mark (") in non-quoted string':	await ctx.send('<:winxp_information:869760946808180747>You need to escape your "quotation marks" with backslashes (\\ these things \\\).')
+		if	error.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
+		elif	error.startswith("Unexpected quote mark") and error.endswith("in non-quoted string"):	await ctx.send('<:winxp_warning:869760947114348604>You need to escape your "quotation marks" with doubled backslashes (\\\\\ these things \\\\\\\).')
+		elif	error == ('Expected closing ".'):	await ctx.send("<:winxp_warning:869760947114348604>A single unescaped quotation mark isn't going to work, sorry.")
 		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 
