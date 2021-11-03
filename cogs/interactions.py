@@ -11,10 +11,8 @@ devs = Developers()
 
 
 class Interactions(commands.Cog):
-	def __init__(self, client):
-		self.client	= client
-		self.teal	= 0x007F7F
-
+	def __init__(self, client):	self.client	= client
+	teal	= 0x007F7F
 	name	= "interactions"
 	name_typable	= name
 	description	= "Interact with other server members!"

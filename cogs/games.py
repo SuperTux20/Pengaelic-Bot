@@ -11,7 +11,6 @@ devs = Developers()
 
 class Games(commands.Cog):
 	def __init__(self, client):	self.client = client
-
 	name	= "games"
 	name_typable	= name
 	description	= "All sorts of fun stuff!"

@@ -15,8 +15,8 @@ devs = Developers()
 
 class Options(commands.Cog):
 	def __init__(self, client):	self.client = client
-	db	= TinyDB("config.json")
 	teal	= 0x007F7F
+	db	= TinyDB("config.json")
 	wipe_censor_confirm	= False
 	reset_options_confirm	= False
 	name	= "options"

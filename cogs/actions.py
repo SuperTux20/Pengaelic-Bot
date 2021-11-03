@@ -8,10 +8,8 @@ from os import	listdir
 
 
 class Actions(commands.Cog):
-	def __init__(self, client):
-		self.client	= client
-		self.teal	= 0x007F7F
-
+	def __init__(self, client):	self.client	= client
+	teal	= 0x007F7F
 	name	= "actions"
 	name_typable	= name
 	description	= "Emote actions!"

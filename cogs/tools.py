@@ -21,9 +21,8 @@ devs = Developers()
 class Tools(commands.Cog):
 	def __init__(self, client):	self.client = client
 	teal	= 0x007F7F
-	nukeconfirm	= False
-	testing	= False
 	db	= TinyDB("config.json")
+	testing	= False
 	name	= "tools"
 	name_typable	= name
 	description	= "Various tools and info."

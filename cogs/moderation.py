@@ -13,7 +13,6 @@ devs = Developers()
 
 class Moderation(commands.Cog):
 	def __init__(self, client):	self.client = client
-	teal	= 0x007F7F
 	db	= TinyDB("config.json")
 	name	= "moderation"
 	name_typable	= name

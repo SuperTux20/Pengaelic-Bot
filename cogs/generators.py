@@ -14,7 +14,6 @@ devs = Developers()
 
 class Generators(commands.Cog):
 	def __init__(self, client):	self.client = client
-
 	name	= "generators"
 	name_typable	= name
 	description	= "Do ya like randomization?"

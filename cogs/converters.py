@@ -12,7 +12,6 @@ devs = Developers()
 
 class Converters(commands.Cog):
 	def __init__(self, client):	self.client = client
-
 	teal	= 0x007F7F
 	name	= "converters"
 	name_typable	= name
