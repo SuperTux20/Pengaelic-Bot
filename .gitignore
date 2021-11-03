@@ -126,9 +126,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Configs
-config.*
-
 # VS/Code configs
 .vs*/
 
@@ -137,3 +134,7 @@ config.*
 
 # nohup output from when i start the bot from ssh
 nohup.out
+
+# Bot-generated files
+config.json
+profiles.json
