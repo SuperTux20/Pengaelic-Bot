@@ -14,6 +14,7 @@ devs = Developers()
 class Moderation(commands.Cog):
 	def __init__(self, client):	self.client = client
 	db	= TinyDB("config.json")
+	nukeconfirm	= False
 	name	= "moderation"
 	name_typable	= name
 	description	= "Staff tools!"
