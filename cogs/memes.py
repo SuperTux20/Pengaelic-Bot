@@ -32,15 +32,16 @@ class Memes(commands.Cog):
 		else:
 			return Image.open("images/meme_templates/generic.jpg")
 
-	@commands.group(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text | bottom text>")
+	@commands.group(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text> | [bottom text]")
 	async def topbottom(self, ctx, *, text):
 		img	= self.getImage(ctx)
 		width, height	= img.size
-		try:
-			topString, bottomString = text.upper().split("|")
-		except ValueError:
-			topString	= text.upper()
-			bottomString	= ""
+		try:	topString, bottomString = text.upper().split("|")
+		except ValueError as error:
+			if "not enough" in str(error):
+				topString, bottomString	= [text.upper(), ""]
+			else:
+				raise
 		# find biggest font size that works
 		fontSize	= int(height / 5)
 		font	= ImageFont.truetype("fonts/impact.ttf", fontSize)
@@ -65,7 +66,7 @@ class Memes(commands.Cog):
 		draw.text(bottomTextPosition,	bottomString,	0xffffffff, font=font)
 		await ctx.send(file=self.Image2File(img, "2012meme.png"))
 
-	@commands.group(name="2016meme", help="Make a more modern top-text meme. Supply your own PNG or JPG!", usage="<top text | bottom text>")
+	@commands.group(name="2016meme", help="Make a more modern top-text meme. Supply your own PNG or JPG!", usage="<text> | [text] | [text] | [etc]")
 	async def toponly(self, ctx, *, text):
 		img	= self.getImage(ctx)
 		width, height	= img.size
@@ -91,7 +92,8 @@ class Memes(commands.Cog):
 	@toponly.error
 	async def messageError(self, ctx, error):
 		error = str(error)
-		if error.endswith("text is a required argument that is missing."):	await ctx.send("<:winxp_warning:869760947114348604>No caption specified!")
+		if "text is a required argument that is missing." in error:	await ctx.send("<:winxp_warning:869760947114348604>No caption specified!")
+		elif "too many values to unpack" in error:	await ctx.send("<:winxp_warning:869760947114348604>Too many lines specified!")
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 
