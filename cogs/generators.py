@@ -107,7 +107,7 @@ class Generators(commands.Cog):
 					await status.edit(content=text)
 					await ctx.send(f'<:winxp_information:869760946808180747>Keyword "{word}" found after {textlen} characters{cutoff} in {elapsed}')
 
-				else:	await ctx.send(f'<:winxp_critical_error:869760946816553020>Could not find keyword "{word}" within one minute. :frowning:')
+				else:	await ctx.send(f'<:winxp_critical_error:869760946816553020>Could not find keyword "{word}" within ten minutes. :frowning:')
 
 	@commands.command(name="fortune", help="Pipe output from [`fortune`](https://en.wikipedia.org/wiki/Fortune_(Unix))\nNote: My developer and I are **not** responsible for any offensive output it may generate.")
 	async def fortune(self, ctx):	await ctx.send(f"```{bash('fortune').decode()[:-1]}```")
