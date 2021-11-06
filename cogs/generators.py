@@ -32,7 +32,7 @@ class Generators(commands.Cog):
 		while text.find(word) == -1:
 			letter	= choice(alphabet)
 			text	= text + letter
-			if timer.monkeywatch(starttime) == "01:00":
+			if timer.monkeywatch(starttime) == "10:00":
 				success = False
 				break
 
