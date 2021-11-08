@@ -4,27 +4,27 @@
 
 ## About
 
-- Language used: `Python 3.9`
-- Libraries used: `py-cord`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
+-   Language used: `Python 3.9`
+-   Libraries used: `py-cord`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
 
 ---
 
-*Pengaelic Bot - the custom-built Discord bot, coded in Python.*
+_Pengaelic Bot - the custom-built Discord bot, coded in Python._
 
-*Copyright (C) 2020-2021 Tux Penguin | <https://github.com/SuperTux20/Pengaelic-Bot/>*
+_Copyright (C) 2020-2021 Tux Penguin | <https://github.com/SuperTux20/Pengaelic-Bot/>_
 
-*This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.*
+_This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version._
 
-*This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.*
+_This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details._
 
 ---
 
-*Some of the code in Pengaelic Bot originates from CAutomator Legacy, a bot created by [Hyperfresh](https://github.com/Hyperfresh). CAutomator Legacy is licensed under LGPLv3.*
+_Some of the code in Pengaelic Bot originates from CAutomator Legacy, a bot created by [Hyperfresh](https://github.com/Hyperfresh). CAutomator Legacy is licensed under LGPLv3._
 
-*CAutomator Legacy - the custom-built Discord bot, coded in Python.*
+_CAutomator Legacy - the custom-built Discord bot, coded in Python._
 
-*Copyright (C) 2020 Hyperfresh | <https://github.com/Hyperfresh/CAutomator/>*
+_Copyright (C) 2020 Hyperfresh | <https://github.com/Hyperfresh/CAutomator-Legacy/>_
 
-*This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.*
+_This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version._
 
-*This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.*
+_This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details._
