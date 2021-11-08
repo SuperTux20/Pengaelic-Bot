@@ -29,8 +29,7 @@ class Options(commands.Cog):
 	async def toggle_option(self, ctx, option, disable_message, enable_message):
 		status = getops(ctx.guild.id, "toggles", option)
 		updop(ctx.guild.id, "toggles", option, not status)
-		if status:	await ctx.send("<:winxp_information:869760946808180747>" + disable_message)
-		else:	await ctx.send("<:winxp_information:869760946808180747>" + enable_message)
+		await ctx.send(f"<:winxp_information:869760946808180747> {disable_message if status else enable_message}")
 
 	# SECTION: SET
 	# ANCHOR: GENERAL
@@ -61,17 +60,11 @@ class Options(commands.Cog):
 			options.pop("lists")
 			options.pop("customRoles")
 			for option, value in options["channels"].items():
-				try:
-					if jsoncheck(ctx.guild.id):	options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name
-					else:	options["channels"][option] = f"<#{ctx.guild.get_channel(int(value)).id}>"
-
+				try:	options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name if jsoncheck(ctx.guild.id) else options["channels"][option] = f"<#{ctx.guild.get_channel(int(value)).id}>"
 				except AttributeError:	options["channels"][option] = "#invalid-channel"
 				except TypeError:	pass
 			for option, value in options["roles"].items():
-				try:
-					if jsoncheck(ctx.guild.id):	options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name
-					else:	options["roles"][option] = f"<@&{ctx.guild.get_role(int(value)).id}>"
-
+				try:	options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name if jsoncheck(ctx.guild.id) else options["roles"][option] = f"<@&{ctx.guild.get_role(int(value)).id}>"
 				except AttributeError:	options["roles"][option] = "@deleted-role"
 				except TypeError:	pass
 
@@ -132,10 +125,7 @@ class Options(commands.Cog):
 	# ANCHOR[id=locktoggle]: LOCK CUSTOM ROLES
 	@optoggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
 	@commands.has_permissions(manage_roles=True)
-	async def toggle_role_lock(self, ctx):
-		message = ""
-		if getops(ctx.guild.id, "roles", "customLockRole") == None:	message = f" Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or don't if they should be disabled entirely."
-		await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", "Custom roles are now locked." + message)
+	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. {'' if getops(ctx.guild.id, 'roles', 'customLockRole') else f' Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or none if they should be disabled entirely.'}")
 
 	# ANCHOR[id=ricktoggle]: RICK ROULETTE
 	@optoggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
