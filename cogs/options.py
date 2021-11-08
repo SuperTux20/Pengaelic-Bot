@@ -60,11 +60,11 @@ class Options(commands.Cog):
 			options.pop("lists")
 			options.pop("customRoles")
 			for option, value in options["channels"].items():
-				try:	options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name if jsoncheck(ctx.guild.id) else options["channels"][option] = f"<#{ctx.guild.get_channel(int(value)).id}>"
+				try:	options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name if jsoncheck(ctx.guild.id) else f"<#{ctx.guild.get_channel(int(value)).id}>"
 				except AttributeError:	options["channels"][option] = "#invalid-channel"
 				except TypeError:	pass
 			for option, value in options["roles"].items():
-				try:	options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name if jsoncheck(ctx.guild.id) else options["roles"][option] = f"<@&{ctx.guild.get_role(int(value)).id}>"
+				try:	options["roles"][option] = "@" + ctx.guild.get_role(int(value)).name if jsoncheck(ctx.guild.id) else f"<@&{ctx.guild.get_role(int(value)).id}>"
 				except AttributeError:	options["roles"][option] = "@deleted-role"
 				except TypeError:	pass
 
