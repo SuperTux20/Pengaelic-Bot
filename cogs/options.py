@@ -1,13 +1,13 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import	discord
 from asyncio import	sleep
 from discord.ext import	commands
 from json import	dumps
 from random import	choice
 from re import	sub
 from tinydb import	TinyDB,	Query
+from discord import	Embed,	Role,	TextChannel
 from pengaelicutils import	newops,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
@@ -76,7 +76,7 @@ class Options(commands.Cog):
 				except TypeError:	pass
 
 			if jsoncheck(ctx.guild.id):	await ctx.send("```json\n{}\n```".format(dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace("\n    ", "\n")))
-			else:	await ctx.send(embed=discord.Embed(title = "Options", description = f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"`\n' + "".join(["".join([chunk for chunk in [f"\n\n**{category[0].capitalize()}**\n", "\n".join([f"{option[0]}: {option[1]}".replace("None", f"No {category[0].capitalize()[:-1]} Set") for option in category[1].items() if any(cat == category[0] for cat in ["channels", "roles"])]), "\n".join([f"{option[0]}: {option[1]}".replace("False", "Disabled").replace("True", "Enabled") for option in category[1].items() if category[0] == "toggles"]), "\n".join([f"{option[0]}: {option[1]}" for option in category[1].items() if category[0] == "messages"])]]) for category in options.items()]), color = self.teal))
+			else:	await ctx.send(embed=Embed(title = "Options", description = f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"`\n' + "".join(["".join([chunk for chunk in [f"\n\n**{category[0].capitalize()}**\n", "\n".join([f"{option[0]}: {option[1]}".replace("None", f"No {category[0].capitalize()[:-1]} Set") for option in category[1].items() if any(cat == category[0] for cat in ["channels", "roles"])]), "\n".join([f"{option[0]}: {option[1]}".replace("False", "Disabled").replace("True", "Enabled") for option in category[1].items() if category[0] == "toggles"]), "\n".join([f"{option[0]}: {option[1]}" for option in category[1].items() if category[0] == "messages"])]]) for category in options.items()]), color = self.teal))
 
 	# ANCHOR: RESET
 	@read_options.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
@@ -157,39 +157,39 @@ class Options(commands.Cog):
 	# ANCHOR[id=cmdr]: BOT COMMANDER
 	@opset.command(name="botCommanderRole", help="Set the bot commander role (required for a lot of commands).")
 	@commands.has_permissions(manage_roles=True)
-	async def change_cmdr_role(self, ctx, *, role: discord.Role):	await self.set_role(ctx, "botCommander", role)
+	async def change_cmdr_role(self, ctx, *, role: Role):	await self.set_role(ctx, "botCommander", role)
 
 	# ANCHOR[id=customlock]: CUSTOM ROLE LOCK
 	@opset.command(name="customRoleLockRole", help="Set what role is required to use custom roles.")
 	@commands.has_permissions(manage_roles=True)
-	async def change_required_role(self, ctx, *, role: discord.Role):	await self.set_role(ctx, "customRoleLock", role)
+	async def change_required_role(self, ctx, *, role: Role):	await self.set_role(ctx, "customRoleLock", role)
 
 	# ANCHOR[id=dramarole]: DRAMA ROLE
 	@opset.command(name="dramaRole", help="Set the drama role.")
 	@commands.has_permissions(manage_roles=True)
-	async def change_drama_role(self, ctx, *, role: discord.Role):	await self.set_role(ctx, "drama", role)
+	async def change_drama_role(self, ctx, *, role: Role):	await self.set_role(ctx, "drama", role)
 
 	# ANCHOR[id=muterole]: MUTE ROLE
 	@opset.command(name="muteRole", help="Set the muted role.")
 	@commands.has_permissions(manage_roles=True)
-	async def change_mute_role(self, ctx, *, role: discord.Role):	await self.set_role(ctx, "mute", role)
+	async def change_mute_role(self, ctx, *, role: Role):	await self.set_role(ctx, "mute", role)
 	# END SECTION
 
 	# SECTION: CHANNELS
 	# ANCHOR[id=dramachan]: DRAMA CHANNEL
 	@opset.command(name="dramaChannel", help="Set what channel auto-suggestions should be converted in.")
 	@commands.has_permissions(manage_roles=True)
-	async def change_drama_channel(self, ctx, *, channel: discord.TextChannel):	await self.set_channel(ctx, "drama", channel)
+	async def change_drama_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "drama", channel)
 
 	# ANCHOR[id=suggchan]: SUGGESTIONS
 	@opset.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
 	@commands.has_permissions(manage_roles=True)
-	async def change_suggestions_channel(self, ctx, *, channel: discord.TextChannel):	await self.set_channel(ctx, "suggestions", channel)
+	async def change_suggestions_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "suggestions", channel)
 
 	# ANCHOR[id=welcomechan]: WELCOME CHANNEL
 	@opset.command(name="welcomeChannel", help="Set what channel welcome messages should be sent in.")
 	@commands.has_permissions(manage_roles=True)
-	async def change_welcome_channel(self, ctx, *, channel: discord.TextChannel):	await self.set_channel(ctx, "welcome", channel)
+	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
 	# END SECTION
 
 	# SECTION: MESSAGES

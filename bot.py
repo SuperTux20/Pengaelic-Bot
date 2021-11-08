@@ -143,8 +143,8 @@ if "--reset-options" in argv:
 
 # ANCHOR: status setter
 async def set_status():
-	if unstable:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Tux's unending screaming"))
-	else:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=str(len(db.all())) + " servers! | p!help"))
+	if unstable:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,	name="Tux's unending screaming"))
+	else:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,	name=str(len(db.all())) + " servers! | p!help"))
 
 
 # ANCHOR: help menu template

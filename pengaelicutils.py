@@ -3,7 +3,11 @@
 
 from dotenv	import load_dotenv	as dotenv
 from os	import getenv	as env
+from discord	import File
 from json	import loads
+from io	import BytesIO
+from PIL	import Image
+from requests	import get
 from subprocess	import check_output
 from time	import time
 from tinydb	import TinyDB,	Query
@@ -155,9 +159,17 @@ def updop(guild: str, category: str, option: str, value):
 	options = db.search(server.guildID == guild)[0][category]
 	options[option] = value
 	db.update({category: options}, server.guildID == guild)
-
-
 # END SECTION
+
+valid_image	= lambda filename: any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
+
+def img2file(img: Image, name: str) -> File:
+	with BytesIO() as image_binary:
+		img.save(image_binary, "PNG")
+		image_binary.seek(0)
+		return File(image_binary, name)
+
+def img_from_msg(ctx, url) -> Image:	return Image.open(BytesIO(get(ctx.message.attachments[0].url).content) if ctx.message.attachments else url)
 
 # ANCHOR: ELDRITCH SYLLABLES
 def eldritch_syllables() -> list:

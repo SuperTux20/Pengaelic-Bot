@@ -1,14 +1,11 @@
 # !/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import	discord
 from asyncio.events import	get_event_loop
 from concurrent.futures import	ThreadPoolExecutor
-from io import	BytesIO
 from discord.ext import	commands
-from pengaelicutils import	jsoncheck,	unhandling,	tux_in_guild
+from pengaelicutils import	unhandling,	tux_in_guild, img2file, img_from_msg
 from PIL import	Image,	ImageFont,	ImageDraw
-from requests import	get
 
 class Memes(commands.Cog):
 	def __init__(self, client):	self.client	= client
@@ -17,20 +14,6 @@ class Memes(commands.Cog):
 	name_typable	= name
 	description	= "Image manipulation is fun, isn't it?"
 	description_long	= description
-	valid_image	= lambda self, filename: any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
-
-	def Image2File(self, img: Image, name: str) -> discord.File:
-		with BytesIO() as image_binary:
-			img.save(image_binary, "PNG")
-			image_binary.seek(0)
-			return discord.File(image_binary, name)
-
-	def getImage(self, ctx) -> Image:
-		if ctx.message.attachments:
-			if self.valid_image(ctx.message.attachments[0].filename):	return Image.open(BytesIO(get(ctx.message.attachments[0].url).content))
-			else:	return Image.open("images/meme_templates/generic.jpg")
-
-		else:	return Image.open("images/meme_templates/generic.jpg")
 
 	def twelve(self, img: Image, text: str) -> Image:
 		width, height	= img.size
@@ -84,12 +67,12 @@ class Memes(commands.Cog):
 
 	@commands.command(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text> | [bottom text]")
 	async def topbottom(self, ctx, *, text):
-		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.Image2File, self.twelve(self.getImage(ctx), text), "2012meme.png")
+		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(img_from_msg(ctx, "images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2012meme.png")
 		await ctx.send(file=img)
 
 	@commands.command(name="2016meme", help="Make a more modern top-text meme. Supply your own PNG or JPG!", usage="<text> | [text] | [text] | [etc]")
 	async def toponly(self, ctx, *, text):
-		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.Image2File, self.sixteen(self.getImage(ctx), text), "2016meme.png")
+		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(img_from_msg(ctx, "images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2016meme.png")
 		await ctx.send(file=img)
 
 	# FIXME: holy fuck come back to this later, text issues
@@ -135,7 +118,7 @@ class Memes(commands.Cog):
 
 	#	draw.text(top_text_pos,	top_string,	(0, 0, 0), font=font)
 	#	draw.text(bottom_text_pos,	bottom_string,	(0, 0, 0), font=font)
-	#	await ctx.send(file=self.Image2File(pad, "drakememe.png"))
+	#	await ctx.send(file=img2file(pad, "drakememe.png"))
 
 	# TODO: actually make this meme
 	# @commands.command(name="galaxybrainmeme", help="Smarter and smarter.", usage="<text> | [text] | [text] | [etc]")
@@ -157,7 +140,7 @@ class Memes(commands.Cog):
 	#	draw	= ImageDraw.Draw(pad)
 
 	#	for line in text:	draw.text((0, (font_size * text.index(line))),	line,	(0, 0, 0), font=font)
-	#	await ctx.send(file=self.Image2File(pad, "galaxybrainmeme.png"))
+	#	await ctx.send(file=img2file(pad, "galaxybrainmeme.png"))
 
 	@topbottom.error
 	@toponly.error

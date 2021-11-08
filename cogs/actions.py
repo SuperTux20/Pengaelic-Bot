@@ -1,10 +1,10 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import 	discord
-from discord.ext import	commands
-from random import	randint
-from os import	listdir
+from discord	import	Embed
+from discord.ext	import	commands
+from random	import	randint
+from os	import	listdir
 
 
 class Actions(commands.Cog):
@@ -15,7 +15,7 @@ class Actions(commands.Cog):
 	description	= "Emote actions!"
 	description_long	= description
 
-	async def act(self, ctx, act, punct="..."):	await ctx.send(embed=discord.Embed(title=f"{ctx.author.mention} is {act}ing{punct}", color=self.teal).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'images/actions/{act}'))-1)}.gif"))
+	async def act(self, ctx, act, punct="..."):	await ctx.send(embed=Embed(title=f"{ctx.author.mention} is {act}ing{punct}", color=self.teal).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'images/actions/{act}'))-1)}.gif"))
 
 	@commands.command(name="cry")
 	async def cry(self, ctx):	await self.act(ctx, "cry")

@@ -1,9 +1,9 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import 	discord
 from discord.utils import	get
 from discord.ext import	commands
+from discord import	Embed,	Member,	DMChannel
 from pengaelicutils import	getops,	Developers
 from random import	choice
 from re import	sub
@@ -23,14 +23,14 @@ class NonCommands(commands.Cog):
 
 	# ANCHOR: ON MEMBER JOIN
 	@commands.Cog.listener()
-	async def on_member_join(self, member: discord.Member):
+	async def on_member_join(self, member: Member):
 		if getops(member.guild.id, "toggles", "welcome"):
 			welcome_channel = getops(member.guild.id, "channels", "welcomeChannel")
 			if welcome_channel:	await get(member.guild.text_channels, id=welcome_channel).send(getops(member.guild.id, "messages", "welcomeMessage").replace("SERVER", member.guild.name).replace("USER", member.name))
 
 	# ANCHOR: ON MEMBER LEAVE
 	@commands.Cog.listener()
-	async def on_member_remove(self, member: discord.Member):
+	async def on_member_remove(self, member: Member):
 		if getops(member.guild.id, "toggles", "welcome"):
 			welcome_channel = getops(member.guild.id, "channels", "welcomeChannel")
 			if welcome_channel:	await get(member.guild.text_channels, id=welcome_channel).send(getops(member.guild.id, "messages", "goodbyeMessage").replace("SERVER", member.guild.name).replace("USER", member.name))
@@ -42,7 +42,7 @@ class NonCommands(commands.Cog):
 		# check if the message it's reading belongs to a bot
 		# then make sure it's not a DM, in which case, don't test options (because there are none)
 		if not message.author.bot:
-			if not isinstance(message.channel, discord.channel.DMChannel):
+			if not isinstance(message.channel, DMChannel):
 				# send everything to variables to make my life easier
 				messagetext = sub(r"[^a-z0-9 ]", "", message.content.lower())	# remove all non-alphanumeric characters (except for spaces) and convert to lowercase
 				server = message.guild.id
@@ -78,7 +78,7 @@ class NonCommands(commands.Cog):
 				# ANCHOR: AUTO POLLS
 				if getops(server, "toggles", "suggestions") and message.channel.id == getops(server, "channels", "suggestionsChannel"):
 					thepoll = await message.channel.send(
-						embed=discord.Embed(
+						embed=Embed(
 							title	= "Suggestion",
 							description	= message.content,
 							color	= 0x007F7F
@@ -106,7 +106,7 @@ class NonCommands(commands.Cog):
 					elif	any(message in messagetext.split() for message in ["hi", "hey", "hello"]):	await message.add_reaction("👋")
 
 			# ANCHOR: BOT OWNER DM INTERACTION
-			elif isinstance(message.channel, discord.channel.DMChannel):
+			elif isinstance(message.channel, DMChannel):
 				if message.attachments and await self.client.is_owner(message.author):
 					if message.attachments[0].filename == "config.json":
 						await message.attachments[0].save("config.json")

@@ -1,8 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import	discord
 from asyncio import	sleep
+from discord import	Member
 from discord.ext import	commands
 from discord.utils import	get
 from tinydb import	TinyDB
@@ -47,7 +47,7 @@ class Moderation(commands.Cog):
 	# LINK cogs/options.py#dramachannel
 	@commands.command(name="drama", help="Assign a member the drama role.", usage="<member>")
 	@commands.has_permissions(kick_members=True)
-	async def drama(self, ctx, member: discord.Member, *, reason=None):
+	async def drama(self, ctx, member: Member, *, reason=None):
 		try:
 			if getops(ctx.guild.id, "channels", "dramaChannel"):
 				await member.add_roles(get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "dramaRole")),reason=reason)
@@ -60,7 +60,7 @@ class Moderation(commands.Cog):
 	# LINK cogs/options.py#muterole
 	@commands.command(name="mute", help="Mute a member.", usage="<member>")
 	@commands.has_permissions(kick_members=True)
-	async def mute(self, ctx, member: discord.Member, *, reason=None):
+	async def mute(self, ctx, member: Member, *, reason=None):
 		try:
 			await member.add_roles(get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "muteRole")),reason=reason)
 			await ctx.send(f"Muted {member} for reason `{reason}`.")
@@ -69,13 +69,13 @@ class Moderation(commands.Cog):
 
 	@commands.command(name="kick", help="Kick a member.", usage="<member>")
 	@commands.has_permissions(kick_members=True)
-	async def kick(self, ctx, member: discord.Member, *, reason=None):
+	async def kick(self, ctx, member: Member, *, reason=None):
 		await member.kick(reason=reason)
 		await ctx.send(f"<:winxp_information:869760946808180747>Kicked {member} for reason `{reason}`.")
 
 	@commands.command(name="ban", help="Ban a member.", usage="<member>")
 	@commands.has_permissions(ban_members=True)
-	async def ban(self, ctx, member: discord.Member, *, reason=None):
+	async def ban(self, ctx, member: Member, *, reason=None):
 		await member.ban(reason=reason)
 		await ctx.send(f"<:winxp_information:869760946808180747>Banned {member} for reason `{reason}`.")
 

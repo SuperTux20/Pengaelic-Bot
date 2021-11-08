@@ -1,7 +1,6 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-import	discord
 import	speedtest
 import	time
 from asyncio import	sleep
@@ -13,6 +12,7 @@ from json import	dumps
 from os import	environ
 from re import	search
 from tinydb import	TinyDB
+from discord import	Embed,	Member,	TextChannel,	Color
 from pengaelicutils import	getops,	updop,	list2str,	unhandling,	tux_in_guild,	jsoncheck,	shell,	Stopwatch,	Developers
 
 devs = Developers()
@@ -59,7 +59,7 @@ class Tools(commands.Cog):
 			bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
 			await ctx.send(f'```json\n"credits": {str(dumps(bot_credits, indent=4))}\n```')
 		else:
-			embed = discord.Embed(color=self.teal, title="Credits", description="All the people on Discord who helped me become what I am today.")
+			embed = Embed(color=self.teal, title="Credits", description="All the people on Discord who helped me become what I am today.")
 			for cred in bot_credits:	embed.add_field(name=cred, value=bot_credits[cred])
 			await ctx.send(embed=embed)
 
@@ -89,7 +89,7 @@ class Tools(commands.Cog):
 		if title == None:	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a name for the poll!")
 		if arg == None:	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify anything to make a poll for!")
 		else:
-			the_poll = await ctx.send(embed=discord.Embed(color=self.teal, title=title, description=arg).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url))
+			the_poll = await ctx.send(embed=Embed(color=self.teal, title=title, description=arg).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url))
 			try:	await ctx.message.delete()
 			except:	pass
 			await the_poll.add_reaction("✅")
@@ -100,7 +100,7 @@ class Tools(commands.Cog):
 
 	@commands.group(name="info", help="See a bunch of data!")
 	async def info(self, ctx):
-		if ctx.invoked_subcommand == None:	await ctx.send(embed=discord.Embed(title="Information", description="See a bunch of data!", color=self.teal).add_field(name="channel", value="See details about the specified channel.").add_field(name="emoji", value="Fetch the specified (server-specific) emoji.").add_field(name="server", value="See information about the server at a glance.").add_field(name="user", value="Get info for the specified user."))
+		if ctx.invoked_subcommand == None:	await ctx.send(embed=Embed(title="Information", description="See a bunch of data!", color=self.teal).add_field(name="channel", value="See details about the specified channel.").add_field(name="emoji", value="Fetch the specified (server-specific) emoji.").add_field(name="server", value="See information about the server at a glance.").add_field(name="user", value="Get info for the specified user."))
 
 	@info.command(name="emoji", help="Fetch the specified (server-specific) emoji.", aliases=["emote"], usage="[:emoji:]")
 	async def emoji(self, ctx, emoji=None):
@@ -118,7 +118,7 @@ class Tools(commands.Cog):
 				emname = emoji.split(":")[:-1]
 				if	emname[0] == "<a":	emname = emname[1] + ".gif"
 				else:		emname = emname[1] + ".png"
-				await ctx.send(embed=discord.Embed(title=emname, color=self.teal).set_image(url=emojiurls[emojis.index(emoji)]))
+				await ctx.send(embed=Embed(title=emname, color=self.teal).set_image(url=emojiurls[emojis.index(emoji)]))
 
 			else:	await ctx.send("<:winxp_warning:869760947114348604>Invalid emoji specified!")
 
@@ -142,7 +142,7 @@ class Tools(commands.Cog):
 			"server id": guild.id,
 			"region": guild.region,
 		}
-		embedinfo = discord.Embed(title=guild.name, color=self.teal, inline=False).set_thumbnail(url=guild.icon_url).set_author(name="Server Info", icon_url=owner.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
+		embedinfo = Embed(title=guild.name, color=self.teal, inline=False).set_thumbnail(url=guild.icon_url).set_author(name="Server Info", icon_url=owner.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
 			"Server Name": guild.name,
 			"Server Owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
@@ -192,7 +192,7 @@ class Tools(commands.Cog):
 		else:	await ctx.send(embed=embedinfo)
 
 	@info.command(name="user",help="Get info for the specified user.",aliases=["member"],usage="[@member]")
-	async def user_info(self, ctx, *, user: discord.Member = None):
+	async def user_info(self, ctx, *, user: Member = None):
 		if user == None:	user = ctx.author
 		roles = user.roles[-5:]
 		roles.reverse()
@@ -206,7 +206,7 @@ class Tools(commands.Cog):
 			"bot": user.bot,
 			"top 5 roles": [role.name for role in roles],
 		}
-		embedinfo = discord.Embed(title=user.display_name, color=self.teal, inline=False).set_thumbnail(url=user.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
+		embedinfo = Embed(title=user.display_name, color=self.teal, inline=False).set_thumbnail(url=user.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
 			"Discriminator": user.discriminator,
 			"Ping": user.mention,
@@ -224,11 +224,11 @@ class Tools(commands.Cog):
 		else:		await ctx.send(embed=embedinfo)
 
 	@info.command(name="channel",help="Get info for the specified channel.",usage="[#channel]")
-	async def channel_info(self, ctx, *, channel: discord.TextChannel = None):
+	async def channel_info(self, ctx, *, channel: TextChannel = None):
 		if channel == None:	channel = ctx.channel
 		creation = channel.created_at
 		jsoninfo = {"name": channel.name, "id": channel.id}
-		embedinfo = discord.Embed(title=channel.name.replace("-", " ").title(), color=self.teal, inline=False).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
+		embedinfo = Embed(title=channel.name.replace("-", " ").title(), color=self.teal, inline=False).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {"Ping": channel.mention, "ID": channel.id}
 		if channel.topic:
 			jsoninfo	|= {"description": channel.topic}
@@ -253,7 +253,7 @@ class Tools(commands.Cog):
 		if self.testing == False:
 			self.testing = True
 			async with ctx.typing():	await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
-			await ctx.channel.send(embed=discord.Embed(title="Speedtest Results", description="*Conducted using [Ookla's Speedtest CLI](https://speedtest.net)*", color=0x007F7F).add_field(name="Server", value=f'{results["server"]["sponsor"]} {results["server"]["name"]}', inline=False).add_field(name="Ping", value=f'{results["ping"]} ms', inline=False).add_field(name="Download Speed", value=f'{round(float((results["download"])/1000000), 2)} Mbps', inline=False).add_field(name="Upload Speed", value=f'{round(float((results["upload"])/1000000), 2)} Mbps', inline=False).set_footer(text=SpeedPerformTime))
+			await ctx.channel.send(embed=Embed(title="Speedtest Results", description="*Conducted using [Ookla's Speedtest CLI](https://speedtest.net)*", color=0x007F7F).add_field(name="Server", value=f'{results["server"]["sponsor"]} {results["server"]["name"]}', inline=False).add_field(name="Ping", value=f'{results["ping"]} ms', inline=False).add_field(name="Download Speed", value=f'{round(float((results["download"])/1000000), 2)} Mbps', inline=False).add_field(name="Upload Speed", value=f'{round(float((results["upload"])/1000000), 2)} Mbps', inline=False).set_footer(text=SpeedPerformTime))
 			self.testing = False
 
 		else:	await ctx.send("<:winxp_information:869760946808180747>A test is already in progress. Please wait...")
@@ -271,14 +271,14 @@ class Tools(commands.Cog):
 			if result and ctx.guild.get_role(int(result)):
 				if hex_code_match:
 					role	= ctx.guild.get_role(int(result))
-					await role.edit(name=role_name, color=discord.Color(int(color, 16)))
+					await role.edit(name=role_name, color=Color(int(color, 16)))
 					await member.add_roles(role)
 					await ctx.send(f"<:winxp_information:869760946808180747>Role {role.mention} edited.")
 
 				else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Invalid hex code `{color}`.")
 			else:
 				if hex_code_match:
-					role_color	= discord.Color(int(color, 16))
+					role_color	= Color(int(color, 16))
 					role	= await ctx.guild.create_role(name=role_name, color=role_color)
 					await member.add_roles(role)
 					updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
@@ -307,7 +307,7 @@ class Tools(commands.Cog):
 	# async def stopwatch(self, ctx):
 	# 	if ctx.invoked_subcommand == None:
 	# 		await ctx.send(
-	# 			embed=discord.Embed(
+	# 			embed=Embed(
 	# 				title	= "Stopwatch",
 	# 				description	= "Track how long something goes.",
 	# 				color	= self.teal,
