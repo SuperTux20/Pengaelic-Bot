@@ -163,7 +163,7 @@ class Memes(commands.Cog):
 	@toponly.error
 	# @drake.error
 	# @galaxybrain.error
-	async def messageError(self, ctx, error):
+	async def error(self, ctx, error):
 		error = str(error)
 		if "text is a required argument that is missing." in error:	await ctx.send("<:winxp_warning:869760947114348604>No caption specified!")
 		elif "too many values to unpack" in error:	await ctx.send("<:winxp_warning:869760947114348604>Too many lines specified!")
