@@ -123,15 +123,14 @@ def unhandling(error, tux_in_server) -> str:
 
 # SECTION OPTIONS
 # ANCHOR: GENERATE NEW OPTIONS
-def newops() -> dict:
-	return {
-		"channels":	{channel_id + "Channel": None for channel_id in ["drama", "suggestions", "welcome"]},
-		"lists":	{"censorList": []},
-		"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
-		"roles":	{role_id + "Role": None for role_id in ["botCommander", "customRoleLock", "drama", "mute"]},
-		"toggles":	{toggle: False for toggle in ["atSomeone", "censor", "dadJokes", "deadChat", "jsonMenus", "lockCustomRoles", "rickRoulette", "suggestions", "welcome"]},
-		"customRoles":	{}
-	}
+newops = lambda: {
+	"channels":	{id + "Channel": None for id in ["drama", "suggestions", "welcome"]},
+	"lists":	{"censorList": []},
+	"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
+	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama", "mute"]},
+	"toggles":	{toggle: False for toggle in ["atSomeone", "censor", "dadJokes", "deadChat", "jsonMenus", "lockCustomRoles", "rickRoulette", "suggestions", "welcome"]},
+	"customRoles":	{}
+}
 
 
 # ANCHOR: GET OPTIONS
