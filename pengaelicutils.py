@@ -169,7 +169,7 @@ def img2file(img: Image, name: str) -> File:
 		image_binary.seek(0)
 		return File(image_binary, name)
 
-img_from_msg = lambda ctx, url: Image.open(BytesIO(get(ctx.message.attachments[0].url if ctx.message.attachments else url).content))
+url2img = lambda url: Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
 
 # ANCHOR: ELDRITCH SYLLABLES
 def eldritch_syllables() -> list:

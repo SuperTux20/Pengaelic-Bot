@@ -4,7 +4,7 @@
 from asyncio.events import	get_event_loop
 from concurrent.futures import	ThreadPoolExecutor
 from discord.ext import	commands
-from pengaelicutils import	unhandling,	tux_in_guild, img2file, img_from_msg
+from pengaelicutils import	unhandling,	tux_in_guild, img2file, url2img
 from PIL import	Image,	ImageFont,	ImageDraw
 
 class Memes(commands.Cog):
@@ -67,12 +67,12 @@ class Memes(commands.Cog):
 
 	@commands.command(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text> | [bottom text]")
 	async def topbottom(self, ctx, *, text):
-		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(img_from_msg(ctx, "images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2012meme.png")
+		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2012meme.png")
 		await ctx.send(file=img)
 
 	@commands.command(name="2016meme", help="Make a more modern top-text meme. Supply your own PNG or JPG!", usage="<text> | [text] | [text] | [etc]")
 	async def toponly(self, ctx, *, text):
-		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(img_from_msg(ctx, "images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2016meme.png")
+		async with ctx.typing():	img = await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2016meme.png")
 		await ctx.send(file=img)
 
 	# FIXME: holy fuck come back to this later, text issues
