@@ -181,7 +181,7 @@ class Games(commands.Cog):
 		vowels	= 0
 		for i in word:
 			if i in "aeiouy":	vowels += 1
-		await ctx.send(f"React to this message and guess the word.\nHINT: The word has {vowels} vowels.")
+		hintmsg = await ctx.send(f"React to this message and guess the word.\nHINT: The word has {vowels} vowels.")
 		the_word = await ctx.send(" ".join(list("_" * len(word))).replace("_", "\_"))
 		# list for storing letters guessed by the player
 		past_guesses = ""
@@ -225,6 +225,8 @@ class Games(commands.Cog):
 					if pengaelic == "pengaelic":	finish += "\n" + pengaelic_words[word]
 					await chance_counter.edit(content=finish)
 					await the_word.edit(content=" ".join(list(word)))
+					await hintmsg.edit(content=hintmsg.content.split("\n")[0])
+					[await hintmsg.clear_reaction(r) for r in hintmsg.reactions]
 					flag = True
 					break
 
