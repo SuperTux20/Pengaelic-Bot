@@ -308,6 +308,7 @@ regional_indicators = {
 	"🇾": "y",
 	"🇿": "z",
 }
+regional_indicators = regional_indicators | {l: i for i, l in regional_indicators.items()}
 
 # ANCHOR: MAGIC 8 BALL RESPONSES
 magic_responses = [
