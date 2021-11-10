@@ -148,6 +148,7 @@ async def set_status():
 
 # ANCHOR: help menu template
 def help_menu(guild, cog, client):
+	if len(cog.get_commands()) == 1:	cog.get_commands = cog.walk_commands
 	if jsoncheck(guild):
 		info = {"description": cog.description_long.lower()} | {"commands": {list2str([command.name] + command.aliases, 0).replace(", ", "/"): command.usage.split("\n") for command in cog.get_commands()}}
 		for command in info["commands"]:
@@ -462,7 +463,7 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
 @help.error
 async def not_a_cog(ctx, error):
 	error = str(error)
-	if error.endswith("AttributeError: 'NoneType' object has no attribute 'name'"):	await ctx.send("<:winxp_warning:869760947114348604>There isn't a help menu for that.")
+	if error.endswith("'NoneType' object has no attribute 'get_commands'"):	await ctx.send("<:winxp_warning:869760947114348604>There isn't a help menu for that.")
 	else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client)))
 
 
