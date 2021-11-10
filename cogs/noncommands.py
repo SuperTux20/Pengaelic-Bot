@@ -50,11 +50,11 @@ class NonCommands(commands.Cog):
 				# ANCHOR: DAD JOKES
 				if getops(server, "toggles", "dadJokes"):
 					if messagetext.startswith("im ") or messagetext.startswith("i am "):
-						if	"pengaelic" in messagetext:	await message.channel.send(await self.not_test(messagetext, "Darn right, you're not!", "You're not the Pengaelic Bot, I am!"))
+						if	"pengaelic" in messagetext:	await message.channel.send(await self.not_test(messagetext, "You're not the Pengaelic Bot, I am!", "Darn right, you're not!"))
 						elif	"chickenmeister" in messagetext or "tux" in messagetext:
 
-							if	Developers.check(Developers, message.author, "tux"):	await message.channel.send(await self.not_test(messagetext, "What? Of course you are!", "Yes you are! Hiya!"))
-							else:		await message.channel.send(await self.not_test(messagetext, "Darn right, you're not!", "You dare to impersonate my creator?! **You shall be punished.** /j"))
+							if	Developers.check(Developers, message.author, "tux"):	await message.channel.send(await self.not_test(messagetext, "Yes you are! Hiya!", "What? Of course you are!"))
+							else:		await message.channel.send(await self.not_test(messagetext, "You dare to impersonate my creator?! **You shall be punished.** /j", "Darn right, you're not!"))
 						else:
 							if	messagetext.startswith("i am an"):	slicer = 7
 							elif	messagetext.startswith("i am a"):	slicer = 6
