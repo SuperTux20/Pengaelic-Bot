@@ -1,13 +1,13 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from asyncio.events import	get_event_loop
-from concurrent.futures import	ThreadPoolExecutor
-from discord.ext import	commands
-from time import	time
-from random import	choice,	randint
-from pengaelicutils import	list2str,	unhandling,	tux_in_guild,	Developers,	Stopwatch,	syllables,	eldritch_syllables
-from subprocess import	check_output as	bash
+from asyncio.events	import get_event_loop
+from concurrent.futures	import ThreadPoolExecutor
+from discord.ext	import commands
+from time	import time
+from random	import choice,	randint
+from pengaelicutils	import list2str,	unhandling,	tux_in_guild,	Developers,	Stopwatch,	syllables,	eldritch_syllables
+from subprocess	import check_output as	bash
 
 devs = Developers()
 

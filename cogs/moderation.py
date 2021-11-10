@@ -1,12 +1,12 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from asyncio import	sleep
-from discord import	Member
-from discord.ext import	commands
-from discord.utils import	get
-from tinydb import	TinyDB
-from pengaelicutils import	getops,	unhandling,	tux_in_guild,	Developers
+from asyncio	import sleep
+from discord	import Member
+from discord.ext	import commands
+from discord.utils	import get
+from tinydb	import TinyDB
+from pengaelicutils	import getops,	unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
 

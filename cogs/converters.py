@@ -1,11 +1,11 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from num2words import	num2words
-from fnmatch import	fnmatch
-from discord.ext import	commands
-from random import	choice,	shuffle
-from pengaelicutils import	unhandling,	tux_in_guild,	Developers
+from num2words	import num2words
+from fnmatch	import fnmatch
+from discord.ext	import commands
+from random	import choice,	shuffle
+from pengaelicutils	import unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
 

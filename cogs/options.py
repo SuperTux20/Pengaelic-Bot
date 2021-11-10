@@ -1,14 +1,14 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from asyncio import	sleep
-from discord.ext import	commands
-from json import	dumps
-from random import	choice
-from re import	sub
-from tinydb import	TinyDB,	Query
-from discord import	Embed,	Role,	TextChannel
-from pengaelicutils import	newops,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers
+from asyncio	import sleep
+from discord.ext	import commands
+from json	import dumps
+from random	import choice
+from re	import sub
+from tinydb	import TinyDB,	Query
+from discord	import Embed,	Role,	TextChannel
+from pengaelicutils	import newops,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers
 
 devs = Developers()
 

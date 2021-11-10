@@ -1,10 +1,10 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from discord	import	Embed
-from discord.ext	import	commands
-from random	import	randint
-from os	import	listdir
+from discord	import Embed
+from discord.ext	import commands
+from random	import randint
+from os	import listdir
 
 
 class Actions(commands.Cog):

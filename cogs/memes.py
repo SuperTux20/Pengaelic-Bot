@@ -1,11 +1,11 @@
 # !/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from asyncio.events import	get_event_loop
-from concurrent.futures import	ThreadPoolExecutor
-from discord.ext import	commands
-from pengaelicutils import	unhandling,	tux_in_guild, img2file, url2img
-from PIL import	Image,	ImageFont,	ImageDraw
+from asyncio.events	import get_event_loop
+from concurrent.futures	import ThreadPoolExecutor
+from discord.ext	import commands
+from pengaelicutils	import unhandling,	tux_in_guild, img2file, url2img
+from PIL	import Image,	ImageFont,	ImageDraw
 
 class Memes(commands.Cog):
 	def __init__(self, client):	self.client	= client

@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import	speedtest
-import	time
-from asyncio import	sleep
-from asyncio.events import	get_event_loop
-from discord.ext import	commands
-from discord.utils import	get
-from concurrent.futures import	ThreadPoolExecutor
-from json import	dumps
-from os import	environ
-from re import	search
-from tinydb import	TinyDB
-from discord import	Embed,	Member,	TextChannel,	Color
-from pengaelicutils import	getops,	updop,	list2str,	unhandling,	tux_in_guild,	jsoncheck,	shell,	Stopwatch,	Developers
+from asyncio.events	import get_event_loop
+from discord.ext	import commands
+from discord.utils	import get
+from concurrent.futures	import ThreadPoolExecutor
+from json	import dumps
+from os	import environ
+from re	import search
+from tinydb	import TinyDB
+from time	import strftime,	localtime
+from discord	import Embed,	Member,	TextChannel,	Color
+from pengaelicutils	import getops,	updop,	list2str,	unhandling,	tux_in_guild,	jsoncheck,	shell,	Stopwatch,	Developers
 
 devs = Developers()
 
@@ -31,7 +30,7 @@ class Tools(commands.Cog):
 	def UpdateTime(self, speed=False):
 		global CurrentTime
 		global SpeedPerformTime
-		CurrentTime = time.strftime("%a/%b %d/%Y %l:%M:%S %p %Z", time.localtime())
+		CurrentTime = strftime("%a/%b %d/%Y %l:%M:%S %p %Z", localtime())
 		if speed:	SpeedPerformTime = CurrentTime	# record this as the time the speedtest was done
 
 	def TestSpeed(self) -> dict:

@@ -10,11 +10,11 @@ if major < 3 or minor < 9:
 	print("Please run Pengaelic Bot with Python >= 3.9")
 	exit()
 
-from json import	dumps
-from subprocess import	CalledProcessError,	call,	STDOUT
-from sys import	argv,	executable				as	python
-from os import	getenv,	system,	execl,	devnull,	listdir	as	ls
-from pengaelicutils import	argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
+from json	import dumps
+from subprocess	import CalledProcessError,	call,	STDOUT
+from sys	import argv,	executable					as	python
+from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir	as	ls
+from pengaelicutils	import argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 
 if argv_parse(argv, ["uninstall", "delete"]):
 	system("rm -rvf ~/Pengaelic-Bot")
@@ -80,11 +80,10 @@ if missing_dependencies:
 print("Passed module test")
 
 import discord
-from discord.errors import	HTTPException
-from discord.ext import	commands
-from discord.utils import	get
-from dotenv import	load_dotenv as	dotenv
-from tinydb import	TinyDB,	Query
+from discord.errors	import HTTPException
+from discord.ext	import commands
+from dotenv	import load_dotenv as	dotenv
+from tinydb	import TinyDB,	Query
 
 # ANCHOR: unstable flagger
 unstable = False
@@ -274,7 +273,7 @@ async def quit_the_bot(ctx):
 async def sh(ctx, *, args):
 	if client.is_owner(ctx.author):
 		try:
-			if args.startswith("cd"):	await ctx.send("<:winxp_critical_error:869760946816553020>Cannot change directory.")
+			if args.startswith("cd"):	await ctx.send("<:winxp_critical_error:869760946816553020>Cannot change directory, that's too messy even for you.")
 			else:	await ctx.send("```\n" + shell(args) + "\n```")
 		except CalledProcessError as error:
 			error = str(error)
@@ -284,14 +283,14 @@ async def sh(ctx, *, args):
 				elif	args.startswith("python") and error == 1:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid Python syntax.")
 				else:
 					if error == 127:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid command.")
-					else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Returned non-zero exit status{error}")
+					else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Returned non-zero exit status{error} (look it up to add error handling)")
 
 			else:	await ctx.send(error)
 		except HTTPException as error:
 			error = str(error)
 			if error.startswith("Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Output too large.")
 
-	else:	await ctx.send("<:winxp_warning:869760947114348604>Hey, only my creator can do this!")
+	else:	await ctx.send("<:winxp_warning:869760947114348604>Hey, only my creator can do this! >:(")
 
 
 # ANCHOR: RESTART
@@ -501,7 +500,7 @@ while True:
 		if unstable:	client.run(getenv("UNSTABLE_TOKEN"))
 		else:	client.run(getenv("DISCORD_TOKEN"))
 	except (KeyboardInterrupt, RuntimeError):
-		print("\b\bConnection closed")
+		print("\b".join(["\b" for _ in range(get_terminal_size().columns)]) + "Connection closed" + "".join([" " for _ in range(get_terminal_size().columns-17)]))
 		while True:	exit(0)
 	except Exception:
 		print("Unable to connect to Discord")

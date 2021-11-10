@@ -1,12 +1,12 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from discord.utils import	get
-from discord.ext import	commands
-from discord import	Embed,	Member,	DMChannel
-from pengaelicutils import	getops,	Developers
-from random import	choice
-from re import	sub
+from discord.utils	import get
+from discord.ext	import commands
+from discord	import Embed,	Member,	DMChannel
+from pengaelicutils	import getops,	Developers
+from random	import choice
+from re	import sub
 
 
 class NonCommands(commands.Cog):
