@@ -108,7 +108,7 @@ class Games(commands.Cog):
 		if replace_cards:
 			for _ in range(cards):
 				random_value	= str(choice(list(values.values())))
-				card	= str(f"{random_value} {(' ' * 6 - len(random_value))} of {choice(suits)}")
+				card	= str(f"{random_value} {' ' * (5 - len(random_value))}of {choice(suits)}")
 
 				if	card[1] == "0" or card[1] == "1" or card[1] == "2" or card[1] == "3":	faces.append(card)
 				else:		numbers.append(card)
@@ -121,7 +121,7 @@ class Games(commands.Cog):
 					elif value == 11 or value == 13:	length = 4
 					elif value == 12:	length = 5
 					else:	length = 1
-					all_cards.append(f"{values[value]} {' ' * (6 - length)} of {suits[suit]}")
+					all_cards.append(f"{values[value]} {' ' * (5 - length)}of {suits[suit]}")
 			if cards > 52:
 				await ctx.send(":black_joker:You can't draw more than the entire deck!")
 				return
