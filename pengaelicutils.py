@@ -88,23 +88,17 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 	# if mode == 1: remove all separation
 	# if mode == 2: remove commas, leaving spaces behind
 	# if mode == 3: replace commas and spaces with newlines
-	if mode == 1:	outstr = "".join(inlist)
-	else:
+	if mode == 0:
+		inlist = [line + ", " for line in inlist]
+		inlist[-1] = inlist[-1][:-2]
 		if _and and len(inlist) > 1:
 			inlist.append(inlist[-1])
-			inlist[-2] = "and"
-		outstr = (
-			str(inlist)[1:-1]	# cut off opening and closing brackets
-			.replace("'", "")	# remove single quotes
-			.replace("\\n", "")	# remove newlines
-		)
-		if _and:
-			if len(inlist) == 3:	outstr = "".join(outstr.split(","))	# remove all commas
-			else:	outstr = "".join(outstr.rsplit(",", 1))	# remove the last comma
+			inlist[-2] = "and "
+			if len(inlist) == 3:	inlist[0] = inlist[0][:-2] + " "	# remove first comma ("this and that" instead of "this, and that")
 
-		if	mode == 2:	outstr = outstr.replace(", ", " ")
-		elif	mode == 3:	outstr = outstr.replace(", ", "\n")
-	return outstr
+	if mode == 2:	inlist = [line + " " for line in inlist]
+	elif mode == 3:	inlist = [line + "\n" for line in inlist]
+	return "".join(inlist)
 
 
 # ANCHOR: ERROR UNHANDLING
