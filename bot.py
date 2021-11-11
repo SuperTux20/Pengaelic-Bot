@@ -35,6 +35,7 @@ if shell("uname -o") != "Android":
 		"fortune-mod",
 		"fortunes",
 		"fortunes-min",
+		"lolcat",
 		"neofetch",
 		"toilet",
 		"toilet-fonts",
@@ -89,31 +90,6 @@ from tinydb	import TinyDB,	Query
 unstable = False
 if argv_parse(argv, ["unstable", "beta", "dev"]):	unstable = True
 
-# ANCHOR: boot message
-info = r"""
- ____________
-| ___| | | | |
-|| | |\|_| | |
-||_|_|    \| |
-| ________  \|
-| \_______|  |
-|__\______|__|
-
-Pengaelic Bot - the custom-built Discord bot, coded in Python
-Copyright (C) 2020-2021 Tux Penguin | https://github.com/SuperTux20/Pengaelic-Bot/
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-"""
-
 # ANCHOR: client
 client = commands.Bot(
 	command_prefix	= "p",
@@ -132,7 +108,7 @@ else:
 	client.description	+= "ot"
 
 system(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
-print(info)
+system('echo "{}" | lolcat'.format(list2str(open("boot.txt", "r").readlines(), 1)))
 print("Defined client")
 db = TinyDB("config.json")
 
