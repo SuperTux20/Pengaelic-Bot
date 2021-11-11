@@ -48,6 +48,14 @@ class Profiles(commands.Cog):
 		profile[option]	= value
 		self.db.update(profile, user.userID == ctx.author.id)
 		await ctx.send(f"<:winxp_information:869760946808180747>{'Updated' if cond else 'Removed'} {option}.")
+
+	async def parsedate(self, ctx, text):
+		if "/" in text:
+			if len(text.split("/")) == 3:	return datetime.strftime(datetime.strptime(text, "%m/%d/%Y"), "%B %-d %Y")
+			if len(text.split("/")) == 2:	return datetime.strftime(datetime.strptime(text, "%m/%d"), "%B %-d")
+			else:	await ctx.send("Invalid date format! Please use M/D/YYYY (year is optional)")
+
+		else:	await ctx.send("Invalid date format! Please use M/D/YYYY (year is optional)")
 	# END SECTION
 
 	@commands.group(name="profile", help="Take a look at your profile!", aliases=["me"])
@@ -82,7 +90,7 @@ class Profiles(commands.Cog):
 	async def set_bio(self, ctx, *, text=None): await self.uprof(ctx, text, "bio", text)
 
 	@profile.command(name="birthday", help="Set a birthday for your profile.", aliases=["bday", "bd"], usage="<M>/<D>/[YYYY]")
-	async def set_bday(self, ctx, *, text=None): await self.uprof(ctx, text, "birthday", datetime.strftime(datetime.strptime(text, "%m/%d/%Y"), "%B %-d %Y"))
+	async def set_bday(self, ctx, *, text=None): await self.uprof(ctx, text, "birthday", await self.parsedate(ctx, text))
 
 	@profile.command(name="image", help="Set an image for your profile with attachment or URL.", aliases=["img", "background", "bg"])
 	async def set_img(self, ctx, text=None): await self.uprof(ctx, text or ctx.message.attachments, "image", ctx.message.attachments[0].url if ctx.message.attachments else text)
