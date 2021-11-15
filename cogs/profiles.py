@@ -27,17 +27,19 @@ class Profiles(commands.Cog):
 			"motd",
 			"nickname",
 			"pronouns",
-			"region",
 			"sexuality"
 		]
-	}
+	} | {"region": "united_nations"}
 
 	# ANCHOR: GET PROFILE
 	def getprof(self, member: str) -> dict:
 		user	= Query()
 		profile	= dict(sorted(self.db.search(user.userID == member)[0].items()))
 		[profile.pop(key) for key in ["userName", "userID", "image"]]
-		if len(profile["region"]) == 2:	profile["region"] = f"flag_{profile['region']}"
+		try:
+			if len(profile["region"]) == 2:	profile["region"] = f"flag_{profile['region']}"
+		except TypeError:
+			pass
 		profile["region"] = f":{profile['region']}:"
 		return dumps(profile, indent=0)[1:-2].replace('"',"").replace(",","").replace("null", "No value set.")
 
