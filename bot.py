@@ -56,7 +56,7 @@ if shell("uname -o") != "Android":
 else:	print("Ignored package test")
 
 # ANCHOR: module test
-requirements = ["py-cord", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
+requirements = ["py-cord", "discord-components", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
 needed = []
 modules = [r.split("==")[0] for r in shell(f"{python} -m pip freeze").split()]
 missing_dependencies = False
@@ -64,31 +64,22 @@ for module in requirements:
 	if module not in modules:
 		needed.append(module)
 		missing_dependencies = True
-if "discord.py" in modules:
-	answer = input("discord.py installation found. This will cause conflicts with py-cord. Do you want to uninstall? [y/n] ")
-	if answer == "y":
-		print("Uninstalling...")
-		shell(f"{python} -m pip uninstall discord.py")
-		print("Done.")
-	else:
-		print("Exiting.")
-		exit()
 if missing_dependencies:
 	print(f"Modules {list2str(needed, 0, True)} are not installed.")
 	print("Installing them now...")
-	shell(f"{python} -m pip install " + needed)
+	shell(f"{python} -m pip install " + list2str(needed, 2))
 	print("Done.")
 print("Passed module test")
 
 import discord
 from discord.errors	import HTTPException
 from discord.ext	import commands
+from discord_components	import Button,	ButtonStyle,	ActionRow,	DiscordComponents,	InteractionEventType
 from dotenv	import load_dotenv as	dotenv
 from tinydb	import TinyDB,	Query
 
 # ANCHOR: unstable flagger
-unstable = False
-if argv_parse(argv, ["unstable", "beta", "dev"]):	unstable = True
+unstable = True if argv_parse(argv, ["unstable", "beta", "dev"]) else False
 
 # ANCHOR: client
 client = commands.Bot(
@@ -100,12 +91,8 @@ client = commands.Bot(
 	intents	= discord.Intents.all()
 )
 
-if unstable:
-	client.command_prefix	+= "@"
-	client.description	+= "eta"
-else:
-	client.command_prefix	+= "!"
-	client.description	+= "ot"
+client.command_prefix	+= "@"	if unstable else "!"
+client.description	+= "eta"	if unstable else "ot"
 
 system(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
 system('echo "{}" | lolcat'.format(list2str(open("boot.txt", "r").readlines(), 1)))
@@ -190,6 +177,7 @@ async def on_ready():
 		db.update({"guildName": guild.name}, Query().guildID == gid)	# did the server's name change?
 		print(f"Loaded options for {guild.name}")
 	await set_status()
+	DiscordComponents(client)
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
 
@@ -395,18 +383,26 @@ async def help(ctx, *, cogname: str = None):
 			for cog in sorted(cogs):	menu.add_field(name=cogs[cog].name.capitalize(), value=cogs[cog].description)
 			if not isinstance(ctx.channel, discord.channel.DMChannel):	menu.add_field(name="Options", value=client.get_cog("Options").description)
 			if Developers.check(None, ctx.author):	menu.add_field(name="Control", value="Update, restart, that sort of thing.")
-			menu.add_field(
-				name	= "Links",
-				value	= "\n".join(
-					[
-						"My official [support server](https://discord.gg/DHHpA7k)",
-						"[Invite me](https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot) to your own server",
-						"My [GitHub repo](https://github.com/SuperTux20/Pengaelic-Bot)"
-					]
-				),
-				inline	= False
+			await ctx.send(
+				embed=menu,
+				components=[
+					Button(
+						style=ButtonStyle.URL,
+						label="Support Server",
+						url="https://discord.gg/DHHpA7k"
+					),
+					Button(
+						style=ButtonStyle.URL,
+						label="Invite Me",
+						url="https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot"
+					),
+					Button(
+						style=ButtonStyle.URL,
+						label="GitHub",
+						url="https://github.com/SuperTux20/Pengaelic-Bot"
+					),
+				]
 			)
-			await ctx.send(embed=menu)
 	elif cogname == "options":
 		if jsoncheck(ctx.guild.id):	await ctx.send(f'```json\n"options": "{client.get_cog("Options").description_long.lower()}",\n"commands": ' + dumps({list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in client.get_cog("Options").get_commands()} | {list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in list(client.get_cog("Options").get_commands()[0].walk_commands()) if command.parents[0] == client.get_cog("Options").get_commands()[0]}, indent=4) + "```")
 		else:
