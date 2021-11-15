@@ -187,7 +187,6 @@ class Games(commands.Cog):
 		past_guesses = ""
 		letter_guessed = ""
 		chances = 6
-		correct = 0
 		flag = False
 		chance_counter = await ctx.send(f"{chances} chances remaining.")
 		while chances != 0 and flag == False:	# flag is updated when word is correctly guessed
@@ -216,7 +215,6 @@ class Games(commands.Cog):
 			for char in word:
 				if char in letter_guessed and Counter(letter_guessed) != Counter(word):
 					word_to_print += char
-					correct += 1
 				# if player has guessed all the letters
 				elif Counter(letter_guessed) == Counter(word):
 					# once the correct word is guessed fully,
