@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+py-cord = "*"
+discord-components = "*"
+num2words = "*"
+python-dotenv = "*"
+speedtest-cli = "*"
+tinydb = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
