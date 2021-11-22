@@ -138,3 +138,6 @@ nohup.out
 # Bot-generated files
 config.json
 profiles.json
+
+# GIMP image file
+*.xcf
