@@ -104,10 +104,7 @@ if "--reset-options" in argv:
 	db.truncate()
 
 # ANCHOR: status setter
-async def set_status():
-	if unstable:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,	name="Tux's unending screaming"))
-	else:	await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,	name=str(len(db.all())) + " servers! | p!help"))
-
+async def set_status(): await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Tux's unending screaming") if unstable else discord.Activity(type=discord.ActivityType.watching, name=str(len(db.all())) + " servers! | p!help"))
 
 # ANCHOR: help menu template
 def help_menu(guild, cog, client):
@@ -180,6 +177,7 @@ async def on_ready():
 	DiscordComponents(client)
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
+	if not shell("hostname").startswith("TrueMintguin"): print("Connected to Discord\nCheck out the support server at https://discord.gg/DHHpA7k")
 
 
 # ANCHOR: ON GUILD JOIN
