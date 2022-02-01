@@ -19,7 +19,7 @@ _This program is distributed in the hope that it will be useful, but WITHOUT ANY
 
 ---
 
-_Some of the code in Pengaelic Bot originates from CAutomator Legacy, a bot created by [Hyperfresh](https://github.com/Hyperfresh). CAutomator Legacy is licensed under LGPLv3._
+_Some of the code in Pengaelic Bot originates from CAutomator Legacy, a bot created by [Hyperfresh](https://github.com/Hyperfresh). CAutomator Legacy is licensed under LGPLv3. We may have had a falling-out and mutually agreed to not contact each other anymore, but I can't just not give credit where it's due._
 
 _CAutomator Legacy - the custom-built Discord bot, coded in Python._
 
