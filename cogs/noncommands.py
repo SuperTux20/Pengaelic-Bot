@@ -1,12 +1,14 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from datetime	import datetime,	timedelta
 from discord.utils	import get
 from discord.ext	import commands
 from discord	import Embed,	Member,	DMChannel
 from pengaelicutils	import getops,	Developers
 from random	import choice
 from re	import sub
+from tinydb	import TinyDB, Query
 
 
 class NonCommands(commands.Cog):
@@ -16,6 +18,7 @@ class NonCommands(commands.Cog):
 	name_typable	= "noncommands"
 	description	= "Automatic message responses that aren't commands."
 	description_long	= description
+	db	= TinyDB("profiles.json")
 
 	async def not_test(self, messagetext, _is, _not):
 		if	"not" in messagetext:	return _not
@@ -101,9 +104,25 @@ class NonCommands(commands.Cog):
 
 				# ANCHOR: REACTIONS
 				if "pengaelic" in messagetext:
-					if	any(message in messagetext.split() for message in ["thank", "thanks", "good"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
+					if	any(message in messagetext.split() for message in ["thank", "thanks", "good", "love", "nice", "great"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
 					elif	any(message in messagetext.split() for message in ["fuck", "bad", "die"]):	await message.add_reaction("<:teal_heart_broken:904460939984781363>")
 					elif	any(message in messagetext.split() for message in ["hi", "hey", "hello"]):	await message.add_reaction("👋")
+
+				# ANCHOR: BIRTHDAY DETECTION
+				users_with_profiles = [self.db.search(Query().userID == member.id) for member in message.guild.members]
+				while [] in users_with_profiles:
+					users_with_profiles.remove([])
+				for user in range(len(users_with_profiles)):
+					users_with_profiles[user] = users_with_profiles[user][0]
+				for user in [(users_with_profiles[user]) for user in range(len(users_with_profiles))]:
+					if len(user["birthday"].rsplit(" ", 1)[1]) == 4: user["birthday"] = user["birthday"].rsplit(" ", 1)[0]
+					if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
+						birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
+						general_chat = get(message.guild.text_channels, id=getops(message.guild.id, "channels", "generalChannel"))
+						already_sent = False
+						async for message in general_chat.history(limit=None, after=datetime.now()-timedelta(days=1)):
+							if message.content == birthday_wishes: already_sent = True
+						if not already_sent: await general_chat.send(birthday_wishes)
 
 			# ANCHOR: BOT OWNER DM INTERACTION
 			elif isinstance(message.channel, DMChannel):
