@@ -168,22 +168,22 @@ class Options(commands.Cog):
 	# SECTION: CHANNELS
 	# ANCHOR[id=dramachan]: DRAMA CHANNEL
 	@opset.command(name="dramaChannel", help="Set the channel for the drama role.")
-	@commands.has_permissions(manage_roles=True)
+	@commands.has_permissions(manage_channels=True)
 	async def change_drama_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "drama", channel)
 
 	# ANCHOR[id=welcomechan]: GENERAL CHANNEL
 	@opset.command(name="generalChannel", help="Set the general chat channel.")
-	@commands.has_permissions(manage_roles=True)
-	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
+	@commands.has_permissions(manage_channels=True)
+	async def change_general_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "general", channel)
 
 	# ANCHOR[id=suggchan]: SUGGESTIONS CHANNEL
 	@opset.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
-	@commands.has_permissions(manage_roles=True)
+	@commands.has_permissions(manage_channels=True)
 	async def change_suggestions_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "suggestions", channel)
 
 	# ANCHOR[id=welcomechan]: WELCOME CHANNEL
 	@opset.command(name="welcomeChannel", help="Set what channel welcome messages should be sent in.")
-	@commands.has_permissions(manage_roles=True)
+	@commands.has_permissions(manage_channels=True)
 	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
 	# END SECTION
 
@@ -277,6 +277,7 @@ class Options(commands.Cog):
 	@change_mute_role.error
 	@change_required_role.error
 	@change_drama_channel.error
+	@change_general_channel.error
 	@change_suggestions_channel.error
 	@change_welcome_channel.error
 	@change_welcome_message.error
