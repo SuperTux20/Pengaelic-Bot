@@ -167,7 +167,7 @@ class Options(commands.Cog):
 
 	# SECTION: CHANNELS
 	# ANCHOR[id=dramachan]: DRAMA CHANNEL
-	@opset.command(name="dramaChannel", help="Set what channel auto-suggestions should be converted in.")
+	@opset.command(name="dramaChannel", help="Set the channel for the drama role.")
 	@commands.has_permissions(manage_roles=True)
 	async def change_drama_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "drama", channel)
 
@@ -178,6 +178,11 @@ class Options(commands.Cog):
 
 	# ANCHOR[id=welcomechan]: WELCOME CHANNEL
 	@opset.command(name="welcomeChannel", help="Set what channel welcome messages should be sent in.")
+	@commands.has_permissions(manage_roles=True)
+	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
+
+	# ANCHOR[id=welcomechan]: GENERAL CHANNEL
+	@opset.command(name="generalChannel", help="Set the general chat channel.")
 	@commands.has_permissions(manage_roles=True)
 	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
 	# END SECTION
