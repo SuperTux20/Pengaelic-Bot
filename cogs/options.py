@@ -171,18 +171,18 @@ class Options(commands.Cog):
 	@commands.has_permissions(manage_roles=True)
 	async def change_drama_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "drama", channel)
 
-	# ANCHOR[id=suggchan]: SUGGESTIONS
+	# ANCHOR[id=welcomechan]: GENERAL CHANNEL
+	@opset.command(name="generalChannel", help="Set the general chat channel.")
+	@commands.has_permissions(manage_roles=True)
+	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
+
+	# ANCHOR[id=suggchan]: SUGGESTIONS CHANNEL
 	@opset.command(name="suggestionsChannel", help="Set what channel auto-suggestions should be converted in.")
 	@commands.has_permissions(manage_roles=True)
 	async def change_suggestions_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "suggestions", channel)
 
 	# ANCHOR[id=welcomechan]: WELCOME CHANNEL
 	@opset.command(name="welcomeChannel", help="Set what channel welcome messages should be sent in.")
-	@commands.has_permissions(manage_roles=True)
-	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
-
-	# ANCHOR[id=welcomechan]: GENERAL CHANNEL
-	@opset.command(name="generalChannel", help="Set the general chat channel.")
 	@commands.has_permissions(manage_roles=True)
 	async def change_welcome_channel(self, ctx, *, channel: TextChannel):	await self.set_channel(ctx, "welcome", channel)
 	# END SECTION

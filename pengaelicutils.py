@@ -122,7 +122,7 @@ def unhandling(error, tux_in_server) -> str:
 # SECTION OPTIONS
 # ANCHOR: GENERATE NEW OPTIONS
 newops = lambda: {
-	"channels":	{id + "Channel": None for id in ["drama", "suggestions", "welcome"]},
+	"channels":	{id + "Channel": None for id in ["drama", "general", "suggestions", "welcome"]},
 	"lists":	{"censorList": []},
 	"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
 	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama", "mute"]},
