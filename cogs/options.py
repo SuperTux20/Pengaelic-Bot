@@ -125,7 +125,7 @@ class Options(commands.Cog):
 	# ANCHOR[id=locktoggle]: LOCK CUSTOM ROLES
 	@optoggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
 	@commands.has_permissions(manage_roles=True)
-	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. {'' if getops(ctx.guild.id, 'roles', 'customLockRole') else f' Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or none if they should be disabled entirely.'}")
+	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. {'' if getops(ctx.guild.id, 'roles', 'customRoleLockRole') else f' Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or none if they should be disabled entirely.'}")
 
 	# ANCHOR[id=ricktoggle]: RICK ROULETTE
 	@optoggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
