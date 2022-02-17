@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime	import datetime,	timedelta
+from xml.dom.minidom import Attr
 from discord.utils	import get
 from discord.ext	import commands
 from discord	import Embed,	Member,	DMChannel
@@ -115,14 +116,17 @@ class NonCommands(commands.Cog):
 				for user in range(len(users_with_profiles)):
 					users_with_profiles[user] = users_with_profiles[user][0]
 				for user in [(users_with_profiles[user]) for user in range(len(users_with_profiles))]:
-					if len(user["birthday"].rsplit(" ", 1)[1]) == 4: user["birthday"] = user["birthday"].rsplit(" ", 1)[0]
-					if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
-						birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
-						general_chat = get(message.guild.text_channels, id=getops(message.guild.id, "channels", "generalChannel"))
-						already_sent = False
-						async for message in general_chat.history(limit=None, after=datetime.now()-timedelta(days=1)):
-							if message.content == birthday_wishes: already_sent = True
-						if not already_sent: await general_chat.send(birthday_wishes)
+					try:
+						if len(user["birthday"].rsplit(" ", 1)[1]) == 4: user["birthday"] = user["birthday"].rsplit(" ", 1)[0]
+						if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
+							birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
+							general_chat = get(message.guild.text_channels, id=getops(message.guild.id, "channels", "generalChannel"))
+							already_sent = False
+							async for message in general_chat.history(limit=None, after=datetime.now()-timedelta(days=1)):
+								if message.content == birthday_wishes: already_sent = True
+							if not already_sent: await general_chat.send(birthday_wishes)
+					except AttributeError:
+						pass
 
 			# ANCHOR: BOT OWNER DM INTERACTION
 			elif isinstance(message.channel, DMChannel):
