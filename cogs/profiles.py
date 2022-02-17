@@ -1,7 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from discord	import Color,	Embed,	Member
+from discord	import Color,	Embed,	User
 from datetime	import datetime
 from discord.ext	import commands
 from json	import dumps
@@ -68,31 +68,36 @@ class Profiles(commands.Cog):
 	# END SECTION
 
 	@commands.group(name="profile", help="Take a look at your profile!", aliases=["me"], usage="[user]")
-	async def profile(self, ctx, *, member: Member = None):
+	async def profile(self, ctx):
 		if ctx.invoked_subcommand == None:
-			if member:
-				try:	await ctx.send(f"Profile for {member.name}", embed=self.getprof(member.id))
-				except IndexError:	await ctx.send(f"{member.name} has no registered profile.")
-			else:
-				try:
-					# add any parameters that may have been created since the profile's creation
-					user	= Query()
-					uid	= ctx.author.id
-					nof	= self.newprof()
-					prof	= self.db.search(user.userID == uid)[0]
-					[prof.pop(key) for key in ["userName", "userID"]]
-					for rof in list(nof.keys()):
-						if rof not in nof:	prof.pop(rof)
-					for rof in list(nof.keys()):
-						prof = dict(list(nof.items()) + list(prof.items()))
-						self.db.update(dict(sorted(prof.items())), user.userID == uid)
+			try:
+				# add any parameters that may have been created since the profile's creation
+				user	= Query()
+				uid	= ctx.author.id
+				nof	= self.newprof()
+				prof	= self.db.search(user.userID == uid)[0]
+				[prof.pop(key) for key in ["userName", "userID"]]
+				for rof in list(nof.keys()):
+					if rof not in nof:	prof.pop(rof)
+				for rof in list(nof.keys()):
+					prof = dict(list(nof.items()) + list(prof.items()))
+					self.db.update(dict(sorted(prof.items())), user.userID == uid)
 
-					self.db.update({"userName": ctx.author.name}, user.userID == uid)	# did the user's name change?
-					await ctx.send(f"Profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
-				except IndexError:
-					newprofile	= {"userName": ctx.author.name, "userID": ctx.author.id} | self.newprof()
-					self.db.insert(newprofile)
-					await ctx.send(f"Created new profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
+				self.db.update({"userName": ctx.author.name}, user.userID == uid)	# did the user's name change?
+				await ctx.send(f"Profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
+			except IndexError:
+				newprofile	= {"userName": ctx.author.name, "userID": ctx.author.id} | self.newprof()
+				self.db.insert(newprofile)
+				await ctx.send(f"Created new profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
+
+	@profile.command(name="get", help="Get someone else's profile.")
+	async def pget(self, ctx, *, user: User = None):
+		if ctx.invoked_subcommand == None:
+			if user:
+				try:	await ctx.send(f"<:winxp_information:869760946808180747>Profile for {user.name}", embed=self.getprof(user.id))
+				except IndexError:	await ctx.send(f"<:winxp_warning:869760947114348604>{user.name} has no registered profile.")
+			else:
+				await ctx.send("<:winxp_critical_error:869760946816553020>You didn't specify a username or ID to get their profile.")
 
 	@profile.command(name="bio", help="Set a bio for your profile.", aliases=["about", "aboutme"], usage="[text]")
 	async def set_bio(self, ctx, *, text=None): await self.uprof(ctx, text, "bio", text)
@@ -122,6 +127,7 @@ class Profiles(commands.Cog):
 	async def set_sexuality(self, ctx, text=None): await self.uprof(ctx, text, "sexuality", text)
 
 	@profile.error
+	@pget.error
 	@set_bio.error
 	@set_bday.error
 	@set_color.error
@@ -133,6 +139,7 @@ class Profiles(commands.Cog):
 	@set_sexuality.error
 	async def error(self, ctx, error):
 		error = str(error)
-		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		if error.startswith("User") and error.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user isn't on this server!")
+		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 def setup(client):	client.add_cog(Profiles(client))
