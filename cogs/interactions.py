@@ -33,8 +33,8 @@ class Interactions(commands.Cog):
 
 	async def vact(self, ctx, act, pastact, actees):
 		message = f"Hey, you can't {act}"
-		if	len(actees) == 1 and actees[0] == ctx.author:	await ctx.send(message + "yourself!")
-		elif	len(actees) == 1 and actees[0] == self.client.user:	await ctx.send(message + "me!")
+		if	len(actees) == 1 and actees[0] == ctx.author:	await ctx.send(message + " yourself!")
+		elif	len(actees) == 1 and actees[0] == self.client.user:	await ctx.send(message + " me!")
 		else:		await ctx.send(embed=self.act(ctx, act, pastact, actees, True))
 
 	# END SECTION
