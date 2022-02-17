@@ -290,7 +290,7 @@ class Options(commands.Cog):
 	async def messageError(self, ctx, error):
 		error = str(error)
 		if error.startswith("You are missing") and error.endswith("permission(s) to run this command."):	await ctx.send("<:winxp_critical_error:869760946816553020>You do not have permission to use that command.")
-		if error.endswith('" not found.'):
+		elif error.endswith('" not found.'):
 			if error.startswith('Channel "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel.")
 			if error.startswith('Role "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role.")
 
