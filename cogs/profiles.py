@@ -1,7 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from discord	import Color,	Embed,	User
+from discord	import Embed,	User
 from datetime	import datetime
 from discord.ext	import commands
 from json	import dumps
@@ -62,9 +62,8 @@ class Profiles(commands.Cog):
 		if "/" in text:
 			if len(text.split("/")) == 3:	return datetime.strftime(datetime.strptime(text, "%m/%d/%Y"), "%B %-d %Y")
 			if len(text.split("/")) == 2:	return datetime.strftime(datetime.strptime(text, "%m/%d"), "%B %-d")
-			else:	await ctx.send("Invalid date format! Please use MM/DD/YYYY (year is optional)")
-
-		else:	await ctx.send("Invalid date format! Please use MM/DD/YYYY (year is optional)")
+		else:
+			await ctx.send("Invalid date format! Please use MM/DD/YYYY (year is optional)")
 	# END SECTION
 
 	@commands.group(name="profile", help="Take a look at your profile!", aliases=["me"], usage="[user]")
@@ -102,14 +101,14 @@ class Profiles(commands.Cog):
 	@profile.command(name="bio", help="Set a bio for your profile.", aliases=["about", "aboutme"], usage="[text]")
 	async def set_bio(self, ctx, *, text=None): await self.uprof(ctx, text, "bio", text)
 
-	@profile.command(name="birthday", help="Set a birthday for your profile.", aliases=["bday", "bd"], usage="<MM>/<DD>/[YYYY]")
+	@profile.command(name="birthday", help="Set a birthday for your profile. An invalid date will unset it.", aliases=["bday", "bd"], usage="<MM>/<DD>/[YYYY]")
 	async def set_bday(self, ctx, *, text=None): await self.uprof(ctx, text, "birthday", await self.parsedate(ctx, text))
 
 	@profile.command(name="color", help="Set your favorite color for your profile.", usage="<hex code with no #>")
 	async def set_color(self, ctx, *, text=None): await self.uprof(ctx, text, "color", int(text, 16) if text else 0)
 
 	@profile.command(name="image", help="Set an image for your profile with attachment or URL.", aliases=["img", "background", "bg"], usage="[text]")
-	async def set_img(self, ctx, *, text=None): await self.uprof(ctx, text or ctx.message.attachments, "image", ctx.message.attachments[0].url if ctx.message.attachments else text)
+	async def set_img(self, ctx, *, text=None): await self.uprof(ctx, text or ctx.message.attachments, "image", (ctx.message.attachments[0].url if ctx.message.attachments else text).replace("media.discordapp.net", "cdn.discordapp.com"))
 
 	@profile.command(name="motd", help='Set a "Message of the Day" for your profile.', aliases=["motto", "slogan", "tagline"], usage="[text]")
 	async def set_motd(self, ctx, *, text=None): await self.uprof(ctx, text, "motd", text)
@@ -118,10 +117,10 @@ class Profiles(commands.Cog):
 	async def set_nick(self, ctx, *, text=None): await self.uprof(ctx, text, "nickname", text)
 
 	@profile.command(name="pronouns", help="Set your preferred pronouns for your profile.", usage="[text]")
-	async def set_pronouns(self, ctx, *, text=None): await self.uprof(ctx, text, "pronouns", text)
+	async def set_pronouns(self, ctx, *, text=None): await self.uprof(ctx, text, "pronouns", text.lower())
 
 	@profile.command(name="region", help="Set a region for your profile.", aliases=["country"], usage="[two-letter country code (see flag emoji names)]")
-	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text if text else "united_nations")
+	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.lower() if text else "united_nations")
 
 	@profile.command(name="sexuality", help="Set your sexuality for your profile.", usage="[text]")
 	async def set_sexuality(self, ctx, *, text=None): await self.uprof(ctx, text, "sexuality", text)
@@ -140,6 +139,7 @@ class Profiles(commands.Cog):
 	async def error(self, ctx, error):
 		error = str(error)
 		if error.startswith("User") and error.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user isn't on this server!")
+		elif error.endswith("'%m/%d/%Y'") or error.endswith("'%m/%d'"):	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid date format! Please use MM/DD/YYYY (year is optional)")
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 def setup(client):	client.add_cog(Profiles(client))
