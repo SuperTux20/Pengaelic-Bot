@@ -158,20 +158,19 @@ async def on_ready():
 			print(f"Configs created for {client.get_guild(newconfigs[server]['guildID']).name}")
 	# add any options that may have been created since the option dicts' creation
 	for guild in client.guilds:
-		gid = guild.id
-		if unstable:	ops = db.search(Query().guildName == "Pengaelic Bot Support")[0]	# Pengaelic Beta is only on Pengaelic Bot Support
-		else:	ops = db.all()[client.guilds.index(guild)]
+		ops = db.search(Query().guildName == guild.name)[0]
 		ops.pop("guildName")
 		ops.pop("guildID")
 		nops = newops()
 		for op in ["channels", "lists", "messages", "roles", "toggles"]:
 			for opt in list(ops[op].keys()):
 				if opt not in nops[op]:	ops[op].pop(opt)
+
 		for op in ["channels", "lists", "messages", "roles", "toggles"]:
 			ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
-			db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == gid)
+			db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == guild.id)
 
-		db.update({"guildName": guild.name}, Query().guildID == gid)	# did the server's name change?
+		db.update({"guildName": guild.name}, Query().guildID == guild.id)	# did the server's name change?
 		print(f"Loaded options for {guild.name}")
 	await set_status()
 	DiscordComponents(client)
