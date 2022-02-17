@@ -13,7 +13,7 @@ class Memes(commands.Cog):
 	name	= "memes"
 	name_typable	= name
 	description	= "Image manipulation is fun, isn't it?"
-	description_long	= description
+	description_long	= description + " More templates coming soon, have to work out some text issues."
 
 	def twelve(self, img: Image, text: str) -> Image:
 		width, height	= img.size
