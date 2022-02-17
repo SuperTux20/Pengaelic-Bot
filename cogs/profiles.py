@@ -90,7 +90,7 @@ class Profiles(commands.Cog):
 				self.db.insert(newprofile)
 				await ctx.send(f"Created new profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
 
-	@profile.command(name="get", help="Get someone else's profile.")
+	@profile.command(name="get", help="Get someone else's profile.", usage="<user>")
 	async def pget(self, ctx, *, user: User = None):
 		if ctx.invoked_subcommand == None:
 			if user:
@@ -111,7 +111,7 @@ class Profiles(commands.Cog):
 	@profile.command(name="image", help="Set an image for your profile with attachment or URL.", aliases=["img", "background", "bg"], usage="[text]")
 	async def set_img(self, ctx, text=None): await self.uprof(ctx, text or ctx.message.attachments, "image", ctx.message.attachments[0].url if ctx.message.attachments else text)
 
-	@profile.command(name="motd", help='Set a "Message of the Day"/motto/slogan for your profile.', aliases=["motto", "slogan", "tagline"], usage="[text]")
+	@profile.command(name="motd", help='Set a "Message of the Day" for your profile.', aliases=["motto", "slogan", "tagline"], usage="[text]")
 	async def set_motd(self, ctx, *, text=None): await self.uprof(ctx, text, "motd", text)
 
 	@profile.command(name="nickname", help="Set a nickname for your profile.", aliases=["nick", "name"], usage="[text]")
