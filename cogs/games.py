@@ -174,7 +174,7 @@ class Games(commands.Cog):
 
 	# ANCHOR: HANGMAN
 	@commands.command(name="hangman",help='A classic! Guess the letters to solve the word before you run out of attempts. Write the word "pengaelic" on the end of the command if you want to guess words related to the lore of my developer\'s fictional worlds.',usage='["pengaelic"]')	# TODO: make more word sets for different topic modes
-	async def hangman(self, ctx, pengaelic=False):
+	async def hangman(self, ctx, pengaelic=None):
 		words	= hangman_words
 		if	pengaelic == "pengaelic":	words = list(pengaelic_words.keys())
 		word	= choice(words)
