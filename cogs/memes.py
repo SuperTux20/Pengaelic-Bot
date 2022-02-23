@@ -60,9 +60,7 @@ class Memes(commands.Cog):
 
 		pad = Image.new(img.mode, (width, height + (font_size * len(text))), 0xffffffff)	# add white padding
 		pad.paste(img, (0, (font_size * len(text)) + 10))
-		draw	= ImageDraw.Draw(pad)
-
-		for line in text:	draw.text((0, (font_size * text.index(line))),	line,	(0, 0, 0), font=font)
+		for line in text:	ImageDraw.Draw(pad).text((0, (font_size * text.index(line))),	line,	(0, 0, 0), font=font)
 		return pad
 
 	@commands.command(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text> | [bottom text]")
