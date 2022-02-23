@@ -173,9 +173,10 @@ async def on_ready():
 
 		db.update({"guildName": guild.name}, Query().guildID == guild.id)	# did the server's name change?
 		print(f"Loaded options for {guild.name}")
-	for leftguild in allgids:
-		print(f"Deleted options for {db.search(Query().guildID == leftguild)['guildName']}")
-		db.remove(Query().guildID == leftguild)
+	if not unstable:
+		for leftguild in allgids:
+			print(f"Deleted options for {db.search(Query().guildID == leftguild)['guildName']}")
+			db.remove(Query().guildID == leftguild)
 	await set_status()
 	DiscordComponents(client)
 	print(f"{client.description} launched in {launchtime.end()}")
