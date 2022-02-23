@@ -155,12 +155,13 @@ async def on_ready():
 	for server in range(len(client.guilds)):
 		if newconfigs[server] not in configgedservers:
 			db.insert({"guildName": client.get_guild(newconfigs[server]["guildID"]).name} | {"guildID": newconfigs[server]["guildID"]} | newops())
-			print(f"Configs created for {client.get_guild(newconfigs[server]['guildID']).name}")
+			print(f"Created options for {client.get_guild(newconfigs[server]['guildID']).name}")
 	# add any options that may have been created since the option dicts' creation
+	allgids = [g["guildID"] for g in db.all()]
 	for guild in client.guilds:
 		ops = db.search(Query().guildName == guild.name)[0]
 		ops.pop("guildName")
-		ops.pop("guildID")
+		allgids.remove(ops.pop("guildID"))
 		nops = newops()
 		for op in ["channels", "lists", "messages", "roles", "toggles"]:
 			for opt in list(ops[op].keys()):
@@ -172,6 +173,9 @@ async def on_ready():
 
 		db.update({"guildName": guild.name}, Query().guildID == guild.id)	# did the server's name change?
 		print(f"Loaded options for {guild.name}")
+	for leftguild in allgids:
+		print(f"Deleted options for {db.search(Query().guildID == leftguild)['guildName']}")
+		db.remove(Query().guildID == leftguild)
 	await set_status()
 	DiscordComponents(client)
 	print(f"{client.description} launched in {launchtime.end()}")
@@ -195,14 +199,16 @@ async def on_guild_join(guild, auto=True):
 				break
 		if auto:
 			# create fresh options row for new server
-			newconfigs = {"guildName": guild.name, "guildID": guild.id} | newops()
-			if newconfigs not in db.all():	db.insert(newconfigs)
-			print(f"Configs created for {guild.name}")
+			db.insert({"guildName": guild.name, "guildID": guild.id} | newops())
+			print(f"Options created for {guild.name}")
 
 
 # ANCHOR: ON GUILD LEAVE
 @client.event
-async def on_guild_remove(guild):	print(f"Was removed from {guild.name}")
+async def on_guild_remove(guild):
+	db.remove(Query().guildID == guild.id)
+	print(f"Was removed from {guild.name}")
+	print(f"Options deleted for {guild.name}")
 
 
 if not unstable:
