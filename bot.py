@@ -207,7 +207,7 @@ async def on_guild_join(guild, auto=True):
 @client.event
 async def on_guild_remove(guild):
 	db.remove(Query().guildID == guild.id)
-	print(f"Was removed from {guild.name}")
+	print(f"Removed from {guild.name}")
 	print(f"Options deleted for {guild.name}")
 
 
@@ -359,24 +359,35 @@ async def help(ctx, *, cogname: str = None):
 		cogs = dict(client.cogs)
 		cogs.pop("Options")
 		cogs.pop("NonCommands")
+		components=[
+			Button(
+				style	= ButtonStyle.URL,
+				label	= "Support Server",
+				url	= "https://discord.gg/DHHpA7k"
+			),
+			Button(
+				style	= ButtonStyle.URL,
+				label	= "Invite Me",
+				url	= "https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot"
+			),
+			Button(
+				style	= ButtonStyle.URL,
+				label	= "GitHub",
+				url	= "https://github.com/SuperTux20/Pengaelic-Bot"
+			),
+		]
 		if jsoncheck(ctx.guild.id):
 			info = {cogs[cog].name: cogs[cog].description.lower()[:-1] for cog in cogs}
-			links = {
-				"support server":	"<https://discord.gg/DHHpA7k>",
-				"invite me":	"<https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot>",
-				"github":	"<https://github.com/SuperTux20/Pengaelic-Bot>"
-			}
 			if not isinstance(ctx.channel, discord.channel.DMChannel):	info |= {"options": client.get_cog("Options").description.lower()[:-1]}
 			if Developers.check(None, ctx.author):	info |= {"control": "update, restart, that sort of thing"}
 			menu = dumps(
 				{
 					"help":	f"type {client.command_prefix}help <category name without spaces or dashes> for more info on each category",
-					"categories":	info,
-					"links":	links
+					"categories":	info
 				},
 				indent=4
 			)
-			await ctx.send(f'```json\n"{client.description}": {menu}```')
+			await ctx.send(f'```json\n"{client.description}": {menu}```', components=components)
 		else:
 			menu = discord.Embed(
 				title	= client.description,
@@ -386,26 +397,7 @@ async def help(ctx, *, cogname: str = None):
 			for cog in sorted(cogs):	menu.add_field(name=cogs[cog].name.capitalize(), value=cogs[cog].description)
 			if not isinstance(ctx.channel, discord.channel.DMChannel):	menu.add_field(name="Options", value=client.get_cog("Options").description)
 			if Developers.check(None, ctx.author):	menu.add_field(name="Control", value="Update, restart, that sort of thing.")
-			await ctx.send(
-				embed=menu,
-				components=[
-					Button(
-						style=ButtonStyle.URL,
-						label="Support Server",
-						url="https://discord.gg/DHHpA7k"
-					),
-					Button(
-						style=ButtonStyle.URL,
-						label="Invite Me",
-						url="https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot"
-					),
-					Button(
-						style=ButtonStyle.URL,
-						label="GitHub",
-						url="https://github.com/SuperTux20/Pengaelic-Bot"
-					),
-				]
-			)
+			await ctx.send(embed=menu, components=components)
 	elif cogname == "options":
 		if jsoncheck(ctx.guild.id):	await ctx.send(f'```json\n"options": "{client.get_cog("Options").description_long.lower()}",\n"commands": ' + dumps({list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in client.get_cog("Options").get_commands()} | {list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in list(client.get_cog("Options").get_commands()[0].walk_commands()) if command.parents[0] == client.get_cog("Options").get_commands()[0]}, indent=4) + "```")
 		else:

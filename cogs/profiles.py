@@ -52,11 +52,16 @@ class Profiles(commands.Cog):
 
 	# ANCHOR: UPDATE PROFILE
 	async def uprof(self, ctx, cond, option: str, value):
+		if value == "_ _": cond	= False
 		user	= Query()
-		profile	= self.db.search(user.userID == ctx.author.id)[0]
-		profile[option]	= value
-		self.db.update(profile, user.userID == ctx.author.id)
-		await ctx.send(f"<:winxp_information:869760946808180747>{'Updated' if cond else 'Removed'} {option}.")
+		profile	= self.db.search(user.userID == ctx.author.id)
+		if profile:
+			profile = profile[0]
+			profile[option] = value
+			self.db.update(profile, user.userID == ctx.author.id)
+			await ctx.send(f"<:winxp_information:869760946808180747>{'Updated' if cond else 'Removed'} {option}.")
+		else:
+			await ctx.send(f"<:winxp_warning:869760947114348604>You don't have a profile yet. Run `{self.client.command_prefix}profile` to create one!")
 
 	async def parsedate(self, ctx, text):
 		if "/" in text:
@@ -138,7 +143,7 @@ class Profiles(commands.Cog):
 	@set_sexuality.error
 	async def error(self, ctx, error):
 		error = str(error)
-		if error.startswith("User") and error.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user isn't on this server!")
+		if error.startswith("User") and error.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user doesn't exist on any servers I'm in.")
 		elif error.endswith("'%m/%d/%Y'") or error.endswith("'%m/%d'"):	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid date format! Please use MM/DD/YYYY (year is optional)")
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
