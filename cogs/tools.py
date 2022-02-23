@@ -143,7 +143,7 @@ class Tools(commands.Cog):
 		embedinfo = Embed(title=guild.name, color=self.teal, inline=False).set_thumbnail(url=guild.icon_url).set_author(name="Server Info", icon_url=owner.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
 			"Server Name": guild.name,
-			"Server Owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
+			"Server Owner": f"{owner.display_name} ({owner.mention})",
 			"Server ID": guild.id,
 		}
 		if guild.description:
