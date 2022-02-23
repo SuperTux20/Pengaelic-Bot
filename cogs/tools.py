@@ -139,14 +139,12 @@ class Tools(commands.Cog):
 			"server name": guild.name,
 			"server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
 			"server id": guild.id,
-			"region": guild.region,
 		}
 		embedinfo = Embed(title=guild.name, color=self.teal, inline=False).set_thumbnail(url=guild.icon_url).set_author(name="Server Info", icon_url=owner.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
 			"Server Name": guild.name,
 			"Server Owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
 			"Server ID": guild.id,
-			"Region": str(guild.region).replace("-", " ").title().replace("Us", "US"),
 		}
 		if guild.description:
 			jsoninfo 	|= {"server description": guild.description}
