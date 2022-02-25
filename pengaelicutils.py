@@ -6,11 +6,13 @@ from os	import getenv	as env
 from discord	import File
 from json	import loads
 from io	import BytesIO
+from numpy	import array
 from PIL	import Image
 from requests	import get
 from subprocess	import check_output
 from time	import time
-from tinydb	import TinyDB,	Query
+from tinydb	import TinyDB, Query
+from wand.image	import Image as Wand
 
 # SECTION: CLASSES
 # SECTION: STOPWATCH
@@ -155,7 +157,6 @@ def updop(guild: str, category: str, option: str, value):
 	db.update({category: options}, server.guildID == guild)
 # END SECTION
 
-valid_image	= lambda filename: any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
 
 def img2file(img: Image, name: str) -> File:
 	with BytesIO() as image_binary:
@@ -163,7 +164,10 @@ def img2file(img: Image, name: str) -> File:
 		image_binary.seek(0)
 		return File(image_binary, name)
 
-url2img = lambda url: Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
+valid_image	= lambda filename: any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
+url2img	= lambda url: Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
+pil2wand	= lambda img: Wand.from_array(array(img))
+wand2pil	= lambda img: Image.open(BytesIO(img.make_blob("png")))
 
 # ANCHOR: ELDRITCH SYLLABLES
 def eldritch_syllables() -> list:
