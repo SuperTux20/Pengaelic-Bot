@@ -423,8 +423,8 @@ async def dog(ctx, *, channel: discord.TextChannel = None):
 		await channel.edit(category=ctx.guild.categories[0])
 	hook = await channel.create_webhook(name="The Dog of Wisdom")
 	await ctx.send(f"<:winxp_information:869760946808180747>Webhook created in {channel}.")
-	await client.get_user(devs.get("tux")).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + str({ctx.guild.name: hook.url.replace("https://discord.com/api/webhooks/", "")}))
-	await ctx.send("<:winxp_information:869760946808180747>My developer has received the webhook URL and will be adding it to the Dog's code shortly.")
+	await client.get_user(devs.get("tux")).send(f"@{ctx.author.name}#{ctx.author.discriminator} is requesting the Dog of Wisdom.\n" + str({ctx.guild.name: hook.url.replace("https://discord.com/api/webhooks/", "")})[1:-1].replace("'",'"'))
+	await ctx.send("<:winxp_information:869760946808180747>My developer has received the webhook URL and will be adding it to the Dog's list shortly.")
 
 
 # ANCHOR: NOT A COG ERROR
