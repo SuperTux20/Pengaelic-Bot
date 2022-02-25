@@ -108,6 +108,7 @@ class NonCommands(commands.Cog):
 					if	any(message in messagetext.split() for message in ["thank", "thanks", "good", "love", "nice", "great"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
 					elif	any(message in messagetext.split() for message in ["fuck", "bad", "die"]):	await message.add_reaction("<:teal_heart_broken:904460939984781363>")
 					elif	any(message in messagetext.split() for message in ["hi", "hey", "hello"]):	await message.add_reaction("👋")
+					else:		await message.add_reaction("👀")
 
 				# ANCHOR: BIRTHDAY DETECTION
 				users_with_profiles = [self.db.search(Query().userID == member.id) for member in message.guild.members]
