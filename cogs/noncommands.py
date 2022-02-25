@@ -42,7 +42,7 @@ class NonCommands(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, message):
 		# ANCHOR: RETURN HELP NOTE
-		if "<@!" + str(self.client.user.id) + ">" == message.content:	await message.channel.send(f"My prefix is `{self.client.command_prefix}`")
+		if str(self.client.user.id) in message.content:	await message.add_reaction("👀")
 		# check if the message it's reading belongs to a bot
 		# then make sure it's not a DM, in which case, don't test options (because there are none)
 		if not message.author.bot:
@@ -108,7 +108,6 @@ class NonCommands(commands.Cog):
 					if	any(message in messagetext.split() for message in ["thank", "thanks", "good", "love", "nice", "great"]):	await message.add_reaction("<:teal_heart:904458637139922994>")
 					elif	any(message in messagetext.split() for message in ["fuck", "bad", "die"]):	await message.add_reaction("<:teal_heart_broken:904460939984781363>")
 					elif	any(message in messagetext.split() for message in ["hi", "hey", "hello"]):	await message.add_reaction("👋")
-					else:		await message.add_reaction("👀")
 
 				# ANCHOR: BIRTHDAY DETECTION
 				users_with_profiles = [self.db.search(Query().userID == member.id) for member in message.guild.members]
