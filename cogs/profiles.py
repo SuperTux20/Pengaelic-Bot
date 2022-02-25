@@ -1,14 +1,20 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from discord	import Embed,	User
+from asyncio.events	import get_event_loop
+from discord	import Embed, User
 from datetime	import datetime
 from discord.ext	import commands
+from concurrent.futures	import ThreadPoolExecutor
+from flag	import flag
 from json	import dumps
+from pengaelicutils	import unhandling, tux_in_guild, img2file, url2img, pil2wand, wand2pil
+from wand.color	import Color
+from wand.display	import display
+from wand.drawing	import Drawing
+from wand.image	import Image as Wand, Font
 from re	import search
-from tinydb	import TinyDB,	Query
-from pengaelicutils	import unhandling,	tux_in_guild, img2file, url2img
-from PIL	import Image,	ImageFont,	ImageDraw
+from tinydb	import TinyDB, Query
 
 class Profiles(commands.Cog):
 	def __init__(self, client):	self.client	= client
@@ -46,9 +52,36 @@ class Profiles(commands.Cog):
 		if profile["image"]: embed.set_image(url=profile["image"])
 		embed.add_field(name="Message of the Day", value=profile["motd"] if profile["motd"] else "No MOTD set")
 		[profile.pop(key) for key in ["userID", "bio", "color", "image", "motd", "nickname"]]
-		for bit in profile:
-			embed.add_field(name=bit.capitalize(), value=str(profile[bit]).replace("None", f"No {bit} set"), inline=False)
+		for bit in profile:	embed.add_field(name=bit.capitalize(), value=str(profile[bit]).replace("None", f"No {bit} set"), inline=False)
 		return embed
+
+	# ANCHOR: GET IMAGE PROFILE
+	# FIXME
+	# def getiprof(self, member: str):
+	# 	user	= Query()
+	# 	profile	= dict(sorted(self.db.search(user.userID == member)[0].items()))
+	# 	color	= profile.pop("color")
+	# 	image	= pil2wand(url2img(profile["image"] if profile["image"] else "images/meme_templates/generic.jpg"))
+	# 	width, height	= image.width, image.height
+	# 	fontcolor	= Color("#ffffff" if color < 0x7f7f7f else "#000000")
+	# 	color	= hex(color)[2:]
+	# 	color	= "#" + "".join(["0" for _ in range(6-len(color))]) + color
+	# 	profile["region"]	= flag(profile["region"])
+	# 	fg	= Wand(width=int(width*(7/8)), height=int(height*(7/8)), background=Color(color))
+	# 	with Drawing() as draw:
+	# 		draw.font	= "fonts/liberation.ttf"
+	# 		draw.font_size	= int(height / 20)
+	# 		draw.fill_color	= fontcolor
+	# 		draw.text(0, 50, f"{profile['nickname']} ({profile['userName']})")
+	# 		draw.text(0, 100, str(profile["bio"]))
+	# 		draw.text(0, 200, str(profile["motd"]))
+	# 		draw.text(0, 250, str(profile["birthday"]))
+	# 		draw.text(0, 300, str(profile["pronouns"]))
+	# 		draw.text(0, 350, str(profile["region"]))
+	# 		draw.text(0, 400, str(profile["sexuality"]))
+	# 		draw(fg)
+	# 		image.composite(fg, int(width*(1/16)), int(height*(1/16)))
+	# 	return wand2pil(image)
 
 	# ANCHOR: UPDATE PROFILE
 	async def uprof(self, ctx, cond, option: str, value):
@@ -86,9 +119,8 @@ class Profiles(commands.Cog):
 				for rof in list(nof.keys()):
 					prof = dict(list(nof.items()) + list(prof.items()))
 					self.db.update(dict(sorted(prof.items())), user.userID == uid)
-
-				self.db.update({"userName": ctx.author.name}, user.userID == uid)	# did the user's name change?
-				await ctx.send(f"Profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
+				self.db.update({"userName": ctx.author.name}, user.userID == uid) # did the user's name change?
+				async with ctx.typing(): await ctx.send(f"Profile for {ctx.author.name}", file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.getiprof(ctx.author.id), f"profile_{ctx.author.name.replace(' ', '_')}_Pengaelic_Bot.png"))
 			except IndexError:
 				newprofile	= {"userName": ctx.author.name, "userID": ctx.author.id} | self.newprof()
 				self.db.insert(newprofile)
@@ -125,7 +157,7 @@ class Profiles(commands.Cog):
 	async def set_pronouns(self, ctx, *, text=None): await self.uprof(ctx, text, "pronouns", text.lower())
 
 	@profile.command(name="region", help="Set a region for your profile.", aliases=["country"], usage="[two-letter country code (see flag emoji names)]")
-	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.lower() if text else "united_nations")
+	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.upper() if text else "UN")
 
 	@profile.command(name="sexuality", help="Set your sexuality for your profile.", usage="[text]")
 	async def set_sexuality(self, ctx, *, text=None): await self.uprof(ctx, text, "sexuality", text)
