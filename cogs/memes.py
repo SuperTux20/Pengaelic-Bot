@@ -60,16 +60,16 @@ class Memes(commands.Cog):
 
 		pad = Image.new(img.mode, (width, height + (font_size * len(text))), 0xffffffff)	# add white padding
 		pad.paste(img, (0, (font_size * len(text)) + 10))
-		for line in text:	ImageDraw.Draw(pad).text((0, (font_size * text.index(line))),	line,	(0, 0, 0), font=font)
+		for line in text:	ImageDraw.Draw(pad).text((0, (font_size * text.index(line))),	line,	0x000, font=font)
 		return pad
 
 	@commands.command(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text> | [bottom text]")
 	async def topbottom(self, ctx, *, text):
-		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2012meme.png"))
+		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), f"{text.replace(' ','_')}_2012meme_Pengaelic_Bot.png"))
 
 	@commands.command(name="2016meme", help="Make a more modern top-text meme. Supply your own PNG or JPG!", usage="<text> | [text] | [text] | [etc]")
 	async def toponly(self, ctx, *, text):
-		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), "2016meme.png"))
+		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), f"{text.replace(' ','_')}_2016meme_Pengaelic_Bot.png"))
 
 	# FIXME: holy fuck come back to this later, text issues
 	# @commands.command(name="drakememe", help="Make a drake meme.", usage="<text> | <text>")
