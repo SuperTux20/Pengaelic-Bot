@@ -70,10 +70,11 @@ class Games(commands.Cog):
 			if coins > 1000000:	response = f"{coins} coins? That's just silly."
 			else:
 				results = [randint(0, 2) for _ in range(coins)]
-				for _ in range(10):
+				for _ in range(7):
 					if 2 in results:
 						for result in range(len(results)):
-							if results[result] == 2:	results[result] = randint(0, 2)
+							if results[result] == 2:
+								results[result] = randint(0, 2)
 				if results.count(2) > 0:
 					if results.count(2) == 1:	response = ", and a coin even landed on its edge."
 					else:	response = f", and {results.count(2)} coins landed on their edges."
