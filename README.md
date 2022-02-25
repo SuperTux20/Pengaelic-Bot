@@ -4,8 +4,9 @@
 
 ## About
 
--   Language used: `Python 3.9`
--   Libraries used: `py-cord`, `num2words`, `python-dotenv`, `speedtest-cli`, `tinydb`
+- Language used: `Python 3.9`
+- Pip modules used: `py-cord`, `num2words`, `pillow`, `python-dotenv`, `speedtest-cli`, `tinydb`, `wand`
+- Apt packages used: `figlet`, `fortune-mod`, `fortunes`, `fortunes-min`, `lolcat`, `neofetch`, `toilet`, `toilet-fonts`,
 
 ---
 

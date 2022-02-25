@@ -56,7 +56,16 @@ if shell("uname -o") != "Android":
 else:	print("Ignored package test")
 
 # ANCHOR: module test
-requirements = ["py-cord", "discord-components", "num2words", "python-dotenv", "speedtest-cli", "tinydb"]
+requirements = [
+	"py-cord",
+	"discord-components",
+	"num2words",
+	"pillow",
+	"python-dotenv",
+	"speedtest-cli",
+	"tinydb",
+	"wand",
+]
 needed = []
 modules = [r.split("==")[0] for r in shell(f"{python} -m pip freeze").split()]
 missing_dependencies = False
