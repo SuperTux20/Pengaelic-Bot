@@ -6,7 +6,12 @@
 
 - Language used: `Python 3.9`
 - Pip modules used: `py-cord`, `num2words`, `pillow`, `python-dotenv`, `speedtest-cli`, `tinydb`, `wand`
-- Apt packages used: `figlet`, `fortune-mod`, `fortunes`, `fortunes-min`, `lolcat`, `neofetch`, `toilet`, `toilet-fonts`,
+- Apt packages used: `figlet`, `fortune-mod`, `fortunes`, `fortunes-min`, `lolcat`, `neofetch`, `toilet`, `toilet-fonts`
+
+## Note
+
+If you can't run Pengaelic Bot due to pieces of modules missing, make sure you force-install the Pip versions, rather than relying on your Linux distro packages.
+To do this, simply `pip install --force <module name>`
 
 ---
 
