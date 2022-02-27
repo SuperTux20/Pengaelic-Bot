@@ -1,8 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from dotenv	import load_dotenv	as dotenv
-from os	import getenv	as env
+from dotenv	import load_dotenv as	dotenv
+from os	import getenv as	env
 from discord	import File
 from json	import loads
 from io	import BytesIO
@@ -12,8 +12,8 @@ from requests	import get
 from subprocess	import check_output
 from sys	import argv
 from time	import time
-from tinydb	import TinyDB, Query
-from wand.image	import Image as Wand
+from tinydb	import TinyDB,	Query
+from wand.image	import Image as	Wand
 
 # SECTION: CLASSES
 # SECTION: STOPWATCH
