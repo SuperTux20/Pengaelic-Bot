@@ -10,6 +10,7 @@ from numpy	import array
 from PIL	import Image
 from requests	import get
 from subprocess	import check_output
+from sys	import argv
 from time	import time
 from tinydb	import TinyDB, Query
 from wand.image	import Image as Wand
@@ -157,17 +158,12 @@ def updop(guild: str, category: str, option: str, value):
 	db.update({category: options}, server.guildID == guild)
 # END SECTION
 
-
+# ANCHOR: PIL IMAGE TO DISCORD FILE
 def img2file(img: Image, name: str) -> File:
 	with BytesIO() as image_binary:
 		img.save(image_binary, "PNG")
 		image_binary.seek(0)
 		return File(image_binary, name)
-
-valid_image	= lambda filename: any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
-url2img	= lambda url: Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
-pil2wand	= lambda img: Wand.from_array(array(img))
-wand2pil	= lambda img: Image.open(BytesIO(img.make_blob("png")))
 
 # ANCHOR: ELDRITCH SYLLABLES
 def eldritch_syllables() -> list:
@@ -333,8 +329,8 @@ magic_responses = [
 		"Why would you ask such a stupid question?",
 	],
 	[
-		"Don’t count on it",
-		"Don’t count on it, buster",
+		"Don't count on it",
+		"Don't count on it, buster",
 		"Heck no",
 		"I don't think so",
 		"I don't think so, pal",
@@ -347,7 +343,7 @@ magic_responses = [
 		"Outlook is terrible. Get Thunderbird instead",
 		"Outlook not so good",
 		"Outlook not so good. Use Gmail instead",
-		"Pfft, don’t count on it",
+		"Pfft, don't count on it",
 		'The law requires that I answer "no"',
 		"Very doubtful",
 		"Uh, no",
@@ -404,5 +400,9 @@ magic_responses = [
 jsoncheck	= lambda guild:	getops(guild, "toggles", "jsonMenus")
 tux_in_guild	= lambda ctx, client:	[bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)), ctx.author.id]
 shell	= lambda command:	check_output(command, shell=True).decode()[:-1]
-argv_parse	= lambda argv, args:	any("--" + arg in argv for arg in args)
+argv_parse	= lambda args:	any("--" + arg in argv for arg in args)
+valid_image	= lambda filename:	any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
+url2img	= lambda url:	Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
+pil2wand	= lambda img:	Wand.from_array(array(img))
+wand2pil	= lambda img:	Image.open(BytesIO(img.make_blob("png")))
 # END SECTION
