@@ -60,17 +60,18 @@ requirements = [
 	"py-cord",
 	"discord-components",
 	"num2words",
-	"Pillow",
+	"pillow",
 	"python-dotenv",
 	"quart",
-	"Quart-Discord",
+	"quart-discord",
 	"requests",
+	"routes",
 	"speedtest-cli",
 	"tinydb",
-	"Wand",
+	"wand",
 ]
 needed = []
-modules = [r.split("==")[0] for r in shell(f"{python} -m pip freeze").split()]
+modules = [r.split("==")[0].lower() for r in shell(f"{python} -m pip freeze").split()]
 missing_dependencies = False
 for module in requirements:
 	if module not in modules:
