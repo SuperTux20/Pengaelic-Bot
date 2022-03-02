@@ -65,7 +65,6 @@ requirements = [
 	"quart",
 	"quart-discord",
 	"requests",
-	"routes",
 	"speedtest-cli",
 	"tinydb",
 	"wand",
@@ -80,7 +79,7 @@ for module in requirements:
 if missing_dependencies:
 	print(f"Modules {list2str(needed, 0, True)} are not installed.")
 	print("Installing them now...")
-	shell(f"{python} -m pip install " + list2str(needed, 2))
+	shell(f"{python} -m pip install --force " + list2str(needed, 2))
 	print("Done.")
 print("Passed module test")
 
@@ -89,7 +88,15 @@ from discord.errors	import HTTPException
 from discord.ext	import commands
 from discord_components	import Button,	ButtonStyle,	DiscordComponents
 from dotenv	import load_dotenv as	dotenv
+from quart	import Quart,	redirect,	url_for,	render_template,	request
+from routes.utils	import app
 from tinydb	import TinyDB,	Query
+
+app = Quart(__name__)
+
+@app.route("/")
+async def home():
+	return await render_template("dash.html")
 
 # ANCHOR: unstable flagger
 unstable = True if argv_parse(["unstable", "beta", "dev"]) else False
@@ -185,13 +192,14 @@ async def on_ready():
 		print(f"Loaded options for {guild.name}")
 	if not unstable:
 		for leftguild in allgids:
-			print(f"Deleted options for {db.search(Query().guildID == leftguild)['guildName']}")
+			print(f"Deleted options for {db.search(Query().guildID == leftguild)[0]['guildName']}")
 			db.remove(Query().guildID == leftguild)
 	await set_status()
 	DiscordComponents(client)
+	client.loop.create_task(app.run_task("0.0.0.0"))
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
-	if not shell("hostname").startswith("TrueMintguin"): print("Connected to Discord\nCheck out the support server at https://gg/DHHpA7k")
+	if not shell("hostname").startswith("TrueMintguin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
 
 
 # ANCHOR: ON GUILD JOIN
