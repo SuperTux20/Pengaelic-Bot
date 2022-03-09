@@ -1,4 +1,4 @@
-# !/usr/bin/python3.9
+#!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
 from asyncio.events	import get_event_loop
