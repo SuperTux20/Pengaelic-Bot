@@ -23,12 +23,12 @@ class Memes(commands.Cog):
 			else:	raise
 
 		font_size	= int(height / 5)	# find biggest font size that works
-		font	= ImageFont.truetype("fonts/impact.ttf", font_size)
+		font	= ImageFont.truetype("static/fonts/impact.ttf", font_size)
 		top_text_size	= font.getsize(top_string)
 		bottom_text_size	= font.getsize(bottom_string)
 		while top_text_size[0] > width - 20 or bottom_text_size[0] > width - 20:
 			font_size	= font_size - 1
-			font	= ImageFont.truetype("fonts/impact.ttf", font_size)
+			font	= ImageFont.truetype("static/fonts/impact.ttf", font_size)
 			top_text_size	= font.getsize(top_string)
 			bottom_text_size	= font.getsize(bottom_string)
 
@@ -50,12 +50,12 @@ class Memes(commands.Cog):
 		width, height	= img.size
 		text	= text.split("|")
 		font_size	= int(height / 10)	# find biggest font size that works
-		font	= ImageFont.truetype("fonts/liberation.ttf", font_size)
+		font	= ImageFont.truetype("static/fonts/liberation.ttf", font_size)
 		for line in text:
 			text_size	= font.getsize(line)
 			while text_size[0] > width - 20:
 				font_size	= font_size - 1
-				font	= ImageFont.truetype("fonts/liberation.ttf", font_size)
+				font	= ImageFont.truetype("static/fonts/liberation.ttf", font_size)
 				text_size	= font.getsize(line)
 
 		pad = Image.new(img.mode, (width, height + (font_size * len(text))), 0xffffffff)	# add white padding

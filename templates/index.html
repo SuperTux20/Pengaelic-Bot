@@ -18,10 +18,19 @@
 </head>
 
 <body>
-	<h1><img src="static/images/icon.png" alt="Pengaelic Bot icon" /></h1>
+	<nav>
+		<img src="static/images/icon.png" alt="Pengaelic Bot icon" height="64px" />
+		<strong class="verti-center">Pengaelic Bot</strong>
+		<a href="https://github.com/SuperTux20/Pengaelic-Bot">GitHub repository</a>
+		{% if logged %}
+		<a href="/logout/" class="button">Logout</a>
+		{% else %}
+		<a href="/login/" class="button">Log in with Discord</a>
+		{% endif %}
+	</nav>
 	<h1>Pengaelic Bot</h1>
 	<h2>A simple multi-purpose Discord bot</h2>
-	<h3><a href="https://github.com/SuperTux20/Pengaelic-Bot">GitHub repository</a></h3>
+	<h3></h3>
 	<h4><a href="static/images">Images used</a></h4>
 	<br />
 	<br />

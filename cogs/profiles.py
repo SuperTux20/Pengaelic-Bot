@@ -69,7 +69,7 @@ class Profiles(commands.Cog):
 	# 	profile["region"]	= flag(profile["region"])
 	# 	fg	= Wand(width=int(width*(7/8)), height=int(height*(7/8)), background=Color(color))
 	# 	with Drawing() as draw:
-	# 		draw.font	= "fonts/liberation.ttf"
+	# 		draw.font	= "static/fonts/liberation.ttf"
 	# 		draw.font_size	= int(height / 20)
 	# 		draw.fill_color	= fontcolor
 	# 		draw.text(0, 50, f"{profile['nickname']} ({profile['userName']})")

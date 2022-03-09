@@ -11,13 +11,24 @@ html {
 	height: 100%;
 }
 
+nav {
+	position: fixed;
+	width: 100%;
+	top: 0;
+}
+
+nav a {
+	float: right;
+	display: block;
+	padding: 20%;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-	text-align: center;
 	padding: 1%;
 }
 
@@ -41,7 +52,6 @@ h6 {
 ul,
 li {
 	padding: 0 16px;
-	text-align: center;
 	list-style: none;
 }
 
