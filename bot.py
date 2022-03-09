@@ -1,12 +1,8 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from sys import	version
-
-from quart_discord import DiscordOAuth2Session
-
 # ANCHOR: version checker
-major, minor = [int(num) for num in version.split(".")[:2]]
+major, minor = [int(num) for num in __import__("sys").version.split(".")[:2]]
 if major < 3 or minor < 9:
 	print("Pengaelic Bot requires Python 3.9 or newer to function properly.")
 	print("Please run Pengaelic Bot with Python >= 3.9")
@@ -15,7 +11,7 @@ if major < 3 or minor < 9:
 from json	import dumps
 from subprocess	import CalledProcessError,	call,	STDOUT
 from sys	import argv,	executable as	python
-from os	import getenv,	environ,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
+from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
 from pengaelicutils	import argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 
 if argv_parse(["uninstall", "delete"]):
@@ -90,42 +86,7 @@ from discord.errors	import HTTPException
 from discord.ext	import commands
 from discord_components	import Button,	ButtonStyle,	DiscordComponents
 from dotenv	import load_dotenv as	dotenv
-from quart	import Quart,	redirect,	url_for,	render_template,	request
-# from routes.utils	import app
 from tinydb	import TinyDB,	Query
-# SECTION: web routes
-app	= Quart(__name__)
-app.secret_key = getenv("session")
-environ["OAUTHLIB_INSECURE_TRANSPORT"] = "true"
-app.config["DISCORD_CLIENT_ID"] = getenv("CLIENT_ID")
-app.config["DISCORD_CLIENT_SECRET"] = getenv("CLIENT_SECRET")
-app.config["DISCORD_REDIRECT_URI"] = getenv("RI")
-app.config["DISCORD_BOT_TOKEN"] = getenv("token")
-dauth	= DiscordOAuth2Session(app)
-
-# ANCHOR: ROOT
-@app.route("/")
-async def webroot():
-	return await render_template("index.html")
-
-# ANCHOR: INVITE
-@app.route("/invite")
-async def webinvite():
-	return await render_template("invite.html")
-
-# ANCHOR: INVITE SUCCESS
-@app.route("/success")
-async def websuccess():
-	return await render_template("success.html")
-
-# ANCHOR: DASHBOARD
-@app.route("/dashboard")
-async def webdashboard():
-	logged = False
-	if await dauth.authorized: logged = True
-	return await render_template("dash.html", logged=logged)
-
-# END SECTION
 
 # ANCHOR: unstable flagger
 unstable = True if argv_parse(["unstable", "beta", "dev"]) else False
@@ -225,7 +186,6 @@ async def on_ready():
 			db.remove(Query().guildID == leftguild)
 	await set_status()
 	DiscordComponents(client)
-	client.loop.create_task(app.run_task("0.0.0.0"))
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
 	if not shell("hostname").startswith("TrueMintguin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
@@ -272,7 +232,7 @@ if not unstable:
 
 # ANCHOR: load token
 dotenv(".env")
-print("Loaded bot token and developer IDs")
+print("Loaded dotenv")
 
 # ANCHOR: EXIT
 @client.command(name="exit", aliases=["quit"])
