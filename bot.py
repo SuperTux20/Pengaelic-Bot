@@ -15,7 +15,8 @@ from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
 from pengaelicutils	import argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 
 if argv_parse(["uninstall", "delete"]):
-	system("rm -rvf ~/Pengaelic-Bot")
+	if shell("pwd").split("/")[-1] == "Pengaelic-Bot":
+		system("rm -rvf ../Pengaelic-Bot")
 	print("Uninstalled Pengaelic Bot.")
 	exit()
 
