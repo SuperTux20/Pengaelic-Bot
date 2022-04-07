@@ -141,3 +141,6 @@ profiles.json
 
 # GIMP image file
 *.xcf
+
+# LibreOffice lock file
+.~lock.*#
