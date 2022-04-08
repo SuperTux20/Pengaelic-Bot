@@ -48,8 +48,9 @@ if shell("uname -o") != "Android":
 	devnull.close()
 	if missing_dependencies:
 		print(f"Packages {list2str(needed, 0, True)} are not installed.")
-		print("Install them with APT.")
-		exit()
+		print("Installing them now...")
+		shell(f"sudo apt install -y " + list2str(needed, 2))
+		print("Done.")
 	print("Passed package test")
 
 else:	print("Ignored package test")
