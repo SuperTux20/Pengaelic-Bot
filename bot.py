@@ -13,6 +13,7 @@ from subprocess	import CalledProcessError,	call,	STDOUT
 from sys	import argv,	executable as	python
 from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
 from pengaelicutils	import argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
+from cogs.events	import Events
 
 if argv_parse(["uninstall", "delete"]):
 	if shell("pwd").split("/")[-1] == "Pengaelic-Bot":
@@ -188,6 +189,8 @@ async def on_ready():
 			db.remove(Query().guildID == leftguild)
 	await set_status()
 	DiscordComponents(client)
+	events = Events(client)
+	events.birthday_detector.start()
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
 	if not shell("hostname").startswith("TrueMintguin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
