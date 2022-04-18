@@ -144,3 +144,6 @@ profiles.json
 
 # LibreOffice lock file
 .~lock.*#
+
+# Other files
+SRS.odt
