@@ -80,6 +80,9 @@ class Profiles(commands.Cog):
 		user	= Query()
 		profile	= self.db.search(user.userID == ctx.author.id)
 		if profile:
+			if option == "region" and len(value) != 2:
+				await ctx.send("<:winxp_critical_error:869760946816553020>You have to use a proper country code (look at the flag emojis for reference).")
+				return
 			profile = profile[0]
 			profile[option] = value
 			self.db.update(profile, user.userID == ctx.author.id)
