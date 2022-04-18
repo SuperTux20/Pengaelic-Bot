@@ -33,7 +33,9 @@ class Events(commands.Cog):
 				if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
 					birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
 					general_chat = [get(guild.text_channels, id=getops(guild.id, "channels", "generalChannel")) for guild in guilds][0]
-					await general_chat.send(birthday_wishes)
+					for usr in users:
+						if usr.id in [get(guild.members, id=user["id"]) for guild in guilds]:
+							await general_chat.send(birthday_wishes)
 			except AttributeError:
 				pass
 
