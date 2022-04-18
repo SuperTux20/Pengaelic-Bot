@@ -31,7 +31,7 @@ class Profiles(commands.Cog):
 			"pronouns",
 			"sexuality"
 		]
-	} | {"color": 0, "region": "united_nations"}
+	} | {"color": 0, "region": "UN"}
 
 	# ANCHOR: GET PROFILE
 	def getprof(self, member: str):
