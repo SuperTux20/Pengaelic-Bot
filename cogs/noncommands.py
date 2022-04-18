@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from datetime	import datetime,	timedelta
-from xml.dom.minidom import Attr
 from discord.utils	import get
 from discord.ext	import commands
 from discord	import Embed,	Member,	DMChannel
