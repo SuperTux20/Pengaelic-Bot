@@ -120,7 +120,7 @@ class Profiles(commands.Cog):
 					prof = dict(list(nof.items()) + list(prof.items()))
 					self.db.update(dict(sorted(prof.items())), user.userID == uid)
 				self.db.update({"userName": ctx.author.name}, user.userID == uid) # did the user's name change?
-				async with ctx.typing(): await ctx.send(f"Profile for {ctx.author.name}", file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.getprof(ctx.author.id), f"profile_{ctx.author.name.replace(' ', '_')}_Pengaelic_Bot.png"))
+				await ctx.send(f"Profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))#file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.getiprof(ctx.author.id), f"profile_{ctx.author.name.replace(' ', '_')}_Pengaelic_Bot.png"))
 			except IndexError:
 				newprofile	= {"userName": ctx.author.name, "userID": ctx.author.id} | self.newprof()
 				self.db.insert(newprofile)
