@@ -29,7 +29,6 @@ class Events(commands.Cog):
 			users_with_profiles[user] = users_with_profiles[user][0]
 		for user in [(users_with_profiles[user]) for user in range(len(users_with_profiles))]:
 			try:
-				print("detecting")
 				if len(user["birthday"].rsplit(" ", 1)[1]) == 4: user["birthday"] = user["birthday"].rsplit(" ", 1)[0]
 				if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
 					birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
