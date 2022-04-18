@@ -38,11 +38,7 @@ class Profiles(commands.Cog):
 		user	= Query()
 		profile	= dict(sorted(self.db.search(user.userID == member)[0].items()))
 		uname = profile.pop("userName")
-		try:
-			if len(profile["region"]) == 2:	profile["region"] = f"flag_{profile['region']}"
-		except TypeError:
-			pass
-		profile["region"] = f":{profile['region']}:"
+		profile["region"] = flag(profile["region"])
 		embed = Embed(title=profile["nickname"] + f" ({uname})" if profile["nickname"] else uname, description=profile["bio"] if profile["bio"] else "No bio set", color=profile["color"])
 		if profile["image"]: embed.set_image(url=profile["image"])
 		embed.add_field(name="Message of the Day", value=profile["motd"] if profile["motd"] else "No MOTD set")
@@ -145,7 +141,7 @@ class Profiles(commands.Cog):
 	async def set_pronouns(self, ctx, *, text=None): await self.uprof(ctx, text, "pronouns", text.lower())
 
 	@profile.command(name="region", help="Set a region for your profile.", aliases=["country"], usage="[two-letter country code (see flag emoji names)]")
-	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.lower() if text else "un")
+	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.upper() if text else "UN")
 
 	@profile.command(name="sexuality", help="Set your sexuality for your profile.", usage="[text]")
 	async def set_sexuality(self, ctx, *, text=None): await self.uprof(ctx, text, "sexuality", text)
