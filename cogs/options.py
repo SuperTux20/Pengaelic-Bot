@@ -89,11 +89,11 @@ class Options(commands.Cog):
 
 	# ANCHOR: TOGGLE
 	@read_options.group(name="toggle", help="Toggle an option.")
-	async def optoggle(self, ctx):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify an option to toggle!") if ctx.invoked_subcommand is None else None
+	async def optoggle(self, ctx):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a valid option to toggle!") if ctx.invoked_subcommand is None else None
 
 	# ANCHOR: SET
 	@read_options.group(name="set", help="Set an option.")
-	async def opset(self, ctx):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify an option to set!") if ctx.invoked_subcommand is None else None
+	async def opset(self, ctx):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a valid option to set!") if ctx.invoked_subcommand is None else None
 	# END SECTION
 
 	# SECTION: TOGGLES
