@@ -91,7 +91,7 @@ class Profiles(commands.Cog):
 			await ctx.send(f"<:winxp_warning:869760947114348604>You don't have a profile yet. Run `{self.client.command_prefix}profile` to create one!")
 	# END SECTION
 
-	@commands.group(name="profile", help="Take a look at your profile!", aliases=["me"], usage="[user]")
+	@commands.group(name="profile", help="Take a look at your profile!", aliases=["me"])
 	async def profile(self, ctx):
 		if ctx.invoked_subcommand == None:
 			try:
@@ -131,7 +131,7 @@ class Profiles(commands.Cog):
 	@profile.command(name="color", help="Set your favorite color for your profile.", usage="<hex code with no #>")
 	async def set_color(self, ctx, *, text=None): await self.uprof(ctx, text, "color", int(text, 16) if text else 0)
 
-	@profile.command(name="image", help="Set an image for your profile with attachment or URL.", aliases=["img", "background", "bg"], usage="[text]")
+	@profile.command(name="image", help="Set an image for your profile with attachment or URL.", aliases=["img", "background", "bg"], usage="[URL or image attachment]")
 	async def set_img(self, ctx, *, text=None): await self.uprof(ctx, text or ctx.message.attachments, "image", (ctx.message.attachments[0].url if ctx.message.attachments else text).replace("media.discordapp.net", "cdn.discordapp.com"))
 
 	@profile.command(name="motd", help='Set a "Message of the Day" for your profile.', aliases=["motto", "slogan", "tagline"], usage="[text]")
