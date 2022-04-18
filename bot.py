@@ -169,6 +169,7 @@ async def on_ready():
 	# add any options that may have been created since the option dicts' creation
 	allgids = [g["guildID"] for g in db.all()]
 	for guild in client.guilds:
+		db.update({"guildName": guild.name}, Query().guildID == guild.id)	# did the server's name change?
 		ops = db.search(Query().guildName == guild.name)[0]
 		ops.pop("guildName")
 		allgids.remove(ops.pop("guildID"))
@@ -181,7 +182,6 @@ async def on_ready():
 			ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
 			db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == guild.id)
 
-		db.update({"guildName": guild.name}, Query().guildID == guild.id)	# did the server's name change?
 		print(f"Loaded options for {guild.name}")
 	if not unstable:
 		for leftguild in allgids:
