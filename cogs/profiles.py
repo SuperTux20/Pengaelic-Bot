@@ -1,19 +1,14 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
-from asyncio.events	import get_event_loop
 from discord	import Embed, User
-from datetime	import datetime
 from discord.ext	import commands
-from concurrent.futures	import ThreadPoolExecutor
 from flag	import flag
 from json	import dumps
-from pengaelicutils	import unhandling, tux_in_guild, img2file, url2img, pil2wand, wand2pil
+from pengaelicutils	import unhandling, tux_in_guild, parsedate, url2img, pil2wand, wand2pil
 from wand.color	import Color
-from wand.display	import display
 from wand.drawing	import Drawing
-from wand.image	import Image as Wand, Font
-from re	import search
+from wand.image	import Image as Wand
 from tinydb	import TinyDB, Query
 
 class Profiles(commands.Cog):
@@ -95,13 +90,6 @@ class Profiles(commands.Cog):
 			await ctx.send(f"<:winxp_information:869760946808180747>{'Updated' if cond else 'Removed'} {option}.")
 		else:
 			await ctx.send(f"<:winxp_warning:869760947114348604>You don't have a profile yet. Run `{self.client.command_prefix}profile` to create one!")
-
-	async def parsedate(self, ctx, text):
-		if "/" in text:
-			if len(text.split("/")) == 3:	return datetime.strftime(datetime.strptime(text, "%m/%d/%Y"), "%B %-d %Y")
-			if len(text.split("/")) == 2:	return datetime.strftime(datetime.strptime(text, "%m/%d"), "%B %-d")
-		else:
-			await ctx.send("Invalid date format! Please use MM/DD/YYYY (year is optional)")
 	# END SECTION
 
 	@commands.group(name="profile", help="Take a look at your profile!", aliases=["me"], usage="[user]")
@@ -139,7 +127,7 @@ class Profiles(commands.Cog):
 	async def set_bio(self, ctx, *, text=None): await self.uprof(ctx, text, "bio", text)
 
 	@profile.command(name="birthday", help="Set a birthday for your profile. An invalid date will unset it.", aliases=["bday", "bd"], usage="<MM>/<DD>/[YYYY]")
-	async def set_bday(self, ctx, *, text=None): await self.uprof(ctx, text, "birthday", await self.parsedate(ctx, text))
+	async def set_bday(self, ctx, *, text=None): await self.uprof(ctx, text, "birthday", await parsedate(ctx, text))
 
 	@profile.command(name="color", help="Set your favorite color for your profile.", usage="<hex code with no #>")
 	async def set_color(self, ctx, *, text=None): await self.uprof(ctx, text, "color", int(text, 16) if text else 0)

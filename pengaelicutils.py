@@ -1,6 +1,7 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+from datetime	import datetime
 from dotenv	import load_dotenv as	dotenv
 from os	import getenv as	env
 from discord	import File
@@ -102,6 +103,14 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 	if mode == 2:	inlist = [line + " " for line in inlist]
 	elif mode == 3:	inlist = [line + "\n" for line in inlist]
 	return "".join(inlist)
+
+# ANCHOR: DATE PARSING
+async def parsedate(self, ctx, text):
+	if "/" in text:
+		if len(text.split("/")) == 3:	return datetime.strftime(datetime.strptime(text, "%m/%d/%Y"), "%B %-d %Y")
+		if len(text.split("/")) == 2:	return datetime.strftime(datetime.strptime(text, "%m/%d"), "%B %-d")
+	else:
+		await ctx.send("Invalid date format! Please use MM/DD/YYYY (year is optional)")
 
 
 # ANCHOR: ERROR UNHANDLING
