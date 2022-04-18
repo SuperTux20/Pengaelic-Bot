@@ -105,7 +105,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 	return "".join(inlist)
 
 # ANCHOR: DATE PARSING
-async def parsedate(self, ctx, text):
+async def parsedate(ctx, text):
 	if "/" in text:
 		if len(text.split("/")) == 3:	return datetime.strftime(datetime.strptime(text, "%m/%d/%Y"), "%B %-d %Y")
 		if len(text.split("/")) == 2:	return datetime.strftime(datetime.strptime(text, "%m/%d"), "%B %-d")
