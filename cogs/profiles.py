@@ -145,7 +145,7 @@ class Profiles(commands.Cog):
 	async def set_pronouns(self, ctx, *, text=None): await self.uprof(ctx, text, "pronouns", text.lower())
 
 	@profile.command(name="region", help="Set a region for your profile.", aliases=["country"], usage="[two-letter country code (see flag emoji names)]")
-	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.upper() if text else "UN")
+	async def set_region(self, ctx, text=None): await self.uprof(ctx, text, "region", text.lower() if text else "un")
 
 	@profile.command(name="sexuality", help="Set your sexuality for your profile.", usage="[text]")
 	async def set_sexuality(self, ctx, *, text=None): await self.uprof(ctx, text, "sexuality", text)
