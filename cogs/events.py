@@ -20,26 +20,20 @@ class Events(commands.Cog):
 	# ANCHOR: BIRTHDAY DETECTION
 	@tasks.loop(hours=24)
 	async def birthday_detector(self):
-		print("start")
 		guilds	= self.client.guilds
 		users	= [member for member in [guild.members for guild in guilds]][0]
 		users_with_profiles = [self.db.search(Query().userID == member.id) for member in users]
-		print("profiles gotten")
 		while [] in users_with_profiles:
 			users_with_profiles.remove([])
-			print("removed nulls")
 		for user in range(len(users_with_profiles)):
 			users_with_profiles[user] = users_with_profiles[user][0]
-			print("extracted dict")
 		for user in [(users_with_profiles[user]) for user in range(len(users_with_profiles))]:
 			try:
 				print("detecting")
 				if len(user["birthday"].rsplit(" ", 1)[1]) == 4: user["birthday"] = user["birthday"].rsplit(" ", 1)[0]
 				if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
 					birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
-					print("getting general")
 					general_chat = [get(guild.text_channels, id=getops(guild.id, "channels", "generalChannel")) for guild in guilds][0]
-					print("sending")
 					await general_chat.send(birthday_wishes)
 			except AttributeError:
 				pass
