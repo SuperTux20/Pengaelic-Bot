@@ -4,7 +4,7 @@
 from discord.utils	import get
 from discord.ext	import commands
 from discord	import Embed,	Member,	DMChannel
-from pengaelicutils	import getops,	Developers
+from pengaelicutils	import getops,	updop,	Developers
 from random	import choice
 from re	import sub
 from tinydb	import TinyDB
@@ -79,6 +79,8 @@ class Reactions(commands.Cog):
 
 				# ANCHOR: AUTO POLLS
 				if getops(server, "toggles", "suggestions") and message.channel.id == getops(server, "channels", "suggestionsChannel"):
+					suggs	= getops(server, "suggestions")
+					footer	= "#" + str(len(suggs)+1)
 					thepoll = await message.channel.send(
 						embed=Embed(
 							title	= "Suggestion",
@@ -87,8 +89,11 @@ class Reactions(commands.Cog):
 						).set_author(
 							name	= message.author.name,
 							icon_url	= message.author.avatar_url
+						).set_footer(
+							text	= footer
 						)
 					)
+					updop(server, "suggestions", footer, [thepoll.channel.id, thepoll.id])
 					try:	await message.delete()
 					except:	pass
 					await thepoll.add_reaction("✅")

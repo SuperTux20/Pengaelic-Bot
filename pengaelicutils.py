@@ -139,20 +139,25 @@ newops = lambda: {
 	"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
 	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama", "mute"]},
 	"toggles":	{toggle: False for toggle in ["atSomeone", "censor", "dadJokes", "deadChat", "jsonMenus", "lockCustomRoles", "rickRoulette", "suggestions", "welcome"]},
-	"customRoles":	{}
+	"customRoles":	{},
+	"suggestions":	{}
 }
 
 
 # ANCHOR: GET OPTIONS
-def getops(guild: str, category: str = None, option: str = None) -> dict:
+def getops(guild: int, category: str = None, option: str = None) -> dict:
 	db	= TinyDB("config.json")
 	server	= Query()
 	if option == None:
-		options = dict(sorted(db.search(server.guildID == guild)[0].items()))
-		options.pop("guildName")
-		options.pop("guildID")
-		if options["lists"]["censorList"] == []:	options["lists"]["censorList"] = None
-		else:	options["lists"]["censorList"] = options["lists"]["censorList"].tostr()
+		if category == None:
+			options = dict(sorted(db.search(server.guildID == guild)[0].items()))
+			options.pop("guildName")
+			options.pop("guildID")
+			if options["lists"]["censorList"] == []:	options["lists"]["censorList"] = None
+			else:	options["lists"]["censorList"] = options["lists"]["censorList"].tostr()
+
+		else:
+			options = dict(sorted(db.search(server.guildID == guild)[0].items()))[category]
 
 	else:	options = db.search(server.guildID == guild)[0][category][option]
 	return options

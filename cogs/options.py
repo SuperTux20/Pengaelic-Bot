@@ -59,6 +59,7 @@ class Options(commands.Cog):
 			options = getops(ctx.guild.id)
 			options.pop("lists")
 			options.pop("customRoles")
+			options.pop("suggestions")
 			for option, value in options["channels"].items():
 				try:	options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name if jsoncheck(ctx.guild.id) else f"<#{ctx.guild.get_channel(int(value)).id}>"
 				except AttributeError:	options["channels"][option] = "#invalid-channel"

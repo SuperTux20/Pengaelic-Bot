@@ -174,11 +174,11 @@ async def on_ready():
 		ops.pop("guildName")
 		allgids.remove(ops.pop("guildID"))
 		nops = newops()
-		for op in ["channels", "lists", "messages", "roles", "toggles"]:
+		for op in ["channels", "lists", "messages", "toggles"]:
 			for opt in list(ops[op].keys()):
 				if opt not in nops[op]:	ops[op].pop(opt)
 
-		for op in ["channels", "lists", "messages", "roles", "toggles"]:
+		for op in ["channels", "lists", "messages", "toggles"]:
 			ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
 			db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == guild.id)
 

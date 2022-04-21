@@ -88,12 +88,15 @@ class Tools(commands.Cog):
 		if title == None:	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a name for the poll!")
 		if arg == None:	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify anything to make a poll for!")
 		else:
-			the_poll = await ctx.send(embed=Embed(color=self.teal, title=title, description=arg).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url))
+			suggs	= getops(ctx.guild.id, "suggestions")
+			footer	= "#" + str(len(suggs)+1)
+			thepoll = await ctx.send(embed=Embed(color=self.teal, title=title, description=arg).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url).set_footer(text=footer))
+			updop(ctx.guild.id, "suggestions", footer, [thepoll.channel.id, thepoll.id])
 			try:	await ctx.message.delete()
 			except:	pass
-			await the_poll.add_reaction("✅")
-			await the_poll.add_reaction("🤷")
-			await the_poll.add_reaction("❌")
+			await thepoll.add_reaction("✅")
+			await thepoll.add_reaction("🤷")
+			await thepoll.add_reaction("❌")
 
 	# ANCHOR: INFO COMMANDS
 
