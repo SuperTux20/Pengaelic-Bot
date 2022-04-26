@@ -6,7 +6,7 @@ from discord	import Member,	Embed
 from discord.ext	import commands
 from discord.utils	import get
 from tinydb	import TinyDB
-from pengaelicutils	import getops,	unhandling,	tux_in_guild,	Developers
+from pengaelicutils	import getops,	unhandling,	tux_in_guild,	Developers,	get_channel,	get_role
 
 devs = Developers()
 
@@ -55,35 +55,65 @@ class Moderation(commands.Cog):
 
 	# LINK cogs/options.py#dramarole
 	# LINK cogs/options.py#dramachan
-	@commands.command(name="drama", help="Assign a member the drama role.", usage="<member>")
+	@commands.command(name="drama", help="Assign a member the drama role.", usage="<member> [reason]")
 	@commands.has_permissions(kick_members=True)
 	async def drama(self, ctx, member: Member, *, reason=None):
-		try:
-			if getops(ctx.guild.id, "channels", "dramaChannel"):
-				await member.add_roles(get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "dramaRole")),reason=reason)
+		if get_role(ctx.guild.id, "drama"):
+			if get_channel(ctx.guild.id, "drama"):
+				await member.add_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "drama")), reason=reason)
 				await ctx.send(f"Sent {member} to the drama channel for reason `{reason}`.")
 
 			else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama channel. To set a drama channel, type `{self.client.command_prefix}options set dramaChannel <drama channel>`.")
 
-		except:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama role. To set a drama role, type `{self.client.command_prefix}options set dramaRole <drama role>`.")
+		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama role. To set a drama role, type `{self.client.command_prefix}options set dramaRole <drama role>`.")
+
+	# LINK cogs/options.py#dramarole
+	# LINK cogs/options.py#dramachan
+	@commands.command(name="undrama", help="Remove the drama role from a member.", usage="<member>")
+	@commands.has_permissions(kick_members=True)
+	async def undrama(self, ctx, member: Member):
+		if get_role(ctx.guild.id, "drama"):
+			if get_channel(ctx.guild.id, "drama"):
+				if get(ctx.guild.roles, id=get_role(ctx.guild.id, "drama")) in member.roles:
+					await member.remove_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "drama")), reason="Release from drama channel")
+					await ctx.send(f"Released {member} from the drama channel.")
+				else:
+					await ctx.send(f"{member} doesn't have the drama role.")
+
+			else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama channel. To set a drama channel, type `{self.client.command_prefix}options set dramaChannel <drama channel>`.")
+
+		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama role. To set a drama role, type `{self.client.command_prefix}options set dramaRole <drama role>`.")
 
 	# LINK cogs/options.py#muterole
-	@commands.command(name="mute", help="Mute a member.", usage="<member>")
+	@commands.command(name="mute", help="Mute a member.", usage="<member> [reason]")
 	@commands.has_permissions(kick_members=True)
 	async def mute(self, ctx, member: Member, *, reason=None):
-		try:
-			await member.add_roles(get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "muteRole")),reason=reason)
+		if get_role(ctx.guild.id, "mute"):
+			await member.add_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason=reason)
 			await ctx.send(f"Muted {member} for reason `{reason}`.")
 
-		except:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
+		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
 
-	@commands.command(name="kick", help="Kick a member.", usage="<member>")
+	# LINK cogs/options.py#muterole
+	@commands.command(name="unmute", help="Unmute a muted member.", usage="<member>")
+	@commands.has_permissions(kick_members=True)
+	async def unmute(self, ctx, member: Member):
+		if get_role(ctx.guild.id, "mute"):
+			if get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")) in member.roles:
+				await member.remove_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason="Unmute")
+				await ctx.send(f"Unmuted {member}.")
+			else:
+				await ctx.send(f"{member} isn't muted.")
+
+		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
+
+	@commands.command(name="kick", help="Kick a member.", usage="<member> [reason]")
 	@commands.has_permissions(kick_members=True)
 	async def kick(self, ctx, member: Member, *, reason=None):
 		await member.kick(reason=reason)
 		await ctx.send(f"<:winxp_information:869760946808180747>Kicked {member} for reason `{reason}`.")
 
-	@commands.command(name="ban", help="Ban a member.", usage="<member>")
+	@commands.command(name="ban", help="Ban a member.", usage="<member> [reason]")
 	@commands.has_permissions(ban_members=True)
 	async def ban(self, ctx, member: Member, *, reason=None):
 		await member.ban(reason=reason)
@@ -118,15 +148,15 @@ class Moderation(commands.Cog):
 	@consider.error
 	@implement.error
 	async def managementError(self, ctx, error):
-		error = str(error)
-		if error.startswith("You are missing Manage") and error.endswith("permission(s) to run this command."):
+		errorstr = str(error)
+		if errorstr.startswith("You are missing Manage") and errorstr.endswith("permission(s) to run this command."):
 			permmsg = f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage "
-			if "Members" in error:	await ctx.send(permmsg + "Members)")
-			if "Messages" in error:	await ctx.send(permmsg + "Messages)")
-			if "Channels" in error:	await ctx.send(permmsg + "Channels)")
+			if "Members" in errorstr:	await ctx.send(permmsg + "Members)")
+			if "Messages" in errorstr:	await ctx.send(permmsg + "Messages)")
+			if "Channels" in errorstr:	await ctx.send(permmsg + "Channels)")
 
-		elif "KeyError: '#" in error:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid suggestion ID (look in the footers of the embeds!)")
-		elif error == "NotFound: 404 Not Found (error code: 10008): Unknown Message":	await ctx.send("<:winxp_critical_error:869760946816553020>Suggestions could not be searched properly. Did one get deleted?)")
+		elif "KeyError: '#" in errorstr:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid suggestion ID (look in the footers of the embeds!)")
+		elif errorstr == "NotFound: 404 Not Found (error code: 10008): Unknown Message":	await ctx.send("<:winxp_critical_error:869760946816553020>Suggestions could not be searched properly. Did one get deleted?)")
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 

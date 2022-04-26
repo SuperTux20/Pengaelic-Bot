@@ -11,9 +11,10 @@ from numpy	import array
 from PIL	import Image
 from requests	import get
 from subprocess	import check_output
-from sys	import argv
+from sys	import argv,	exc_info
 from time	import time
 from tinydb	import TinyDB,	Query
+from traceback	import TracebackException
 from wand.image	import Image as	Wand
 
 # SECTION: CLASSES
@@ -115,17 +116,20 @@ async def parsedate(ctx, text):
 
 # ANCHOR: ERROR UNHANDLING
 def unhandling(error, tux_in_server) -> str:
-	error	= str(error)
+	exc, error, trace	= exc_info()
+	errorstr	= str(error)
+	if errorstr.startswith("Command raised an exception: "):	errorstr = errorstr[29:]
+
 	author	= tux_in_server[1]
 	tux_in_server	= tux_in_server[0]
-	output	= "<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n" f"> {error}\n"
+	full_error = "".join(TracebackException(exc, error, trace).format()).split("The above exception was the direct cause of the following exception:")[0].replace("/home/tux", "~")
+	output	= f"<:winxp_critical_error:869760946816553020>Unhandled error occurred:\n```\n{full_error}\n```"
 	if tux_in_server:
 		if author == Developers.get(None, "tux"):
-			output = "<:winxp_critical_error:869760946816553020>"
-			if error.startswith("Command raised an exception: "):	error = error[29:]
-			tux_msg = error
+			output = ""
+			tux_msg = "```\n" + full_error + "\n```"
 
-		else:	tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
+		else:	tux_msg = f"Pinging <@!686984544930365440> (my developer) so he can see this error."
 
 	else:	tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
 	return output + tux_msg
@@ -419,4 +423,6 @@ valid_image	= lambda filename:	any(filename.endswith(ext) for ext in ["png", "jp
 url2img	= lambda url:	Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
 pil2wand	= lambda img:	Wand.from_array(array(img))
 wand2pil	= lambda img:	Image.open(BytesIO(img.make_blob("png")))
+get_channel	= lambda guild, channel:	getops(guild, "channels",	channel	+ "Channel")
+get_role	= lambda guild, role:	getops(guild, "roles",	role	+ "Role")
 # END SECTION

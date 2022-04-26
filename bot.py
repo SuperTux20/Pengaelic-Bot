@@ -160,36 +160,42 @@ async def on_ready():
 	# create a server's configs
 	if db.all() == []:	[db.insert({"guildName": guild.name, "guildID": guild.id} | newops()) for guild in client.guilds]
 	newconfigs	= [{"guildID": guild.id} for guild in client.guilds]
-	configgedservers	= [{"guildID": guild["guildID"]} for guild in db.all()]
+	configgedguilds	= [{"guildID": guild["guildID"]} for guild in db.all()]
+	allgids	= [g["guildID"] for g in db.all()]
+	server	= Query()
+	events	= Events(client)
 	# try to make configs for a server that the bot was added to while it was offline
-	for server in range(len(client.guilds)):
-		if newconfigs[server] not in configgedservers:
-			db.insert({"guildName": client.get_guild(newconfigs[server]["guildID"]).name} | {"guildID": newconfigs[server]["guildID"]} | newops())
-			print(f"Created options for {client.get_guild(newconfigs[server]['guildID']).name}")
+	for guild in range(len(client.guilds)):
+		if newconfigs[guild] not in configgedguilds:
+			db.insert({"guildName": client.get_guild(newconfigs[guild]["guildID"]).name} | {"guildID": newconfigs[guild]["guildID"]} | newops())
+			print(f"Created options for {client.get_guild(newconfigs[guild]['guildID']).name}")
 	# add any options that may have been created since the option dicts' creation
-	allgids = [g["guildID"] for g in db.all()]
 	for guild in client.guilds:
-		db.update({"guildName": guild.name}, Query().guildID == guild.id)	# did the server's name change?
-		ops = db.search(Query().guildName == guild.name)[0]
-		ops.pop("guildName")
+		db.update({"warnings": {}}, server.guildID == guild.id)
+		db.update({"guildName": guild.name}, server.guildID == guild.id)	# did the server's name change?
+		ops = db.search(server.guildName == guild.name)[0]
+		print(ops.pop("guildName"))
 		allgids.remove(ops.pop("guildID"))
 		nops = newops()
-		for op in ["channels", "lists", "messages", "toggles"]:
-			for opt in list(ops[op].keys()):
-				if opt not in nops[op]:	ops[op].pop(opt)
+		noplist = list(newops().keys())
+		for op in noplist:
+			try:
+				for opt in list(ops[op].keys()):
+					if opt not in nops[op]:	ops[op].pop(opt)
+			except KeyError:
+				ops |= {op:nops[op]}
 
-		for op in ["channels", "lists", "messages", "toggles"]:
+		for op in noplist:
 			ops[op] = dict(list(nops[op].items()) + list(ops[op].items()))
-			db.update(dict(sorted({op: ops[op]}.items())), Query().guildID == guild.id)
+			db.update(dict(sorted({op: ops[op]}.items())), server.guildID == guild.id)
 
 		print(f"Loaded options for {guild.name}")
 	if not unstable:
 		for leftguild in allgids:
-			print(f"Deleted options for {db.search(Query().guildID == leftguild)[0]['guildName']}")
-			db.remove(Query().guildID == leftguild)
+			print(f"Deleted options for {db.search(server.guildID == leftguild)[0]['guildName']}")
+			db.remove(server.guildID == leftguild)
 	await set_status()
 	DiscordComponents(client)
-	events = Events(client)
 	events.birthday_detector.start()
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(client.guilds)} servers")
@@ -228,10 +234,10 @@ if not unstable:
 	# ANCHOR: ERROR HANDLING
 	@client.event
 	async def on_command_error(ctx, error):
-		if not hasattr(ctx.command, "on_error"):	# if the command doesn't have its own error handling...
-
-			if str(error).startswith("Command") and str(error).endswith("is not found"):	await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
-			else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client)))	# ...send the global error
+		if not hasattr(ctx.command, "on_error"): # if the command doesn't have its own error handling...
+			errorstr = str(error)
+			if errorstr.startswith("Command") and errorstr.endswith("is not found"):	await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
+			else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client))) # ...send the global error
 # END SECTION
 
 

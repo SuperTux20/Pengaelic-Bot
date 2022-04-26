@@ -90,8 +90,8 @@ class Interactions(commands.Cog):
 	@squish.error
 	@tickle.error
 	async def error(self, ctx, error):
-		error	= str(error)
-		if	error.startswith("Member") and error.endswith("not found.") or "IndexError" in error:	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
+		errorstr	= str(error)
+		if	errorstr.startswith("Member") and errorstr.endswith("not found.") or "IndexError" in errorstr:	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
 		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 

@@ -4,7 +4,7 @@
 from discord.utils	import get
 from discord.ext	import commands
 from discord	import Embed,	Member,	DMChannel
-from pengaelicutils	import getops,	updop,	Developers
+from pengaelicutils	import getops,	updop,	Developers,	get_channel
 from random	import choice
 from re	import sub
 from tinydb	import TinyDB
@@ -27,14 +27,14 @@ class Reactions(commands.Cog):
 	@commands.Cog.listener()
 	async def on_member_join(self, member: Member):
 		if getops(member.guild.id, "toggles", "welcome"):
-			welcome_channel = getops(member.guild.id, "channels", "welcomeChannel")
+			welcome_channel = get_channel(member.guild.id, "welcome")
 			if welcome_channel:	await get(member.guild.text_channels, id=welcome_channel).send(getops(member.guild.id, "messages", "welcomeMessage").replace("SERVER", member.guild.name).replace("USER", member.name))
 
 	# ANCHOR: ON MEMBER LEAVE
 	@commands.Cog.listener()
 	async def on_member_remove(self, member: Member):
 		if getops(member.guild.id, "toggles", "welcome"):
-			welcome_channel = getops(member.guild.id, "channels", "welcomeChannel")
+			welcome_channel = get_channel(member.guild.id, "welcome")
 			if welcome_channel:	await get(member.guild.text_channels, id=welcome_channel).send(getops(member.guild.id, "messages", "goodbyeMessage").replace("SERVER", member.guild.name).replace("USER", member.name))
 
 	@commands.Cog.listener()
@@ -78,7 +78,7 @@ class Reactions(commands.Cog):
 				if "dead" in messagetext and ("chat" in messagetext or "server" in messagetext) and getops(server, "toggles", "deadChat") and list(await message.channel.history(limit=2).flatten())[0].author != self.client.user:	await message.channel.send(f"{choice(['N', 'n'])}o {choice(['U', 'u'])}")
 
 				# ANCHOR: AUTO POLLS
-				if getops(server, "toggles", "suggestions") and message.channel.id == getops(server, "channels", "suggestionsChannel"):
+				if getops(server, "toggles", "suggestions") and message.channel.id == get_channel(server, "suggestions"):
 					suggs	= getops(server, "suggestions")
 					footer	= "#" + str(len(suggs)+1)
 					thepoll = await message.channel.send(

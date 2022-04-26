@@ -161,9 +161,9 @@ class Profiles(commands.Cog):
 	@set_region.error
 	@set_sexuality.error
 	async def error(self, ctx, error):
-		error = str(error)
-		if error.startswith("User") and error.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user doesn't exist on any servers I'm in.")
-		elif error.endswith("'%m/%d/%Y'") or error.endswith("'%m/%d'"):	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid date format! Please use MM/DD/YYYY (year is optional)")
+		errorstr = str(error)
+		if errorstr.startswith("User") and errorstr.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user doesn't exist on any servers I'm in.")
+		elif errorstr.endswith("'%m/%d/%Y'") or errorstr.endswith("'%m/%d'"):	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid date format! Please use MM/DD/YYYY (year is optional)")
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 def setup(client):	client.add_cog(Profiles(client))

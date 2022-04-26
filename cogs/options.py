@@ -8,7 +8,7 @@ from random	import choice
 from re	import sub
 from tinydb	import TinyDB,	Query
 from discord	import Embed,	Role,	TextChannel
-from pengaelicutils	import newops,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers
+from pengaelicutils	import newops,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	get_role
 
 devs = Developers()
 
@@ -34,7 +34,7 @@ class Options(commands.Cog):
 	# SECTION: SET
 	# ANCHOR: GENERAL
 	async def setop(self, ctx, option, value, optype, message):
-		if ctx.author.guild_permissions.manage_roles or getops(ctx.guild.id, "roles", "botCommanderRole"):
+		if ctx.author.guild_permissions.manage_roles or get_role(ctx.guild.id, "botCommander"):
 			updop(ctx.guild.id, optype + "s", option + optype.capitalize(), value.id)
 			await ctx.send("<:winxp_information:869760946808180747>{} {} {} {} {}.".format(optype.capitalize(), value.name, message, sub(r"([A-Z])", r" \1", option).lower(), optype))	# i would use an fstring here but they don't allow backslashes
 
@@ -126,7 +126,7 @@ class Options(commands.Cog):
 	# ANCHOR[id=locktoggle]: LOCK CUSTOM ROLES
 	@optoggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
 	@commands.has_permissions(manage_roles=True)
-	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. {'' if getops(ctx.guild.id, 'roles', 'customRoleLockRole') else f' Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or none if they should be disabled entirely.'}")
+	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. {'' if get_role(ctx.guild.id, 'customRoleLock') else f' Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or none if they should be disabled entirely.'}")
 
 	# ANCHOR[id=ricktoggle]: RICK ROULETTE
 	@optoggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
@@ -289,11 +289,11 @@ class Options(commands.Cog):
 	@del_censor.error
 	@wipe_censor.error
 	async def messageError(self, ctx, error):
-		error = str(error)
-		if error.startswith("You are missing") and error.endswith("permission(s) to run this command."):	await ctx.send("<:winxp_critical_error:869760946816553020>You do not have permission to use that command.")
-		elif error.endswith('" not found.'):
-			if error.startswith('Channel "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel.")
-			if error.startswith('Role "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role.")
+		errorstr = str(error)
+		if errorstr.startswith("You are missing") and errorstr.endswith("permission(s) to run this command."):	await ctx.send("<:winxp_critical_error:869760946816553020>You do not have permission to use that command.")
+		elif errorstr.endswith('" not found.'):
+			if errorstr.startswith('Channel "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel.")
+			if errorstr.startswith('Role "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role.")
 
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 

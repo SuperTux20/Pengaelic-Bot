@@ -4,13 +4,12 @@
 from datetime	import datetime
 from discord.utils	import get
 from discord.ext	import commands,	tasks
-from pengaelicutils	import getops,	Developers
+from pengaelicutils	import getops,	get_channel
 from tinydb	import TinyDB,	Query
 
 
 class Events(commands.Cog):
 	def __init__(self, client):	self.client = client
-	devs	= Developers()
 	name	= "events"
 	name_typable	= name
 	description	= "Scheduled events that aren't commands."
@@ -32,7 +31,7 @@ class Events(commands.Cog):
 				if len(user["birthday"].rsplit(" ", 1)[1]) == 4: user["birthday"] = user["birthday"].rsplit(" ", 1)[0]
 				if datetime.strftime(datetime.now(), "%B %-d") == user["birthday"]:
 					birthday_wishes = f'Happy birthday, {self.client.get_user(user["userID"]).mention}! :birthday:'
-					general_chat = [get(guild.text_channels, id=getops(guild.id, "channels", "generalChannel")) for guild in guilds][0]
+					general_chat = [get(guild.text_channels, id=get_channel(guild.id, "general")) for guild in guilds][0]
 					for usr in users:
 						if usr.id in [get(guild.members, id=user["id"]) for guild in guilds]:
 							await general_chat.send(birthday_wishes)

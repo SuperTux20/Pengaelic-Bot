@@ -12,7 +12,7 @@ from re	import search
 from tinydb	import TinyDB
 from time	import strftime,	localtime
 from discord	import Embed,	Member,	TextChannel,	Color
-from pengaelicutils	import getops,	updop,	list2str,	unhandling,	tux_in_guild,	jsoncheck,	shell,	Stopwatch,	Developers
+from pengaelicutils	import getops,	updop,	list2str,	unhandling,	tux_in_guild,	jsoncheck,	shell,	Stopwatch,	Developers,	get_role
 
 devs = Developers()
 
@@ -263,7 +263,7 @@ class Tools(commands.Cog):
 	@commands.command(name="role",help="Create a custom color role for yourself!",usage="<hex code>\n<role name>")
 	async def role(self, ctx, color, *, role_name):
 		member = ctx.author
-		role_lock = get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+		role_lock = get(ctx.guild.roles, id=get_role(ctx.guild.id, "customRoleLock"))
 		if role_lock in member.roles or role_lock == None:
 			try:	result	= getops(ctx.guild.id, "customRoles", str(member.id))
 			except KeyError:	result	= None
@@ -291,7 +291,7 @@ class Tools(commands.Cog):
 	@commands.command(name="delrole", help="Delete your custom role.")
 	async def delrole(self, ctx):
 		member	= ctx.author
-		role_lock	= get(ctx.guild.roles, id=getops(ctx.guild.id, "roles", "customRoleLock"))
+		role_lock	= get(ctx.guild.roles, id=get_role(ctx.guild.id, "customRoleLock"))
 		if role_lock in member.roles or role_lock == None:
 			result = getops(ctx.guild.id, "customRoles", str(member.id))
 			if result:
@@ -332,10 +332,10 @@ class Tools(commands.Cog):
 	async def dummy(self, ctx):	await ctx.send(unhandling("DummyError", tux_in_guild(ctx, self.client)))
 
 	@commands.command(name="invite", help="Invite me to your server!")
-	async def invite(self, ctx):	await ctx.send("https://discord.gg/DHHpA7k")
+	async def invite(self, ctx):	await ctx.send("https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot")
 
 	@commands.command(name="support", help="Come to the support server!")
-	async def support(self, ctx):	await ctx.send("https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot")
+	async def support(self, ctx):	await ctx.send("https://discord.gg/DHHpA7k")
 
 	@commands.command(name="github", help="See my source code!")
 	async def github(self, ctx):	await ctx.send("https://github.com/SuperTux20/Pengaelic-Bot")
@@ -360,7 +360,7 @@ class Tools(commands.Cog):
 	@delrole.error
 	@emoji.error
 	@info.error
-	async def generalError(self, ctx, error):	await ctx.send(unhandling(str(error), tux_in_guild(ctx, self.client)))
+	async def generalError(self, ctx, error):	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Tools(client))

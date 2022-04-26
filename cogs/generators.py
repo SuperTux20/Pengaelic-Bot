@@ -117,12 +117,10 @@ class Generators(commands.Cog):
 	@img.error
 	@fortune.error
 	async def error(self, ctx, error):
-		error = str(error)
-		if	error.startswith("Command raised an exception: "):	error = error[29:]
-
-		if	error.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
-		elif	error.startswith("Unexpected quote mark") and error.endswith("in non-quoted string"):	await ctx.send('<:winxp_warning:869760947114348604>You need to escape your "quotation marks" with doubled backslashes (\\\\\ these things \\\\\\\).')
-		elif	error == ('Expected closing ".'):	await ctx.send("<:winxp_warning:869760947114348604>A single unescaped quotation mark isn't going to work, sorry.")
+		errorstr = str(error)
+		if	errorstr.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
+		elif	errorstr.startswith("Unexpected quote mark") and errorstr.endswith("in non-quoted string"):	await ctx.send('<:winxp_warning:869760947114348604>You need to escape your "quotation marks" with doubled backslashes (\\\\\ these things \\\\\\\).')
+		elif	errorstr == ('Expected closing ".'):	await ctx.send("<:winxp_warning:869760947114348604>A single unescaped quotation mark isn't going to work, sorry.")
 		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 

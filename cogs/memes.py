@@ -143,9 +143,9 @@ class Memes(commands.Cog):
 	# @drake.error
 	# @galaxybrain.error
 	async def error(self, ctx, error):
-		error = str(error)
-		if "text is a required argument that is missing." in error:	await ctx.send("<:winxp_warning:869760947114348604>No caption specified!")
-		elif "too many values to unpack" in error:	await ctx.send("<:winxp_warning:869760947114348604>Too many lines specified!")
+		errorstr = str(error)
+		if "text is a required argument that is missing." in errorstr:	await ctx.send("<:winxp_warning:869760947114348604>No caption specified!")
+		elif "too many values to unpack" in errorstr:	await ctx.send("<:winxp_warning:869760947114348604>Too many lines specified!")
 		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
 
 
