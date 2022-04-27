@@ -247,7 +247,7 @@ class Converters(commands.Cog):
 		errorstr = str(error)
 		if	errorstr.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
 		elif	errorstr == "arg is a required argument that is missing.":	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify any text to convert!")
-		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:		await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Converters(client))

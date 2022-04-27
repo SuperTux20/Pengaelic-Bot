@@ -92,7 +92,7 @@ class Interactions(commands.Cog):
 	async def error(self, ctx, error):
 		errorstr	= str(error)
 		if	errorstr.startswith("Member") and errorstr.endswith("not found.") or "IndexError" in errorstr:	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
-		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:		await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Interactions(client))

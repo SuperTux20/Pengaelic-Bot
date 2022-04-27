@@ -115,7 +115,7 @@ async def parsedate(ctx, text):
 
 
 # ANCHOR: ERROR UNHANDLING
-def unhandling(error, tux_in_server) -> str:
+def unhandling(tux_in_server) -> str:
 	exc, error, trace	= exc_info()
 	errorstr	= str(error)
 	if errorstr.startswith("Command raised an exception: "):	errorstr = errorstr[29:]
@@ -137,14 +137,19 @@ def unhandling(error, tux_in_server) -> str:
 
 # SECTION OPTIONS
 # ANCHOR: GENERATE NEW OPTIONS
-newops = lambda: {
+newops_static = lambda: {
 	"channels":	{id + "Channel": None for id in ["drama", "general", "suggestions", "welcome"]},
 	"lists":	{"censorList": []},
 	"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
 	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama", "mute"]},
 	"toggles":	{toggle: False for toggle in ["atSomeone", "censor", "dadJokes", "deadChat", "jsonMenus", "lockCustomRoles", "rickRoulette", "suggestions", "welcome"]},
+}
+
+newops_dynamic = lambda: {
 	"customRoles":	{},
-	"suggestions":	{}
+	"suggestions":	{},
+	"warnings":	{},
+	"xp":	{}
 }
 
 

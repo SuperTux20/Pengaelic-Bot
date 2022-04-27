@@ -12,7 +12,7 @@ from json	import dumps
 from subprocess	import CalledProcessError,	call,	STDOUT
 from sys	import argv,	executable as	python
 from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
-from pengaelicutils	import argv_parse,	newops,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
+from pengaelicutils	import argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 from cogs.events	import Events
 
 if argv_parse(["uninstall", "delete"]):
@@ -158,7 +158,7 @@ async def on_resumed():	print("Reconnected")
 @client.event
 async def on_ready():
 	# create a server's configs
-	if db.all() == []:	[db.insert({"guildName": guild.name, "guildID": guild.id} | newops()) for guild in client.guilds]
+	if db.all() == []:	[db.insert({"guildName": guild.name, "guildID": guild.id} | newops_static() | newops_dynamic()) for guild in client.guilds]
 	newconfigs	= [{"guildID": guild.id} for guild in client.guilds]
 	configgedguilds	= [{"guildID": guild["guildID"]} for guild in db.all()]
 	allgids	= [g["guildID"] for g in db.all()]
@@ -167,7 +167,7 @@ async def on_ready():
 	# try to make configs for a server that the bot was added to while it was offline
 	for guild in range(len(client.guilds)):
 		if newconfigs[guild] not in configgedguilds:
-			db.insert({"guildName": client.get_guild(newconfigs[guild]["guildID"]).name} | {"guildID": newconfigs[guild]["guildID"]} | newops())
+			db.insert({"guildName": client.get_guild(newconfigs[guild]["guildID"]).name, "guildID": newconfigs[guild]["guildID"]} | newops_static() | newops_dynamic())
 			print(f"Created options for {client.get_guild(newconfigs[guild]['guildID']).name}")
 	# add any options that may have been created since the option dicts' creation
 	for guild in client.guilds:
@@ -176,8 +176,8 @@ async def on_ready():
 		ops = db.search(server.guildName == guild.name)[0]
 		print(ops.pop("guildName"))
 		allgids.remove(ops.pop("guildID"))
-		nops = newops()
-		noplist = list(newops().keys())
+		nops = newops_static()
+		noplist = list(nops.keys())
 		for op in noplist:
 			try:
 				for opt in list(ops[op].keys()):
@@ -218,7 +218,7 @@ async def on_guild_join(guild, auto=True):
 				break
 		if auto:
 			# create fresh options row for new server
-			db.insert({"guildName": guild.name, "guildID": guild.id} | newops())
+			db.insert({"guildName": guild.name, "guildID": guild.id} | newops_static() | newops_dynamic())
 			print(f"Options created for {guild.name}")
 
 
@@ -237,7 +237,7 @@ if not unstable:
 		if not hasattr(ctx.command, "on_error"): # if the command doesn't have its own error handling...
 			errorstr = str(error)
 			if errorstr.startswith("Command") and errorstr.endswith("is not found"):	await ctx.send(f"Invalid command/usage. Type `{client.command_prefix}help` for a list of commands and their usages.")
-			else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client))) # ...send the global error
+			else:	await ctx.send(unhandling(tux_in_guild(ctx, client))) # ...send the global error
 # END SECTION
 
 
@@ -450,7 +450,7 @@ async def dog(ctx, *, channel: TextChannel = None):
 async def not_a_cog(ctx, error):
 	error = str(error)
 	if error.endswith("'NoneType' object has no attribute 'get_commands'"):	await ctx.send("<:winxp_warning:869760947114348604>There isn't a help menu for that.")
-	else:	await ctx.send(unhandling(error, tux_in_guild(ctx, client)))
+	else:	await ctx.send(unhandling(tux_in_guild(ctx, client)))
 
 
 # ANCHOR: TOGGLE MENU

@@ -281,7 +281,7 @@ class Tools(commands.Cog):
 					role_color	= Color(int(color, 16))
 					role	= await ctx.guild.create_role(name=role_name, color=role_color)
 					await member.add_roles(role)
-					updop(ctx.guild.id, "customRoles", str(member.id), str(role.id))
+					updop(ctx.guild.id, "customRoles", str(member.id), role.id)
 					await ctx.send(f"<:winxp_information:869760946808180747>Role {role.mention} created and given.")
 
 				else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Invalid hex code `{color}`.")
@@ -295,7 +295,7 @@ class Tools(commands.Cog):
 		if role_lock in member.roles or role_lock == None:
 			result = getops(ctx.guild.id, "customRoles", str(member.id))
 			if result:
-				await member.remove_roles(ctx.guild.get_role(int(result)))
+				await member.remove_roles(ctx.guild.get_role(result))
 				await ctx.channel.send(f"Removed custom role.")
 
 			else:	await ctx.channel.send(f"{member.mention}, you don't have a custom role to remove!")
@@ -329,7 +329,7 @@ class Tools(commands.Cog):
 	async def bugreport(self, ctx, *, bug):	await self.client.get_user(devs.get("tux")).send(f"@{ctx.author} has sent a bug report from {ctx.guild}.\n```\n{bug}\n```")
 
 	@commands.command(name="dummy", help="See a dummy error message.")
-	async def dummy(self, ctx):	await ctx.send(unhandling("DummyError", tux_in_guild(ctx, self.client)))
+	async def dummy(self, ctx):	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 	@commands.command(name="invite", help="Invite me to your server!")
 	async def invite(self, ctx):	await ctx.send("https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot")
@@ -348,7 +348,7 @@ class Tools(commands.Cog):
 			if	error.startswith("Member"):	await ctx.send("<:winxp_warning:869760947114348604>Invalid user specified!")
 			elif	error.startswith("Channel"):	await ctx.send("<:winxp_warning:869760947114348604>Invalid channel specified!")
 
-		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 	@server_info.error
 	# @stopwatch_start.error
@@ -360,7 +360,9 @@ class Tools(commands.Cog):
 	@delrole.error
 	@emoji.error
 	@info.error
-	async def generalError(self, ctx, error):	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+	async def generalError(self, ctx, error):
+		if str(error).endswith("role_name is a required argument that is missing."):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a role name!")
+		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Tools(client))

@@ -6,7 +6,7 @@ from discord	import Member,	Embed
 from discord.ext	import commands
 from discord.utils	import get
 from tinydb	import TinyDB
-from pengaelicutils	import getops,	unhandling,	tux_in_guild,	Developers,	get_channel,	get_role
+from pengaelicutils	import getops,	updop,	unhandling,	tux_in_guild,	Developers,	get_channel,	get_role
 
 devs = Developers()
 
@@ -20,9 +20,9 @@ class Moderation(commands.Cog):
 	description	= "Staff tools!"
 	description_long	= description + " Obviously, you need adequate permissions to use these commands."
 
-	async def editsuggestion(self, ctx, suggestionID, reason, type) -> list:
-		if not suggestionID.startswith("#"):	suggestionID = "#" + suggestionID
-		suggestion	= getops(ctx.guild.id, "suggestions", suggestionID)
+	async def editsuggestion(self, ctx, suggestion_id, reason, type) -> list:
+		if not suggestion_id.startswith("#"):	suggestion_id = "#" + suggestion_id
+		suggestion	= getops(ctx.guild.id, "suggestions", suggestion_id)
 		message	= await get(ctx.guild.text_channels, id=suggestion[0]).fetch_message(suggestion[1])
 		embed	= message.embeds[0]
 		embed.color	= {":white_check_mark: Approved": 0x00ff00, ":x: Denied": 0xff0000, ":thinking: Considered": 0xffff00, ":ballot_box_with_check: Implemented": 0x0000ff}[type]
@@ -53,6 +53,49 @@ class Moderation(commands.Cog):
 			await ctx.channel.delete(reason=f"Nuked #{ctx.channel.name}")
 			self.nukeconfirm = False
 
+	@commands.command(name="warn", help="Warn a member.", usage="<member> [reason]")
+	@commands.has_permissions(kick_members=True)
+	async def warn(self, ctx, member: Member, *, reason=None):
+		try:	warns = getops(ctx.guild.id, "warnings", str(member.id))
+		except KeyError:	warns = {}
+		number = str(len(warns)+1)
+		await member.send(f"You have been warned in {ctx.guild.name} for reason `{reason}`")
+		updop(ctx.guild.id, "warnings", str(member.id), warns | {number: reason})
+		await ctx.message.add_reaction("✅")
+
+	@commands.command(name="warns", help="See all warnings.", usage="[member]")
+	@commands.has_permissions(kick_members=True)
+	async def warns(self, ctx, member: Member=None):
+		if member:
+			warns = getops(ctx.guild.id, "warnings", member.id)
+			await ctx.send(warns)
+		else:
+			warns = getops(ctx.guild.id, "warnings")
+			await ctx.send(warns)
+
+	# LINK cogs/options.py#muterole
+	@commands.command(name="mute", help="Mute a member.", usage="<member> [reason]")
+	@commands.has_permissions(kick_members=True)
+	async def mute(self, ctx, member: Member, *, reason=None):
+		if get_role(ctx.guild.id, "mute"):
+			await member.add_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason=reason)
+			await ctx.message.add_reaction("✅")
+
+		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
+
+	# LINK cogs/options.py#muterole
+	@commands.command(name="unmute", help="Unmute a muted member.", usage="<member>")
+	@commands.has_permissions(kick_members=True)
+	async def unmute(self, ctx, member: Member):
+		if get_role(ctx.guild.id, "mute"):
+			if get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")) in member.roles:
+				await member.remove_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason="Unmute")
+				await ctx.message.add_reaction("✅")
+			else:
+				await ctx.send(f"{member} isn't muted.")
+
+		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
+
 	# LINK cogs/options.py#dramarole
 	# LINK cogs/options.py#dramachan
 	@commands.command(name="drama", help="Assign a member the drama role.", usage="<member> [reason]")
@@ -61,7 +104,7 @@ class Moderation(commands.Cog):
 		if get_role(ctx.guild.id, "drama"):
 			if get_channel(ctx.guild.id, "drama"):
 				await member.add_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "drama")), reason=reason)
-				await ctx.send(f"Sent {member} to the drama channel for reason `{reason}`.")
+				await ctx.message.add_reaction("✅")
 
 			else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama channel. To set a drama channel, type `{self.client.command_prefix}options set dramaChannel <drama channel>`.")
 
@@ -76,36 +119,13 @@ class Moderation(commands.Cog):
 			if get_channel(ctx.guild.id, "drama"):
 				if get(ctx.guild.roles, id=get_role(ctx.guild.id, "drama")) in member.roles:
 					await member.remove_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "drama")), reason="Release from drama channel")
-					await ctx.send(f"Released {member} from the drama channel.")
+					await ctx.message.add_reaction("✅")
 				else:
 					await ctx.send(f"{member} doesn't have the drama role.")
 
 			else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama channel. To set a drama channel, type `{self.client.command_prefix}options set dramaChannel <drama channel>`.")
 
 		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set drama role. To set a drama role, type `{self.client.command_prefix}options set dramaRole <drama role>`.")
-
-	# LINK cogs/options.py#muterole
-	@commands.command(name="mute", help="Mute a member.", usage="<member> [reason]")
-	@commands.has_permissions(kick_members=True)
-	async def mute(self, ctx, member: Member, *, reason=None):
-		if get_role(ctx.guild.id, "mute"):
-			await member.add_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason=reason)
-			await ctx.send(f"Muted {member} for reason `{reason}`.")
-
-		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
-
-	# LINK cogs/options.py#muterole
-	@commands.command(name="unmute", help="Unmute a muted member.", usage="<member>")
-	@commands.has_permissions(kick_members=True)
-	async def unmute(self, ctx, member: Member):
-		if get_role(ctx.guild.id, "mute"):
-			if get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")) in member.roles:
-				await member.remove_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason="Unmute")
-				await ctx.send(f"Unmuted {member}.")
-			else:
-				await ctx.send(f"{member} isn't muted.")
-
-		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
 
 	@commands.command(name="kick", help="Kick a member.", usage="<member> [reason]")
 	@commands.has_permissions(kick_members=True)
@@ -127,19 +147,19 @@ class Moderation(commands.Cog):
 
 	@suggestion.command(name="approve", help="Approve someone's suggestion.")
 	@commands.has_permissions(manage_messages=True)
-	async def approve(self, ctx, suggestionID, *, reason: str = None):	await self.editsuggestion(ctx, suggestionID, reason, ":white_check_mark: Approved")
+	async def approve(self, ctx, suggestion_id, *, reason: str = None):	await self.editsuggestion(ctx, suggestion_id, reason, ":white_check_mark: Approved")
 
 	@suggestion.command(name="deny", help="Deny someone's suggestion.")
 	@commands.has_permissions(manage_messages=True)
-	async def deny(self, ctx, suggestionID, *, reason: str = None):	await self.editsuggestion(ctx, suggestionID, reason, ":x: Denied")
+	async def deny(self, ctx, suggestion_id, *, reason: str = None):	await self.editsuggestion(ctx, suggestion_id, reason, ":x: Denied")
 
 	@suggestion.command(name="consider", help="Consider someone's suggestion.")
 	@commands.has_permissions(manage_messages=True)
-	async def consider(self, ctx, suggestionID, *, reason: str = None):	await self.editsuggestion(ctx, suggestionID, reason, ":thinking: Considered")
+	async def consider(self, ctx, suggestion_id, *, reason: str = None):	await self.editsuggestion(ctx, suggestion_id, reason, ":thinking: Considered")
 
 	@suggestion.command(name="implement", help="Implement someone's suggestion.")
 	@commands.has_permissions(manage_messages=True)
-	async def implement(self, ctx, suggestionID, *, reason: str = None):	await self.editsuggestion(ctx, suggestionID, reason, ":ballot_box_with_check: Implemented")
+	async def implement(self, ctx, suggestion_id, *, reason: str = None):	await self.editsuggestion(ctx, suggestion_id, reason, ":ballot_box_with_check: Implemented")
 
 	@clear.error
 	@nuke.error
@@ -157,7 +177,7 @@ class Moderation(commands.Cog):
 
 		elif "KeyError: '#" in errorstr:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid suggestion ID (look in the footers of the embeds!)")
 		elif errorstr == "NotFound: 404 Not Found (error code: 10008): Unknown Message":	await ctx.send("<:winxp_critical_error:869760946816553020>Suggestions could not be searched properly. Did one get deleted?)")
-		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Moderation(client))

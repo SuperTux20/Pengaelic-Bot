@@ -146,7 +146,7 @@ class Memes(commands.Cog):
 		errorstr = str(error)
 		if "text is a required argument that is missing." in errorstr:	await ctx.send("<:winxp_warning:869760947114348604>No caption specified!")
 		elif "too many values to unpack" in errorstr:	await ctx.send("<:winxp_warning:869760947114348604>Too many lines specified!")
-		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Memes(client))

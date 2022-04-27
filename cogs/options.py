@@ -8,7 +8,7 @@ from random	import choice
 from re	import sub
 from tinydb	import TinyDB,	Query
 from discord	import Embed,	Role,	TextChannel
-from pengaelicutils	import newops,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	get_role
+from pengaelicutils	import newops_static,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	get_role
 
 devs = Developers()
 
@@ -83,7 +83,7 @@ class Options(commands.Cog):
 			await sleep(10)
 			if self.reset_options_confirm:	self.reset_options_confirm = False
 		elif self.reset_options_confirm:
-			for op in ["channels", "lists", "messages", "roles", "toggles"]:	self.db.update({op: newops()[op]}, Query().guildID == gid)
+			for op in ["channels", "lists", "messages", "roles", "toggles"]:	self.db.update({op: newops_static()[op]}, Query().guildID == gid)
 			await ctx.send("<:winxp_information:869760946808180747>Options reset to defaults.")
 			await self.read_options(ctx)
 			self.reset_options_confirm = False
@@ -295,7 +295,7 @@ class Options(commands.Cog):
 			if errorstr.startswith('Channel "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel.")
 			if errorstr.startswith('Role "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid role.")
 
-		else:	await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Options(client))

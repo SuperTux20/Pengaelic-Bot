@@ -55,7 +55,7 @@ class Generators(commands.Cog):
 		if	eldritch:	syls = eldritch_syllables()
 		else:		syls = syllables
 		if amount > 0 and upper_limit > 0 and lower_limit > 0:
-			if	not lower_limit > upper_limit:	return list2str(["".join([choice(choice(syls)) for _ in range(randint(lower_limit, upper_limit))]).capitalize() for _ in range(amount)], 3)
+			if	lower_limit <= upper_limit:	return list2str(["".join([choice(choice(syls)) for _ in range(randint(lower_limit, upper_limit))]).capitalize() for _ in range(amount)], 3)
 			else:		return "The lower limit cannot be higher than the upper limit."
 
 		else:	return "Values can't be zero."
@@ -121,7 +121,7 @@ class Generators(commands.Cog):
 		if	errorstr.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
 		elif	errorstr.startswith("Unexpected quote mark") and errorstr.endswith("in non-quoted string"):	await ctx.send('<:winxp_warning:869760947114348604>You need to escape your "quotation marks" with doubled backslashes (\\\\\ these things \\\\\\\).')
 		elif	errorstr == ('Expected closing ".'):	await ctx.send("<:winxp_warning:869760947114348604>A single unescaped quotation mark isn't going to work, sorry.")
-		else:		await ctx.send(unhandling(error, tux_in_guild(ctx, self.client)))
+		else:		await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
 def setup(client):	client.add_cog(Generators(client))
