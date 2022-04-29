@@ -171,7 +171,6 @@ async def on_ready():
 			print(f"Created options for {client.get_guild(newconfigs[guild]['guildID']).name}")
 	# add any options that may have been created since the option dicts' creation
 	for guild in client.guilds:
-		db.update({"warnings": {}}, server.guildID == guild.id)
 		db.update({"guildName": guild.name}, server.guildID == guild.id)	# did the server's name change?
 		ops = db.search(server.guildName == guild.name)[0]
 		print(ops.pop("guildName"))
