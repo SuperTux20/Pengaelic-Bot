@@ -1,0 +1,57 @@
+{
+	"channels": {
+		"drama": null,
+		"general": null,
+		"suggestions": null,
+		"welcome": null
+	},
+	"lists": {
+		"censorList": [
+			"insert blacklisted word here",
+			"insert other blacklisted word"
+		]
+	},
+	"messages": {
+		"welcomeMessage": "Welcome to SERVER, USER!",
+		"goodbyeMessage": "See you later, USER."
+	},
+	"roles": {
+		"botCommander": null,
+		"customRoleLock": null,
+		"drama": null,
+		"mute": null
+	},
+	"toggles": {
+		"atSomeone": false,
+		"censor": false,
+		"dadJokes": false,
+		"deadChat": false,
+		"jsonMenus": false,
+		"lockCustomRoles": false,
+		"rickRoulette": false,
+		"suggestions": false,
+		"welcome": false
+	},
+	"customRoles": {
+		"123456789012345678": 987654321098765432 // user: role
+	},
+	"suggestions": {
+		"#1": 111222333444555666 // suggestion: message
+	},
+	"warnings": {
+		"123456789012345678": { // user: {
+			"1": "doing something wrong",
+			"2": "broke a rule"
+		}
+	},
+	"xp": {
+		"999888777666555444": { // server: {
+			"123456789012345678": 12345, // user: xp
+			"123456789012345679": 56432
+		},
+		"989898777666555444": {
+			"123456789012345678": 12458,
+			"123456789012345679": 53267
+		}
+	}
+}
