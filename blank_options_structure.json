@@ -1,4 +1,6 @@
 {
+	"guildName": "The Generic Dummy Data Server",
+	"guildID": "737464243460374550",
 	"channels": {
 		"drama": null,
 		"general": null,
@@ -7,8 +9,10 @@
 	},
 	"lists": {
 		"censorList": [
-			"insert blacklisted word here",
-			"insert other blacklisted word"
+			"insert",
+			"blacklisted",
+			"words",
+			"here"
 		]
 	},
 	"messages": {
