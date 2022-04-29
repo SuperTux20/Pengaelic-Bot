@@ -387,7 +387,7 @@ async def help(ctx, *, cogname: str = None):
 			Button(
 				style	= ButtonStyle.URL,
 				label	= "Invite Me",
-				url	= "https://com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot"
+				url	= "https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot"
 			),
 			Button(
 				style	= ButtonStyle.URL,
