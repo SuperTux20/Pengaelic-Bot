@@ -5,7 +5,7 @@ from asyncio	import sleep
 from discord	import Member,	Embed
 from discord.ext	import commands
 from discord.utils	import get
-from tinydb	import TinyDB
+from tinydb	import TinyDB,	Query
 from pengaelicutils	import getops,	updop,	unhandling,	tux_in_guild,	Developers,	get_channel,	get_role
 
 devs = Developers()
@@ -19,6 +19,7 @@ class Moderation(commands.Cog):
 	name_typable	= name
 	description	= "Staff tools!"
 	description_long	= description + " Obviously, you need adequate permissions to use these commands."
+	teal = 0x007f7f
 
 	async def editsuggestion(self, ctx, suggestion_id, reason, type) -> list:
 		if not suggestion_id.startswith("#"):	suggestion_id = "#" + suggestion_id
@@ -63,15 +64,34 @@ class Moderation(commands.Cog):
 		updop(ctx.guild.id, "warnings", str(member.id), warns | {number: reason})
 		await ctx.message.add_reaction("✅")
 
+	@commands.command(name="unwarn", help="Remove a warning.", usage="<member> <warning number>")
+	@commands.has_permissions(kick_members=True)
+	async def unwarn(self, ctx, member: Member, id):
+		warns	= getops(ctx.guild.id, "warnings")
+		userwarns	= getops(ctx.guild.id, "warnings", str(member.id))
+		number	= str(len(warns)+1)
+		userwarns.pop(id)
+		if userwarns == {}: warns.pop(str(member.id))
+		self.db.update({"warnings": warns}, Query().guildID == ctx.guild.id)
+		await ctx.message.add_reaction("✅")
+
 	@commands.command(name="warns", help="See all warnings.", usage="[member]")
 	@commands.has_permissions(kick_members=True)
 	async def warns(self, ctx, member: Member=None):
 		if member:
-			warns = getops(ctx.guild.id, "warnings", member.id)
-			await ctx.send(warns)
+			try:
+				warns	= getops(ctx.guild.id, "warnings", str(member.id))
+				embed	= Embed(title=f"Warnings for {member.name}", color=self.teal)
+				[embed.add_field(name=warn, value=warns[warn]) for warn in warns]
+				await ctx.send(embed=embed)
+			except KeyError:
+				await ctx.send(f"There are no logged warnings for {member.name}")
 		else:
-			warns = getops(ctx.guild.id, "warnings")
-			await ctx.send(warns)
+			warns	= getops(ctx.guild.id, "warnings")
+			embed	= Embed(title=f"Warnings in {ctx.guild.name}", color=self.teal)
+			[embed.add_field(name=get(ctx.guild.members, id=int(mem)).name, value=len(warns[mem])) for mem in warns]
+			if warns == {}:	await ctx.send("There are no logged warnings in this server.")
+			else:	await ctx.send(embed=embed)
 
 	# LINK cogs/options.py#muterole
 	@commands.command(name="mute", help="Mute a member.", usage="<member> [reason]")
