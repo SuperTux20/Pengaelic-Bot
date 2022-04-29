@@ -273,7 +273,7 @@ class Tools(commands.Cog):
 					role	= ctx.guild.get_role(int(result))
 					await role.edit(name=role_name, color=Color(int(color, 16)))
 					await member.add_roles(role)
-					await ctx.send(f"<:winxp_information:869760946808180747>Role {role.mention} edited.")
+					await ctx.message.add_reaction("✅")
 
 				else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Invalid hex code `{color}`.")
 			else:
@@ -282,7 +282,7 @@ class Tools(commands.Cog):
 					role	= await ctx.guild.create_role(name=role_name, color=role_color)
 					await member.add_roles(role)
 					updop(ctx.guild.id, "customRoles", str(member.id), role.id)
-					await ctx.send(f"<:winxp_information:869760946808180747>Role {role.mention} created and given.")
+					await ctx.message.add_reaction("✅")
 
 				else:	await ctx.send(f"<:winxp_critical_error:869760946816553020>Invalid hex code `{color}`.")
 
@@ -296,7 +296,7 @@ class Tools(commands.Cog):
 			result = getops(ctx.guild.id, "customRoles", str(member.id))
 			if result:
 				await member.remove_roles(ctx.guild.get_role(result))
-				await ctx.channel.send(f"Removed custom role.")
+				await ctx.message.add_reaction("✅")
 
 			else:	await ctx.channel.send(f"{member.mention}, you don't have a custom role to remove!")
 
@@ -326,7 +326,9 @@ class Tools(commands.Cog):
 	# 	await ctx.send(Stopwatch.end(self))
 
 	@commands.command(name="bugreport", help="Send a bug report to my developer.")
-	async def bugreport(self, ctx, *, bug):	await self.client.get_user(devs.get("tux")).send(f"@{ctx.author} has sent a bug report from {ctx.guild}.\n```\n{bug}\n```")
+	async def bugreport(self, ctx, *, bug):
+		await self.client.get_user(devs.get("tux")).send(f"@{ctx.author} has sent a bug report from {ctx.guild}.\n```\n{bug}\n```")
+		await ctx.message.add_reaction("✅")
 
 	@commands.command(name="dummy", help="See a dummy error message.")
 	async def dummy(self, ctx):	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
