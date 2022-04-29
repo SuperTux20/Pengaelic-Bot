@@ -92,6 +92,7 @@ from dotenv	import load_dotenv as	dotenv
 from tinydb	import TinyDB,	Query
 
 # ANCHOR: unstable flagger
+if argv_parse(["stable", "nobeta"]): unstable = False  # for switching from beta to stable from inside discord
 unstable = True if argv_parse(["unstable", "beta", "dev"]) else False
 
 # ANCHOR: client
@@ -283,7 +284,7 @@ async def sh(ctx, *, args):
 @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
 async def restart(ctx, *, restargs=""):
 	if Developers.check(None, ctx.author):
-		if unstable:	restargs = "--unstable"
+		if unstable and restargs == "":	restargs = "--unstable"
 		await ctx.send("<:winxp_information:869760946808180747>Restarting...")
 		print("Restarting...")
 		await client.change_presence(activity=Game("Restarting..."), status=Status.dnd)
