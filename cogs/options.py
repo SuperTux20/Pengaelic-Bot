@@ -8,7 +8,7 @@ from random	import choice
 from re	import sub
 from tinydb	import TinyDB,	Query
 from discord	import Embed,	Role,	TextChannel
-from pengaelicutils	import newops_static,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	get_role
+from pengaelicutils	import newops_static,	newops_dynamic,	getops,	updop,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	get_role
 
 devs = Developers()
 
@@ -26,25 +26,25 @@ class Options(commands.Cog):
 
 	# SECTION: FUNCTIONS
 	# ANCHOR: TOGGLE
-	async def toggle_option(self, ctx, option, disable_message, enable_message):
+	async def toggle_option(self, ctx, option):
 		status = getops(ctx.guild.id, "toggles", option)
 		updop(ctx.guild.id, "toggles", option, not status)
-		await ctx.send(f"<:winxp_information:869760946808180747> {disable_message if status else enable_message}")
+		await ctx.message.add_reaction("✅")
 
 	# SECTION: SET
 	# ANCHOR: GENERAL
-	async def setop(self, ctx, option, value, optype, message):
+	async def setop(self, ctx, option, value, optype):
 		if ctx.author.guild_permissions.manage_roles or get_role(ctx.guild.id, "botCommander"):
 			updop(ctx.guild.id, optype + "s", option + optype.capitalize(), value.id)
-			await ctx.send("<:winxp_information:869760946808180747>{} {} {} {} {}.".format(optype.capitalize(), value.name, message, sub(r"([A-Z])", r" \1", option).lower(), optype))	# i would use an fstring here but they don't allow backslashes
+			await ctx.message.add_reaction("✅")
 
 		else:	await ctx.send("<:winxp_critical_error:869760946816553020>You do not have permission to use that command.")
 
 	# ANCHOR: CHANNEL
-	async def set_channel(self, ctx, option, value):	await self.setop(ctx, option, value, "channel", "is now set as the")
+	async def set_channel(self, ctx, option, value):	await self.setop(ctx, option, value, "channel")
 
 	# ANCHOR: ROLE
-	async def set_role(self, ctx, option, value):	await self.setop(ctx, option, value, "role", "is now set as the")
+	async def set_role(self, ctx, option, value):	await self.setop(ctx, option, value, "role")
 	# END SECTION
 	# END SECTION
 
@@ -57,9 +57,7 @@ class Options(commands.Cog):
 		if ctx.invoked_subcommand == None:
 			p = self.client.command_prefix
 			options = getops(ctx.guild.id)
-			options.pop("lists")
-			options.pop("customRoles")
-			options.pop("suggestions")
+			[options.pop(op) for op in list(newops_dynamic().keys()) + ["lists"]]
 			for option, value in options["channels"].items():
 				try:	options["channels"][option] = "#" + ctx.guild.get_channel(int(value)).name if jsoncheck(ctx.guild.id) else f"<#{ctx.guild.get_channel(int(value)).id}>"
 				except AttributeError:	options["channels"][option] = "#invalid-channel"
@@ -101,47 +99,47 @@ class Options(commands.Cog):
 	# ANCHOR[id=@toggle]: @SOMEONE
 	@optoggle.command(name="atSomeone", help="Change whether custom roles should be locked to members with only a specific role.")
 	@commands.has_permissions(manage_roles=True)
-	async def toggle_at_someone(self, ctx):	await self.toggle_option(ctx, "atSomeone", "Server members can no longer ping @someone.", "Server members can now ping @someone.")
+	async def toggle_at_someone(self, ctx):	await self.toggle_option(ctx, "atSomeone")
 
 	# ANCHOR[id=censortoggle]: CENSOR
 	@optoggle.command(name="censor", help="Toggle the automatic deletion of messages containing specific keywords.", aliases=["filter"])
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_censor(self, ctx):	await self.toggle_option(ctx, "censor", "Censorship turned off.", "Censorship turned on.")
+	async def toggle_censor(self, ctx):	await self.toggle_option(ctx, "censor")
 
 	# ANCHOR[id=dadtoggle]: DAD JOKES
 	@optoggle.command(name="dadJokes", help='Toggle the automatic Dad Bot-like responses to messages starting with "I\'m".')
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_dad_jokes(self, ctx):	await self.toggle_option(ctx, "dadJokes", "Bye Dad, I'm the Pengaelic Bot! (dad jokes turned off)", "Hi Dad, I'm the Pengaelic Bot! (dad jokes turned on)")
+	async def toggle_dad_jokes(self, ctx):	await self.toggle_option(ctx, "dadJokes")
 
 	# ANCHOR[id=dedtoggle]: DEAD CHAT
 	@optoggle.command(name="deadChat", help='Toggle the automatic "no u" response to someone saying "dead chat".')
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_dead_chat(self, ctx):	await self.toggle_option(ctx, "deadChat", "The server lives! (dead chat jokes turned off)", f"{choice(['N', 'n'])}o {choice(['U', 'u'])} (dead chat jokes turned on)")
+	async def toggle_dead_chat(self, ctx):	await self.toggle_option(ctx, "deadChat")
 
 	# ANCHOR[id=jsontoggle]: JSON MENUS
 	@optoggle.command(name="jsonMenus", help="Change whether menus should be shown in embed or JSON format.")
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_json(self, ctx):	await self.toggle_option(ctx, "jsonMenus", "Menus will be shown in embed format.", "Menus will be shown in JSON format.")
+	async def toggle_json(self, ctx):	await self.toggle_option(ctx, "jsonMenus")
 
 	# ANCHOR[id=locktoggle]: LOCK CUSTOM ROLES
 	@optoggle.command(name="lockCustomRoles", help="Change whether custom roles should be locked to members with only a specific role.")
 	@commands.has_permissions(manage_roles=True)
-	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles", "Custom roles are now available to everyone.", f"Custom roles are now locked. {'' if get_role(ctx.guild.id, 'customRoleLock') else f' Use `{self.client.command_prefix}options set customLockRole <role name>` to set what role they should be locked behind, or none if they should be disabled entirely.'}")
+	async def toggle_role_lock(self, ctx):	await self.toggle_option(ctx, "lockCustomRoles")
 
 	# ANCHOR[id=ricktoggle]: RICK ROULETTE
 	@optoggle.command(name="rickRoulette", help="Turn Rickroll-themed Russian Roulette on or off.")
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_rick_roulette(self, ctx):	await self.toggle_option(ctx, "rickRoulette", "You know the rules, and so do I. (Rick Roulette turned off)", "You know the rules, it's time to die. (Rick Roulette turned on)")
+	async def toggle_rick_roulette(self, ctx):	await self.toggle_option(ctx, "rickRoulette")
 
 	# ANCHOR[id=suggtoggle]: AUTO SUGGESTIONS
 	@optoggle.command(name="suggestions", help="Turn automatic poll-making on or off. This does not effect the p!suggest command.")
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_suggestions(self, ctx):	await self.toggle_option(ctx, "suggestions", "Auto-suggestions turned off.", "Auto-suggestions turned on.")
+	async def toggle_suggestions(self, ctx):	await self.toggle_option(ctx, "suggestions")
 
 	# ANCHOR[id=welcometoggle]: WELCOME MESSAGES
 	@optoggle.command(name="welcome", help="Toggle the automatic welcome messages.")
 	@commands.has_permissions(manage_messages=True)
-	async def toggle_welcome(self, ctx):	await self.toggle_option(ctx, "welcome", "Welcome messages turned off.", "Welcome messages turned on.")
+	async def toggle_welcome(self, ctx):	await self.toggle_option(ctx, "welcome")
 	# END SECTION
 
 	# SECTION: ROLES
