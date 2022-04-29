@@ -174,7 +174,6 @@ async def on_ready():
 	for guild in client.guilds:
 		db.update({"guildName": guild.name}, server.guildID == guild.id)	# did the server's name change?
 		ops = db.search(server.guildName == guild.name)[0]
-		print(ops.pop("guildName"))
 		allgids.remove(ops.pop("guildID"))
 		nops = newops_static()
 		noplist = list(nops.keys())
