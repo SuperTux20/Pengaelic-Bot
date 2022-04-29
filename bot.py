@@ -375,13 +375,14 @@ if not unstable:
 async def help(ctx, *, cogname: str = None):
 	if cogname == None:
 		cogs = dict(client.cogs)
+		cogs.pop("Events")
 		cogs.pop("Options")
-		cogs.pop("NonCommands")
+		cogs.pop("Reactions")
 		components=[
 			Button(
 				style	= ButtonStyle.URL,
 				label	= "Support Server",
-				url	= "https://gg/DHHpA7k"
+				url	= "https://discord.gg/DHHpA7k"
 			),
 			Button(
 				style	= ButtonStyle.URL,
