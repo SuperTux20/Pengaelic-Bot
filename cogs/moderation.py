@@ -69,8 +69,9 @@ class Moderation(commands.Cog):
 	async def unwarn(self, ctx, member: Member, id):
 		warns	= getops(ctx.guild.id, "warnings")
 		userwarns	= getops(ctx.guild.id, "warnings", str(member.id))
-		number	= str(len(warns)+1)
 		userwarns.pop(id)
+		userwarns = {number+1: list(userwarns.values())[number] for number in range(len(userwarns))}
+		warns[str(member.id)] = userwarns
 		if userwarns == {}: warns.pop(str(member.id))
 		self.db.update({"warnings": warns}, Query().guildID == ctx.guild.id)
 		await ctx.message.add_reaction("✅")
