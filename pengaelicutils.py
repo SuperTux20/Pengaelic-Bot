@@ -127,7 +127,7 @@ def unhandling(tux_in_server) -> str:
 	if tux_in_server:
 		if author == Developers.get(None, "tux"):
 			output = ""
-			tux_msg = "```\n" + full_error + "\n```"
+			tux_msg = "```\n" + full_error.replace("```", "`") + "\n```"
 
 		else:	tux_msg = f"Pinging <@!686984544930365440> (my developer) so he can see this error."
 
