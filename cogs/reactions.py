@@ -33,7 +33,7 @@ class Reactions(commands.Cog):
 	# ANCHOR: ON MEMBER LEAVE
 	@commands.Cog.listener()
 	async def on_member_remove(self, member: Member):
-		if getops(member.guild.id, "toggles", "welcome"):
+		if getops(member.guild.id, "toggles", "welcome") and member != self.client.user:
 			welcome_channel = get_channel(member.guild.id, "welcome")
 			if welcome_channel:	await get(member.guild.text_channels, id=welcome_channel).send(getops(member.guild.id, "messages", "goodbyeMessage").replace("SERVER", member.guild.name).replace("USER", member.name))
 

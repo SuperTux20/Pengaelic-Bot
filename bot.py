@@ -14,6 +14,7 @@ from sys	import argv,	executable as	python
 from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
 from pengaelicutils	import argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 from cogs.events	import Events
+from cogs.profiles	import Profiles
 
 if argv_parse(["uninstall", "delete"]):
 	if shell("pwd").split("/")[-1] == "Pengaelic-Bot":
@@ -87,6 +88,7 @@ print("Passed module test")
 from discord	import Intents,	Activity,	ActivityType,	Embed,	Game,	Status,	Message,	TextChannel,	channel
 from discord.errors	import HTTPException
 from discord.ext	import commands
+from discord.utils	import get
 from discord_components	import Button,	ButtonStyle,	DiscordComponents
 from dotenv	import load_dotenv as	dotenv
 from tinydb	import TinyDB,	Query
@@ -109,6 +111,7 @@ system(f'toilet -w 1000 -f standard -F border -F gay "{client.description}"')
 system('echo "{}" | lolcat'.format(list2str(open("boot.txt", "r").readlines(), 1)))
 print("Defined client")
 db = TinyDB("config.json")
+profiles = TinyDB("profiles.json")
 
 if argv_parse(["reset-options"]):
 	print("Options reset")
@@ -169,7 +172,12 @@ async def on_ready():
 	for guild in range(len(client.guilds)):
 		if newconfigs[guild] not in configgedguilds:
 			db.insert({"guildName": client.get_guild(newconfigs[guild]["guildID"]).name, "guildID": newconfigs[guild]["guildID"]} | newops_static() | newops_dynamic())
-			print(f"Created options for {client.get_guild(newconfigs[guild]['guildID']).name}")
+			print(f"Options created for {client.get_guild(newconfigs[guild]['guildID']).name}")
+		# create profiles for all server members
+		for member in client.guilds[guild].members:
+			if member.id not in [int(profile["userID"]) for profile in profiles.all()] and not member.bot:
+				profiles.insert({"userName": member.name, "userID": member.id} | Profiles(client).newprof())
+				print(f"Profile created for {member.name}")
 	# add any options that may have been created since the option dicts' creation
 	for guild in client.guilds:
 		db.update({"guildName": guild.name}, server.guildID == guild.id)	# did the server's name change?
@@ -216,17 +224,20 @@ async def on_guild_join(guild, auto=True):
 					).set_thumbnail(url=client.user.avatar_url))
 				break
 		if auto:
-			# create fresh options row for new server
+			# create fresh options for new server
 			db.insert({"guildName": guild.name, "guildID": guild.id} | newops_static() | newops_dynamic())
 			print(f"Options created for {guild.name}")
+			# create profiles for all server members
+			for member in guild.members:
+				if member.id not in [int(profile["userID"]) for profile in profiles.all()]:
+					profiles.insert({"userName": member.name, "userID": member.id} | Profiles(client).newprof())
+					print(f"Profile created for {member.name}")
 
 
 # ANCHOR: ON GUILD LEAVE
 @client.event
 async def on_guild_remove(guild):
-	db.remove(Query().guildID == guild.id)
 	print(f"Removed from {guild.name}")
-	print(f"Options deleted for {guild.name}")
 
 
 if not unstable:
@@ -247,7 +258,7 @@ print("Loaded dotenv")
 # ANCHOR: EXIT
 @client.command(name="exit", aliases=["quit"])
 async def quit_the_bot(ctx):
-	if Developers.check(None, ctx.author):
+	if Developers().check(ctx.author):
 		await ctx.send("<:winxp_information:869760946808180747>Shutting down.")
 		exit(0)
 
@@ -282,7 +293,7 @@ async def sh(ctx, *, args):
 # ANCHOR: RESTART
 @client.command(name="restart", aliases=["reload", "reboot", "rs", "rl", "rb"])
 async def restart(ctx, *, restargs=""):
-	if Developers.check(None, ctx.author):
+	if Developers().check(ctx.author):
 		if unstable and restargs == "":	restargs = "--unstable"
 		await ctx.send("<:winxp_information:869760946808180747>Restarting...")
 		print("Restarting...")
@@ -292,11 +303,22 @@ async def restart(ctx, *, restargs=""):
 	else:	await ctx.send("<:winxp_warning:869760947114348604>Hey, only my developers can do this!")
 
 
+# ANCHOR: LEAVE
+@client.command(name="leave")
+async def leave(ctx, id: int):
+	if Developers().check(ctx.author):
+		guild = get(client.guilds, id=id)
+		await guild.leave()
+		await ctx.send(f"Left {guild.name}")
+	else:
+		await ctx.send("<:winxp_warning:869760947114348604>Hey, only my developers can do this!")
+
+
 if not unstable:
 	# ANCHOR: UPDATE LOG
 	@client.command(name="updatelog", aliases=["ul", "ulog"])
 	async def updatelog(ctx, formatted=True, status: Message = None):
-		if Developers.check(None, ctx.author):
+		if Developers().check(ctx.author):
 			if jsoncheck(ctx.guild.id):
 				if status:	await status.edit(content="Looking in the logs...")
 				else:	status = await ctx.send("<:winxp_information:869760946808180747>Looking in the logs...")
@@ -353,7 +375,7 @@ if not unstable:
 	# ANCHOR: UPDATE COMMAND
 	@client.command(name="update", aliases=["ud"])
 	async def update(ctx, force=False):
-		if Developers.check(None, ctx.author):
+		if Developers().check(ctx.author):
 			if jsoncheck(ctx.guild.id):	status = await ctx.send("<:winxp_information:869760946808180747>Pulling the latest commits from GitHub...")
 			else:	status = await ctx.send(embed=Embed(title="Pulling the latest commits from GitHub...", color=0x007F7F))
 			await client.change_presence(activity=Game("Updating..."), status=Status.idle)
@@ -366,7 +388,7 @@ if not unstable:
 
 	@update.error
 	async def update_error(ctx, error):
-		await ctx.send(f"<:winxp_critical_error:869760946816553020>An error occurred while updating...```\n{error}\n```Attempting force-update.")
+		await ctx.send(f"<:winxp_critical_error:869760946816553020>An error occurred while updating.```\n{error}\n```Attempting force-update...")
 		await update(ctx, True)
 
 
@@ -398,7 +420,7 @@ async def help(ctx, *, cogname: str = None):
 		if jsoncheck(ctx.guild.id):
 			info = {cogs[cog].name: cogs[cog].description.lower()[:-1] for cog in cogs}
 			if not isinstance(ctx.channel, channel.DMChannel):	info |= {"options": client.get_cog("Options").description.lower()[:-1]}
-			if Developers.check(None, ctx.author):	info |= {"control": "update, restart, that sort of thing"}
+			if Developers().check(ctx.author):	info |= {"control": "update, restart, that sort of thing"}
 			menu = dumps(
 				{
 					"help":	f"type {client.command_prefix}help <category name without spaces or dashes> for more info on each category",
@@ -415,7 +437,7 @@ async def help(ctx, *, cogname: str = None):
 			)
 			for cog in sorted(cogs):	menu.add_field(name=cogs[cog].name.capitalize(), value=cogs[cog].description)
 			if not isinstance(ctx.channel, channel.DMChannel):	menu.add_field(name="Options", value=client.get_cog("Options").description)
-			if Developers.check(None, ctx.author):	menu.add_field(name="Control", value="Update, restart, that sort of thing.")
+			if Developers().check(ctx.author):	menu.add_field(name="Control", value="Update, restart, that sort of thing.")
 			await ctx.send(embed=menu, components=components)
 	elif cogname == "options":
 		if jsoncheck(ctx.guild.id):	await ctx.send(f'```json\n"options": "{client.get_cog("Options").description_long.lower()}",\n"commands": ' + dumps({list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in client.get_cog("Options").get_commands()} | {list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in list(client.get_cog("Options").get_commands()[0].walk_commands()) if command.parents[0] == client.get_cog("Options").get_commands()[0]}, indent=4) + "```")
@@ -425,7 +447,7 @@ async def help(ctx, *, cogname: str = None):
 			for subcommand in list(command.walk_commands()):
 				if subcommand.parents[0] == command:	menu.add_field(name=subcommand.name, value=subcommand.help)
 			await ctx.send(embed=menu)
-	elif cogname == "control" and Developers.check(None, ctx.author):
+	elif cogname == "control" and Developers().check(ctx.author):
 		if jsoncheck(ctx.guild.id):	await ctx.send(f'```json\n"control": "update, restart, that sort of thing",\n"commands": ' + dumps(["exit", "restart", "update", "forceupdate", "updatelog", "sh"], indent=4) + "```")
 		else:	await ctx.send(embed=Embed(title="Control", description="Commands for developers to control the bot itself.", color=0x007F7F).add_field(name="exit", value="Shut off the bot.").add_field(name="restart", value="Reload the bot.").add_field(name="update", value="Check if there's new commits on GitHub, and if there are, pull them and restart.").add_field(name="forceupdate", value="Same as update, but it always restarts regardless of what the update log says, because I'm sure I fucked up the regular update command somehow.").add_field(name="updatelog", value="Show the log of the last update.").add_field(name="sh", value="Direct Bash access. Don't fuck this up."))
 	else:
