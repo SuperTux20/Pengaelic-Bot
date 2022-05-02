@@ -23,23 +23,23 @@ class XP(commands.Cog):
 	@commands.Cog.listener()
 	async def on_message(self, message):
 		profiles = Profiles(self.client)
-		delay = 2
+		delay = 1
+		increment = randint(2, 5)
+		try:	current = getops(message.guild.id, "xp", str(message.author.id))
+		except KeyError:	updop(message.guild.id, "xp", str(message.author.id), 0) if not message.author.bot else None
 		# check if...
 		# 1.) message is not in a DM (avoid errors)
 		# 2.) message is not from a bot (don't give bots XP)
 		# 3.) message is not within `delay` minutes of the previous message by the same user (avoid spam farming)
 		if not isinstance(message.channel, DMChannel) and not message.author.bot and ([msg for msg in await message.channel.history(limit=1000).flatten() if msg.author == message.author][0].created_at < datetime.now() - timedelta(minutes=delay)):
-			increment = randint(2, 5)
-			try:	current = getops(message.guild.id, "xp", str(message.author.id))
-			except KeyError:	current = 0
 			updop(message.guild.id, "xp", str(message.author.id), current + increment)
-			try:	current = profiles.getdata(str(message.author.id))["xp"]
-			except KeyError:	current = 0
-			await profiles.uprof(message, None, "xp", current + increment, False)
+			await profiles.uprof(message, None, "xp", profiles.getdata(str(message.author.id))["xp"] + increment, False)
 
 	@commands.command(name="xp", help="See your XP.", aliases=["rank"])
 	async def xp(self, ctx):
-		await ctx.send(f"You have {getops(ctx.guild.id, 'xp', str(ctx.author.id))} server XP and {Profiles(self.client).getdata(str(ctx.author.id))['xp']} global XP!")
+		try:	serverXP = getops(ctx.guild.id, 'xp', str(ctx.author.id))
+		except KeyError:	serverXP = 0
+		await ctx.send(f"You have {serverXP} server XP and {Profiles(self.client).getdata(str(ctx.author.id))['xp']} global XP!")
 
 	@commands.command(name="leaderboard", help="See the rankings on the server.", aliases=["top", "lb"])
 	async def lb(self, ctx):

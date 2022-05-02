@@ -240,7 +240,7 @@ async def on_guild_remove(guild):
 	print(f"Removed from {guild.name}")
 
 
-if not unstable:
+if unstable:
 	# ANCHOR: ERROR HANDLING
 	@client.event
 	async def on_command_error(ctx, error):
