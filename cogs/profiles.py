@@ -22,7 +22,8 @@ class Profiles(commands.Cog):
 
 	# SECTION FUNCTIONS
 	# ANCHOR: GENERATE NEW PROFILE
-	newprof = lambda self: {key: None for key in [
+	newprof = lambda self: {
+		key: None for key in [
 			"bio",
 			"birthday",
 			"image",
@@ -31,16 +32,23 @@ class Profiles(commands.Cog):
 			"pronouns",
 			"sexuality"
 		]
-	} | {"color": 0, "region": "UN"}
+	} | {
+		key: 0 for key in [
+			"color",
+			"xp"
+		]
+	} | {"region": "UN"}
+
+	# ANCHOR: GET PROFILE DATA
+	getdata = lambda self, member: dict(sorted(self.db.search(Query().userID == int(member))[0].items()))
 
 	# ANCHOR: GET PROFILE
 	def getprof(self, member: str):
-		user	= Query()
-		profile	= dict(sorted(self.db.search(user.userID == member)[0].items()))
-		uname = profile.pop("userName")
-		profile["region"] = flag(profile["region"])
-		embed = Embed(title=profile["nickname"] + f" ({uname})" if profile["nickname"] else uname, description=profile["bio"] if profile["bio"] else "No bio set", color=profile["color"])
-		if profile["image"]: embed.set_image(url=profile["image"])
+		profile	= self.getdata(member)
+		uname	= profile.pop("userName")
+		profile["region"]	= flag(profile["region"])
+		embed	= Embed(title=profile["nickname"] + f" ({uname})" if profile["nickname"] else uname, description=profile["bio"] if profile["bio"] else "No bio set", color=profile["color"])
+		if profile["image"]:	embed.set_image(url=profile["image"])
 		embed.add_field(name="Message of the Day", value=profile["motd"] if profile["motd"] else "No MOTD set")
 		[profile.pop(key) for key in ["userID", "bio", "color", "image", "motd", "nickname"]]
 		for bit in profile:	embed.add_field(name=bit.capitalize(), value=str(profile[bit]).replace("None", f"No {bit} set"), inline=False)
@@ -75,7 +83,7 @@ class Profiles(commands.Cog):
 	# 	return wand2pil(image)
 
 	# ANCHOR: UPDATE PROFILE
-	async def uprof(self, ctx, cond, option: str, value):
+	async def uprof(self, ctx, cond, option: str, value, show: bool = True):
 		if value == "_ _": cond	= False
 		user	= Query()
 		profile	= self.db.search(user.userID == ctx.author.id)
@@ -86,7 +94,7 @@ class Profiles(commands.Cog):
 			profile = profile[0]
 			profile[option] = value
 			self.db.update(profile, user.userID == ctx.author.id)
-			await ctx.send(f"<:winxp_information:869760946808180747>{'Updated' if cond else 'Removed'} {option}.")
+			if show: await ctx.send(f"<:winxp_information:869760946808180747>{'Updated' if cond else 'Removed'} {option}.")
 		else:
 			await ctx.send(f"<:winxp_warning:869760947114348604>You don't have a profile yet. Run `{self.client.command_prefix}profile` to create one!")
 	# END SECTION
