@@ -83,14 +83,14 @@ class Moderation(commands.Cog):
 			try:
 				warns	= getops(ctx.guild.id, "warnings", str(member.id))
 				embed	= Embed(title=f"Warnings for {member.name}", color=self.teal)
-				[embed.add_field(name=warn, value=warns[warn]) for warn in warns]
+				[embed.add_field(name=warn, value=warns[warn], inline=False) for warn in warns]
 				await ctx.send(embed=embed)
 			except KeyError:
 				await ctx.send(f"There are no logged warnings for {member.name}")
 		else:
 			warns	= getops(ctx.guild.id, "warnings")
 			embed	= Embed(title=f"Warnings in {ctx.guild.name}", color=self.teal)
-			[embed.add_field(name=get(ctx.guild.members, id=int(mem)).name, value=len(warns[mem])) for mem in warns]
+			[embed.add_field(name=get(ctx.guild.members, id=int(mem)).name, value=len(warns[mem]), inline=False) for mem in warns]
 			if warns == {}:	await ctx.send("There are no logged warnings in this server.")
 			else:	await ctx.send(embed=embed)
 
