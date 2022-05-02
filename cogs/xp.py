@@ -27,11 +27,13 @@ class XP(commands.Cog):
 		increment = randint(2, 5)
 		try:	current = getops(message.guild.id, "xp", str(message.author.id))
 		except KeyError:	updop(message.guild.id, "xp", str(message.author.id), 0) if not message.author.bot else None
+		try:	timecheck = [msg for msg in await message.channel.history(limit=1000).flatten() if msg.author == message.author][0].created_at < datetime.now() - timedelta(minutes=delay)
+		except IndexError:	timecheck = True
 		# check if...
 		# 1.) message is not in a DM (avoid errors)
 		# 2.) message is not from a bot (don't give bots XP)
 		# 3.) message is not within `delay` minutes of the previous message by the same user (avoid spam farming)
-		if not isinstance(message.channel, DMChannel) and not message.author.bot and ([msg for msg in await message.channel.history(limit=1000).flatten() if msg.author == message.author][0].created_at < datetime.now() - timedelta(minutes=delay)):
+		if not isinstance(message.channel, DMChannel) and not message.author.bot and timecheck:
 			updop(message.guild.id, "xp", str(message.author.id), current + increment)
 			await profiles.uprof(message, None, "xp", profiles.getdata(str(message.author.id))["xp"] + increment, False)
 
