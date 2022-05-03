@@ -14,7 +14,7 @@ if major < 3 or minor < 9:
 	exit()
 
 # ANCHOR: dotenv checker
-if ".envelope" not in ls():
+if ".env" not in ls():
 	print(f"You are missing the dotenv file. ({shell('pwd')}/.env)")
 	print("Formatting is as follows...")
 	print("""
