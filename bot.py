@@ -1,24 +1,35 @@
 #!/usr/bin/python3.9
 # -*- coding: utf-8 -*-
 
+
+from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
+from pengaelicutils	import shell,	argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	Stopwatch
+from sys	import argv,	executable as	python,	version
+
 # ANCHOR: version checker
-major, minor = [int(num) for num in __import__("sys").version.split(".")[:2]]
+major, minor = [int(num) for num in version.split(".")[:2]]
 if major < 3 or minor < 9:
 	print("Pengaelic Bot requires Python 3.9 or newer to function properly.")
 	print("Please run Pengaelic Bot with Python >= 3.9")
 	exit()
 
+# ANCHOR: dotenv checker
+if ".envelope" not in ls():
+	print(f"You are missing the dotenv file. ({shell('pwd')}/.env)")
+	print("Formatting is as follows...")
+	print("""
+# .env
+DISCORD_TOKEN="BoT.tOKeN.GOES-HERE"
+DEVELOPER_IDS={"you": YOURUSERID, "someone_else": THEIRUSERID}""")
+	exit()
+
 from json	import dumps
 from subprocess	import CalledProcessError,	call,	STDOUT
-from sys	import argv,	executable as	python
-from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
-from pengaelicutils	import argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	shell,	tux_in_guild,	Developers,	Stopwatch
 from cogs.events	import Events
 from cogs.profiles	import Profiles
 
 if argv_parse(["uninstall", "delete"]):
-	if shell("pwd").split("/")[-1] == "Pengaelic-Bot":
-		system("rm -rvf ../Pengaelic-Bot")
+	system("rm -rvf ../Pengaelic-Bot")
 	print("Uninstalled Pengaelic Bot.")
 	exit()
 

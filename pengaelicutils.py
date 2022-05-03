@@ -66,6 +66,10 @@ class Stopwatch:
 # SECTION: DEVELOPERS
 # load all developer user IDs
 class Developers:
+	# ANCHOR: directory check, quit if not in the bot's folder
+	if check_output("pwd", shell=True).decode()[:-1].split("/")[-1] != "Pengaelic-Bot":
+		print("Please run Pengaelic Bot inside its folder. Please note that renaming the folder containing the bot's files to something other than `Pengaelic-Bot` will cause this message to appear.")
+		exit()
 	dotenv(".env")
 	everyone = loads(env("DEVELOPER_IDS"))
 
