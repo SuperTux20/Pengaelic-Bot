@@ -251,7 +251,7 @@ async def on_guild_remove(guild):
 	print(f"Removed from {guild.name}")
 
 
-if unstable:
+if not unstable:
 	# ANCHOR: ERROR HANDLING
 	@client.event
 	async def on_command_error(ctx, error):
@@ -481,8 +481,7 @@ async def dog(ctx, *, channel: TextChannel = None):
 # ANCHOR: NOT A COG ERROR
 @help.error
 async def not_a_cog(ctx, error):
-	error = str(error)
-	if error.endswith("'NoneType' object has no attribute 'get_commands'"):	await ctx.send("<:winxp_warning:869760947114348604>There isn't a help menu for that.")
+	if str(error).endswith("'NoneType' object has no attribute 'get_commands'"):	await ctx.send("<:winxp_warning:869760947114348604>There isn't a help menu for that.")
 	else:	await ctx.send(unhandling(tux_in_guild(ctx, client)))
 
 
