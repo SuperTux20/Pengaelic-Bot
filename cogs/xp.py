@@ -11,7 +11,7 @@ from random	import randint
 from tinydb	import TinyDB
 
 
-class XP(commands.Cog):
+class Xp(commands.Cog):
 	def __init__(self, client):	self.client = client
 	devs	= Developers()
 	name	= "xp"
@@ -47,9 +47,5 @@ class XP(commands.Cog):
 	async def lb(self, ctx):
 		await ctx.send(str([(get(ctx.guild.members,id=int(user)).name,xp) for user,xp in sorted(getops(ctx.guild.id,"xp").items(),key=lambda x:x[1],reverse=True)])[2:-2].replace("), (","\n").replace("'","").replace(",",":"))
 
-	@commands.command(name="debug")
-	async def debug(self, ctx):
-		await ctx.send()
 
-
-def setup(client):	client.add_cog(XP(client))
+def setup(client):	client.add_cog(Xp(client))
