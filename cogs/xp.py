@@ -19,23 +19,28 @@ class Xp(commands.Cog):
 	description	= "You know, experience points. You get 'em every message."
 	description_long	= description
 	db	= TinyDB("profiles.json")
+	lastmsg	= None
 
 	@commands.Cog.listener()
 	async def on_message(self, message):
-		profiles = Profiles(self.client)
-		delay = 1
-		increment = randint(2, 5)
+		profiles	= Profiles(self.client)
+		increment	= randint(getops(message.guild.id, "numbers", "xpLower"), getops(message.guild.id, "numbers", "xpUpper"))
+		try:
+			lastmsg	= ([msg for msg in await message.channel.history(limit=1000).flatten() if msg.author == message.author][0]) if self.lastmsg == None else self.lastmsg
+			timecheck	= lastmsg.created_at < datetime.now() - timedelta(minutes=getops(message.guild.id, "numbers", "xpDelay"))
+		except IndexError: # if there's no lastmsg to be found
+			timecheck = True
+
 		try:	current = getops(message.guild.id, "xp", str(message.author.id))
 		except KeyError:	updop(message.guild.id, "xp", str(message.author.id), 0) if not message.author.bot else None
-		try:	timecheck = [msg for msg in await message.channel.history(limit=1000).flatten() if msg.author == message.author][0].created_at < datetime.now() - timedelta(minutes=delay)
-		except IndexError:	timecheck = True
 		# check if...
 		# 1.) message is not in a DM (avoid errors)
 		# 2.) message is not from a bot (don't give bots XP)
-		# 3.) message is not within `delay` minutes of the previous message by the same user (avoid spam farming)
+		# 3.) message is not within `delay` minutes of the previous message that the user gained XP on (avoid spam farming)
 		if not isinstance(message.channel, DMChannel) and not message.author.bot and timecheck:
 			updop(message.guild.id, "xp", str(message.author.id), current + increment)
 			await profiles.uprof(message, None, "xp", profiles.getdata(str(message.author.id))["xp"] + increment, False)
+			self.lastmsg = message
 
 	@commands.command(name="xp", help="See your XP.", aliases=["rank"])
 	async def xp(self, ctx):

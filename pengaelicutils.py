@@ -145,6 +145,7 @@ newops_static = lambda: {
 	"channels":	{id + "Channel": None for id in ["drama", "general", "suggestions", "welcome"]},
 	"lists":	{"censorList": []},
 	"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
+	"numbers":	{"xpDelay": 1, "xpLower": 2, "xpUpper": 5},
 	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama", "mute"]},
 	"toggles":	{toggle: False for toggle in ["atSomeone", "censor", "dadJokes", "deadChat", "jsonMenus", "lockCustomRoles", "rickRoulette", "suggestions", "welcome"]},
 }

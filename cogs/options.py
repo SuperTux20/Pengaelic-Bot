@@ -202,6 +202,29 @@ class Options(commands.Cog):
 		await ctx.send(f'<:winxp_information:869760946808180747>Goodbye message set to "{message}".')
 	# END SECTION
 
+	# SECTION: NUMBERS
+	# ANCHOR[id=xpd]: XP DELAY
+	@opset.command(name="xpDelay", help="Set how many minutes it'll take for a user to gain XP.")
+	@commands.has_permissions(manage_roles=True)
+	async def change_xp_delay(self, ctx, delay: int):
+		updop(ctx.guild.id, "numbers", "xpDelay", delay)
+		await ctx.send(f"<:winxp_information:869760946808180747>Users will now gain XP every {delay} minutes.")
+
+	# ANCHOR[id=xpl]: LOWER XP RANGE
+	@opset.command(name="lowerXP", help="Set the lower range for random XP.")
+	@commands.has_permissions(manage_roles=True)
+	async def change_xp_lower_bound(self, ctx, xp: int):
+		updop(ctx.guild.id, "numbers", "xpLower", xp)
+		await ctx.send(f"<:winxp_information:869760946808180747>Users will now gain at least {xp} XP.")
+
+	# ANCHOR[id=xpu]: UPPER XP RANGE
+	@opset.command(name="upperXP", help="Set the upper range for random XP.")
+	@commands.has_permissions(manage_roles=True)
+	async def change_xp_upper_bound(self, ctx, xp: int):
+		updop(ctx.guild.id, "numbers", "xpUpper", xp)
+		await ctx.send(f"<:winxp_information:869760946808180747>Users will now gain at most {xp} XP.")
+	# END SECTION
+
 	# SECTION: CENSOR
 	# ANCHOR: CENSOR INFO
 	@read_options.group(name="censor", help="Edit the censor.", aliases=["filter"])
