@@ -68,7 +68,21 @@ class Options(commands.Cog):
 				except TypeError:	pass
 
 			if jsoncheck(ctx.guild.id):	await ctx.send("```json\n{}\n```".format(dumps({"options": options}, sort_keys=True, indent=4)[6:-2].replace("\n    ", "\n")))
-			else:	await ctx.send(embed=Embed(title = "Options", description = f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"`\n' + "".join(["".join([chunk for chunk in [f"\n\n**{category[0].capitalize()}**\n", "\n".join([f"{option[0]}: {option[1]}".replace("None", f"No {category[0].capitalize()[:-1]} Set") for option in category[1].items() if any(cat == category[0] for cat in ["channels", "roles"])]), "\n".join([f"{option[0]}: {option[1]}".replace("False", "Disabled").replace("True", "Enabled") for option in category[1].items() if category[0] == "toggles"]), "\n".join([f"{option[0]}: {option[1]}" for option in category[1].items() if category[0] == "messages"])]]) for category in options.items()]), color = self.teal))
+			else:	await ctx.send(embed=Embed(title = "Options", description = f'All of the options.\nTo set an option, type `{p}options set <option> <value>`\nTo toggle a toggle option, type `{p}options toggle <option>`\nTo add to the censor list, type `{p}options censor add "<word or phrase>"`\n' +
+					"".join(["".join([chunk for chunk in [
+						f"\n\n**{category[0].capitalize()}**\n", "\n".join([
+							f"{option[0]}: {option[1]}".replace("None", f"No {category[0].capitalize()[:-1]} Set")
+							for option in category[1].items() if any(cat == category[0] for cat in ["channels", "roles"])]),
+						"\n".join([f"{option[0]}: {option[1]}".replace("False", "Disabled").replace("True", "Enabled")
+						for option in category[1].items()
+						if category[0] == "toggles"]),
+						"\n".join([f"{option[0]}: {option[1]}"
+						for option in category[1].items()
+						if category[0] == "messages"]),
+						"\n".join([f"{option[0]}: {option[1]}"
+						for option in category[1].items()
+						if category[0] == "numbers"])
+					]]) for category in options.items()]), color = self.teal))
 
 	# ANCHOR: RESET
 	@read_options.command(name="reset", help="Reset to the default options.", aliases=["defaults"])
