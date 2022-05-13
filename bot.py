@@ -3,7 +3,6 @@
 
 
 from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
-from pengaelicutils	import shell,	argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	Stopwatch
 from sys	import argv,	executable as	python,	version
 
 # ANCHOR: version checker
@@ -15,7 +14,7 @@ if major < 3 or minor < 9:
 
 # ANCHOR: dotenv checker
 if ".env" not in ls():
-	print(f"You are missing the dotenv file. ({shell('pwd')}/.env)")
+	print(f"You are missing the dotenv file. ({__import__('subprocess').check_output('pwd', shell=True).decode()[:-1]}/.env)")
 	print("Formatting is as follows...")
 	print("""
 # .env
@@ -24,6 +23,7 @@ DEVELOPER_IDS={"you": YOURUSERID, "someone_else": THEIRUSERID}""")
 	exit()
 
 from json	import dumps
+from pengaelicutils	import shell,	argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	Stopwatch
 from subprocess	import CalledProcessError,	call,	STDOUT
 from cogs.events	import Events
 from cogs.profiles	import Profiles
