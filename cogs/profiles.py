@@ -3,6 +3,7 @@
 
 from discord	import Embed, User
 from discord.ext	import commands
+from discord.utils	import get
 from flag	import flag
 from json	import dumps
 from pengaelicutils	import unhandling, tux_in_guild, parsedate, url2img, pil2wand, wand2pil
@@ -40,7 +41,8 @@ class Profiles(commands.Cog):
 	} | {"region": "UN"}
 
 	# ANCHOR: GET PROFILE DATA
-	getdata = lambda self, member: dict(sorted(self.db.search(Query().userID == int(member))[0].items()))
+	async def getdata(self, member):
+		return dict(sorted(self.db.search(Query().userID == int(member))[0].items())) if not (await self.client.fetch_user(member)).bot else None
 
 	# ANCHOR: GET PROFILE
 	def getprof(self, member: str):
