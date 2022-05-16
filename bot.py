@@ -3,8 +3,14 @@
 
 
 from os	import getenv,	system,	execl,	get_terminal_size,	listdir as	ls
-from sys	import argv,	version
-exec(open("pengaelicutils.py").read())
+from subprocess	import CalledProcessError
+from sys	import argv,	version,	platform
+
+# ANCHOR: os checker
+if platform == "win32":
+	print("Pengaelic Bot requires Linux to function.")
+	print("Please run Pengaelic Bot on a Linux installation, or use the Windows Subsystem for Linux (WSL 1 or 2 both work fine).")
+	exit()
 
 # ANCHOR: version checker
 major, minor = [int(num) for num in version.split(".")[:2]]
@@ -23,9 +29,10 @@ DISCORD_TOKEN="BoT.tOKeN.GOES-HERE"
 DEVELOPER_IDS={"you": YOURUSERID, "someone_else": THEIRUSERID}""")
 	exit()
 
+exec(open("pengaelicutils.py").read())
+
 from json	import dumps
 from pengaelicutils	import shell,	argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	Stopwatch
-from subprocess	import CalledProcessError
 from cogs.events	import Events
 from cogs.profiles	import Profiles
 
