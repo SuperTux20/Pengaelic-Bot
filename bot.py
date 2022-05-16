@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 
-from os	import getenv,	system,	execl,	devnull,	get_terminal_size,	listdir as	ls
-from sys	import argv,	executable as	python,	version
+from os	import getenv,	system,	execl,	get_terminal_size,	listdir as	ls
+from sys	import argv,	version
+exec(open("pengaelicutils.py").read())
 
 # ANCHOR: version checker
 major, minor = [int(num) for num in version.split(".")[:2]]
@@ -24,7 +25,7 @@ DEVELOPER_IDS={"you": YOURUSERID, "someone_else": THEIRUSERID}""")
 
 from json	import dumps
 from pengaelicutils	import shell,	argv_parse,	newops_static,	newops_dynamic,	list2str,	jsoncheck,	unhandling,	tux_in_guild,	Developers,	Stopwatch
-from subprocess	import CalledProcessError,	call,	STDOUT
+from subprocess	import CalledProcessError
 from cogs.events	import Events
 from cogs.profiles	import Profiles
 
@@ -37,64 +38,6 @@ system("clear")
 launchtime = Stopwatch()
 launchtime.start()
 devs = Developers()
-
-# ANCHOR: package test
-print("Imported modules")
-if shell("uname -o") != "Android":
-	devnull = open(devnull, "w")
-	requirements = [
-		"figlet",
-		"fortune-mod",
-		"fortunes",
-		"fortunes-min",
-		"lolcat",
-		"neofetch",
-		"toilet",
-		"toilet-fonts",
-	]
-	needed = []
-	missing_dependencies = False
-	for package in requirements:
-		if call(["dpkg", "-s", package], stdout=devnull, stderr=STDOUT):
-			needed.append(package)
-			missing_dependencies = True
-	devnull.close()
-	if missing_dependencies:
-		print(f"Packages {list2str(needed, 0, True)} are not installed.")
-		print("Installing them now...")
-		shell(f"sudo apt install -y " + list2str(needed, 2))
-		print("Done.")
-	print("Passed package test")
-
-else:	print("Ignored package test")
-
-# ANCHOR: module test
-requirements = [
-	"py-cord",
-	"discord-components",
-	"num2words",
-	"pillow",
-	"python-dotenv",
-	"quart",
-	"quart-discord",
-	"requests",
-	"speedtest-cli",
-	"tinydb",
-	"wand",
-]
-needed = []
-modules = [r.split("==")[0].lower() for r in shell(f"{python} -m pip freeze").split()]
-missing_dependencies = False
-for module in requirements:
-	if module not in modules:
-		needed.append(module)
-		missing_dependencies = True
-if missing_dependencies:
-	print(f"Modules {list2str(needed, 0, True)} are not installed.")
-	print("Installing them now...")
-	shell(f"{python} -m pip install --force " + list2str(needed, 2))
-	print("Done.")
-print("Passed module test")
 
 from discord	import Intents,	Activity,	ActivityType,	Embed,	Game,	Status,	Message,	TextChannel,	channel
 from discord.errors	import HTTPException

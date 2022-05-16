@@ -2,19 +2,109 @@
 # -*- coding: utf-8 -*-
 
 from datetime	import datetime
-from dotenv	import load_dotenv as	dotenv
-from os	import getenv as	env
-from discord	import File
-from json	import loads
 from io	import BytesIO
+from json	import loads
+from os	import getenv as	env,	devnull
+from subprocess	import check_output,	call,	STDOUT
+from sys	import argv,	exc_info,	executable as	python
+from time	import time
+from traceback	import TracebackException
+
+jsoncheck	= lambda guild:	getops(guild, "toggles", "jsonMenus")
+tux_in_guild	= lambda ctx, client:	[bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)), ctx.author.id]
+argv_parse	= lambda args:	any("--" + arg in argv for arg in args)
+valid_image	= lambda filename:	any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
+shell	= lambda command:	check_output(command, shell=True).decode()[:-1]
+url2img	= lambda url:	Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
+pil2wand	= lambda img:	Wand.from_array(array(img))
+wand2pil	= lambda img:	Image.open(BytesIO(img.make_blob("png")))
+get_channel	= lambda guild, channel:	getops(guild, "channels",	channel	+ "Channel")
+get_role	= lambda guild, role:	getops(guild, "roles",	role	+ "Role")
+
+# ANCHOR: LIST TO STRING
+def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
+	# if mode == 0: proper sentence formatting (minus period)
+	# if mode == 1: remove all separation
+	# if mode == 2: remove commas, leaving spaces behind
+	# if mode == 3: replace commas and spaces with newlines
+	if mode == 0:
+		inlist = [line + ", " for line in inlist]
+		inlist[-1] = inlist[-1][:-2]
+		if _and and len(inlist) > 1:
+			inlist.append(inlist[-1])
+			inlist[-2] = "and "
+			if len(inlist) == 3:	inlist[0] = inlist[0][:-2] + " "	# remove first comma ("this and that" instead of "this, and that")
+
+	if mode == 2:	inlist = [line + " " for line in inlist]
+	elif mode == 3:	inlist = [line + "\n" for line in inlist]
+	return "".join(inlist)
+
+# ANCHOR: package test
+print("Imported modules")
+if shell("uname -o") != "Android":
+	devnull = open(devnull, "w")
+	requirements = [
+		"figlet",
+		"fortune-mod",
+		"fortunes",
+		"fortunes-min",
+		"lolcat",
+		"neofetch",
+		"toilet",
+		"toilet-fonts",
+	]
+	needed = []
+	missing_dependencies = False
+	for package in requirements:
+		if call(["dpkg", "-s", package], stdout=devnull, stderr=STDOUT):
+			needed.append(package)
+			missing_dependencies = True
+	devnull.close()
+	if missing_dependencies:
+		print(f"Packages {list2str(needed, 0, True)} are not installed.")
+		print("Installing them now...")
+		shell(f"sudo apt install -y " + list2str(needed, 2))
+		print("Done.")
+	print("Passed package test")
+
+else:	print("Ignored package test")
+
+# ANCHOR: module test
+requirements = [
+	"py-cord",
+	"discord-components",
+	"emoji-country-flag",
+	"num2words",
+	"numpy",
+	"pillow",
+	"python-dotenv",
+	"quart",
+	"quart-discord",
+	"requests",
+	"speedtest-cli",
+	"tinydb",
+	"wand",
+]
+needed = []
+modules = [r.split("==")[0].lower() for r in shell(f"{python} -m pip freeze").split()]
+missing_dependencies = False
+for module in requirements:
+	if module not in modules:
+		needed.append(module)
+		missing_dependencies = True
+if missing_dependencies:
+	print(f"Modules {list2str(needed, 0, True)} are not installed.")
+	print("Installing them now...")
+	shell(f"{python} -m pip install --force " + list2str(needed, 2))
+	print("Done.")
+print("Passed module test")
+
+from discord	import File
+from dotenv	import load_dotenv as	dotenv
 from numpy	import array
 from PIL	import Image
 from requests	import get
-from subprocess	import check_output
-from sys	import argv,	exc_info
-from time	import time
 from tinydb	import TinyDB,	Query
-from traceback	import TracebackException
 from wand.image	import Image as	Wand
 
 # SECTION: CLASSES
@@ -90,24 +180,6 @@ class Developers:
 
 # END SECTION
 # END SECTION
-
-# ANCHOR: LIST TO STRING
-def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
-	# if mode == 0: proper sentence formatting (minus period)
-	# if mode == 1: remove all separation
-	# if mode == 2: remove commas, leaving spaces behind
-	# if mode == 3: replace commas and spaces with newlines
-	if mode == 0:
-		inlist = [line + ", " for line in inlist]
-		inlist[-1] = inlist[-1][:-2]
-		if _and and len(inlist) > 1:
-			inlist.append(inlist[-1])
-			inlist[-2] = "and "
-			if len(inlist) == 3:	inlist[0] = inlist[0][:-2] + " "	# remove first comma ("this and that" instead of "this, and that")
-
-	if mode == 2:	inlist = [line + " " for line in inlist]
-	elif mode == 3:	inlist = [line + "\n" for line in inlist]
-	return "".join(inlist)
 
 # ANCHOR: DATE PARSING
 async def parsedate(ctx, text):
@@ -423,16 +495,3 @@ magic_responses = [
 		":white_check_mark:",
 	],
 ]
-
-# SECTION: LITTLE EASE-OF-USE LAMBDA FUNCTIONS
-jsoncheck	= lambda guild:	getops(guild, "toggles", "jsonMenus")
-tux_in_guild	= lambda ctx, client:	[bool(ctx.guild.get_member(client.get_user(Developers.get(None, "tux")).id)), ctx.author.id]
-shell	= lambda command:	check_output(command, shell=True).decode()[:-1]
-argv_parse	= lambda args:	any("--" + arg in argv for arg in args)
-valid_image	= lambda filename:	any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
-url2img	= lambda url:	Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
-pil2wand	= lambda img:	Wand.from_array(array(img))
-wand2pil	= lambda img:	Image.open(BytesIO(img.make_blob("png")))
-get_channel	= lambda guild, channel:	getops(guild, "channels",	channel	+ "Channel")
-get_role	= lambda guild, role:	getops(guild, "roles",	role	+ "Role")
-# END SECTION
