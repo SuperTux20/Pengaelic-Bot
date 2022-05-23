@@ -4,7 +4,7 @@
 
 from os	import getenv,	system,	execl,	get_terminal_size,	listdir as	ls
 from subprocess	import CalledProcessError
-from sys	import argv,	version,	platform
+from sys	import argv,	executable as python,	version,	platform
 
 # ANCHOR: os checker
 if platform == "win32":
