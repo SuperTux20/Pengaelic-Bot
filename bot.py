@@ -167,7 +167,7 @@ async def on_ready():
 	events.birthday_detector.start()
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(db.all())} configured servers with {len(profiles.all())} unique member profiles")
-	if not shell("hostname").startswith("TrueMintguin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
+	if "True" not in shell("hostname") and "guin" not in shell("hostname"):	print("Check out the support server at https://discord.gg/DHHpA7k")
 
 
 # ANCHOR: ON GUILD JOIN

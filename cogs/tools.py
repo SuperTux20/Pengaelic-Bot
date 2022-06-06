@@ -70,15 +70,11 @@ class Tools(commands.Cog):
 			system	= (shell('neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"').split(":")[1][1:-2].split("x86")[0][:-1])
 			kernel	= uname("r")
 			os	= uname("o")
-		emoji = "<:os_linux:901137018153754684>"
-		if	os == "Android":	emoji = "<:os_android:901137017860136961>"
+		if	os == "Android":	emoji	= "<:os_android:901137017860136961>"
 		elif	os == "GNU/Linux":
-
-			try:
-				if environ["WSL_DISTRO_NAME"]:	emoji = "<:os_windows:901137018405400576>"
-
-			except KeyError:	pass
-		await ctx.send(f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel}{emoji}")
+			if	kernel.endswith("microsoft-standard-WSL2"):	emoji	= "<:os_windows:901137018405400576>"
+			else:	emoji	= "<:os_linux:901137018153754684>"
+		await ctx.send(f"<:winxp_information:869760946808180747>I'm running on {system}, kernel version {kernel} {emoji}")
 
 	@commands.command(name="test", help="Am I online? I'm not sure.")
 	async def test(self, ctx):	await ctx.send("Yep, I'm alive :sunglasses:")
