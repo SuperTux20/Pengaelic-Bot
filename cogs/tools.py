@@ -114,8 +114,7 @@ class Tools(commands.Cog):
 			emojis += animojis
 			if emoji in emojis:
 				emname = emoji.split(":")[:-1]
-				if	emname[0] == "<a":	emname = emname[1] + ".gif"
-				else:		emname = emname[1] + ".png"
+				emname = emname[1] + (".gif" if emname[0] == "<a" else ".png")
 				await ctx.send(embed=Embed(title=emname, color=self.teal).set_image(url=emojiurls[emojis.index(emoji)]))
 
 			else:	await ctx.send("<:winxp_warning:869760947114348604>Invalid emoji specified!")
