@@ -41,41 +41,39 @@ class Interactions(commands.Cog):
 
 	# SECTION: INTERACTIONS
 	@commands.command(name="hug", help="Give somebody a hug!", usage="<username, nickname, or @mention>")
-	async def hug(self, ctx, *hug: Member):	await self.nact(ctx, "hug", "hugged", hug, ["You wrap your arms tightly around yourself.", "Reaching through the 4th dimension, you manage to give yourself a hug.", "You hug yourself, somehow."])
+	async def hug(self, ctx, *hug: Member): await self.nact(ctx, "hug", "hugged", hug, ["You wrap your arms tightly around yourself.", "Reaching through the 4th dimension, you manage to give yourself a hug.", "You hug yourself, somehow."])
 
 	@commands.command(name="boop",help="Boop someone's nose :3",usage="<username, nickname, or @mention>")
-	async def boop(self, ctx, *boop: Member):	await self.nact(ctx, "boop", "booped", boop, ["You boop your own nose, I guess...? ", f"You miss your nose and poke yourself in the eye. {choice(['Ouch', 'Oops', 'Whoops'])}!", "Somehow, your hand clips through your nose and appears on the other side of your head."])
+	async def boop(self, ctx, *boop: Member): await self.nact(ctx, "boop", "booped", boop, ["You boop your own nose, I guess...? ", f"You miss your nose and poke yourself in the eye. {choice(['Ouch', 'Oops', 'Whoops'])}!", "Somehow, your hand clips through your nose and appears on the other side of your head."])
 
 	@commands.command(name="pat",help="Pat someone on the head!",usage="<username, nickname, or @mention>")
-	async def pat(self, ctx, *pat: Member):	await self.nact(ctx, "pat", "patted", pat, ["You pat yourself on the head.", "You reach into the mirror and pat your reflection on the head.", "You give yourself a pat on the back."])
+	async def pat(self, ctx, *pat: Member): await self.nact(ctx, "pat", "patted", pat, ["You pat yourself on the head.", "You reach into the mirror and pat your reflection on the head.", "You give yourself a pat on the back."])
 
 	@commands.command(name="tickle",help="Tickle tickle tickle... >:D",usage="<username, nickname, or @mention>")
-	async def tickle(self, ctx, *tickle: Member):	await self.nact(ctx, "tickle", "tickled", tickle, ["You try to tickle yourself, but your body reflexively flinches away.", "You try to tickle yourself, and you burst out laughing the moment your finger touches you.", "You try to tickle yourself, but nothing happens."])
+	async def tickle(self, ctx, *tickle: Member): await self.nact(ctx, "tickle", "tickled", tickle, ["You try to tickle yourself, but your body reflexively flinches away.", "You try to tickle yourself, and you burst out laughing the moment your finger touches you.", "You try to tickle yourself, but nothing happens."])
 
 	@commands.command(name="kiss",help="Give somebody a kiss~ :kissing_heart:",usage="<username, nickname, or @mention>")
-	async def kiss(self, ctx, *kiss: Member):	await self.nact(ctx, "kiss", "kissed", kiss, ["You... Huh... How does this work...?", "You kiss your reflection in the mirror.", "You kiss the back of your own hand."])
+	async def kiss(self, ctx, *kiss: Member): await self.nact(ctx, "kiss", "kissed", kiss, ["You... Huh... How does this work...?", "You kiss your reflection in the mirror.", "You kiss the back of your own hand."])
 
 	@commands.command(name="squish",help="Sqweesh someone's face >3<",usage="<username, nickname, or @mention>")
-	async def squish(self, ctx, *squish: Member):	await self.nact(ctx, "squish", "squished", squish, ["You squish your own face. You look like a fish.", "You reach through the mirror and squish your reflection's face.", "For some reason, you curl your arms around your head to squish your own face."])
+	async def squish(self, ctx, *squish: Member): await self.nact(ctx, "squish", "squished", squish, ["You squish your own face. You look like a fish.", "You reach through the mirror and squish your reflection's face.", "For some reason, you curl your arms around your head to squish your own face."])
 
 	@commands.command(name="nom",help="**C O N S U M E**",usage="<username, nickname, or @mention>")
-	async def nom(self, ctx, *nom: Member):	await self.nact(ctx, "nom", "nommed", nom, ["You break all meaning of Euclidean space and eat yourself.", "You pull your reflection out of the mirror and eat them.", "You shove your hand into your mouth, then give up."])
-
+	async def nom(self, ctx, *nom: Member): await self.nact(ctx, "nom", "nommed", nom, ["You break all meaning of Euclidean space and eat yourself.", "You pull your reflection out of the mirror and eat them.", "You shove your hand into your mouth, then give up."])
 	# END SECTION
 
 	# SECTION: ACTS OF VIOLENCE
 	@commands.command(name="slap", help="Slap someone!", usage="<username, nickname, or @mention>")
-	async def slap(self, ctx, *slap: Member):	await self.vact(ctx, "slap", "slapped", slap)
+	async def slap(self, ctx, *slap: Member): await self.vact(ctx, "slap", "slapped", slap)
 
 	@commands.command(name="stab", help="Stab someone!", usage="<username, nickname, or @mention>")
-	async def stab(self, ctx, *stab: Member):	await self.vact(ctx, "stab", "stabbed", stab)
+	async def stab(self, ctx, *stab: Member): await self.vact(ctx, "stab", "stabbed", stab)
 
 	@commands.command(name="shoot", help="Shoot someone!", usage="<username, nickname, or @mention>")
-	async def shoot(self, ctx, *shoot: Member):	await self.vact(ctx, "shoot", "shot", shoot)
+	async def shoot(self, ctx, *shoot: Member): await self.vact(ctx, "shoot", "shot", shoot)
 
 	@commands.command(name="bonk", help="Bonk someone!", usage="<username, nickname, or @mention>")
-	async def bonk(self, ctx, *bonk: Member):	await self.vact(ctx, "bonk", "bonked", bonk)
-
+	async def bonk(self, ctx, *bonk: Member): await self.vact(ctx, "bonk", "bonked", bonk)
 	# END SECTION
 
 	@bonk.error
