@@ -34,7 +34,8 @@ class Xp(commands.Cog):
 		try:	currentsrv = getops(message.guild.id, "xp", str(message.author.id))
 		except KeyError:	updop(message.guild.id, "xp", str(message.author.id), 0) if not message.author.bot else None
 		currentglo	= await Profiles(self.client).getdata(str(message.author.id))
-		level	= floor(currentglo / 1000)
+		if currentglo == None:	return
+		level	= floor(currentglo["xp"] / 1000)
 		# check if...
 		# 1.) message is not in a DM (avoid errors)
 		# 2.) message is not from a bot (don't give bots XP)
