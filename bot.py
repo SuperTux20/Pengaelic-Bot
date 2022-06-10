@@ -47,7 +47,7 @@ launchtime.start()
 devs = Developers()
 
 from discord	import Intents,	Activity,	ActivityType,	Embed,	Game,	Status,	Message,	TextChannel,	channel
-from discord.errors	import HTTPException
+from discord.errors	import HTTPException,	LoginFailure
 from discord.ext	import commands
 from discord.utils	import get
 from discord_components	import Button,	ButtonStyle,	DiscordComponents
@@ -171,7 +171,7 @@ async def on_ready():
 	events.birthday_detector.start()
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(db.all())} configured servers with {len(profiles.all())} unique member profiles")
-	if "True" not in shell("hostname") and "guin" not in shell("hostname"):	print("Check out the support server at https://discord.gg/DHHpA7k")
+	if not shell("hostname").startswith("TrueMintguin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
 
 
 # ANCHOR: ON GUILD JOIN
@@ -475,6 +475,9 @@ while True:
 	except (KeyboardInterrupt, RuntimeError):
 		print("\b".join(["\b" for _ in range(get_terminal_size().columns)]) + "Connection closed" + "".join([" " for _ in range(get_terminal_size().columns-17)]))
 		while True:	exit(0)
+	except LoginFailure:
+		print("Invalid token")
+		while True: exit(2)
 	except Exception:
 		print("Unable to connect to Discord")
 		while True:	exit(1)
