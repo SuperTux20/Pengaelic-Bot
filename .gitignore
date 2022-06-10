@@ -138,6 +138,7 @@ nohup.out
 # Bot-generated files
 config.json
 profiles.json
+youtube-dl/*
 
 # GIMP image file
 *.xcf

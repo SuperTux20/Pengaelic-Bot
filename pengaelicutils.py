@@ -44,6 +44,7 @@ print("Imported modules")
 if shell("uname -o") != "Android":
 	devnull = open(devnull, "w")
 	requirements = [
+		"ffmpeg",
 		"figlet",
 		"fortune-mod",
 		"fortunes",
@@ -84,6 +85,7 @@ requirements = [
 	"speedtest-cli",
 	"tinydb",
 	"wand",
+	"youtube-dl",
 ]
 needed = []
 modules = [r.split("==")[0].lower() for r in shell(f"{python} -m pip freeze").split()]

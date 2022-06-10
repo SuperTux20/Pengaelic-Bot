@@ -78,6 +78,10 @@ if argv_parse(["reset-options"]):
 	print("Options reset")
 	db.truncate()
 
+if argv_parse(["clear-music", "clear-music-cache", "wipe-music", "wipe-music-cache"]):
+	print("Wiped music cache")
+	system("rm -r youtube-dl")
+
 # ANCHOR: status setter
 async def set_status(): await client.change_presence(activity=Activity(type=ActivityType.listening, name="Tux's unending screaming") if unstable else Activity(type=ActivityType.watching, name=f"{len(db.all())} servers and {len(profiles.all())} users! | p!help"))
 
@@ -265,7 +269,7 @@ async def restart(ctx, *, restargs=""):
 
 
 # ANCHOR: LEAVE
-@client.command(name="leave")
+@client.command(name="leaveserver")
 async def leave(ctx, id: int):
 	if Developers().check(ctx.author):
 		guild = get(client.guilds, id=id)
