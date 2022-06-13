@@ -65,11 +65,11 @@ class Memes(commands.Cog):
 
 	@commands.command(name="2012meme", help="Make a classic top-text bottom-text meme. Supply your own PNG or JPG!", usage="<top text> | [bottom text]")
 	async def topbottom(self, ctx, *, text):
-		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), f"{text.replace(' ','_')}_2012meme_Pengaelic_Bot.png"))
+		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.twelve(url2img("static/images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), f"{text.replace(' ','_')}_2012meme_Pengaelic_Bot.png"))
 
 	@commands.command(name="2016meme", help="Make a more modern top-text meme. Supply your own PNG or JPG!", usage="<text> | [text] | [text] | [etc]")
 	async def toponly(self, ctx, *, text):
-		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(url2img("images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), f"{text.replace(' ','_')}_2016meme_Pengaelic_Bot.png"))
+		async with ctx.typing(): await ctx.send(file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.sixteen(url2img("static/images/meme_templates/generic.jpg" if not ctx.message.attachments else ctx.message.attachments[0].url), text), f"{text.replace(' ','_')}_2016meme_Pengaelic_Bot.png"))
 
 	# FIXME: holy fuck come back to this later, text issues
 	# @commands.command(name="drakememe", help="Make a drake meme.", usage="<text> | <text>")
