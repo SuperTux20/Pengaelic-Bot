@@ -113,6 +113,7 @@ class Generators(commands.Cog):
 	async def fortune(self, ctx):	await ctx.send(f"```{bash('fortune').decode()[:-1]}```")
 
 	@name_generator.error
+	@eldritch_name_generator.error
 	@florida_man.error
 	@img.error
 	@fortune.error
