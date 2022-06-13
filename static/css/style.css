@@ -67,12 +67,12 @@ li a {
 	color: #00ffff;
 }
 
-#usage {
+.usage {
 	font-size: 16pt;
 	margin: auto;
-	width: 10em;
+	width: 80%;
 }
 
-#usage>li {
+.usage>li {
 	text-align: left;
 }
