@@ -70,6 +70,7 @@ class Music(commands.Cog):
 			except ClientException:	pass
 			if url:
 				vc =	ctx.message.guild.voice_client
+				await ctx.send("Downloading audio from YouTube link...")
 				async with ctx.typing():
 					try:	mkdir("youtube-dl")
 					except FileExistsError:	pass
