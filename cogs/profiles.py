@@ -45,8 +45,8 @@ class Profiles(commands.Cog):
 		return dict(sorted(self.db.search(Query().userID == int(member))[0].items())) if not (await self.client.fetch_user(member)).bot else None
 
 	# ANCHOR: GET PROFILE
-	def getprof(self, member: str):
-		profile	= self.getdata(member)
+	async def getprof(self, member: str):
+		profile	= await self.getdata(member)
 		uname	= profile.pop("userName")
 		profile["region"]	= flag(profile["region"])
 		embed	= Embed(title=profile["nickname"] + f" ({uname})" if profile["nickname"] else uname, description=profile["bio"] if profile["bio"] else "No bio set", color=profile["color"])
@@ -117,17 +117,17 @@ class Profiles(commands.Cog):
 					prof = dict(list(nof.items()) + list(prof.items()))
 					self.db.update(dict(sorted(prof.items())), user.userID == uid)
 				self.db.update({"userName": ctx.author.name}, user.userID == uid) # did the user's name change?
-				await ctx.send(f"Profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))#file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.getiprof(ctx.author.id), f"profile_{ctx.author.name.replace(' ', '_')}_Pengaelic_Bot.png"))
+				await ctx.send(f"Profile for {ctx.author.name}", embed=(await self.getprof(ctx.author.id)))#file=await get_event_loop().run_in_executor(ThreadPoolExecutor(), img2file, self.getiprof(ctx.author.id), f"profile_{ctx.author.name.replace(' ', '_')}_Pengaelic_Bot.png"))
 			except IndexError:
 				newprofile	= {"userName": ctx.author.name, "userID": ctx.author.id} | self.newprof()
 				self.db.insert(newprofile)
-				await ctx.send(f"Created new profile for {ctx.author.name}", embed=self.getprof(ctx.author.id))
+				await ctx.send(f"Created new profile for {ctx.author.name}", embed=(await self.getprof(ctx.author.id)))
 
 	@profile.command(name="get", help="Get someone else's profile.", usage="<user>")
 	async def pget(self, ctx, *, user: User = None):
 		if ctx.invoked_subcommand == None:
 			if user:
-				try:	await ctx.send(f"<:winxp_information:869760946808180747>Profile for {user.name}", embed=self.getprof(user.id))
+				try:	await ctx.send(f"<:winxp_information:869760946808180747>Profile for {user.name}", embed=(await self.getprof(user.id)))
 				except IndexError:	await ctx.send(f"<:winxp_warning:869760947114348604>{user.name} has no registered profile.")
 			else:
 				await ctx.send("<:winxp_critical_error:869760946816553020>You didn't specify a username or ID to get their profile.")
