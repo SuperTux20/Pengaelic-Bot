@@ -50,9 +50,9 @@ class Tools(commands.Cog):
 	@commands.command(name="credits", help="See who helped me come to exist!")
 	async def credits(self, ctx):
 		bot_credits = {
-			"Lead Developer and Creator":	f"Tux Penguin ({self.client.get_user(devs.get('tux'))})",
-			"Side Developer and Host":	f"Cherry Rain ({self.client.get_user(devs.get('cherry'))})",
-			"Minor Contributor":	f"Hyla Asencion ({self.client.get_user(devs.get('hy'))})",
+			"Lead Developer and Creator":	"Tux Penguin",
+			"Minor Contributor 1":	"Cherry Rain",
+			"Minor Contributor 2":	"Hyla Asencion",
 		}
 		if jsoncheck(ctx.guild.id):
 			bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
@@ -109,7 +109,7 @@ class Tools(commands.Cog):
 			[f"https://cdn.discordapp.com/emojis/{em.id}.gif"	for em in ctx.guild.emojis	if em.animated]
 		)
 
-		if emoji == None:	await ctx.send(f"""<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID.\n__Normal__\n"+ {str(emojis)[1:-1].replace("'", "").replace(", ", "")}\n__Animated__\n"{str(animojis)[1:-1].replace("'", "").replace(", ", "")}""")
+		if emoji == None:	await ctx.send(f"""<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID.\n""" + (f"""__Normal__\n {str(emojis)[1:-1].replace("'", "").replace(", ", "")}\n""" if emojis != [] else "") + (f"""__Animated__\n{str(animojis)[1:-1].replace("'", "").replace(", ", "")}""" if animojis != [] else ""))
 		else:
 			emojis += animojis
 			if emoji in emojis:
