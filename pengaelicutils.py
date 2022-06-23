@@ -16,7 +16,6 @@ argv_parse	= lambda args:	any("--" + arg in argv for arg in args)
 valid_image	= lambda filename:	any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
 shell	= lambda command:	check_output(command, shell=True).decode()[:-1]
 url2img	= lambda url:	Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
-pil2wand	= lambda img:	Wand.from_array(array(img))
 wand2pil	= lambda img:	Image.open(BytesIO(img.make_blob("png")))
 get_channel	= lambda guild, channel:	getops(guild, "channels",	channel	+ "Channel")
 get_role	= lambda guild, role:	getops(guild, "roles",	role	+ "Role")
@@ -28,7 +27,7 @@ def list2str(inlist: list, mode: int = 0, _and: bool = False) -> str:
 	# if mode == 2: remove commas, leaving spaces behind
 	# if mode == 3: replace commas and spaces with newlines
 	if mode == 0:
-		inlist = [line + ", " for line in inlist]
+		inlist = [str(line) + ", " for line in inlist]
 		inlist[-1] = inlist[-1][:-2]
 		if _and and len(inlist) > 1:
 			inlist.append(inlist[-1])
@@ -76,7 +75,6 @@ requirements = [
 	"discord-components",
 	"emoji-country-flag",
 	"num2words",
-	"numpy",
 	"pillow",
 	"python-dotenv",
 	"quart",
@@ -103,7 +101,6 @@ print("Passed module test")
 
 from discord	import File
 from dotenv	import load_dotenv as	dotenv
-from numpy	import array
 from PIL	import Image
 from requests	import get
 from tinydb	import TinyDB,	Query
