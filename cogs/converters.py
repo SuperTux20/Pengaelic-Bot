@@ -20,7 +20,7 @@ class Converters(commands.Cog):
 
 	async def test_for_content(self, ctx, arg) -> str:
 		if arg:	return arg
-		else:	return list([message async for message in ctx.channel.history(limit=2)])[1].content
+		else:	return [message async for message in ctx.channel.history(limit=2)][1].content
 
 	async def substitutor(self, ctx, arg, alphabet, upper=False):
 		arg = await self.test_for_content(ctx, arg)
