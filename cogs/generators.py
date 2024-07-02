@@ -6,7 +6,7 @@ from concurrent.futures	import ThreadPoolExecutor
 from discord.ext	import commands
 from time	import time
 from random	import choice,	randint
-from pengaelicutils	import list2str,	unhandling,	tux_in_guild,	Developers,	Stopwatch,	syllables,	eldritch_syllables
+from pengaelicutils	import list2str,	unhandling,	tux_in_guild,	Developers,	Stopwatch,	syllables,	eldritch_syllables, syllatest
 from subprocess	import check_output as	bash
 
 devs = Developers()
@@ -51,8 +51,11 @@ class Generators(commands.Cog):
 		)
 		return text, cutoff, textlen, success, timer.monkeywatch(starttime)
 
-	def gen(self, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2, eldritch: bool = False) -> str:
-		if	eldritch:	syls = eldritch_syllables()
+	def gen(self, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2, eldritch: bool = False, test: bool = False) -> str:
+		if	eldritch:
+			syls = eldritch_syllables()
+			if test:
+				syls= syllatest
 		else:		syls = syllables
 		if amount > 0 and upper_limit > 0 and lower_limit > 0:
 			if	lower_limit <= upper_limit:	return list2str(["".join([choice(choice(syls)) for _ in range(randint(lower_limit, upper_limit))]).capitalize() for _ in range(amount)], 3)
@@ -67,6 +70,9 @@ class Generators(commands.Cog):
 
 	@commands.command(name="ename", help="Generate an eldritch name that sounds straight out of an H. P. Lovecraft novel.", aliases=["eldritchname"], usage="[names to generate (1)]\n[max syllables (3)]\n[min syllables (2)]")
 	async def eldritch_name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):	await ctx.send(self.gen(amount, upper_limit, lower_limit, True))
+
+	@commands.command(name="tname", help="A prototype name generator.", usage="[names to generate (1)]\n[max syllables (3)]\n[min syllables (2)]")
+	async def eldritch_name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):	await ctx.send(self.gen(amount, upper_limit, lower_limit, True, True))
 
 	@commands.command(name="floridaman", help="Generate random Florida Man headlines!", aliases=["florida"], usage="[other state/country]")
 	async def florida_man(self, ctx, *, state="florida"):
@@ -118,11 +124,11 @@ class Generators(commands.Cog):
 	@img.error
 	@fortune.error
 	async def error(self, ctx, error):
-		errorstr = str(error)
+		errorstr = str(error)[29:]
 		if	errorstr.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
 		elif	errorstr.startswith("Unexpected quote mark") and errorstr.endswith("in non-quoted string"):	await ctx.send('<:winxp_warning:869760947114348604>You need to escape your "quotation marks" with doubled backslashes (\\\\\ these things \\\\\\\).')
 		elif	errorstr == ('Expected closing ".'):	await ctx.send("<:winxp_warning:869760947114348604>A single unescaped quotation mark isn't going to work, sorry.")
 		else:		await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
-def setup(client):	client.add_cog(Generators(client))
+async def setup(client):	await client.add_cog(Generators(client))

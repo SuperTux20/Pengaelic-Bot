@@ -38,4 +38,4 @@ class Events(commands.Cog):
 			except AttributeError:
 				pass
 
-def setup(client):	client.add_cog(Events(client))
+async def setup(client):	await client.add_cog(Events(client))

@@ -51,8 +51,8 @@ class Tools(commands.Cog):
 	async def credits(self, ctx):
 		bot_credits = {
 			"Lead Developer and Creator":	"Tux Penguin",
-			"Minor Contributor 1":	"Cherry Rain",
-			"Minor Contributor 2":	"Hyla Asencion",
+			"Minor Contributor":	"Cherry Rain",
+			"Former Contributor":	"Hyla Asencion",
 		}
 		if jsoncheck(ctx.guild.id):
 			bot_credits = {cred.lower(): bot_credits[cred] for cred in bot_credits}
@@ -65,7 +65,6 @@ class Tools(commands.Cog):
 	@commands.command(name="os", help="Read what OS I'm running on!", aliases=["getos"])
 	async def showOS(self, ctx):
 		def uname(item) -> str:	return shell(f"uname -{item}")
-
 		async with ctx.typing():
 			system	= (shell('neofetch | grep OS | sed "s/\x1B\[[0-9;]\{1,\}[A-Za-z]//g"').split(":")[1][1:-2].split("x86")[0][:-1])
 			kernel	= uname("r")
@@ -78,21 +77,6 @@ class Tools(commands.Cog):
 
 	@commands.command(name="test", help="Am I online? I'm not sure.")
 	async def test(self, ctx):	await ctx.send("Yep, I'm alive :sunglasses:")
-
-	@commands.command(name="poll", help="Send a poll!", aliases=["suggest"], usage="'<poll name>' <poll content>")
-	async def poll(self, ctx, title=None, *, arg=None):
-		if title == None:	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a name for the poll!")
-		if arg == None:	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify anything to make a poll for!")
-		else:
-			suggs	= getops(ctx.guild.id, "suggestions")
-			footer	= "#" + str(len(suggs)+1)
-			thepoll = await ctx.send(embed=Embed(color=self.teal, title=title, description=arg).set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url).set_footer(text=footer))
-			updop(ctx.guild.id, "suggestions", footer, [thepoll.channel.id, thepoll.id])
-			try:	await ctx.message.delete()
-			except:	pass
-			await thepoll.add_reaction("✅")
-			await thepoll.add_reaction("🤷")
-			await thepoll.add_reaction("❌")
 
 	# ANCHOR: INFO COMMANDS
 
@@ -109,7 +93,7 @@ class Tools(commands.Cog):
 			[f"https://cdn.discordapp.com/emojis/{em.id}.gif"	for em in ctx.guild.emojis	if em.animated]
 		)
 
-		if emoji == None:	await ctx.send(f"""<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID.\n""" + (f"""__Normal__\n {str(emojis)[1:-1].replace("'", "").replace(", ", "")}\n""" if emojis != [] else "") + (f"""__Animated__\n{str(animojis)[1:-1].replace("'", "").replace(", ", "")}""" if animojis != [] else ""))
+		if emoji == None:	await ctx.send("""<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID.\n""" + (f"""__Normal__\n {str(emojis)[1:-1].replace("'", "").replace(", ", "")}\n""" if emojis != [] else "") + (f"""__Animated__\n{str(animojis)[1:-1].replace("'", "").replace(", ", "")}""" if animojis != [] else ""))
 		else:
 			emojis += animojis
 			if emoji in emojis:
@@ -362,4 +346,4 @@ class Tools(commands.Cog):
 		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
-def setup(client):	client.add_cog(Tools(client))
+async def setup(client):	await client.add_cog(Tools(client))

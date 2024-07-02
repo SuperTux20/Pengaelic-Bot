@@ -16,6 +16,7 @@ argv_parse	= lambda args:	any("--" + arg in argv for arg in args)
 valid_image	= lambda filename:	any(filename.endswith(ext) for ext in ["png", "jpg", "jpeg"])
 shell	= lambda command:	check_output(command, shell=True).decode()[:-1]
 url2img	= lambda url:	Image.open(BytesIO(get(url).content) if url.startswith("http") else url)	# if a relative local path is specified it breaks, so don't try to get() it
+pil2wand	= lambda img:	Wand.from_array(array(img))
 wand2pil	= lambda img:	Image.open(BytesIO(img.make_blob("png")))
 get_channel	= lambda guild, channel:	getops(guild, "channels",	channel	+ "Channel")
 get_role	= lambda guild, role:	getops(guild, "roles",	role	+ "Role")
@@ -63,7 +64,7 @@ if shell("uname -o") != "Android":
 	if missing_dependencies:
 		print(f"Packages {list2str(needed, 0, True)} are not installed.")
 		print("Installing them now...")
-		shell(f"sudo apt install -y " + list2str(needed, 2))
+		shell("sudo apt install -y " + list2str(needed, 2))
 		print("Done.")
 	print("Passed package test")
 
@@ -71,10 +72,10 @@ else:	print("Ignored package test")
 
 # ANCHOR: module test
 requirements = [
-	"py-cord",
-	"discord-components",
+	"discord.py",
 	"emoji-country-flag",
 	"num2words",
+	"numpy",
 	"pillow",
 	"python-dotenv",
 	"quart",
@@ -101,6 +102,7 @@ print("Passed module test")
 
 from discord	import File
 from dotenv	import load_dotenv as	dotenv
+from numpy	import array
 from PIL	import Image
 from requests	import get
 from tinydb	import TinyDB,	Query
@@ -204,7 +206,7 @@ def unhandling(tux_in_server) -> str:
 			output = ""
 			tux_msg = "```\n" + full_error.replace("```", "`") + "\n```"
 
-		else:	tux_msg = f"Pinging <@!686984544930365440> (my developer) so he can see this error."
+		else:	tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
 
 	else:	tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
 	return output + tux_msg
@@ -217,7 +219,7 @@ newops_static = lambda: {
 	"lists":	{"censorList": []},
 	"messages":	{"welcomeMessage": "Welcome to SERVER, USER!", "goodbyeMessage": "See you later, USER."},
 	"numbers":	{"xpDelay": 1, "xpLower": 2, "xpUpper": 5},
-	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama", "mute"]},
+	"roles":	{id + "Role": None for id in ["botCommander", "customRoleLock", "drama"]},
 	"toggles":	{toggle: False for toggle in ["atSomeone", "censor", "dadJokes", "deadChat", "jsonMenus", "lockCustomRoles", "rickRoulette", "suggestions", "welcome"]},
 }
 
@@ -325,6 +327,18 @@ syllables = [
 	["ya", "ye", "yi", "yo", "yu"],
 	["za", "zal", "ze", "zi", "zil", "zo", "zu"],
 ]
+
+vowels = "aeiou"
+consonants = "bcdfghjklmnpqrstvwxyz"
+
+syllatest = []
+for v in vowels:
+	syllatest.append([v+c for c in consonants])
+stbk = syllatest.copy()
+for v in range(len(syllatest)):
+	for s in range(len(syllatest[v])):
+		for c in consonants:
+			syllatest[v].append(c+stbk[v][s])
 
 # ANCHOR: HANGMAN WORDS
 hangman_words = [

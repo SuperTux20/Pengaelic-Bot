@@ -242,10 +242,10 @@ class Games(commands.Cog):
 	@bubblewrap.error
 	@hangman.error
 	async def error(self, ctx, error):
-		errorstr = str(error)
+		errorstr = str(error)[29:]
 		if errorstr.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
 		elif errorstr == "HTTPException: 400 Bad Request (error code: 50006): Cannot send an empty message":	"for some reason, hangman throws this error when nothing is even really supposed to happen in the first place, this string is here to merely disregard it"
 		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
-def setup(client):	client.add_cog(Games(client))
+async def setup(client):	await client.add_cog(Games(client))

@@ -101,7 +101,7 @@ class Reactions(commands.Cog):
 					await thepoll.add_reaction("❌")
 
 				# ANCHOR: RICK ROULETTE
-				if "you know the rules" == messagetext and getops(server, "toggles", "rickRoulette"):	await message.channel.send(choice(["And so do I :pensive:" for _ in range(5)] + ["Say goodbye <:delet_this:828693389712949269>"]))
+				if "you know the rules" == messagetext and getops(server, "toggles", "rickRoulette"):	await message.channel.send(choice(["And so do I :pensive:" for _ in range(5)] + ["Say goodbye <:delet_this:1257729100681056407>"]))
 
 				# ANCHOR: @SOMEONE
 				if "@someone" == messagetext and getops(server, "toggles", "atSomeone"):	await message.channel.send(choice(message.guild.members).mention + ", you have been randomly selected by a @someone ping!")
@@ -123,4 +123,4 @@ class Reactions(commands.Cog):
 						await message.channel.send("Downloaded new dotenv file.")
 
 
-def setup(client):	client.add_cog(Reactions(client))
+async def setup(client):	await client.add_cog(Reactions(client))

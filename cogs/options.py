@@ -324,7 +324,7 @@ class Options(commands.Cog):
 	@del_censor.error
 	@wipe_censor.error
 	async def messageError(self, ctx, error):
-		errorstr = str(error)
+		errorstr = str(error)[29:]
 		if errorstr.startswith("You are missing") and errorstr.endswith("permission(s) to run this command."):	await ctx.send("<:winxp_critical_error:869760946816553020>You do not have permission to use that command.")
 		elif errorstr.endswith('" not found.'):
 			if errorstr.startswith('Channel "'):	await ctx.send(f"<:winxp_warning:869760947114348604>{ctx.author.mention}, that isn't a valid channel.")
@@ -333,4 +333,4 @@ class Options(commands.Cog):
 		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
-def setup(client):	client.add_cog(Options(client))
+async def setup(client):	await client.add_cog(Options(client))

@@ -58,4 +58,4 @@ class Xp(commands.Cog):
 		await ctx.send(str([(get(ctx.guild.members,id=int(user)).name,xp) for user,xp in sorted(getops(ctx.guild.id,"xp").items(),key=lambda x:x[1],reverse=True)])[2:-2].replace("), (","\n").replace("'","").replace(",",":"))
 
 
-def setup(client):	client.add_cog(Xp(client))
+async def setup(client):	await client.add_cog(Xp(client))

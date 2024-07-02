@@ -41,16 +41,11 @@ if argv_parse(["uninstall", "delete"]):
 	print("Uninstalled Pengaelic Bot.")
 	exit()
 
-system("clear")
-launchtime = Stopwatch()
-launchtime.start()
-devs = Developers()
-
-from discord	import Intents,	Activity,	ActivityType,	Embed,	Game,	Status,	Message,	TextChannel,	channel
+import	asyncio
+from discord	import Intents,	Activity,	ActivityType,	Embed,	Game,	Status,	Message,	TextChannel,	channel,	ui,	ButtonStyle
 from discord.errors	import HTTPException,	LoginFailure
 from discord.ext	import commands
 from discord.utils	import get
-from discord_components	import Button,	ButtonStyle,	DiscordComponents
 from dotenv	import load_dotenv as	dotenv
 from tinydb	import TinyDB,	Query
 
@@ -167,11 +162,10 @@ async def on_ready():
 			print(f"Deleted options for {db.search(server.guildID == leftguild)[0]['guildName']}")
 			db.remove(server.guildID == leftguild)
 	await set_status()
-	DiscordComponents(client)
 	events.birthday_detector.start()
 	print(f"{client.description} launched in {launchtime.end()}")
 	if not unstable:	print(f"Currently on {len(db.all())} configured servers with {len(profiles.all())} unique member profiles")
-	if not shell("hostname").startswith("TrueMintguin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
+	if not shell("hostname").startswith("True") and not shell("hostname").endswith("guin"):	print("Check out the support server at https://discord.gg/DHHpA7k")
 
 
 # ANCHOR: ON GUILD JOIN
@@ -356,6 +350,15 @@ if not unstable:
 		await ctx.send(f"<:winxp_critical_error:869760946816553020>An error occurred while updating.```\n{error}\n```Attempting force-update...")
 		await update(ctx, True)
 
+class HelpButtons(ui.View):
+	def __init__(self):
+		super().__init__()
+		support_button = ui.Button(style=ButtonStyle.link, label="Support Server", url="https://discord.gg/DHHpA7k")
+		invite_button = ui.Button(style=ButtonStyle.link, label="Invite Me", url="https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot")
+		repo_button = ui.Button(style=ButtonStyle.link, label="GitHub", url="https://github.com/SuperTux20/Pengaelic-Bot")
+		self.add_item(support_button)
+		self.add_item(invite_button)
+		self.add_item(repo_button)
 
 # ANCHOR: HELP MENU
 @client.group(name="help", help="Show this message", aliases=["commands", "h", "?"])
@@ -365,23 +368,6 @@ async def help(ctx, *, cogname: str = None):
 		cogs.pop("Events")
 		cogs.pop("Options")
 		cogs.pop("Reactions")
-		components=[
-			Button(
-				style	= ButtonStyle.URL,
-				label	= "Support Server",
-				url	= "https://discord.gg/DHHpA7k"
-			),
-			Button(
-				style	= ButtonStyle.URL,
-				label	= "Invite Me",
-				url	= "https://discord.com/api/oauth2/authorize?client_id=721092139953684580&permissions=805661782&scope=bot"
-			),
-			Button(
-				style	= ButtonStyle.URL,
-				label	= "GitHub",
-				url	= "https://github.com/SuperTux20/Pengaelic-Bot"
-			),
-		]
 		if jsoncheck(ctx.guild.id):
 			info = {cogs[cog].name: cogs[cog].description.lower()[:-1] for cog in cogs}
 			if not isinstance(ctx.channel, channel.DMChannel):	info |= {"options": client.get_cog("Options").description.lower()[:-1]}
@@ -393,7 +379,7 @@ async def help(ctx, *, cogname: str = None):
 				},
 				indent=4
 			)
-			await ctx.send(f'```json\n"{client.description}": {menu}```', components=components)
+			await ctx.send(f'```json\n"{client.description}": {menu}```', view=HelpButtons())
 		else:
 			menu = Embed(
 				title	= client.description,
@@ -403,7 +389,7 @@ async def help(ctx, *, cogname: str = None):
 			for cog in sorted(cogs):	menu.add_field(name=cogs[cog].name.capitalize(), value=cogs[cog].description)
 			if not isinstance(ctx.channel, channel.DMChannel):	menu.add_field(name="Options", value=client.get_cog("Options").description)
 			if Developers().check(ctx.author):	menu.add_field(name="Control", value="Update, restart, that sort of thing.")
-			await ctx.send(embed=menu, components=components)
+			await ctx.send(embed=menu, view=HelpButtons())
 	elif cogname == "options":
 		if jsoncheck(ctx.guild.id):	await ctx.send(f'```json\n"options": "{client.get_cog("Options").description_long.lower()}",\n"commands": ' + dumps({list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in client.get_cog("Options").get_commands()} | {list2str([command.name] + command.aliases, 1).replace(", ", "/"): command.usage for command in list(client.get_cog("Options").get_commands()[0].walk_commands()) if command.parents[0] == client.get_cog("Options").get_commands()[0]}, indent=4) + "```")
 		else:
@@ -413,7 +399,7 @@ async def help(ctx, *, cogname: str = None):
 				if subcommand.parents[0] == command:	menu.add_field(name=subcommand.name, value=subcommand.help)
 			await ctx.send(embed=menu)
 	elif cogname == "control" and Developers().check(ctx.author):
-		if jsoncheck(ctx.guild.id):	await ctx.send(f'```json\n"control": "update, restart, that sort of thing",\n"commands": ' + dumps(["exit", "restart", "update", "forceupdate", "updatelog", "sh"], indent=4) + "```")
+		if jsoncheck(ctx.guild.id):	await ctx.send('```json\n"control": "update, restart, that sort of thing",\n"commands": ' + dumps(["exit", "restart", "update", "forceupdate", "updatelog", "sh"], indent=4) + "```")
 		else:	await ctx.send(embed=Embed(title="Control", description="Commands for developers to control the bot itself.", color=0x007F7F).add_field(name="exit", value="Shut off the bot.").add_field(name="restart", value="Reload the bot.").add_field(name="update", value="Check if there's new commits on GitHub, and if there are, pull them and restart.").add_field(name="forceupdate", value="Same as update, but it always restarts regardless of what the update log says, because I'm sure I fucked up the regular update command somehow.").add_field(name="updatelog", value="Show the log of the last update.").add_field(name="sh", value="Direct Bash access. Don't fuck this up."))
 	else:
 		if jsoncheck(ctx.guild.id):	await ctx.send(help_menu(ctx.guild.id, client.get_cog(cogname.capitalize()), client))
@@ -460,24 +446,33 @@ async def h_censor(ctx):
 		else:	help_menu.add_field(name="({})".format(str([command.name] + command.aliases)[1:-1].replace("'", "").replace(", ", "/")), value=command.help)
 	await ctx.send(embed=help_menu)
 
+async def setup():
+	system("clear")
 
-# ANCHOR: cog loader
-for cog in ls("cogs"):
-	if cog.endswith(".py"):
-		client.load_extension(f"cogs.{cog[:-3]}")
-		print(f"Loaded cog {cog[:-3]}")
+	# ANCHOR: cog loader
+	for cog in ls("cogs"):
+		if cog.endswith(".py"):
+			await client.load_extension(f"cogs.{cog[:-3]}")
+			print(f"Loaded cog {cog[:-3]}")
 
-# ANCHOR: login
-while True:
-	try:
-		if unstable:	client.run(getenv("UNSTABLE_TOKEN"))
-		else:	client.run(getenv("DISCORD_TOKEN"))
-	except (KeyboardInterrupt, RuntimeError):
-		print("\b".join(["\b" for _ in range(get_terminal_size().columns)]) + "Connection closed" + "".join([" " for _ in range(get_terminal_size().columns-17)]))
-		while True:	exit(0)
-	except LoginFailure:
-		print("Invalid token")
-		while True: exit(2)
-	except Exception:
-		print("Unable to connect to Discord")
-		while True:	exit(1)
+async def main():
+	# ANCHOR: login
+	async with client:
+		try:
+			await setup()
+			if unstable:	await client.start(getenv("UNSTABLE_TOKEN"))
+			else:	await client.start(getenv("DISCORD_TOKEN"))
+		# except (KeyboardInterrupt, RuntimeError):
+		# 	print("\b".join(["\b" for _ in range(get_terminal_size().columns)]) + "Connection closed" + "".join([" " for _ in range(get_terminal_size().columns-17)]))
+		# 	while True:	exit(0)
+		except LoginFailure:
+			print("Invalid token")
+			while True: exit(2)
+		# except Exception:
+		# 	print("Unable to connect to Discord")
+		# 	while True:	exit(1)
+
+launchtime = Stopwatch()
+launchtime.start()
+devs = Developers()
+asyncio.run(main())

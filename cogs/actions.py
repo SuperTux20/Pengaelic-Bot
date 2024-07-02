@@ -35,4 +35,4 @@ class Actions(commands.Cog):
 	async def sleep(self, ctx): await self.act(ctx, "sleep")
 
 
-def setup(client):	client.add_cog(Actions(client))
+async def setup(client):	await client.add_cog(Actions(client))

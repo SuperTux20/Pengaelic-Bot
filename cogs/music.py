@@ -89,4 +89,4 @@ class Music(commands.Cog):
 		try:	await vc.disconnect()
 		except:	await ctx.send("I'm not connected to a voice channel.")
 
-def setup(client):	client.add_cog(Music(client))
+async def setup(client):	await client.add_cog(Music(client))

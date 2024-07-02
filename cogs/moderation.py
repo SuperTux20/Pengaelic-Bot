@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from asyncio	import sleep
+from datetime	import timedelta
 from discord	import Member,	Embed
 from discord.ext	import commands
 from discord.utils	import get
@@ -44,7 +45,7 @@ class Moderation(commands.Cog):
 	@commands.has_permissions(manage_channels=True)
 	async def nuke(self, ctx):
 		if not self.nukeconfirm:
-			await ctx.send(f"<:winxp_question:869760946904645643>Are you **really** sure you want to wipe this channel? Type the command again to confirm. This will expire in 10 seconds.")
+			await ctx.send("<:winxp_question:869760946904645643>Are you **really** sure you want to wipe this channel? Type the command again to confirm. This will expire in 10 seconds.")
 			self.nukeconfirm = True
 			await sleep(10)
 			if self.nukeconfirm:	self.nukeconfirm = False
@@ -94,28 +95,17 @@ class Moderation(commands.Cog):
 			if warns == {}:	await ctx.send("There are no logged warnings in this server.")
 			else:	await ctx.send(embed=embed)
 
-	# LINK cogs/options.py#muterole
-	@commands.command(name="mute", help="Mute a member.", usage="<member> [reason]")
-	@commands.has_permissions(kick_members=True)
-	async def mute(self, ctx, member: Member, *, reason=None):
-		if get_role(ctx.guild.id, "mute"):
-			await member.add_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason=reason)
-			await ctx.message.add_reaction("✅")
+	@commands.command(name="mute", help="Mute a member.", usage="<member> [duration in hours, decimals accepted] [reason]", aliases=["timeout"])
+	@commands.has_permissions(moderate_members=True)
+	async def mute(self, ctx, member: Member, time: int=1, reason: str=None):
+		await member.timeout(timedelta(hours=time), reason=reason)
+		await ctx.message.add_reaction("✅")
 
-		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
-
-	# LINK cogs/options.py#muterole
-	@commands.command(name="unmute", help="Unmute a muted member.", usage="<member>")
-	@commands.has_permissions(kick_members=True)
+	@commands.command(name="unmute", help="Unmute a muted member.", usage="<member>", aliases=["untimeout"])
+	@commands.has_permissions(moderate_members=True)
 	async def unmute(self, ctx, member: Member):
-		if get_role(ctx.guild.id, "mute"):
-			if get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")) in member.roles:
-				await member.remove_roles(get(ctx.guild.roles, id=get_role(ctx.guild.id, "mute")), reason="Unmute")
-				await ctx.message.add_reaction("✅")
-			else:
-				await ctx.send(f"{member} isn't muted.")
-
-		else:	await ctx.send(f"<:winxp_warning:869760947114348604>There is no set mute role. To set a mute role, type `{self.client.command_prefix}options set muteRole <mute role>`.")
+		await member.timeout(None)
+		await ctx.message.add_reaction("✅")
 
 	# LINK cogs/options.py#dramarole
 	# LINK cogs/options.py#dramachan
@@ -189,7 +179,7 @@ class Moderation(commands.Cog):
 	@consider.error
 	@implement.error
 	async def managementError(self, ctx, error):
-		errorstr = str(error)
+		errorstr = str(error)[29:]
 		if errorstr.startswith("You are missing Manage") and errorstr.endswith("permission(s) to run this command."):
 			permmsg = f"<:winxp_information:869760946808180747>{ctx.author.mention}, you have insufficient permissions (Manage "
 			if "Members" in errorstr:	await ctx.send(permmsg + "Members)")
@@ -201,4 +191,4 @@ class Moderation(commands.Cog):
 		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 
-def setup(client):	client.add_cog(Moderation(client))
+async def setup(client):	await client.add_cog(Moderation(client))
