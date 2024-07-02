@@ -347,8 +347,10 @@ if not unstable:
 
 	@update.error
 	async def update_error(ctx, error):
-		await ctx.send(f"<:winxp_critical_error:869760946816553020>An error occurred while updating.```\n{error}\n```Attempting force-update...")
-		await update(ctx, True)
+		errorstr = str(error)[29:]
+		print(errorstr)
+		# await ctx.send(f"<:winxp_critical_error:869760946816553020>An error occurred while updating.```\n{error}\n```Attempting force-update...")
+		# await update(ctx, True)
 
 class HelpButtons(ui.View):
 	def __init__(self):
