@@ -72,7 +72,7 @@ class Generators(commands.Cog):
 	async def eldritch_name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):	await ctx.send(self.gen(amount, upper_limit, lower_limit, True))
 
 	@commands.command(name="tname", help="A prototype name generator.", usage="[names to generate (1)]\n[max syllables (3)]\n[min syllables (2)]")
-	async def eldritch_name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):	await ctx.send(self.gen(amount, upper_limit, lower_limit, True, True))
+	async def testing_name_generator(self, ctx, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2):	await ctx.send(self.gen(amount, upper_limit, lower_limit, True, True))
 
 	@commands.command(name="floridaman", help="Generate random Florida Man headlines!", aliases=["florida"], usage="[other state/country]")
 	async def florida_man(self, ctx, *, state="florida"):
@@ -120,6 +120,7 @@ class Generators(commands.Cog):
 
 	@name_generator.error
 	@eldritch_name_generator.error
+	@testing_name_generator.error
 	@florida_man.error
 	@img.error
 	@fortune.error
