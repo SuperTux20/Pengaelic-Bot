@@ -20,7 +20,7 @@ class Converters(commands.Cog):
 
 	async def test_for_content(self, ctx, arg) -> str:
 		if arg:	return arg
-		else:	return list(await ctx.channel.history(limit=2).flatten())[1].content
+		else:	return list([message async for message in ctx.channel.history(limit=2)])[1].content
 
 	async def substitutor(self, ctx, arg, alphabet, upper=False):
 		arg = await self.test_for_content(ctx, arg)
@@ -246,6 +246,7 @@ class Converters(commands.Cog):
 	async def overcharlimit(self, ctx, error):
 		errorstr = str(error)[29:]
 		if	errorstr.startswith("HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body"):	await ctx.send("<:winxp_critical_error:869760946816553020>Sending all that would put me over the character limit!")
+		elif	errorstr.startswith("HTTPException: 400 Bad Request (error code: 50006): Cannot send an empty message"):	await ctx.send("<:winxp_critical_error:869760946816553020>There's no text in the previous message for me to mess with!")
 		elif	errorstr == "arg is a required argument that is missing.":	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify any text to convert!")
 		else:		await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
