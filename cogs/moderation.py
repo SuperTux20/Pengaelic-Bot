@@ -97,7 +97,7 @@ class Moderation(commands.Cog):
 
 	@commands.command(name="mute", help="Mute a member.", usage="<member> [duration in hours, decimals accepted] [reason]", aliases=["timeout"])
 	@commands.has_permissions(moderate_members=True)
-	async def mute(self, ctx, member: Member, time: int=1, reason: str=None):
+	async def mute(self, ctx, member: Member, time: float=1, reason: str=None):
 		await member.timeout(timedelta(hours=time), reason=reason)
 		await ctx.message.add_reaction("✅")
 
