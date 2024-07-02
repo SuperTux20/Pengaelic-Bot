@@ -353,7 +353,8 @@ if not unstable:
 			await ctx.send(f"<:winxp_critical_error:869760946816553020>An error occurred while updating.```\n{error}\n```Attempting force-update...")
 			await update(ctx, True)
 		else:
-			await ctx.send("I'm up-to-date!")
+			await [message async for message in ctx.channel.history(limit=1)][0].delete()
+			await ctx.send("<:winxp_information:869760946808180747>I'm up-to-date!")
 
 class HelpButtons(ui.View):
 	def __init__(self):
