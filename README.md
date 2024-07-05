@@ -4,8 +4,8 @@
 
 ## About
 
-- Language used: `Python 3.9`
-- Pip modules used: `py-cord`, `discord-components`, `num2words`, `pillow`, `python-dotenv`, `quart`, `quart-discord`, `requests`, `routes`, `speedtest-cli`, `tinydb`, `wand`
+- Language used: `Python 3.9` (or newer)
+- Pip modules used: `discord.py`, `num2words`, `pillow`, `python-dotenv`, `quart`, `quart-discord`, `requests`, `routes`, `speedtest-cli`, `tinydb`, `wand`
 - Apt packages used: `figlet`, `fortune-mod`, `fortunes`, `fortunes-min`, `lolcat`, `neofetch`, `toilet`, `toilet-fonts`
 
 ## Note
@@ -17,7 +17,7 @@ To do this, simply `pip install --force <module name>`
 
 _Pengaelic Bot - the custom-built Discord bot, coded in Python._
 
-_Copyright (C) 2020-2022 Tux Penguin | <https://github.com/SuperTux20/Pengaelic-Bot/>_
+_Copyright (C) 2020-2024 Tux Penguin | <https://github.com/SuperTux20/Pengaelic-Bot/>_
 
 _This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version._
 
@@ -29,7 +29,7 @@ _Some of the code in Pengaelic Bot originates from CAutomator Legacy, a bot crea
 
 _CAutomator Legacy - the custom-built Discord bot, coded in Python._
 
-_Copyright (C) 2020 Hyperfresh | <https://github.com/Hyperfresh/CAutomator-Legacy/>_
+_Copyright (C) 2020-2021 Hyperfresh | <https://github.com/Hyperfresh/CAutomator-Legacy/>_
 
 _This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version._
 
