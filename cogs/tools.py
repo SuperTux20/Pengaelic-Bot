@@ -93,7 +93,12 @@ class Tools(commands.Cog):
 			[f"https://cdn.discordapp.com/emojis/{em.id}.gif"	for em in ctx.guild.emojis	if em.animated]
 		)
 
-		if emoji == None:	await ctx.send("""<:winxp_information:869760946808180747>Here's all the emojis on this server, sorted by ID.\n""" + (f"""__Normal__\n {str(emojis)[1:-1].replace("'", "").replace(", ", "")}\n""" if emojis != [] else "") + (f"""__Animated__\n{str(animojis)[1:-1].replace("'", "").replace(", ", "")}""" if animojis != [] else ""))
+		if emoji == None:
+			emb = Embed(title=f"Emojis in {ctx.guild.name}")
+			if len(emojis) > 0:	emb.add_field(name="Static",	value=str(emojis)[1:-1].replace("'", "").replace(", ", ""),	inline=False)
+			if len(animojis) > 0:	emb.add_field(name="Animated",	value=str(animojis)[1:-1].replace("'", "").replace(", ", ""),	inline=False)
+			if len(emojis) == 0 and len(animojis) == 0:	await ctx.send("<:winxp_critical_error:869760946816553020>This server has no emojis!")
+			else:	await ctx.send(embed=emb)
 		else:
 			emojis += animojis
 			if emoji in emojis:
@@ -110,19 +115,12 @@ class Tools(commands.Cog):
 
 		if owner.nick == None:	owner.nick = owner.name
 		creation = guild.created_at
-		try:
-			region = str(guild.region).split("-")
-			region[0] = region[0].upper()
-			region[1] = region[1].capitalize()
-			region = " ".join(region)
-
-		except:	region = region[0].capitalize()
 		jsoninfo = {
 			"server name": guild.name,
 			"server owner": f"{owner.display_name} ({owner.name}#{owner.discriminator})",
 			"server id": guild.id,
 		}
-		embedinfo = Embed(title=guild.name, color=self.teal, inline=False).set_thumbnail(url=guild.icon_url).set_author(name="Server Info", icon_url=owner.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
+		embedinfo = Embed(title=guild.name, color=self.teal).set_thumbnail(url=guild.icon.url).set_author(name="Server Info", icon_url=owner.avatar.url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
 			"Server Name": guild.name,
 			"Server Owner": f"{owner.display_name} ({owner.mention})",
@@ -132,7 +130,7 @@ class Tools(commands.Cog):
 			jsoninfo 	|= {"server description": guild.description}
 			embedinfofields	|= {"Server Description": guild.description}
 		jsoninfo |= {
-			"server icon": str(guild.icon_url).split("?")[0],
+			"server icon": str(guild.icon.url).split("?")[0],
 			"two-factor authentication": bool(guild.mfa_level),
 			"creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
 			"verification level": f"{guild.verification_level[0]} (level {guild.verification_level[1]+1})",
@@ -157,15 +155,16 @@ class Tools(commands.Cog):
 			"Emojis": len(guild.emojis),
 			"Roles": len(guild.roles) - 1,
 		}
-		if len(await guild.bans()) > 0:
-			jsoninfo	|= {"bans": len(await guild.bans())}
-			embedinfofields	|= {"Bans": len(await guild.bans())}
+		bans = [entry async for entry in guild.bans()]
+		if len(bans) > 0:
+			jsoninfo	|= {"bans": len(bans)}
+			embedinfofields	|= {"Bans": len(bans)}
 		if guild.premium_subscription_count > 0:
 			jsoninfo	|= {"boosts": guild.premium_subscription_count, "boosters": len(guild.premium_subscribers)}
 			embedinfofields	|= {"Boosts": guild.premium_subscription_count, "Boosters": len(guild.premium_subscribers)}
 		for info in embedinfofields:
 			embedinfofields[info] = str(embedinfofields[info])
-			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Enabled").replace("False", "Disabled"))
+			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Enabled").replace("False", "Disabled"), inline=False)
 
 		if getops(guild.id, "toggles", "jsonMenus"):	await ctx.send(f'```json\n"server information": {dumps(jsoninfo,indent=4)}```')
 		else:	await ctx.send(embed=embedinfo)
@@ -173,31 +172,30 @@ class Tools(commands.Cog):
 	@info.command(name="user",help="Get info for the specified user.",aliases=["member"],usage="[@member]")
 	async def user_info(self, ctx, *, user: Member = None):
 		if user == None:	user = ctx.author
-		roles = user.roles[-5:]
+		roles = user.roles[1:]
 		roles.reverse()
 		creation = user.created_at
 		jsoninfo = {
-			"name": f"{user.display_name} ({user.name}#{user.discriminator})",
+			"name": f"{user.display_name} ({user.name})",
 			"id": user.id,
-			"avatar": str(user.avatar_url).split("?")[0],
+			"avatar": str(user.avatar.url).split("?")[0],
 			"creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
-			"animated avatar": user.is_avatar_animated(),
+			"animated avatar": user.avatar.is_animated(),
 			"bot": user.bot,
-			"top 5 roles": [role.name for role in roles],
+			"roles": [role.name for role in roles],
 		}
-		embedinfo = Embed(title=user.display_name, color=self.teal, inline=False).set_thumbnail(url=user.avatar_url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
+		embedinfo = Embed(title=user.display_name, color=self.teal).set_thumbnail(url=user.avatar.url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
-			"Discriminator": user.discriminator,
 			"Ping": user.mention,
 			"ID": user.id,
-			"Animated Avatar": user.is_avatar_animated(),
+			"Animated Avatar": user.avatar.is_animated(),
 			"Bot": user.bot,
-			"Top 5 Roles": list2str([f"<@&{role.id}>" for role in roles], 2),
+			"Roles": list2str([f"<@&{role.id}>" for role in roles], 2),
 		}
 		if user.nick == user.display_name:	embedinfo.add_field(name="Real Name", value=user.name)
 		for info in embedinfofields:
 			embedinfofields[info] = str(embedinfofields[info])
-			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Yes").replace("False", "No"))
+			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Yes").replace("False", "No"), inline=False)
 
 		if	getops(ctx.guild.id, "toggles", "jsonMenus"):	await ctx.send(f'```json\n"user information": {dumps(jsoninfo,indent=4)}```')
 		else:		await ctx.send(embed=embedinfo)
@@ -207,7 +205,7 @@ class Tools(commands.Cog):
 		if channel == None:	channel = ctx.channel
 		creation = channel.created_at
 		jsoninfo = {"name": channel.name, "id": channel.id}
-		embedinfo = Embed(title=channel.name.replace("-", " ").title(), color=self.teal, inline=False).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
+		embedinfo = Embed(title=channel.name.replace("-", " ").title(), color=self.teal).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {"Ping": channel.mention, "ID": channel.id}
 		if channel.topic:
 			jsoninfo	|= {"description": channel.topic}
@@ -220,7 +218,7 @@ class Tools(commands.Cog):
 			embedinfofields |= {"Slowmode": channel.slowmode_delay}
 		for info in embedinfofields:
 			embedinfofields[info] = str(embedinfofields[info])
-			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Yes").replace("False", "No"))
+			embedinfo.add_field(name=info, value=embedinfofields[info].replace("True", "Yes").replace("False", "No"), inline=False)
 
 		if getops(ctx.guild.id, "toggles", "jsonMenus"):	await ctx.send(f'```json\n"channel information": {dumps(jsoninfo,indent=4)}```')
 		else:	await ctx.send(embed=embedinfo)
