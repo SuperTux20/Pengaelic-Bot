@@ -94,11 +94,15 @@ class Tools(commands.Cog):
 		)
 
 		if emoji == None:
-			emb = Embed(title=f"Emojis in {ctx.guild.name}", color=self.teal)
-			if len(emojis) > 0:	emb.add_field(name="Static",	value=str(emojis)[1:-1].replace("'", "").replace(", ", ""),	inline=False)
-			if len(animojis) > 0:	emb.add_field(name="Animated",	value=str(animojis)[1:-1].replace("'", "").replace(", ", ""),	inline=False)
+			statics	= Embed(title=f"Static emojis in {ctx.guild.name}",	description=str(emojis)[1:-1].replace("'", "").replace(", ", ""),	color=self.teal)
+			anims	= Embed(title=f"Animated emojis in {ctx.guild.name}",	description=str(animojis)[1:-1].replace("'", "").replace(", ", ""),	color=self.teal)
+
 			if len(emojis) == 0 and len(animojis) == 0:	await ctx.send("<:winxp_critical_error:869760946816553020>This server has no emojis!")
-			else:	await ctx.send(embed=emb)
+			else:
+				embeds = []
+				if len(emojis) > 0:	embeds.append(statics)
+				if len(animojis) > 0:	embeds.append(anims)
+				await ctx.send(embeds=embeds)
 		else:
 			emojis += animojis
 			if emoji in emojis:
