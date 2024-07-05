@@ -174,6 +174,7 @@ class Profiles(commands.Cog):
 		errorstr = str(error)[29:]
 		if errorstr.startswith("User") and errorstr.endswith("not found."):	await ctx.send("<:winxp_warning:869760947114348604>That user doesn't exist on any servers I'm in.")
 		elif errorstr.endswith("'%m/%d/%Y'") or errorstr.endswith("'%m/%d'"):	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid date format! Please use MM/DD/YYYY (year is optional)")
+		elif "base 16" in errorstr:	await ctx.send("<:winxp_critical_error:869760946816553020>Invalid color format! Please use any hexadecimal code from 000000 to FFFFFF.")
 		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
 async def setup(client):	await client.add_cog(Profiles(client))
