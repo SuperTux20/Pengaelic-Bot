@@ -171,11 +171,6 @@ class Options(commands.Cog):
 	@opset.command(name="dramaRole", help="Set the drama role.")
 	@commands.has_permissions(manage_roles=True)
 	async def change_drama_role(self, ctx, *, role: Role):	await self.set_role(ctx, "drama", role)
-
-	# ANCHOR[id=muterole]: MUTE ROLE
-	@opset.command(name="muteRole", help="Set the muted role.")
-	@commands.has_permissions(manage_roles=True)
-	async def change_mute_role(self, ctx, *, role: Role):	await self.set_role(ctx, "mute", role)
 	# END SECTION
 
 	# SECTION: CHANNELS
@@ -310,7 +305,6 @@ class Options(commands.Cog):
 	@toggle_welcome.error
 	@change_cmdr_role.error
 	@change_drama_role.error
-	@change_mute_role.error
 	@change_required_role.error
 	@change_drama_channel.error
 	@change_general_channel.error
