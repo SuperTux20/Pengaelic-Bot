@@ -14,7 +14,7 @@ class Actions(commands.Cog):
 	description	= "Emote actions!"
 	description_long	= description
 
-	async def act(self, ctx, act, punct="..."): await ctx.send(embed=Embed(description=f"{ctx.author.mention} is {act}ing{punct}", color=0x007F7F).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/images/actions/{act}/{randint(1,len(listdir(f'images/actions/{act}'))-1)}.gif"))
+	async def act(self, ctx, act, punct="..."): await ctx.send(embed=Embed(description=f"{ctx.author.mention} is {act}ing{punct}", color=0x007F7F).set_image(url=f"https://supertux20.github.io/Pengaelic-Bot/static/images/actions/{act}/{randint(1,len(listdir(f'static/images/actions/{act}'))-1)}.gif"))
 
 	@commands.command(name="cry")
 	async def cry(self, ctx): await self.act(ctx, "cry")
