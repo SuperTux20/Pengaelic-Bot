@@ -132,10 +132,10 @@ class Profiles(commands.Cog):
 			else:
 				await ctx.send("<:winxp_critical_error:869760946816553020>You didn't specify a username or ID to get their profile.")
 
-	@profile.command(name="bio", help="Set a bio for your profile.", aliases=["about", "aboutme"], usage="[text]")
+	@profile.command(name="bio", help="Set a bio for your profile.", aliases=["about", "aboutme", "Bio"], usage="[text]")
 	async def set_bio(self, ctx, *, text=None):	await self.uprof(ctx, text, "bio", text)
 
-	@profile.command(name="birthday", help="Set a birthday for your profile. An invalid date will unset it.", aliases=["bday", "bd"], usage="<MM>/<DD>/[YYYY]")
+	@profile.command(name="birthday", help="Set a birthday for your profile. An invalid date will unset it.", aliases=["bday", "bd", "Birthday"], usage="<MM>/<DD>/[YYYY]")
 	async def set_bday(self, ctx, *, text=None):	await self.uprof(ctx, text, "birthday", await parsedate(ctx, text))
 
 	@profile.command(name="color", help="Set your favorite color for your profile.", usage="<hex code with no #>")
@@ -144,19 +144,19 @@ class Profiles(commands.Cog):
 	@profile.command(name="image", help="Set an image for your profile with attachment or URL.", aliases=["img", "background", "bg"], usage="[URL or image attachment]")
 	async def set_img(self, ctx, *, text=None):	await self.uprof(ctx, text or ctx.message.attachments, "image", (ctx.message.attachments[0].url if ctx.message.attachments else text).replace("media.discordapp.net", "cdn.discordapp.com"))
 
-	@profile.command(name="motd", help='Set a "Message of the Day" for your profile.', aliases=["motto", "slogan", "tagline"], usage="[text]")
+	@profile.command(name="motd", help='Set a "Message of the Day" for your profile.', aliases=["motto", "slogan", "tagline", "MOTD"], usage="[text]")
 	async def set_motd(self, ctx, *, text=None):	await self.uprof(ctx, text, "motd", text)
 
 	@profile.command(name="nickname", help="Set a nickname for your profile.", aliases=["nick", "name"], usage="[text]")
 	async def set_nick(self, ctx, *, text=None):	await self.uprof(ctx, text, "nickname", text)
 
-	@profile.command(name="pronouns", help="Set your preferred pronouns for your profile.", usage="[text]")
+	@profile.command(name="pronouns", help="Set your preferred pronouns for your profile.", aliases=["Pronouns"], usage="[text]")
 	async def set_pronouns(self, ctx, *, text=None):	await self.uprof(ctx, text, "pronouns", text.lower())
 
-	@profile.command(name="region", help="Set a region for your profile.", aliases=["country"], usage="[two-letter country code (see flag emoji names)]")
+	@profile.command(name="region", help="Set a region for your profile.", aliases=["country", "Region"], usage="[two-letter country code (see flag emoji names)]")
 	async def set_region(self, ctx, text=None):	await self.uprof(ctx, text, "region", text.upper() if text else "UN")
 
-	@profile.command(name="sexuality", help="Set your sexuality for your profile.", usage="[text]")
+	@profile.command(name="sexuality", help="Set your sexuality for your profile.", aliases=["Sexuality"], usage="[text]")
 	async def set_sexuality(self, ctx, *, text=None):	await self.uprof(ctx, text, "sexuality", text)
 
 	@profile.error
