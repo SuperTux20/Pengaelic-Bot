@@ -22,8 +22,7 @@
 	"roles": {
 		"botCommander": null,
 		"customRoleLock": null,
-		"drama": null,
-		"mute": null
+		"drama": null
 	},
 	"toggles": {
 		"atSomeone": false,
@@ -37,19 +36,19 @@
 		"welcome": false
 	},
 	"customRoles": {
-		"123456789012345678": 987654321098765432 // user: role
+		"123456789012345678": 987654321098765432
 	},
 	"suggestions": {
-		"#1": 111222333444555666 // suggestion: message
+		"#1": 111222333444555666
 	},
 	"warnings": {
-		"123456789012345678": { // user: {
+		"123456789012345678": {
 			"1": "doing something wrong",
 			"2": "broke a rule"
 		}
 	},
 	"xp": {
-		"123456789012345678": 12345, // user: xp
+		"123456789012345678": 12345,
 		"123456789012345679": 56432
 	}
 }
