@@ -94,7 +94,7 @@ class Tools(commands.Cog):
 		)
 
 		if emoji == None:
-			emb = Embed(title=f"Emojis in {ctx.guild.name}")
+			emb = Embed(title=f"Emojis in {ctx.guild.name}", color=self.teal)
 			if len(emojis) > 0:	emb.add_field(name="Static",	value=str(emojis)[1:-1].replace("'", "").replace(", ", ""),	inline=False)
 			if len(animojis) > 0:	emb.add_field(name="Animated",	value=str(animojis)[1:-1].replace("'", "").replace(", ", ""),	inline=False)
 			if len(emojis) == 0 and len(animojis) == 0:	await ctx.send("<:winxp_critical_error:869760946816553020>This server has no emojis!")
@@ -176,13 +176,13 @@ class Tools(commands.Cog):
 		roles.reverse()
 		creation = user.created_at
 		jsoninfo = {
-			"name": f"{user.display_name} ({user.name})",
+			"name": f"{user.display_name} (@{user.name})",
 			"id": user.id,
 			"avatar": str(user.avatar.url).split("?")[0],
 			"creation date": f"{creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT",
 			"animated avatar": user.avatar.is_animated(),
 			"bot": user.bot,
-			"roles": [role.name for role in roles],
+			"roles": [role.name for role in roles] if len(roles) > 0 else None,
 		}
 		embedinfo = Embed(title=user.display_name, color=self.teal).set_thumbnail(url=user.avatar.url).set_footer(text=f"Created {creation.month}/{creation.day}/{creation.year} {creation.hour}:{creation.minute}:{creation.second} UTC/GMT")
 		embedinfofields = {
@@ -190,7 +190,7 @@ class Tools(commands.Cog):
 			"ID": user.id,
 			"Animated Avatar": user.avatar.is_animated(),
 			"Bot": user.bot,
-			"Roles": list2str([f"<@&{role.id}>" for role in roles], 2),
+			"Roles": list2str([f"<@&{role.id}>" for role in roles], 2) if len(roles) > 0 else None,
 		}
 		if user.nick == user.display_name:	embedinfo.add_field(name="Real Name", value=user.name)
 		for info in embedinfofields:
