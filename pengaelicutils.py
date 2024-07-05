@@ -206,7 +206,7 @@ def unhandling(tux_in_server) -> str:
 			output = ""
 			tux_msg = "```\n" + full_error.replace("```", "`") + "\n```"
 
-		else:	tux_msg = "Pinging <@!686984544930365440> (my developer) so he can see this error."
+		else:	tux_msg = "Pinging <@!686984544930365440> (my developer) so they can see this error."
 
 	else:	tux_msg = "Run `p!bugreport` <error> to send Tux (my developer) a message, replacing <error> with the copy/pasted error message and some details about what was happening shortly before the error appeared (such as what command caused the error)"
 	return output + tux_msg
