@@ -58,11 +58,11 @@ class Reactions(commands.Cog):
 							if	Developers.check(Developers, message.author, "tux"):	await message.channel.send(await self.not_test(messagetext, "Yes you are! Hiya!", "What? Of course you are!"))
 							else:		await message.channel.send(await self.not_test(messagetext, "You dare to impersonate my creator?! **You shall be punished.** /j", "Darn right, you're not!"))
 						else:
-							if	messagetext.startswith("i am an"):	slicer = 7
-							elif	messagetext.startswith("i am a"):	slicer = 6
-							elif	messagetext.startswith("im an"):	slicer = 5
-							elif	messagetext.startswith("im a"):	slicer = 4
-							elif	messagetext.startswith("i am"):	slicer = 4
+							if	messagetext.startswith("i am an "):	slicer = 7
+							elif	messagetext.startswith("i am a "):	slicer = 6
+							elif	messagetext.startswith("im an "):	slicer = 5
+							elif	messagetext.startswith("im a "):	slicer = 4
+							elif	messagetext.startswith("i am "):	slicer = 4
 							else:		slicer = 2
 							await message.channel.send(f"Hi{messagetext[slicer:]}, I'm the Pengaelic Bot!")
 
