@@ -233,8 +233,11 @@ class Tools(commands.Cog):
 	async def speedtest(self, ctx):
 		if self.testing == False:
 			self.testing = True
+			stresults = await ctx.send(embed=Embed(title="Running Speedtest...", color=0x007F7F))
 			async with ctx.typing():	await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.TestSpeed)
-			await ctx.channel.send(embed=Embed(title="Speedtest Results", description="*Conducted using [Ookla's Speedtest CLI](https://speedtest.net)*", color=0x007F7F).add_field(name="Server", value=f'{results["server"]["sponsor"]} {results["server"]["name"]}', inline=False).add_field(name="Ping", value=f'{results["ping"]} ms', inline=False).add_field(name="Download Speed", value=f'{round(float((results["download"])/1000000), 2)} Mbps', inline=False).add_field(name="Upload Speed", value=f'{round(float((results["upload"])/1000000), 2)} Mbps', inline=False).set_footer(text=SpeedPerformTime))
+			finished = await ctx.send("Complete!")
+			await stresults.edit(embed=Embed(title="Speedtest Results", description="*Conducted using [Ookla's Speedtest CLI](https://speedtest.net)*", color=0x007F7F).add_field(name="Server", value=f'{results["server"]["sponsor"]} {results["server"]["name"]}', inline=False).add_field(name="Ping", value=f'{results["ping"]} ms', inline=False).add_field(name="Download Speed", value=f'{round(float((results["download"])/1000000), 2)} Mbps', inline=False).add_field(name="Upload Speed", value=f'{round(float((results["upload"])/1000000), 2)} Mbps', inline=False).set_footer(text=SpeedPerformTime))
+			await finished.delete()
 			self.testing = False
 
 		else:	await ctx.send("<:winxp_information:869760946808180747>A test is already in progress. Please wait...")
