@@ -35,12 +35,6 @@ class Generators(commands.Cog):
 			if timer.monkeywatch(starttime) == "10:00":
 				success = False
 				break
-
-		cutoff	= ""
-		textlen	= len(text)
-		if len(text) > 1000:
-			text = f"...{text[-1000:]}"
-			cutoff = " (last 1000 shown)"
 		text = (
 			text.replace("\\", "\\\\")
 			.replace("*", "\*")
@@ -49,7 +43,7 @@ class Generators(commands.Cog):
 			.replace("~", "\~")
 			.replace("|", "\|")
 		)
-		return text, cutoff, textlen, success, timer.monkeywatch(starttime)
+		return text, True if len(text) > 1000 else False, len(text), success, timer.monkeywatch(starttime)
 
 	def gen(self, amount: int = 1, upper_limit: int = 3, lower_limit: int = 2, eldritch: bool = False, test: bool = False) -> str:
 		if	eldritch:
@@ -108,10 +102,10 @@ class Generators(commands.Cog):
 			if invalid:	await ctx.send(f"<:winxp_warning:869760947114348604>Your keyword contained characters that weren't in the specified alphabet ({list2str(alphabet, 1)})")
 			else:
 				status = await ctx.send("<:winxp_information:869760946808180747>Generating...")
-				async with ctx.typing():	text, cutoff, textlen, success, elapsed = await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.MonkeyBusiness, word, alphabet,time())
+				async with ctx.typing():	text, cutoff, textlen, success, elapsed = await get_event_loop().run_in_executor(ThreadPoolExecutor(), self.MonkeyBusiness, word, alphabet, time())
 				if success:
-					await status.edit(content=text)
-					await ctx.send(f'<:winxp_information:869760946808180747>Keyword "{word}" found after {textlen} characters{cutoff} in {elapsed}')
+					await status.edit(content=f'<:winxp_information:869760946808180747>Keyword "{word}" found after {textlen} characters{" (last 1000 shown)" if cutoff else ""} in {elapsed}')
+					await ctx.send("..." + text[-1000:] if cutoff else text)
 
 				else:	await ctx.send(f'<:winxp_critical_error:869760946816553020>Could not find keyword "{word}" within ten minutes. :frowning:')
 
