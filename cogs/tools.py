@@ -323,6 +323,7 @@ class Tools(commands.Cog):
 	@emoji.error
 	@info.error
 	async def generalError(self, ctx, error):
+		if str(error).endswith("color is a required argument that is missing."):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a role color!")
 		if str(error).endswith("role_name is a required argument that is missing."):	await ctx.send("<:winxp_warning:869760947114348604>You didn't specify a role name!")
 		else:	await ctx.send(unhandling(tux_in_guild(ctx, self.client)))
 
